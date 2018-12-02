@@ -1,0 +1,24 @@
+.SchoolList {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 980px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.SchoolList-header {
+  max-width: 980px;
+  width: 100%;
+  margin: 12px auto;
+  text-align: center;
+}
+
+.SchoolList-search {
+  background-color: #eeeeee;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  padding: 12px;
+  max-width: 300px;
+  width: 100%;
+}
