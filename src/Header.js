@@ -7,13 +7,13 @@ class Header extends Component {
   render() {
     return (
       <header className="App-header">
-        <Link to="/" className="App-logo-link">
-          <Logo />
-        </Link>
+        <Logo displayText />
         <nav className="App-header-nav">
           <ul>
             <li>
-              <Link to="/schools">Find Your School</Link>
+              <Link to="/schools" className="FindYourSchool-link">
+                Find Your School
+              </Link>
             </li>
           </ul>
         </nav>

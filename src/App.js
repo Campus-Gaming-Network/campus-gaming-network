@@ -4,8 +4,7 @@ import Header from "./Header";
 import Main from "./Main";
 import { Router } from "@reach/router";
 import Home from "./Home";
-import SchoolList from "./SchoolList";
-import SchoolDetail from "./SchoolDetail";
+import Schools from "./Schools";
 
 class App extends Component {
   render() {
@@ -15,8 +14,7 @@ class App extends Component {
         <Main>
           <Router>
             <Home path="/" />
-            <SchoolList path="schools" />
-            <SchoolDetail path=":school" />
+            <Schools path="schools/*" />
           </Router>
         </Main>
       </div>
