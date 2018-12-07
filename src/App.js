@@ -1,23 +1,26 @@
 import React, { Component } from "react";
-import "./App.css";
+import { Router } from "@reach/router";
+
+// Components
 import Header from "./Header";
 import Main from "./Main";
-import { Router } from "@reach/router";
 import Home from "./Home";
 import Schools from "./Schools";
+import Login from "./Login";
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      <>
         <Header />
         <Main>
           <Router>
             <Home path="/" />
             <Schools path="schools/*" />
+            <Login path="login" />
           </Router>
         </Main>
-      </div>
+      </>
     );
   }
 }

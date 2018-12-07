@@ -4,7 +4,9 @@ class Home extends Component {
   render() {
     return (
       <article>
-        <h1>Home</h1>
+        <section className="p-8 w-full">
+          <h1>Home</h1>
+        </section>
       </article>
     );
   }

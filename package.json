@@ -11,9 +11,11 @@
     "react-virtualized": "^9.21.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "build:css": "postcss src/styles/index.css -o src/index.css",
+    "watch:css": "postcss src/styles/index.css -o src/index.css -w",
+    "start": "react-scripts start && npm run watch:css",
+    "build": "react-scripts build && npm run build:css",
+    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -24,5 +26,10 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "autoprefixer": "^9.4.2",
+    "postcss-cli": "^6.0.1",
+    "tailwindcss": "^0.7.2"
+  }
 }

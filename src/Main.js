@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 class Main extends Component {
   render() {
-    return (
-      <main>{this.props.children}</main>
-    );
+    return <main role="main">{this.props.children}</main>;
   }
 }
 
