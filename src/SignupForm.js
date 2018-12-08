@@ -4,7 +4,7 @@ import { Link } from "@reach/router";
 // Utils
 import { getFormData } from "./utils";
 
-class LoginForm extends Component {
+class SignupForm extends Component {
   // The third party component we use will replace this, but for now lets
   // pretend it does something useful
   validate = form => {
@@ -36,10 +36,9 @@ class LoginForm extends Component {
           onSubmit={this.handleSubmit}
           className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 text-white"
         >
-          <h1 className="text-center pb-2 pt-2">Welcome back</h1>
-          <p className="text-grey-dark text-center pb-8">
-            Log in to your account.
-          </p>
+          <h1 className="text-center font-hairline pb-6 pt-2">
+            Create an Account
+          </h1>
           <div className="mb-4">
             <label
               className="block text-grey-darker text-sm font-bold mb-2"
@@ -56,47 +55,55 @@ class LoginForm extends Component {
               required
             />
           </div>
-          <div>
+          <div className="mb-4">
             <label
               className="block text-grey-darker text-sm font-bold mb-2"
-              htmlFor="password"
+              htmlFor="email"
             >
-              Password
+              Email
             </label>
             <input
-              className="bg-grey-lightest appearance-none border rounded w-full py-2 px-3 text-grey-darker mb-2 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
-              type="password"
-              name="password"
-              placeholder="******************"
+              className="bg-grey-lightest appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email"
               required
             />
           </div>
-          <Link
-            to="/forgot-password"
-            className="inline-block no-underline align-baseline text-xs text-orange hover:text-orange-dark"
+          <label
+            className="block text-grey-darker text-sm font-bold mb-2"
+            htmlFor="password"
           >
-            Forgot Password?
-          </Link>
+            Password
+          </label>
+          <input
+            className="bg-grey-lightest appearance-none border rounded w-full py-2 px-3 text-grey-darker mb-2 leading-tight focus:outline-none focus:shadow-outline"
+            id="password"
+            type="password"
+            name="password"
+            placeholder="******************"
+            required
+          />
           <button
             className="mt-6 w-full bg-orange hover:bg-orange-dark text-white font-bold py-4 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
-            Log In
+            Signup
           </button>
         </form>
         <span className="text-sm text-grey-dark pr-1">
-          Don't have an account?
+          Already have an account?
         </span>
         <Link
-          to="/sign-up"
+          to="/login"
           className="text-sm no-underline text-orange hover:text-orange-dark"
         >
-          Sign up
+          Log In
         </Link>
       </>
     );
   }
 }
 
-export default LoginForm;
+export default SignupForm;

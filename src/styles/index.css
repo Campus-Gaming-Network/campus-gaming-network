@@ -3,3 +3,6 @@
 @tailwind utilities;
 
 /* Your custom CSS here */
+body {
+  font-family: Rubik;
+}

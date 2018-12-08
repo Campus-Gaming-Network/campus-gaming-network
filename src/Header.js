@@ -7,7 +7,7 @@ import Logo from "./Logo";
 class Header extends Component {
   render() {
     return (
-      <header className="shadow bg-white">
+      <header className="shadow bg-black">
         <nav className="flex items-center justify-between p-2">
           <div className="flex mr-6">
             <Logo />
@@ -16,7 +16,7 @@ class Header extends Component {
             <div className="ml-auto">
               <Link
                 to="/login"
-                className="no-underline inline-block mr-2 text-sm px-4 py-2 leading-none border rounded text-orange border-orange hover:border-transparent hover:text-white hover:bg-orange"
+                className="no-underline inline-block mr-2 text-sm px-4 py-2 leading-none border rounded text-grey-light border-grey-light hover:border-grey-light hover:text-white"
               >
                 Log In
               </Link>

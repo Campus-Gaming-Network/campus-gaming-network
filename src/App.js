@@ -1,26 +1,26 @@
 import React, { Component } from "react";
-import { Router } from "@reach/router";
 
 // Components
-import Header from "./Header";
 import Main from "./Main";
 import Home from "./Home";
-import Schools from "./Schools";
 import Login from "./Login";
+import Signup from "./Signup";
+import ForgotPassword from "./ForgotPassword";
+import Profile from "./Profile";
+import EditProfile from "./EditProfile";
 
 class App extends Component {
   render() {
     return (
-      <>
-        <Header />
-        <Main>
-          <Router>
-            <Home path="/" />
-            <Schools path="schools/*" />
-            <Login path="login" />
-          </Router>
-        </Main>
-      </>
+      <Main>
+        <Home path="/" />
+        <Login path="login" />
+        <Signup path="sign-up" />
+        <ForgotPassword path="forgot-password" />
+        <Profile path="profile">
+          <EditProfile path="edit" />
+        </Profile>
+      </Main>
     );
   }
 }
