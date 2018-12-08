@@ -9,8 +9,11 @@ class Header extends Component {
     return (
       <header className="shadow bg-black">
         <nav className="flex items-center justify-between p-2">
-          <div className="flex mr-6">
+          <div className="flex mr-6 items-center">
             <Logo />
+            <Link to="schools" className="text-white no-underline pl-6">
+              Find Your School
+            </Link>
           </div>
           <div className="flex-grow flex items-center w-auto">
             <div className="ml-auto">
