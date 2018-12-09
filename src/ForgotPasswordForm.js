@@ -24,7 +24,7 @@ class ForgotPasswordForm extends Component {
       <form
         onKeyUp={this.handleKeyUp}
         onSubmit={this.handleSubmit}
-        className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 text-white"
+        className="bg-grey-darkest shadow-lg rounded px-8 pt-6 pb-8 mb-4 text-white"
       >
         <h1 className="text-center pb-2 pt-2">Forgot your password?</h1>
         <p className="text-grey-dark text-center pb-8">

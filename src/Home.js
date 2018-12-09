@@ -6,8 +6,24 @@ class Home extends Component {
     return (
       <article>
         <section className="p-8 w-full">
-          <h1 className="text-white">Home</h1>
-          <Link to="profile">Profile</Link>
+          <Link to="/" className="block text-white p-2">
+            Home
+          </Link>
+          <Link to="profile/jdoe" className="block text-white p-2">
+            Profile
+          </Link>
+          <Link to="login" className="block text-white p-2">
+            Log in
+          </Link>
+          <Link to="sign-up" className="block text-white p-2">
+            Sign up
+          </Link>
+          <Link to="forgot-password" className="block text-white p-2">
+            Forgot Password
+          </Link>
+          <Link to="schools" className="block text-white p-2">
+            Find Your School
+          </Link>
         </section>
       </article>
     );

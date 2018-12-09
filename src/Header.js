@@ -6,23 +6,38 @@ import Logo from "./Logo";
 
 class Header extends Component {
   render() {
+    const isAuthenticated = true;
+
     return (
-      <header className="shadow bg-black">
-        <nav className="flex items-center justify-between p-2">
+      <header>
+        <nav className="flex items-center justify-between p-2 max-w-3xl mx-auto">
           <div className="flex mr-6 items-center">
             <Logo />
-            <Link to="schools" className="text-white no-underline pl-6">
-              Find Your School
-            </Link>
           </div>
           <div className="flex-grow flex items-center w-auto">
             <div className="ml-auto">
-              <Link
-                to="/login"
-                className="no-underline inline-block mr-2 text-sm px-4 py-2 leading-none border rounded text-grey-light border-grey-light hover:border-grey-light hover:text-white"
-              >
-                Log In
-              </Link>
+              {!isAuthenticated ? (
+                <Link
+                  to="/login"
+                  className="text-xs no-underline font-medium uppercase inline-block px-3 py-2 border rounded text-white border-grey-darker hover:border-grey-dark"
+                >
+                  Log In
+                </Link>
+              ) : (
+                <Link
+                  to="/user"
+                  className="rounded flex text-grey-light items-center no-underline group px-2 py-1 hover:bg-grey-darkest"
+                >
+                  <span className="text-xs pr-2 group-hover:text-orange">
+                    Jane Doe
+                  </span>
+                  <img
+                    src="https://picsum.photos/30/30/?image=1027"
+                    alt="Profile"
+                    className="shadow rounded-full"
+                  />
+                </Link>
+              )}
             </div>
           </div>
         </nav>

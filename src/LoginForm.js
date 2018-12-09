@@ -34,7 +34,7 @@ class LoginForm extends Component {
         <form
           onKeyUp={this.handleKeyUp}
           onSubmit={this.handleSubmit}
-          className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 text-white"
+          className="bg-grey-darkest shadow-lg rounded px-8 pt-6 pb-8 mb-4 text-white"
         >
           <h1 className="text-center pb-2 pt-2">Welcome back</h1>
           <p className="text-grey-dark text-center pb-8">
@@ -79,7 +79,7 @@ class LoginForm extends Component {
             Forgot Password?
           </Link>
           <button
-            className="mt-6 w-full bg-orange hover:bg-orange-dark text-white font-bold py-4 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="mt-6 w-full bg-orange hover:bg-orange-dark text-white font-medium py-4 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
             Log In

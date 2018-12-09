@@ -34,9 +34,9 @@ class SignupForm extends Component {
         <form
           onKeyUp={this.handleKeyUp}
           onSubmit={this.handleSubmit}
-          className="bg-black shadow-md rounded px-8 pt-6 pb-8 mb-4 text-white"
+          className="bg-grey-darkest shadow-lg rounded px-8 pt-6 pb-8 mb-4 text-white"
         >
-          <h1 className="text-center font-hairline pb-6 pt-2">
+          <h1 className="text-center font-normal pb-6 pt-2">
             Create an Account
           </h1>
           <div className="mb-4">
@@ -86,10 +86,10 @@ class SignupForm extends Component {
             required
           />
           <button
-            className="mt-6 w-full bg-orange hover:bg-orange-dark text-white font-bold py-4 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="mt-6 w-full bg-orange hover:bg-orange-dark text-white font-medium py-4 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
-            Signup
+            Sign up
           </button>
         </form>
         <span className="text-sm text-grey-dark pr-1">

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Main from "./Main";
@@ -22,9 +22,7 @@ class App extends Component {
         <Login path="login" />
         <Signup path="sign-up" />
         <ForgotPassword path="forgot-password" />
-        <Profile path="profile">
-          <EditProfile path="edit" />
-        </Profile>
+        <Profile path="profile/:handle" />
         <Schools path="schools" />
       </Main>
     );
