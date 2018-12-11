@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import { Link } from "@reach/router";
 import axios from "axios";
 
+// Config
+import config from "./config";
+
 class Profile extends Component {
   async componentDidMount() {
-    // Make api request to get user account baded on url handle
-    console.log("handle : %s", this.props.handle);
+    // Make api request to get user account baded on url username
+    console.log("username : %s", this.props.username);
     await this.getGames();
   }
 
@@ -15,7 +18,7 @@ class Profile extends Component {
         "https://api-endpoint.igdb.com/games/1942?fields=*",
         {
           headers: {
-            "user-key": "7abd6fa6d50e330abff5a40825f4c616",
+            "user-key": config.igdb,
             Accept: "application/json"
           }
         }
@@ -44,24 +47,6 @@ class Profile extends Component {
             </div>
           </div>
         </section>
-        {/* <section className="mt-8">
-          <div className="pl-1">
-            <ul className="list-reset">
-              <li>
-                <i className="fab fa-discord" />
-              </li>
-              <li>
-                <i className="fab fa-steam" />
-              </li>
-              <li>
-                <i className="fab fa-xbox" />
-              </li>
-              <li>
-                <i className="fab fa-playstation" />
-              </li>
-            </ul>
-          </div>
-        </section> */}
         <section className="mt-8">
           <div className="pl-1">
             <h3 className="text-white font-medium pb-2 uppercase text-xs">
