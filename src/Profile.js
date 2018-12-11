@@ -2,58 +2,55 @@ import React, { Component } from "react";
 import { Link } from "@reach/router";
 import axios from "axios";
 
-// Config
-import config from "./config";
-
 class Profile extends Component {
   async componentDidMount() {
     // Make api request to get user account baded on url username
-    console.log("username : %s", this.props.username);
-    await this.getGames();
+    // console.log("username : %s", this.props.username);
+    // await this.getGames();
   }
 
   getGames = async () => {
-    try {
-      const response = await axios.get(
-        "https://api-endpoint.igdb.com/games/1942?fields=*",
-        {
-          headers: {
-            "user-key": config.igdb,
-            Accept: "application/json"
-          }
-        }
-      );
-      console.log("response : ", response);
-    } catch (e) {
-      console.log("e : ", e);
-    }
+    // try {
+    //   const response = await axios.get(
+    //     "https://api-endpoint.igdb.com/games/1942?fields=*",
+    //     {
+    //       headers: {
+    //         "user-key": process.env.REACT_APP_IGDB_API_KEY,
+    //         Accept: "application/json"
+    //       }
+    //     }
+    //   );
+    //   console.log("response : ", response);
+    // } catch (e) {
+    //   console.log("e : ", e);
+    // }
   };
 
   render() {
     return (
       <article className="p-8 max-w-md mx-auto">
-        <section className="b-6">
+        <section className="b-6 shadow rounded-full bg-grey-darkest">
           <div className="flex items-center">
             <img
               src="https://picsum.photos/100/100/?image=1027"
               alt="Profile"
-              className="shadow rounded-full"
+              className="shadow-md rounded-full"
             />
             <div className="pl-6">
               <h1 className="text-white font-normal">Jane Doe</h1>
-              <h4 className="block text-grey-darker font-normal">
-                Chicago, IL
-              </h4>
+              <h2 className="block text-grey-dark font-normal">
+                Illinois Institute of Technology
+              </h2>
             </div>
           </div>
         </section>
         <section className="mt-8">
           <div className="pl-1">
             <h3 className="text-white font-medium pb-2 uppercase text-xs">
-              School
+              Major
             </h3>
             <p className="text-grey-light font-hairline">
-              Illinois Institute of Technology
+              Information Technology &amp; Management (4th year)
             </p>
           </div>
         </section>

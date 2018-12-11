@@ -11,6 +11,7 @@ import ForgotPassword from "./ForgotPassword";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
 import Schools from "./Schools";
+import NotFound from "./NotFound";
 
 library.add(faUser);
 
@@ -22,8 +23,9 @@ class App extends Component {
         <Login path="login" />
         <Signup path="sign-up" />
         <ForgotPassword path="forgot-password" />
-        <Profile path="profile/:handle" />
+        <Profile path="user/:username" />
         <Schools path="schools" />
+        <NotFound default />
       </Main>
     );
   }

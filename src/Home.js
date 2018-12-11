@@ -9,7 +9,7 @@ class Home extends Component {
           <Link to="/" className="block text-white p-2">
             Home
           </Link>
-          <Link to="profile/jdoe" className="block text-white p-2">
+          <Link to="user/jdoe" className="block text-white p-2">
             Profile
           </Link>
           <Link to="login" className="block text-white p-2">

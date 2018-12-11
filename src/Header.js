@@ -5,9 +5,32 @@ import { Link } from "@reach/router";
 import Logo from "./Logo";
 
 class Header extends Component {
-  render() {
+  renderHeaderLinks = () => {
     const isAuthenticated = true;
 
+    return !isAuthenticated ? (
+      <Link
+        to="/login"
+        className="text-xs no-underline font-medium uppercase inline-block px-3 py-2 border rounded text-white border-grey-darker hover:border-grey-dark"
+      >
+        Log In
+      </Link>
+    ) : (
+      <Link
+        to="/user/jdoe"
+        className="rounded flex text-grey-light items-center no-underline group px-2 py-1 hover:bg-grey-darkest"
+      >
+        <span className="text-xs pr-2 group-hover:text-orange">Jane Doe</span>
+        <img
+          src="https://picsum.photos/30/30/?image=1027"
+          alt="Profile"
+          className="shadow rounded-full"
+        />
+      </Link>
+    );
+  };
+
+  render() {
     return (
       <header>
         <nav className="flex items-center justify-between p-2 max-w-3xl mx-auto">
@@ -15,30 +38,7 @@ class Header extends Component {
             <Logo />
           </div>
           <div className="flex-grow flex items-center w-auto">
-            <div className="ml-auto">
-              {!isAuthenticated ? (
-                <Link
-                  to="/login"
-                  className="text-xs no-underline font-medium uppercase inline-block px-3 py-2 border rounded text-white border-grey-darker hover:border-grey-dark"
-                >
-                  Log In
-                </Link>
-              ) : (
-                <Link
-                  to="/user"
-                  className="rounded flex text-grey-light items-center no-underline group px-2 py-1 hover:bg-grey-darkest"
-                >
-                  <span className="text-xs pr-2 group-hover:text-orange">
-                    Jane Doe
-                  </span>
-                  <img
-                    src="https://picsum.photos/30/30/?image=1027"
-                    alt="Profile"
-                    className="shadow rounded-full"
-                  />
-                </Link>
-              )}
-            </div>
+            <div className="ml-auto">{this.renderHeaderLinks()}</div>
           </div>
         </nav>
       </header>
