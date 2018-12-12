@@ -1,1 +1,1 @@
-# campus-gamer
+# ALPHA STAGE - Campus Gaming Network
