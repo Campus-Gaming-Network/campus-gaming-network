@@ -1,29 +1,14 @@
 import React, { Component } from "react";
-import { Link } from "@reach/router";
 
 class Home extends Component {
   render() {
     return (
       <article>
-        <section className="p-8 w-full">
-          <Link to="/" className="block text-white p-2">
-            Home
-          </Link>
-          <Link to="user/jdoe" className="block text-white p-2">
-            Profile
-          </Link>
-          <Link to="login" className="block text-white p-2">
-            Log in
-          </Link>
-          <Link to="sign-up" className="block text-white p-2">
-            Sign up
-          </Link>
-          <Link to="forgot-password" className="block text-white p-2">
-            Forgot Password
-          </Link>
-          <Link to="schools" className="block text-white p-2">
-            Find Your School
-          </Link>
+        <section className="p-8 max-w-3xl mx-auto text-center">
+          <h1 className="text-white">Campus Gaming Network [Alpha]</h1>
+          <p className="text-white font-hairline">
+            Connecting gamers across campus and across the United States.
+          </p>
         </section>
       </article>
     );

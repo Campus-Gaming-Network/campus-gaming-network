@@ -1,34 +1,12 @@
 import React, { Component } from "react";
-import { Link } from "@reach/router";
-import axios from "axios";
 
 class Profile extends Component {
-  async componentDidMount() {
-    // Make api request to get user account baded on url username
-    // console.log("username : %s", this.props.username);
-    // await this.getGames();
-  }
-
-  getGames = async () => {
-    // try {
-    //   const response = await axios.get(
-    //     "https://api-endpoint.igdb.com/games/1942?fields=*",
-    //     {
-    //       headers: {
-    //         "user-key": process.env.REACT_APP_IGDB_API_KEY,
-    //         Accept: "application/json"
-    //       }
-    //     }
-    //   );
-    //   console.log("response : ", response);
-    // } catch (e) {
-    //   console.log("e : ", e);
-    // }
-  };
-
   render() {
     return (
       <article className="p-8 max-w-md mx-auto">
+        <button className="text-white" onClick={this.props.handleLogout}>
+          log out
+        </button>
         <section className="b-6 shadow rounded-full bg-grey-darkest">
           <div className="flex items-center">
             <img

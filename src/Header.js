@@ -6,9 +6,7 @@ import Logo from "./Logo";
 
 class Header extends Component {
   renderHeaderLinks = () => {
-    const isAuthenticated = true;
-
-    return !isAuthenticated ? (
+    return !this.props.isAuthenticated ? (
       <Link
         to="/login"
         className="text-xs no-underline font-medium uppercase inline-block px-3 py-2 border rounded text-white border-grey-darker hover:border-grey-dark"

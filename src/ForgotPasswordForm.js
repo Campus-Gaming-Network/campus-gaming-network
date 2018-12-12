@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 
-// Utils
-import { getFormData } from "./utils";
-
 class ForgotPasswordForm extends Component {
   handleKeyUp = event => {
     if (event.keyCode === 13) {
@@ -10,13 +7,8 @@ class ForgotPasswordForm extends Component {
     }
   };
 
-  // This will be replaced by a third party component like aws amplify or
-  // something similar
   handleSubmit = event => {
     event.preventDefault();
-    const form = event.target;
-    const user = getFormData(form);
-    console.log("user : ", user);
   };
 
   render() {
@@ -38,6 +30,7 @@ class ForgotPasswordForm extends Component {
             Email
           </label>
           <input
+            autoFocus
             className="bg-grey-lightest appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline"
             id="email"
             name="email"

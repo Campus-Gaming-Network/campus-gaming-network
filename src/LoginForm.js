@@ -1,14 +1,26 @@
 import React, { Component } from "react";
-import { Link } from "@reach/router";
-
-// Utils
-import { getFormData } from "./utils";
+import { Link, navigate } from "@reach/router";
+import { Auth } from "aws-amplify";
 
 class LoginForm extends Component {
-  // The third party component we use will replace this, but for now lets
-  // pretend it does something useful
-  validate = form => {
-    return true;
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLoading: false,
+      email: "",
+      password: ""
+    };
+  }
+
+  validateForm() {
+    return this.state.email.length > 0 && this.state.password.length > 0;
+  }
+
+  handleChange = event => {
+    this.setState({
+      [event.target.id]: event.target.value
+    });
   };
 
   handleKeyUp = event => {
@@ -17,14 +29,18 @@ class LoginForm extends Component {
     }
   };
 
-  // This will be replaced by a third party component like aws amplify or
-  // something similar
-  handleSubmit = event => {
+  handleSubmit = async event => {
     event.preventDefault();
-    const form = event.target;
-    if (this.validate(form)) {
-      const user = getFormData(form);
-      console.log("user : ", user);
+
+    this.setState({ isLoading: true });
+
+    try {
+      await Auth.signIn(this.state.email, this.state.password);
+      this.props.userHasAuthenticated(true);
+      navigate("/");
+    } catch (e) {
+      alert(e.message);
+      this.setState({ isLoading: false });
     }
   };
 
@@ -43,16 +59,19 @@ class LoginForm extends Component {
           <div className="mb-4">
             <label
               className="block text-grey-darker text-sm font-bold mb-2"
-              htmlFor="username"
+              htmlFor="email"
             >
-              Username
+              Email
             </label>
             <input
+              autoFocus
               className="bg-grey-lightest appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              name="username"
+              id="email"
+              name="email"
               type="text"
-              placeholder="Username"
+              placeholder="Email"
+              value={this.state.email}
+              onChange={this.handleChange}
               required
             />
           </div>
@@ -69,6 +88,8 @@ class LoginForm extends Component {
               type="password"
               name="password"
               placeholder="******************"
+              value={this.state.password}
+              onChange={this.handleChange}
               required
             />
           </div>
@@ -79,10 +100,13 @@ class LoginForm extends Component {
             Forgot Password?
           </Link>
           <button
-            className="mt-6 w-full bg-orange hover:bg-orange-dark text-white font-medium py-4 px-4 rounded focus:outline-none focus:shadow-outline"
+            className={`${
+              !this.validateForm() ? "opacity-75 cursor-not-allowed" : ""
+            } mt-6 w-full bg-orange hover:bg-orange-light hover:border-orange border-b-4 border-orange-dark text-white font-medium py-4 px-4 rounded`}
+            disabled={!this.validateForm()}
             type="submit"
           >
-            Log In
+            {this.state.isLoading ? "Logging in..." : "Log In"}
           </button>
         </form>
         <span className="text-sm text-grey-dark pr-1">
