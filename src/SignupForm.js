@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import { Link, navigate } from "@reach/router";
 import { Auth } from "aws-amplify";
 
+// Components
+import Button from "./Button";
+import Alert from "./Alert";
+
 class SignupForm extends Component {
   constructor(props) {
     super(props);
@@ -32,16 +36,6 @@ class SignupForm extends Component {
     this.setState({
       [event.target.id]: event.target.value
     });
-  };
-
-  handleKeyUp = event => {
-    if (event.keyCode === 13) {
-      if (event.target.id === "form") {
-        this.handleSubmit(event);
-      } else if (event.target.id === "confirmationForm") {
-        this.handleConfirmationSubmit(event);
-      }
-    }
   };
 
   handleSubmit = async event => {
@@ -84,15 +78,13 @@ class SignupForm extends Component {
   renderConfirmationForm() {
     return (
       <form
-        id="confirmationForm"
-        onKeyUp={this.handleKeyUp}
         onSubmit={this.handleSubmit}
         className="bg-grey-darkest shadow-lg rounded px-8 pt-6 pb-8 mb-4 text-white"
       >
         <div className="mb-4">
           <label
             className="block text-grey-darker text-sm font-bold mb-2"
-            htmlFor="email"
+            htmlFor="confirmationCode"
           >
             Confirmation Code
           </label>
@@ -108,25 +100,21 @@ class SignupForm extends Component {
             required
           />
         </div>
-        <div
-          class="bg-teal-lightest border-l-4 border-teal text-teal-dark p-4"
-          role="alert"
-        >
+        <Alert>
           <p className="text-xs">
-            Please check your email for the confirmation code.
+            Please check your email ({this.state.email}) for a confirmation
+            code.
           </p>
-        </div>
-        <button
-          className={`${
-            !this.validateConfirmationForm()
-              ? "opacity-75 cursor-not-allowed"
-              : ""
-          } mt-6 w-full bg-orange hover:bg-orange-light hover:border-orange border-b-4 border-orange-dark text-white font-medium py-4 px-4 rounded`}
+        </Alert>
+        <Button
+          className="mt-6"
           disabled={!this.validateConfirmationForm()}
+          isLoading={this.state.isLoading}
           type="submit"
+          loadingText="Verifying..."
         >
-          {this.state.isLoading ? "Verifying..." : "Verify"}
-        </button>
+          Verify
+        </Button>
       </form>
     );
   }
@@ -134,8 +122,6 @@ class SignupForm extends Component {
   renderForm() {
     return (
       <form
-        id="form"
-        onKeyUp={this.handleKeyUp}
         onSubmit={this.handleSubmit}
         className="bg-grey-darkest shadow-lg rounded px-8 pt-6 pb-8 mb-4 text-white"
       >
@@ -191,15 +177,15 @@ class SignupForm extends Component {
           onChange={this.handleChange}
           required
         />
-        <button
-          className={`${
-            !this.validateForm() ? "opacity-75 cursor-not-allowed" : ""
-          } mt-6 w-full bg-orange hover:bg-orange-light hover:border-orange border-b-4 border-orange-dark text-white font-medium py-4 px-4 rounded`}
+        <Button
+          className="mt-6"
           disabled={!this.validateForm()}
           type="submit"
+          isLoading={this.state.isLoading}
+          loadingText="Signing up..."
         >
-          {this.state.isLoading ? "Signing up..." : "Sign up"}
-        </button>
+          Sign up
+        </Button>
       </form>
     );
   }

@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { Link, navigate } from "@reach/router";
 import { Auth } from "aws-amplify";
 
+// Components
+import Button from "./Button";
+
 class LoginForm extends Component {
   constructor(props) {
     super(props);
@@ -23,12 +26,6 @@ class LoginForm extends Component {
     });
   };
 
-  handleKeyUp = event => {
-    if (event.keyCode === 13) {
-      this.handleSubmit(event);
-    }
-  };
-
   handleSubmit = async event => {
     event.preventDefault();
 
@@ -48,7 +45,6 @@ class LoginForm extends Component {
     return (
       <>
         <form
-          onKeyUp={this.handleKeyUp}
           onSubmit={this.handleSubmit}
           className="bg-grey-darkest shadow-lg rounded px-8 pt-6 pb-8 mb-4 text-white"
         >
@@ -99,15 +95,15 @@ class LoginForm extends Component {
           >
             Forgot Password?
           </Link>
-          <button
-            className={`${
-              !this.validateForm() ? "opacity-75 cursor-not-allowed" : ""
-            } mt-6 w-full bg-orange hover:bg-orange-light hover:border-orange border-b-4 border-orange-dark text-white font-medium py-4 px-4 rounded`}
+          <Button
+            className="mt-6"
             disabled={!this.validateForm()}
             type="submit"
+            isLoading={this.state.isLoading}
+            loadingText="Logging in..."
           >
-            {this.state.isLoading ? "Logging in..." : "Log In"}
-          </button>
+            Log In
+          </Button>
         </form>
         <span className="text-sm text-grey-dark pr-1">
           Don't have an account?
