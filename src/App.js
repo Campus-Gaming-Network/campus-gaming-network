@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { Router, navigate, Redirect } from "@reach/router";
 import { Auth } from "aws-amplify";
 
@@ -14,8 +12,6 @@ import ForgotPassword from "./ForgotPassword";
 import Profile from "./Profile";
 import Schools from "./Schools";
 import NotFound from "./NotFound";
-
-library.add(faUser);
 
 class App extends Component {
   constructor(props) {

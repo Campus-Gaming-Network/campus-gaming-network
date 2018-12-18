@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaUser } from "react-icons/fa";
 
 class Schools extends Component {
   render() {
@@ -19,7 +19,7 @@ class Schools extends Component {
                 </h4>
                 <span className="text-xs rounded-full bg-grey-dark text-grey-light py-1 px-2">
                   13
-                  <FontAwesomeIcon icon="user" className="ml-2 text-xs" />
+                  <FaUser className="ml-2 text-xs" />
                 </span>
               </div>
             </li>
@@ -30,7 +30,7 @@ class Schools extends Component {
                 </h4>
                 <span className="text-xs rounded-full bg-grey-dark text-grey-light py-1 px-2">
                   24
-                  <FontAwesomeIcon icon="user" className="ml-2 text-xs" />
+                  <FaUser className="ml-2 text-xs" />
                 </span>
               </div>
             </li>{" "}
@@ -41,7 +41,7 @@ class Schools extends Component {
                 </h4>
                 <span className="text-xs rounded-full bg-grey-dark text-grey-light py-1 px-2">
                   7
-                  <FontAwesomeIcon icon="user" className="ml-2 text-xs" />
+                  <FaUser className="ml-2 text-xs" />
                 </span>
               </div>
             </li>{" "}
@@ -52,7 +52,7 @@ class Schools extends Component {
                 </h4>
                 <span className="text-xs rounded-full bg-grey-dark text-grey-light py-1 px-2">
                   4
-                  <FontAwesomeIcon icon="user" className="ml-2 text-xs" />
+                  <FaUser className="ml-2 text-xs" />
                 </span>
               </div>
             </li>{" "}
@@ -63,7 +63,7 @@ class Schools extends Component {
                 </h4>
                 <span className="text-xs rounded-full bg-grey-dark text-grey-light py-1 px-2">
                   999
-                  <FontAwesomeIcon icon="user" className="ml-2 text-xs" />
+                  <FaUser className="ml-2 text-xs" />
                 </span>
               </div>
             </li>{" "}
@@ -74,7 +74,7 @@ class Schools extends Component {
                 </h4>
                 <span className="text-xs rounded-full bg-grey-dark text-grey-light py-1 px-2">
                   1
-                  <FontAwesomeIcon icon="user" className="ml-2 text-xs" />
+                  <FaUser className="ml-2 text-xs" />
                 </span>
               </div>
             </li>{" "}
@@ -83,7 +83,7 @@ class Schools extends Component {
                 <h4 className="text-white font-hairline mb-2">ITT Tech</h4>
                 <span className="text-xs rounded-full bg-grey-dark text-grey-light py-1 px-2">
                   68
-                  <FontAwesomeIcon icon="user" className="ml-2 text-xs" />
+                  <FaUser className="ml-2 text-xs" />
                 </span>
               </div>
             </li>
