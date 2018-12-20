@@ -5,16 +5,23 @@ export default ({
   loadingText,
   isLoading,
   children,
+  unstyled,
   ...props
 }) => {
-  const classNames = [
-    "w-full focus:shadow-outline bg-orange hover:bg-orange-light hover:border-orange border-b-4 border-orange-dark text-white font-medium py-4 px-4 rounded",
+  let classNames = [
+    "focus:shadow-outline text-white",
     ...(props.disabled || isLoading ? ["opacity-75 cursor-not-allowed"] : [""]),
     className
-  ].join(" ");
+  ];
+
+  if (!unstyled) {
+    classNames.push(
+      "w-full bg-orange hover:bg-orange-light hover:border-orange border-b-4 border-orange-dark font-medium py-4 px-4 rounded"
+    );
+  }
 
   return (
-    <button {...props} className={classNames}>
+    <button {...props} className={classNames.join(" ")}>
       {isLoading ? loadingText : children}
     </button>
   );

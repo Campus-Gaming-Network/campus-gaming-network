@@ -4,9 +4,6 @@ class Profile extends Component {
   render() {
     return (
       <article className="p-8 max-w-md mx-auto">
-        <button className="text-white" onClick={this.props.handleLogout}>
-          log out
-        </button>
         <section className="b-6 shadow rounded-full bg-grey-darkest">
           <div className="flex items-center">
             <img

@@ -121,6 +121,12 @@ class ForgotPasswordForm extends Component {
         onSubmit={this.handleConfirmClick}
         className="bg-grey-darkest shadow-lg rounded px-8 pt-6 pb-8 mb-4 text-white"
       >
+        <Alert className="mb-2">
+          <p className="text-xs">
+            Please check your email ({this.state.email}) for a confirmation
+            code.
+          </p>
+        </Alert>
         <div className="mb-4">
           <label
             className="block text-grey-darker text-sm font-bold mb-2"
@@ -140,12 +146,6 @@ class ForgotPasswordForm extends Component {
             required
           />
         </div>
-        <Alert>
-          <p className="text-xs">
-            Please check your email ({this.state.email}) for a confirmation
-            code.
-          </p>
-        </Alert>
         <div className="mb-4">
           <label
             className="block text-grey-darker text-sm font-bold mb-2"
@@ -197,12 +197,12 @@ class ForgotPasswordForm extends Component {
 
   renderSuccessMessage() {
     return (
-      <div>
-        <p className="text-xs">Your password has been reset.</p>
+      <div className="text-center">
+        <p className="text-white pb-2">Your password has been reset.</p>
         <p>
           <Link
             to="/login"
-            className="text-sm no-underline text-orange hover:text-orange-dark"
+            className="text-xs no-underline text-orange hover:text-orange-dark"
           >
             Click here to login with your new credentials.
           </Link>

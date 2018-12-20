@@ -1,11 +1,12 @@
 import React from "react";
 
-export default ({ children }) => {
+export default ({ children, className }) => {
+  const classNames = [
+    "bg-orange-lightest border-l-4 border-orange text-orange-dark p-2",
+    className
+  ].join(" ");
   return (
-    <div
-      className="bg-teal-lightest border-l-4 border-teal text-teal-dark p-4"
-      role="alert"
-    >
+    <div className={classNames} role="alert">
       {children}
     </div>
   );
