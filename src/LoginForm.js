@@ -106,7 +106,7 @@ class LoginForm extends Component {
           </Button>
         </form>
         <span className="text-sm text-grey-dark pr-1">
-          Don't have an account?
+          Don’t have an account?
         </span>
         <Link
           to="/sign-up"

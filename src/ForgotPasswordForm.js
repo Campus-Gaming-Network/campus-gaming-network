@@ -80,7 +80,7 @@ class ForgotPasswordForm extends Component {
       >
         <h1 className="text-center pb-2 pt-2">Forgot your password?</h1>
         <p className="text-grey-dark text-center pb-8">
-          Enter the email you use for Campus Gaming Network, and we'll help you
+          Enter the email you use for Campus Gaming Network, and we’ll help you
           create a new password.
         </p>
         <div className="mb-4">
