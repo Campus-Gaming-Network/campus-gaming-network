@@ -3,6 +3,19 @@
 @tailwind utilities;
 
 /* Your custom CSS here */
-body {
-  font-family: Rubik;
+body,
+button,
+input,
+select,
+textarea {
+  font-family: Karla, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Rubik, sans-serif;
 }

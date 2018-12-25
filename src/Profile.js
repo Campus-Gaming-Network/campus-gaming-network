@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "@reach/router";
 import { FaDiscord, FaSteam, FaXbox, FaPlaystation } from "react-icons/fa";
 
 class Profile extends Component {
@@ -40,20 +41,20 @@ class Profile extends Component {
         </section>
         <section className="mt-12">
           <div className="pl-1">
-            <h3 className="text-white font-medium pb-2 uppercase text-xs">
+            <h3 className="text-grey-darker font-medium pb-2 text-sm">
               Major
             </h3>
-            <p className="text-grey-light font-hairline">
+            <p className="text-grey-lightest">
               Information Technology &amp; Management (4th year)
             </p>
           </div>
         </section>
         <section className="mt-12">
           <div className="pl-1">
-            <h3 className="text-white font-medium pb-2 uppercase text-xs">
+            <h3 className="text-grey-darker font-medium pb-2 text-sm">
               Bio
             </h3>
-            <p className="text-grey-light font-hairline">
+            <p className="text-grey-lightest">
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis
               ut laudantium, libero ducimus qui rerum quibusdam consectetur quam
               sit nemo neque doloribus itaque asperiores autem laborum at amet
@@ -63,47 +64,55 @@ class Profile extends Component {
         </section>
         <section className="mt-12">
           <div className="pl-1">
-            <h3 className="text-white font-medium pb-2 uppercase text-xs">
+            <h3 className="text-grey-darker font-medium pb-2 text-sm">
               Favorite Games
             </h3>
             <ul className="list-reset flex">
-              <li className="flex justify-center items-center p-1 pl-0">
+              <li className="flex justify-center items-center p-2 pl-0">
                 <img
-                  className="p-1 pl-0"
+                  className="rounded-full h-24 w-24 border-2 border-grey-darkest"
                   src="https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg"
                   alt=""
                 />
               </li>
-              <li className="flex justify-center items-center p-1">
+              <li className="flex justify-center items-center p-2">
                 <img
-                  className="p-1"
+                  className="rounded-full h-24 w-24 border-2 border-grey-darkest"
                   src="https://images.igdb.com/igdb/image/upload/t_cover_big/hjfe6xe6k5oqprn8vnkz.jpg"
                   alt=""
                 />
               </li>
-              <li className="flex justify-center items-center p-1">
+              <li className="flex justify-center items-center p-2">
                 <img
-                  className="p-1"
+                  className="rounded-full h-24 w-24 border-2 border-grey-darkest"
                   src="https://images.igdb.com/igdb/image/upload/t_cover_big/yfk9f2lbo0r7slytuhra.jpg"
                   alt=""
                 />
               </li>
-              <li className="flex justify-center items-center p-1">
+              <li className="flex justify-center items-center p-2">
                 <img
-                  className="p-1"
+                  className="rounded-full h-24 w-24 border-2 border-grey-darkest"
                   src="https://images.igdb.com/igdb/image/upload/t_cover_big/co1hjh.jpg"
                   alt=""
                 />
               </li>
-              <li className="flex justify-center items-center p-1 pr-0">
+              <li className="flex justify-center items-center p-2 pr-0">
                 <img
-                  className="p-1 pr-0"
+                  className="rounded-full h-24 w-24 border-2 border-grey-darkest"
                   src="https://images.igdb.com/igdb/image/upload/t_cover_big/obcjdcsaq2ndxqi7zqdf.jpg"
                   alt=""
                 />
               </li>
             </ul>
           </div>
+        </section>
+        <section className="mt-16 text-center">
+          <Link
+            to="/account/profile"
+            className="text-xs no-underline font-medium uppercase inline-block px-3 py-2 border rounded text-white border-grey-darker hover:border-grey-dark"
+          >
+            EDIT PROFILE
+          </Link>
         </section>
       </article>
     );

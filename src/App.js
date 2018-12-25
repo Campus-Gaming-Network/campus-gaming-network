@@ -12,6 +12,9 @@ import ForgotPassword from "./ForgotPassword";
 import Profile from "./Profile";
 import Schools from "./Schools";
 import NotFound from "./NotFound";
+import Account from "./Account";
+import EditAccount from "./EditAccount";
+import EditProfile from "./EditProfile";
 
 class App extends Component {
   constructor(props) {
@@ -19,13 +22,16 @@ class App extends Component {
 
     this.state = {
       isAuthenticated: false,
-      isAuthenticating: true
+      isAuthenticating: true,
+      email: ""
     };
   }
 
   async componentDidMount() {
     try {
       await Auth.currentSession();
+      const response = await Auth.currentAuthenticatedUser();
+      this.setUserEmail(response.attributes.email);
       this.userHasAuthenticated(true);
     } catch (e) {
       if (e !== "No current user") {
@@ -36,11 +42,15 @@ class App extends Component {
     this.setState({ isAuthenticating: false });
   }
 
+  setUserEmail = email => {
+    this.setState({ email });
+  };
+
   userHasAuthenticated = authenticated => {
     this.setState({ isAuthenticated: authenticated });
   };
 
-  handleLogout = async event => {
+  handleLogout = async () => {
     await Auth.signOut();
 
     this.userHasAuthenticated(false);
@@ -52,7 +62,8 @@ class App extends Component {
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,
       userHasAuthenticated: this.userHasAuthenticated,
-      handleLogout: this.handleLogout
+      handleLogout: this.handleLogout,
+      email: this.state.email
     };
 
     return (
@@ -63,6 +74,10 @@ class App extends Component {
             <Home path="/" />
             <Profile path="user/:username" {...childProps} />
             <Schools path="schools" {...childProps} />
+            <Account path="account" {...childProps}>
+              <EditAccount path="/" {...childProps} />
+              <EditProfile path="profile" {...childProps} />
+            </Account>
             <Redirect from="login" to="/" noThrow />
             <Redirect from="sign-up" to="/" noThrow />
             <Redirect from="forgot-password" to="/" noThrow />
