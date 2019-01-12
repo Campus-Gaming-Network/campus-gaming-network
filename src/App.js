@@ -3,29 +3,25 @@ import { Router, navigate, Redirect } from "@reach/router";
 import { Auth } from "aws-amplify";
 
 // Components
-import Main from "./Main";
-import Header from "./Header";
-import Home from "./Home";
-import Login from "./Login";
-import Signup from "./Signup";
-import ForgotPassword from "./ForgotPassword";
-import Profile from "./Profile";
-import Schools from "./Schools";
-import NotFound from "./NotFound";
-import Account from "./Account";
-import EditAccount from "./EditAccount";
-import EditProfile from "./EditProfile";
+import Main from "Main";
+import Header from "Header";
+import Home from "Home";
+import Login from "Login";
+import Signup from "Signup";
+import ForgotPassword from "ForgotPassword";
+import Profile from "Profile";
+import NotFound from "NotFound";
+import Account from "Account";
+import EditAccount from "EditAccount";
+import EditProfile from "EditProfile";
+import Feed from "Feed";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isAuthenticated: false,
-      isAuthenticating: true,
-      email: ""
-    };
-  }
+  state = {
+    isAuthenticated: false,
+    isAuthenticating: true,
+    email: ""
+  };
 
   async componentDidMount() {
     try {
@@ -71,9 +67,8 @@ class App extends Component {
         <Header {...childProps} />
         {this.state.isAuthenticated ? (
           <Router>
-            <Home path="/" />
+            <Feed path="/" />
             <Profile path="user/:username" {...childProps} />
-            <Schools path="schools" {...childProps} />
             <Account path="account" {...childProps}>
               <EditAccount path="/" {...childProps} />
               <EditProfile path="profile" {...childProps} />

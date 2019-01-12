@@ -8,7 +8,7 @@ class Account extends Component {
         "no-underline text-xs text-center block rounded-t border-t-4 p-3 text-grey hover:font-medium hover:text-grey-lightest";
       if (isCurrent) {
         className +=
-          " font-medium border-orange text-grey-lightest bg-grey-darkest";
+          " font-medium border-orange-dark text-grey-lightest bg-grey-darkest";
       } else {
         className += " border-grey-darker bg-grey-darker";
       }

@@ -3,17 +3,13 @@ import { Link } from "@reach/router";
 import { FaUser } from "react-icons/fa";
 
 // Components
-import Logo from "./Logo";
-import Button from "./Button";
+import Logo from "Logo";
+import Button from "Button";
 
 class Header extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      userDropdownOpen: false
-    };
-  }
+  state = {
+    userDropdownOpen: false
+  };
 
   openUserDropdown = event => {
     event.preventDefault();

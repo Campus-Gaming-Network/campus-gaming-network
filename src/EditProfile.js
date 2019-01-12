@@ -2,28 +2,19 @@ import React, { Component } from "react";
 import { FaDiscord, FaSteam, FaXbox, FaPlaystation } from "react-icons/fa";
 
 // Components
-import Button from "./Button";
+import Button from "Button";
 
 class EditProfile extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isLoading: false,
-      school: "",
-      major: "",
-      bio: "",
-      discord: "",
-      steam: "",
-      xbox: "",
-      playstation: ""
-    };
-  }
-
-  validateForm() {
-    // will figure out later
-    return true;
-  }
+  state = {
+    isLoading: false,
+    school: "",
+    major: "",
+    bio: "",
+    discord: "",
+    steam: "",
+    xbox: "",
+    playstation: ""
+  };
 
   handleChange = event => {
     this.setState({
@@ -34,7 +25,12 @@ class EditProfile extends Component {
   handleSubmit = async event => {
     event.preventDefault();
 
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true }, () => {
+      setTimeout(() => {
+        alert("Updated!");
+        this.setState({ isLoading: false });
+      }, 1500);
+    });
   };
 
   render() {
@@ -44,6 +40,23 @@ class EditProfile extends Component {
         <p className="text-grey-dark text-center pb-8">
           The information entered here will be displayed to other users.
         </p>
+        <div className="mb-4">
+          <label
+            className="block text-grey-dark text-sm font-bold mb-2"
+            htmlFor="name"
+          >
+            Name
+          </label>
+          <input
+            autoFocus
+            className="bg-grey-lightest appearance-none border rounded w-full py-2 px-3 text-grey-darker leading-tight focus:outline-none focus:shadow-outline"
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Name"
+            value={this.props.name}
+          />
+        </div>
         <div className="mb-4">
           <label className="block text-grey-dark text-sm font-bold mb-2">
             School
@@ -190,9 +203,7 @@ class EditProfile extends Component {
           </div>
         </div>
         <Button
-          className="mt-6"
-          disabled={!this.validateForm()}
-          type="submit"
+          className="mt-10"
           isLoading={this.state.isLoading}
           loadingText="Updating..."
         >

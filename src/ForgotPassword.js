@@ -3,24 +3,20 @@ import { Auth } from "aws-amplify";
 import { Link } from "@reach/router";
 
 // Components
-import Button from "./Button";
-import Alert from "./Alert";
+import Button from "Button";
+import Alert from "Alert";
 
 class ForgotPassword extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      code: "",
-      email: "",
-      password: "",
-      codeSent: false,
-      confirmed: false,
-      confirmPassword: "",
-      isConfirming: false,
-      isSendingCode: false
-    };
-  }
+  state = {
+    code: "",
+    email: "",
+    password: "",
+    codeSent: false,
+    confirmed: false,
+    confirmPassword: "",
+    isConfirming: false,
+    isSendingCode: false
+  };
 
   validateCodeForm() {
     return this.state.email.length > 0;
@@ -202,7 +198,7 @@ class ForgotPassword extends Component {
         <p>
           <Link
             to="/login"
-            className="text-xs no-underline text-orange hover:text-orange-dark"
+            className="text-xs no-underline text-orange-dark hover:text-orange-darker"
           >
             Click here to login with your new credentials.
           </Link>

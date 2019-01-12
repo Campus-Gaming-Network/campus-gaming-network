@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "@reach/router";
 
 // Assets
-import logo from "./logo.svg";
+import logo from "logo.svg";
 
 class Logo extends Component {
   render() {

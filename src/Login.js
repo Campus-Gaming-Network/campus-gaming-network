@@ -3,18 +3,14 @@ import { Link, navigate } from "@reach/router";
 import { Auth } from "aws-amplify";
 
 // Components
-import Button from "./Button";
+import Button from "Button";
 
 class Login extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isLoading: false,
-      email: "",
-      password: ""
-    };
-  }
+  state = {
+    isLoading: false,
+    email: "",
+    password: ""
+  };
 
   validateForm() {
     return this.state.email.length > 0 && this.state.password.length > 0;
@@ -92,7 +88,7 @@ class Login extends Component {
             </div>
             <Link
               to="/forgot-password"
-              className="inline-block no-underline align-baseline text-xs text-orange hover:text-orange-dark"
+              className="inline-block no-underline align-baseline text-xs text-orange-dark hover:text-orange-darker"
             >
               Forgot Password?
             </Link>
@@ -111,7 +107,7 @@ class Login extends Component {
           </span>
           <Link
             to="/sign-up"
-            className="text-sm no-underline text-orange hover:text-orange-dark"
+            className="text-sm no-underline text-orange-dark hover:text-orange-darker"
           >
             Sign up
           </Link>
