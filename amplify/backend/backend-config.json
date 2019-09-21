@@ -1,0 +1,26 @@
+{
+	"auth": {
+		"campusgamingnetworkf4cb20d1": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	},
+	"api": {
+		"campusgamingnetwork": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"authConfig": {
+					"additionalAuthenticationProviders": [],
+					"defaultAuthentication": {
+						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
+						"userPoolConfig": {
+							"userPoolId": "authcampusgamingnetworkf4cb20d1"
+						}
+					}
+				}
+			}
+		}
+	}
+}

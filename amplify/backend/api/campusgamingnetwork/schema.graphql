@@ -1,0 +1,107 @@
+type User
+  @model
+  @searchable
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update] }
+      { allow: private, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  username: String!
+  firstName: String!
+  lastName: String!
+  hometown: String
+  email: AWSEmail!
+  birthdate: AWSDate
+  isVerifiedStudent: Boolean
+  events: [Event] @connection(name: "UserEvents")
+  school: School @connection(name: "SchoolUsers")
+  major: String
+  minor: String
+  bio: String
+  status: UserStatus!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  file: S3Object
+  responses: [EventResponse] @connection(name: "UserResponses")
+}
+
+type School
+  @model
+  @searchable
+  @auth(rules: [{ allow: private, operations: [read] }]) {
+  id: ID!
+  name: String!
+  handle: String!
+  description: String
+  contactEmail: AWSEmail
+  website: AWSURL
+  location: String
+  events: [Event] @connection(name: "SchoolEvents")
+  users: [User] @connection(name: "SchoolUsers")
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  file: S3Object
+}
+
+type Event
+  @model
+  @searchable
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update, delete] }
+      { allow: private, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  school: School! @connection(name: "SchoolEvents")
+  title: String!
+  description: String!
+  location: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  owner: User! @connection(name: "UserEvents")
+  startDateTime: AWSDateTime!
+  endDateTime: AWSDateTime!
+  responses: [EventResponse] @connection(name: "EventResponses")
+}
+
+type EventResponse
+  @model
+  @auth(
+    rules: [
+      { allow: owner, operations: [create, update] }
+      { allow: private, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  event: Event! @connection(name: "EventResponses")
+  owner: User! @connection(name: "UserResponses")
+  response: Response!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type S3Object {
+  bucket: String!
+  region: String!
+  key: String!
+}
+
+enum Response {
+  YES
+  NO
+  MAYBE
+}
+
+enum UserStatus {
+  FRESHMAN
+  SOPHMORE
+  JUNIOR
+  SENIOR
+  GRAD
+  ALUMNI
+  FACULTY
+  OTHER
+}

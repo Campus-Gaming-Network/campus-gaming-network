@@ -1,0 +1,19 @@
+{
+    "local": {
+        "awscloudformation": {
+            "AuthRoleName": "campusgamingnetwork-local-20190921033725-authRole",
+            "UnauthRoleArn": "arn:aws:iam::311249210143:role/campusgamingnetwork-local-20190921033725-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::311249210143:role/campusgamingnetwork-local-20190921033725-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "campusgamingnetwork-local-20190921033725-deployment",
+            "UnauthRoleName": "campusgamingnetwork-local-20190921033725-unauthRole",
+            "StackName": "campusgamingnetwork-local-20190921033725",
+            "StackId": "arn:aws:cloudformation:us-east-2:311249210143:stack/campusgamingnetwork-local-20190921033725/2144a890-dc21-11e9-b1b3-02d33a13e486"
+        },
+        "categories": {
+            "auth": {
+                "campusgamingnetworkf4cb20d1": {}
+            }
+        }
+    }
+}
