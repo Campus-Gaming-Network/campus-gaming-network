@@ -21,17 +21,22 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const [isLoggedin, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  const toggledLoggedIn = () => setIsLoggedIn(!isLoggedIn);
+
+  const pageProps = {
+    isLoggedIn,
+    setIsLoggedIn
+  };
 
   return (
     <React.Fragment>
       {/* Start Header */}
-      <header className="bg-white border-b-2 sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3">
+      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-5">
         <div className="flex items-center justify-between px-4 py-3 sm:p-0">
           <div className="flex items-center">
-            <Link to="/">
-              <Logo className="h-16 pr-4" />
-            </Link>
+            <Link to="/">{/* <Logo className="h-16" /> */}</Link>
           </div>
           <div className="sm:hidden">
             <button
@@ -46,43 +51,46 @@ const App = () => {
             </button>
           </div>
         </div>
-        {!isLoggedin && (
-          <nav
-            role="navigation"
-            className={`${
-              isMenuOpen ? "block" : "hidden"
-            } px-2 pt-2 pb-4 sm:flex sm:p-0`}
-          >
+        <nav
+          role="navigation"
+          className={`${
+            isMenuOpen ? "block" : "hidden"
+          } px-2 pt-2 pb-4 sm:flex sm:p-0`}
+        >
+          {isLoggedIn ? (
             <Link
               to="/profile"
-              className="block mx-2 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+              className="text-xl block mx-3 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
             >
               Profile
             </Link>
-            <a
-              href="#"
-              className="block mx-2 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-            >
-              Log in
-            </a>
-            <a
-              href="#"
-              className="mt-1 block mx-2 py-1 font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline sm:mt-0 sm:ml-2"
-            >
-              Sign up
-            </a>
-          </nav>
-        )}
+          ) : (
+            <React.Fragment>
+              <a
+                href="#"
+                className="text-xl block mx-3 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+              >
+                Log in
+              </a>
+              <a
+                href="#"
+                className="text-xl mt-1 block mx-3 py-1 font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline sm:mt-0 sm:ml-2"
+              >
+                Sign up
+              </a>
+            </React.Fragment>
+          )}
+        </nav>
       </header>
       {/* End Header */}
       {/* Start Body */}
       <main className="pb-12">
         <Router>
-          <Home path="/" />
-          <Profile path="profile" />
+          <Home path="/" {...pageProps} />
+          {isLoggedIn && <Profile path="profile" />}
         </Router>
       </main>
-      <footer>
+      <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
         <section className="max-w-4xl mx-auto p-8 flex items-center justify-around">
           <a
             href="#"
@@ -106,13 +114,20 @@ const App = () => {
             Contact
           </a>
         </section>
+        {/* <button
+          onClick={toggledLoggedIn}
+          type="button"
+          className="rounded-lg border-2 border-black py-2 px-4 font-semibold"
+        >
+          {isLoggedIn ? "Log Out" : "Log In"}
+        </button> */}
       </footer>
       {/* End Body */}
     </React.Fragment>
   );
 };
 
-const Home = () => {
+const Home = props => {
   const onSearchSubmit = e => {
     e.preventDefault();
 
@@ -121,16 +136,23 @@ const Home = () => {
 
   return (
     <React.Fragment>
-      <h1 className="text-center text-5xl py-12">Campus Gaming Network</h1>
-      <article>
-        <section className="max-w-4xl mx-auto bg-white p-8 border-2 rounded flex items-center">
+      <div className="max-w-4xl mx-auto mt-8 mb-16">
+        {/* <Logo className="h-24 mr-4" /> */}
+        <h1 className="text-6xl mb-2">Campus Gaming Network</h1>
+        <h2 className="text-3xl text-gray-600">
+          Connect with other collegiate gamers for casual or competitive gaming
+          at your school or nearby.
+        </h2>
+      </div>
+      <article className="hidden">
+        <section className="max-w-4xl mx-auto bg-white p-8 border-2 rounded-lg flex items-center">
           <img
             className="h-40 pr-12"
             src="https://st2.depositphotos.com/3834629/5652/v/950/depositphotos_56527995-stock-illustration-gamer-boy.jpg"
             alt=""
           />
           <form onSubmit={onSearchSubmit} className="flex-auto">
-            <label className="text-2xl font-semibold text-gray-900 mb-4 block">
+            <label className="text-4xl font-semibold text-gray-900 mb-4 block">
               Find your next gaming party:
             </label>
             <div className="flex">
@@ -151,11 +173,11 @@ const Home = () => {
           </form>
         </section>
       </article>
-      <article className="max-w-4xl mx-auto mt-12">
-        <h3 className="text-2xl font-semibold text-gray-800">
+      <article className="max-w-4xl mx-auto mb-12">
+        <h3 className="text-3xl font-semibold text-gray-800">
           Upcoming events near Chicago, IL
         </h3>
-        <section className="bg-white px-6 border-2 rounded mt-4">
+        <section className="bg-white px-6 border-2 rounded-lg mt-4">
           <ul>
             <li className="flex items-center py-8">
               <img
@@ -166,7 +188,7 @@ const Home = () => {
               <div className="flex-initial">
                 <a
                   href=""
-                  className="text-2xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
+                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
                 >
                   General Body Meeting
                 </a>
@@ -191,7 +213,7 @@ const Home = () => {
                     212 Northern Ave, Boston, MA 02210
                   </a>
                 </div>
-                <p>
+                <p className="text-lg">
                   Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                   Atque ullam blanditiis ut et ab delectus, inventore quos.
                   Totam nihil explicabo quibusdam laboriosam fugiat commodi quam
@@ -204,28 +226,30 @@ const Home = () => {
                   />
                   <span>71 Going</span>
                 </div>
-                <div className="pt-8">
-                  <button
-                    type="button"
-                    className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded"
-                  >
-                    Going
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className="ml-2 text-gray-800"
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 ml-4 rounded"
-                  >
-                    Interested
-                    <FontAwesomeIcon
-                      icon={faStar}
-                      className="ml-2 text-gray-800"
-                    />
-                  </button>
-                </div>
+                {props.isLoggedIn && (
+                  <div className="pt-8">
+                    <button
+                      type="button"
+                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-lg"
+                    >
+                      Going
+                      <FontAwesomeIcon
+                        icon={faCheck}
+                        className="ml-2 text-gray-800"
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 ml-4 rounded-lg"
+                    >
+                      Interested
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        className="ml-2 text-gray-800"
+                      />
+                    </button>
+                  </div>
+                )}
               </div>
             </li>
             <li className="flex items-center py-8 border-t-2">
@@ -237,7 +261,7 @@ const Home = () => {
               <div className="flex-initial">
                 <a
                   href=""
-                  className="text-2xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
+                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
                 >
                   CSGO and Mountain Dew
                 </a>
@@ -257,7 +281,7 @@ const Home = () => {
                   />
                   <span>To be determined</span>
                 </div>
-                <p>
+                <p className="text-lg">
                   Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                   Atque ullam blanditiis ut et ab delectus, inventore quos.
                 </p>
@@ -268,28 +292,30 @@ const Home = () => {
                   />
                   <span>4 Going</span>
                 </div>
-                <div className="pt-8">
-                  <button
-                    type="button"
-                    className="bg-teal-100 border-2 border-teal-700 hover:bg-teal-200 text-teal-700 font-semibold py-2 px-4 rounded"
-                  >
-                    Going
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className="ml-2 text-teal-800"
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 ml-4 rounded"
-                  >
-                    Interested
-                    <FontAwesomeIcon
-                      icon={faStar}
-                      className="ml-2 text-gray-800"
-                    />
-                  </button>
-                </div>
+                {props.isLoggedIn && (
+                  <div className="pt-8">
+                    <button
+                      type="button"
+                      className="bg-teal-100 border-2 border-teal-700 hover:bg-teal-200 text-teal-700 font-semibold py-2 px-4 rounded-lg"
+                    >
+                      Going
+                      <FontAwesomeIcon
+                        icon={faCheck}
+                        className="ml-2 text-teal-800"
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 ml-4 rounded-lg"
+                    >
+                      Interested
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        className="ml-2 text-gray-800"
+                      />
+                    </button>
+                  </div>
+                )}
               </div>
             </li>
             <li className="flex items-center py-8 border-t-2">
@@ -301,7 +327,7 @@ const Home = () => {
               <div className="flex-initial">
                 <a
                   href=""
-                  className="text-2xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
+                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
                 >
                   LoL and Doritos
                 </a>
@@ -326,7 +352,7 @@ const Home = () => {
                     212 Northern Ave, Boston, MA 02210
                   </a>
                 </div>
-                <p>
+                <p className="text-lg">
                   Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                   Atque ullam blanditiis ut et ab delectus, inventore quos.
                   Totam nihil explicabo quibusdam laborio...
@@ -338,46 +364,48 @@ const Home = () => {
                   />
                   <span>23 Going</span>
                 </div>
-                <div className="pt-8">
-                  <button
-                    type="button"
-                    className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded"
-                  >
-                    Going
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className="ml-2 text-gray-800"
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    className="bg-yellow-100 border-2 border-yellow-500 hover:bg-yellow-200 text-yellow-900 font-semibold py-2 px-4 ml-4 rounded"
-                  >
-                    Interested
-                    <FontAwesomeIcon
-                      icon={faStar}
-                      className="ml-2 text-yellow-800"
-                    />
-                  </button>
-                </div>
+                {props.isLoggedIn && (
+                  <div className="pt-8">
+                    <button
+                      type="button"
+                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-lg"
+                    >
+                      Going
+                      <FontAwesomeIcon
+                        icon={faCheck}
+                        className="ml-2 text-gray-800"
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      className="bg-yellow-100 border-2 border-yellow-500 hover:bg-yellow-200 text-yellow-900 font-semibold py-2 px-4 ml-4 rounded-lg"
+                    >
+                      Interested
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        className="ml-2 text-yellow-800"
+                      />
+                    </button>
+                  </div>
+                )}
               </div>
             </li>
-            <li className="flex items-center py-4 border-t-2">
+            <li className="flex items-center py-4 border-t-2 text-lg">
               <a
                 href=""
                 className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
               >
-                See all upcoming events near Chicago, IL
+                See all upcoming events around Chicago, IL
               </a>
             </li>
           </ul>
         </section>
       </article>
-      <article className="max-w-4xl mx-auto mt-12">
-        <h3 className="text-2xl font-semibold text-gray-800">
+      <article className="max-w-4xl mx-auto mb-12">
+        <h3 className="text-3xl font-semibold text-gray-800">
           Upcoming events in the United States
         </h3>
-        <section className="bg-white px-6 border-2 rounded mt-4">
+        <section className="bg-white px-6 border-2 rounded-lg mt-4">
           <ul>
             <li className="flex items-center py-8">
               <img
@@ -388,7 +416,7 @@ const Home = () => {
               <div className="flex-initial">
                 <a
                   href=""
-                  className="text-2xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
+                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
                 >
                   General Body Meeting
                 </a>
@@ -413,7 +441,7 @@ const Home = () => {
                     212 Northern Ave, Boston, MA 02210
                   </a>
                 </div>
-                <p>
+                <p className="text-lg">
                   Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                   Atque ullam blanditiis ut et ab delectus, inventore quos.
                   Totam nihil explicabo quibusdam laboriosam fugiat commodi quam
@@ -437,7 +465,7 @@ const Home = () => {
               <div className="flex-initial">
                 <a
                   href=""
-                  className="text-2xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
+                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
                 >
                   CSGO and Mountain Dew
                 </a>
@@ -457,7 +485,7 @@ const Home = () => {
                   />
                   <span>To be determined</span>
                 </div>
-                <p>
+                <p className="text-lg">
                   Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                   Atque ullam blanditiis ut et ab delectus, inventore quos.
                 </p>
@@ -479,7 +507,7 @@ const Home = () => {
               <div className="flex-initial">
                 <a
                   href=""
-                  className="text-2xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
+                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
                 >
                   LoL and Doritos
                 </a>
@@ -504,7 +532,7 @@ const Home = () => {
                     212 Northern Ave, Boston, MA 02210
                   </a>
                 </div>
-                <p>
+                <p className="text-lg">
                   Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                   Atque ullam blanditiis ut et ab delectus, inventore quos.
                   Totam nihil explicabo quibusdam laborio...
@@ -518,12 +546,12 @@ const Home = () => {
                 </div>
               </div>
             </li>
-            <li className="flex items-center py-4 border-t-2">
+            <li className="flex items-center py-4 border-t-2 text-lg">
               <a
                 href=""
                 className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
               >
-                See all upcoming events in the United States
+                See all upcoming events around the United States
               </a>
             </li>
           </ul>
