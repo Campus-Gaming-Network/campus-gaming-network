@@ -6,15 +6,11 @@ import {
   faTimes,
   faMapMarkerAlt,
   faCalendar,
-  faCalendarAlt,
   faUserFriends,
   faCheck,
-  faStar,
-  faLongArrowAltRight,
-  faArrowRight,
-  faSearch
+  faStar
 } from "@fortawesome/free-solid-svg-icons";
-import { ReactComponent as Logo } from "./logo.svg";
+// import { ReactComponent as Logo } from "./logo.svg";
 import "./App.css";
 
 const App = () => {
@@ -25,7 +21,7 @@ const App = () => {
 
   const toggledLoggedIn = () => setIsLoggedIn(!isLoggedIn);
 
-  const pageProps = {
+  const authProps = {
     isLoggedIn,
     setIsLoggedIn
   };
@@ -58,26 +54,44 @@ const App = () => {
           } px-2 pt-2 pb-4 sm:flex sm:p-0`}
         >
           {isLoggedIn ? (
-            <Link
-              to="/profile"
-              className="text-xl block mx-3 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-            >
-              Profile
-            </Link>
+            <React.Fragment>
+              <Link
+                to="user/1"
+                className="text-center text-xl block mx-5 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+              >
+                <img
+                  className="h-16 w-16 rounded-full border-4 border-gray-300"
+                  src="https://randomuser.me/api/portraits/lego/8.jpg"
+                  alt=""
+                />
+                Profile
+              </Link>
+              <Link
+                to="iit"
+                className="text-center text-xl block mx-5 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+              >
+                <img
+                  className="h-16 w-16 rounded-full border-4 border-gray-300"
+                  src="https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png"
+                  alt=""
+                />
+                School
+              </Link>
+            </React.Fragment>
           ) : (
             <React.Fragment>
-              <a
-                href="#"
+              <Link
+                to="login"
                 className="text-xl block mx-3 py-1 active:outline font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline"
               >
                 Log in
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="signup"
                 className="text-xl mt-1 block mx-3 py-1 font-medium sm:rounded-none rounded text-blue-700 hover:text-blue-800 hover:underline focus:underline sm:mt-0 sm:ml-2"
               >
                 Sign up
-              </a>
+              </Link>
             </React.Fragment>
           )}
         </nav>
@@ -86,41 +100,38 @@ const App = () => {
       {/* Start Body */}
       <main className="pb-12">
         <Router>
-          <Home path="/" {...pageProps} />
-          {isLoggedIn && <Profile path="profile" />}
+          <Home path="/" {...authProps} />
+          {isLoggedIn && <User path="user/:id" {...authProps} />}
         </Router>
       </main>
       <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
         <section className="max-w-4xl mx-auto p-8 flex items-center justify-around">
-          <a
-            href="#"
+          <Link
+            to="about"
             className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
           >
-            <FontAwesomeIcon />
             About
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="contribute"
             className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
           >
-            <FontAwesomeIcon />
             Contribute
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="contact"
             className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
           >
-            <FontAwesomeIcon />
             Contact
-          </a>
+          </Link>
         </section>
-        {/* <button
+        <button
           onClick={toggledLoggedIn}
           type="button"
-          className="rounded-lg border-2 border-black py-2 px-4 font-semibold"
+          className="fixed top-0 left-0 ml-4 mt-4 rounded-lg border-2 border-black py-2 px-4 font-semibold bg-white"
         >
           {isLoggedIn ? "Log Out" : "Log In"}
-        </button> */}
+        </button>
       </footer>
       {/* End Body */}
     </React.Fragment>
@@ -174,385 +185,55 @@ const Home = props => {
         </section>
       </article>
       <article className="max-w-4xl mx-auto mb-12">
-        <h3 className="text-3xl font-semibold text-gray-800">
+        <h3 className="text-3xl font-semibold text-gray-700">
           Upcoming events near Chicago, IL
         </h3>
-        <section className="bg-white px-6 border-2 rounded-lg mt-4">
+        <section className="bg-white px-6 border-4 rounded-lg mt-4">
           <ul>
-            <li className="flex items-center py-8">
-              <img
-                src="https://theory.cs.uic.edu/images/uic.PNG"
-                alt=""
-                className="w-auto flex-initial h-20 pr-8"
-              />
-              <div className="flex-initial">
-                <a
-                  href=""
-                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
-                >
-                  General Body Meeting
-                </a>
-                <div className="block pb-1">
-                  <FontAwesomeIcon
-                    icon={faCalendar}
-                    className="text-gray-700 mr-2"
-                  />
-                  <time className="text-lg" dateTime="2009-11-13T20:00Z">
-                    Sun, Oct 3, 5:00pm
-                  </time>
-                </div>
-                <div className="block pb-2">
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2"
-                  />
-                  <a
-                    href=""
-                    className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-                  >
-                    212 Northern Ave, Boston, MA 02210
-                  </a>
-                </div>
-                <p className="text-lg">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Atque ullam blanditiis ut et ab delectus, inventore quos.
-                  Totam nihil explicabo quibusdam laboriosam fugiat commodi quam
-                  autem quaerat rem! Temporibus, aliquam!
-                </p>
-                <div className="pt-2">
-                  <FontAwesomeIcon
-                    icon={faUserFriends}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>71 Going</span>
-                </div>
-                {props.isLoggedIn && (
-                  <div className="pt-8">
-                    <button
-                      type="button"
-                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-lg"
-                    >
-                      Going
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        className="ml-2 text-gray-800"
-                      />
-                    </button>
-                    <button
-                      type="button"
-                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 ml-4 rounded-lg"
-                    >
-                      Interested
-                      <FontAwesomeIcon
-                        icon={faStar}
-                        className="ml-2 text-gray-800"
-                      />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </li>
-            <li className="flex items-center py-8 border-t-2">
-              <img
-                src="https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png"
-                alt=""
-                className="w-auto flex-initial h-20 pr-8"
-              />
-              <div className="flex-initial">
-                <a
-                  href=""
-                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
-                >
-                  CSGO and Mountain Dew
-                </a>
-                <div className="block pb-1">
-                  <FontAwesomeIcon
-                    icon={faCalendar}
-                    className="text-gray-700 mr-2"
-                  />
-                  <time className="text-lg" dateTime="2009-11-13T20:00Z">
-                    Sun, Oct 3, 5:00pm
-                  </time>
-                </div>
-                <div className="block pb-2">
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>To be determined</span>
-                </div>
-                <p className="text-lg">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Atque ullam blanditiis ut et ab delectus, inventore quos.
-                </p>
-                <div className="pt-2">
-                  <FontAwesomeIcon
-                    icon={faUserFriends}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>4 Going</span>
-                </div>
-                {props.isLoggedIn && (
-                  <div className="pt-8">
-                    <button
-                      type="button"
-                      className="bg-teal-100 border-2 border-teal-700 hover:bg-teal-200 text-teal-700 font-semibold py-2 px-4 rounded-lg"
-                    >
-                      Going
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        className="ml-2 text-teal-800"
-                      />
-                    </button>
-                    <button
-                      type="button"
-                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 ml-4 rounded-lg"
-                    >
-                      Interested
-                      <FontAwesomeIcon
-                        icon={faStar}
-                        className="ml-2 text-gray-800"
-                      />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </li>
-            <li className="flex items-center py-8 border-t-2">
-              <img
-                src="http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png"
-                alt=""
-                className="w-auto flex-initial h-20 pr-8"
-              />
-              <div className="flex-initial">
-                <a
-                  href=""
-                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
-                >
-                  LoL and Doritos
-                </a>
-                <div className="block pb-1">
-                  <FontAwesomeIcon
-                    icon={faCalendar}
-                    className="text-gray-700 mr-2"
-                  />
-                  <time className="text-lg" dateTime="2009-11-13T20:00Z">
-                    Sun, Oct 3, 5:00pm
-                  </time>
-                </div>
-                <div className="block pb-2">
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2"
-                  />
-                  <a
-                    href=""
-                    className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-                  >
-                    212 Northern Ave, Boston, MA 02210
-                  </a>
-                </div>
-                <p className="text-lg">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Atque ullam blanditiis ut et ab delectus, inventore quos.
-                  Totam nihil explicabo quibusdam laborio...
-                </p>
-                <div className="pt-2">
-                  <FontAwesomeIcon
-                    icon={faUserFriends}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>23 Going</span>
-                </div>
-                {props.isLoggedIn && (
-                  <div className="pt-8">
-                    <button
-                      type="button"
-                      className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-lg"
-                    >
-                      Going
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        className="ml-2 text-gray-800"
-                      />
-                    </button>
-                    <button
-                      type="button"
-                      className="bg-yellow-100 border-2 border-yellow-500 hover:bg-yellow-200 text-yellow-900 font-semibold py-2 px-4 ml-4 rounded-lg"
-                    >
-                      Interested
-                      <FontAwesomeIcon
-                        icon={faStar}
-                        className="ml-2 text-yellow-800"
-                      />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </li>
-            <li className="flex items-center py-4 border-t-2 text-lg">
-              <a
-                href=""
+            <EventListItem
+              isFirst={true}
+              isLoggedIn={props.isLoggedIn}
+              title="General Body Meeting"
+              url="uic/events/1"
+              logo="https://theory.cs.uic.edu/images/uic.PNG"
+              dateTime="2009-11-13T20:00Z"
+              formattedDateTime="Sun, Oct 3, 5:00pm"
+              addressLink="https://goo.gl/maps/hRWzpokHjpgQaon78"
+              address="212 Northern Ave, Boston, MA 02210"
+              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laboriosam fugiat commodi quam autem quaerat rem! Temporibus, aliquam!"
+              going="71"
+            />
+            <EventListItem
+              isLoggedIn={props.isLoggedIn}
+              title="CSGO and Mountain Dew"
+              url="iit/events/1"
+              logo="https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png"
+              dateTime="2009-11-13T20:00Z"
+              formattedDateTime="Sun, Oct 3, 5:00pm"
+              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos."
+              going="4"
+              response="yes"
+            />
+            <EventListItem
+              isLoggedIn={props.isLoggedIn}
+              title="LoL and Doritos"
+              url="uiuc/events/1"
+              logo="http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png"
+              dateTime="2009-11-13T20:00Z"
+              formattedDateTime="Sun, Oct 3, 5:00pm"
+              addressLink="https://goo.gl/maps/hRWzpokHjpgQaon78"
+              address="212 Northern Ave, Boston, MA 02210"
+              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laborio..."
+              going="23"
+              response="maybe"
+            />
+            <li className="flex items-center py-4 border-t-4 text-lg">
+              <Link
+                to="events"
                 className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
               >
                 See all upcoming events around Chicago, IL
-              </a>
-            </li>
-          </ul>
-        </section>
-      </article>
-      <article className="max-w-4xl mx-auto mb-12">
-        <h3 className="text-3xl font-semibold text-gray-800">
-          Upcoming events in the United States
-        </h3>
-        <section className="bg-white px-6 border-2 rounded-lg mt-4">
-          <ul>
-            <li className="flex items-center py-8">
-              <img
-                src="https://theory.cs.uic.edu/images/uic.PNG"
-                alt=""
-                className="w-auto flex-initial h-20 pr-8"
-              />
-              <div className="flex-initial">
-                <a
-                  href=""
-                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
-                >
-                  General Body Meeting
-                </a>
-                <div className="block pb-1">
-                  <FontAwesomeIcon
-                    icon={faCalendar}
-                    className="text-gray-700 mr-2"
-                  />
-                  <time className="text-lg" dateTime="2009-11-13T20:00Z">
-                    Sun, Oct 3
-                  </time>
-                </div>
-                <div className="block pb-2">
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2"
-                  />
-                  <a
-                    href=""
-                    className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-                  >
-                    212 Northern Ave, Boston, MA 02210
-                  </a>
-                </div>
-                <p className="text-lg">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Atque ullam blanditiis ut et ab delectus, inventore quos.
-                  Totam nihil explicabo quibusdam laboriosam fugiat commodi quam
-                  autem quaerat rem! Temporibus, aliquam!
-                </p>
-                <div className="pt-2">
-                  <FontAwesomeIcon
-                    icon={faUserFriends}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>71 Going</span>
-                </div>
-              </div>
-            </li>
-            <li className="flex items-center py-8 border-t-2">
-              <img
-                src="https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png"
-                alt=""
-                className="w-auto flex-initial h-20 pr-8"
-              />
-              <div className="flex-initial">
-                <a
-                  href=""
-                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
-                >
-                  CSGO and Mountain Dew
-                </a>
-                <div className="block pb-1">
-                  <FontAwesomeIcon
-                    icon={faCalendar}
-                    className="text-gray-700 mr-2"
-                  />
-                  <time className="text-lg" dateTime="2009-11-13T20:00Z">
-                    Sun, Oct 3, 5:00pm
-                  </time>
-                </div>
-                <div className="block pb-2">
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>To be determined</span>
-                </div>
-                <p className="text-lg">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Atque ullam blanditiis ut et ab delectus, inventore quos.
-                </p>
-                <div className="pt-2">
-                  <FontAwesomeIcon
-                    icon={faUserFriends}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>4 Going</span>
-                </div>
-              </div>
-            </li>
-            <li className="flex items-center py-8 border-t-2">
-              <img
-                src="http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png"
-                alt=""
-                className="w-auto flex-initial h-20 pr-8"
-              />
-              <div className="flex-initial">
-                <a
-                  href=""
-                  className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
-                >
-                  LoL and Doritos
-                </a>
-                <div className="block pb-1">
-                  <FontAwesomeIcon
-                    icon={faCalendar}
-                    className="text-gray-700 mr-2"
-                  />
-                  <time className="text-lg" dateTime="2009-11-13T20:00Z">
-                    Sun, Oct 3, 5:00pm
-                  </time>
-                </div>
-                <div className="block pb-2">
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2"
-                  />
-                  <a
-                    href=""
-                    className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-                  >
-                    212 Northern Ave, Boston, MA 02210
-                  </a>
-                </div>
-                <p className="text-lg">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Atque ullam blanditiis ut et ab delectus, inventore quos.
-                  Totam nihil explicabo quibusdam laborio...
-                </p>
-                <div className="pt-2">
-                  <FontAwesomeIcon
-                    icon={faUserFriends}
-                    className="text-gray-700 mr-2"
-                  />
-                  <span>23 Going</span>
-                </div>
-              </div>
-            </li>
-            <li className="flex items-center py-4 border-t-2 text-lg">
-              <a
-                href=""
-                className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-              >
-                See all upcoming events around the United States
-              </a>
+              </Link>
             </li>
           </ul>
         </section>
@@ -561,8 +242,119 @@ const Home = props => {
   );
 };
 
-const Profile = () => {
-  return <div>Profile</div>;
+const EventListItem = props => {
+  const [currResponse, setResponse] = React.useState(props.response);
+
+  const toggleResponse = nextResponse => {
+    if (currResponse === nextResponse) {
+      setResponse("");
+    } else {
+      setResponse(nextResponse);
+    }
+  };
+
+  return (
+    <li
+      className={`flex items-center py-8 ${!props.isFirst ? "border-t-4" : ""}`}
+    >
+      <img src={props.logo} alt="" className="w-auto flex-initial h-20 pr-8" />
+      <div className="flex-initial">
+        <Link
+          to={props.url}
+          className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
+        >
+          {props.title}
+        </Link>
+        <div className="block pb-1">
+          <FontAwesomeIcon icon={faCalendar} className="text-gray-700 mr-2" />
+          <time className="text-lg" dateTime={props.dateTime}>
+            {props.formattedDateTime}
+          </time>
+        </div>
+        <div className="block pb-2">
+          <FontAwesomeIcon
+            icon={faMapMarkerAlt}
+            className="text-gray-700 mr-2"
+          />
+          {props.address ? (
+            <a
+              href={props.addressLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+            >
+              {props.address}
+            </a>
+          ) : (
+            <span>To be determined</span>
+          )}
+        </div>
+        <p className="text-lg">{props.description}</p>
+        <div className="pt-2">
+          <FontAwesomeIcon
+            icon={faUserFriends}
+            className="text-gray-700 mr-2"
+          />
+          <span>{props.going} Going</span>
+        </div>
+        {props.isLoggedIn && (
+          <div className="pt-8">
+            <Button
+              type="button"
+              onClick={() => toggleResponse("yes")}
+              variant={currResponse === "yes" ? "teal" : ""}
+            >
+              Going
+              <FontAwesomeIcon
+                icon={faCheck}
+                className={`ml-2 ${
+                  currResponse === "yes" ? "text-teal-800" : "text-gray-800"
+                }`}
+              />
+            </Button>
+            <Button
+              type="button"
+              onClick={() => toggleResponse("maybe")}
+              variant={currResponse === "maybe" ? "yellow" : ""}
+              className="ml-4"
+            >
+              Interested
+              <FontAwesomeIcon
+                icon={faStar}
+                className={`ml-2 ${
+                  currResponse === "maybe" ? "text-yellow-800" : "text-gray-800"
+                }`}
+              />
+            </Button>
+          </div>
+        )}
+      </div>
+    </li>
+  );
+};
+
+const Button = props => {
+  const { children, variant = "", className = "", ...restProps } = props;
+  const variants = {
+    teal: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700",
+    yellow:
+      "bg-yellow-100 border-yellow-500 hover:bg-yellow-200 text-yellow-900",
+    default: "bg-white border-gray-400 hover:bg-gray-200 text-gray-900"
+  };
+  const defaultClass = `${
+    variants[variant || "default"]
+  } border-2 font-semibold py-2 px-4 rounded-lg`;
+
+  return (
+    <button {...restProps} className={[defaultClass, className].join(" ")}>
+      {children}
+    </button>
+  );
+};
+
+const User = props => {
+  console.log(props);
+  return <article className="max-w-4xl mx-auto mt-8 mb-16">User</article>;
 };
 
 export default App;
