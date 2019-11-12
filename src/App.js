@@ -13,6 +13,52 @@ import {
 // import { ReactComponent as Logo } from "./logo.svg";
 import "./App.css";
 
+const DEFAULT_LINK_CLASSNAMES =
+  "font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline";
+
+const TEST_DATA = {
+  eventList: [
+    {
+      title: "General Body Meeting",
+      url: "uic/events/1",
+      logo: "https://theory.cs.uic.edu/images/uic.PNG",
+      dateTime: "2009-11-13T20:00Z",
+      formattedDateTime: "Sun, Oct 3, 5:00pm",
+      addressLink: "https://goo.gl/maps/hRWzpokHjpgQaon78",
+      address: "212 Northern Ave, Boston, MA 02210",
+      description:
+        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laboriosam fugiat commodi quam autem quaerat rem! Temporibus, aliquam!",
+      going: "71"
+    },
+    {
+      title: "CSGO and Mountain Dew",
+      url: "iit/events/1",
+      logo:
+        "https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png",
+      dateTime: "2009-11-13T20:00Z",
+      formattedDateTime: "Sun, Oct 3, 5:00pm",
+      description:
+        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos.",
+      going: "4",
+      response: "yes"
+    },
+    {
+      title: "LoL and Doritos",
+      url: "uiuc/events/1",
+      logo:
+        "http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png",
+      dateTime: "2009-11-13T20:00Z",
+      formattedDateTime: "Sun, Oct 3, 5:00pm",
+      addressLink: "https://goo.gl/maps/hRWzpokHjpgQaon78",
+      address: "212 Northern Ave, Boston, MA 02210",
+      description:
+        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laborio...",
+      going: "23",
+      response: "maybe"
+    }
+  ]
+};
+
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -106,22 +152,13 @@ const App = () => {
       </main>
       <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
         <section className="max-w-4xl mx-auto p-8 flex items-center justify-around">
-          <Link
-            to="about"
-            className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-          >
+          <Link to="about" className={DEFAULT_LINK_CLASSNAMES}>
             About
           </Link>
-          <Link
-            to="contribute"
-            className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-          >
+          <Link to="contribute" className={DEFAULT_LINK_CLASSNAMES}>
             Contribute
           </Link>
-          <Link
-            to="contact"
-            className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-          >
+          <Link to="contact" className={DEFAULT_LINK_CLASSNAMES}>
             Contact
           </Link>
         </section>
@@ -190,48 +227,15 @@ const Home = props => {
         </h3>
         <section className="bg-white px-6 border-4 rounded-lg mt-4">
           <ul>
-            <EventListItem
-              isFirst={true}
-              isLoggedIn={props.isLoggedIn}
-              title="General Body Meeting"
-              url="uic/events/1"
-              logo="https://theory.cs.uic.edu/images/uic.PNG"
-              dateTime="2009-11-13T20:00Z"
-              formattedDateTime="Sun, Oct 3, 5:00pm"
-              addressLink="https://goo.gl/maps/hRWzpokHjpgQaon78"
-              address="212 Northern Ave, Boston, MA 02210"
-              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laboriosam fugiat commodi quam autem quaerat rem! Temporibus, aliquam!"
-              going="71"
-            />
-            <EventListItem
-              isLoggedIn={props.isLoggedIn}
-              title="CSGO and Mountain Dew"
-              url="iit/events/1"
-              logo="https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png"
-              dateTime="2009-11-13T20:00Z"
-              formattedDateTime="Sun, Oct 3, 5:00pm"
-              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos."
-              going="4"
-              response="yes"
-            />
-            <EventListItem
-              isLoggedIn={props.isLoggedIn}
-              title="LoL and Doritos"
-              url="uiuc/events/1"
-              logo="http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png"
-              dateTime="2009-11-13T20:00Z"
-              formattedDateTime="Sun, Oct 3, 5:00pm"
-              addressLink="https://goo.gl/maps/hRWzpokHjpgQaon78"
-              address="212 Northern Ave, Boston, MA 02210"
-              description="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laborio..."
-              going="23"
-              response="maybe"
-            />
+            {TEST_DATA.eventList.map((event, i) => (
+              <EventListItem
+                isFirst={i === 0}
+                isLoggedIn={props.isLoggedIn}
+                {...event}
+              />
+            ))}
             <li className="flex items-center py-4 border-t-4 text-lg">
-              <Link
-                to="events"
-                className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-              >
+              <Link to="events" className={DEFAULT_LINK_CLASSNAMES}>
                 See all upcoming events around Chicago, IL
               </Link>
             </li>
@@ -277,14 +281,7 @@ const EventListItem = props => {
             className="text-gray-700 mr-2"
           />
           {props.address ? (
-            <a
-              href={props.addressLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
-            >
-              {props.address}
-            </a>
+            <OutsideLink href={props.addressLink}>{props.address}</OutsideLink>
           ) : (
             <span>To be determined</span>
           )}
@@ -333,8 +330,20 @@ const EventListItem = props => {
   );
 };
 
-const Button = props => {
-  const { children, variant = "", className = "", ...restProps } = props;
+const OutsideLink = ({ children, ...rest }) => {
+  return (
+    <a
+      {...rest}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={DEFAULT_LINK_CLASSNAMES}
+    >
+      {children}
+    </a>
+  );
+};
+
+const Button = ({ children, variant = "", className = "", ...rest }) => {
   const variants = {
     teal: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700",
     yellow:
@@ -346,7 +355,7 @@ const Button = props => {
   } border-2 font-semibold py-2 px-4 rounded-lg`;
 
   return (
-    <button {...restProps} className={[defaultClass, className].join(" ")}>
+    <button {...rest} className={[defaultClass, className].join(" ")}>
       {children}
     </button>
   );
