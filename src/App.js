@@ -10,7 +10,6 @@ import {
   faCheck,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
-// import { ReactComponent as Logo } from "./logo.svg";
 import "./App.css";
 
 const DEFAULT_LINK_CLASSNAMES =
@@ -56,7 +55,83 @@ const TEST_DATA = {
       going: "23",
       response: "maybe"
     }
-  ]
+  ],
+  user: {
+    username: "bsansone",
+    firstName: "Brandon",
+    lastName: "Sansone",
+    hometown: "Wheaton, Illinois",
+    major: "Information Technology & Management",
+    minor: "",
+    status: "Alumni",
+    isVerifiedStudent: true,
+    birthdate: "1994-01-25T00:00Z",
+    school: {
+      id: "1",
+      name: "Illinois Institute of Technology",
+      abbreviation: "iit"
+    },
+    bio:
+      "Hockey fan, ninja, drummer, Mad Men fan and product designer. Performing at the crossroads of art and sustainability to save the world from bad design. My opinions belong to nobody but myself. ",
+    gameAccounts: [
+      {
+        name: "Discord",
+        value: "#bsansone123"
+      },
+      {
+        name: "Steam",
+        value: "DJ Windows XP"
+      },
+      {
+        name: "PlayStation Network",
+        value: "BSansone52"
+      },
+      {
+        name: "Xbox Live",
+        value: "xXDestroyerXx"
+      },
+      {
+        name: "Battle.net",
+        value: "Kieji#1674"
+      }
+    ],
+    currentlyPlaying: [
+      {
+        name: "Terraria",
+        coverId: "co1rbo"
+      },
+      {
+        name: "World of Warcraft Classic",
+        coverId: "co1trz"
+      },
+      {
+        name: "League of Legends",
+        coverId: "lxoumgqbbj3erxgq6a6l"
+      }
+    ],
+    favoriteGames: [
+      {
+        name: "League of Legends",
+        coverId: "lxoumgqbbj3erxgq6a6l"
+      },
+      {
+        name: "Call of Duty 2",
+        coverId: "hjfe6xe6k5oqprn8vnkz"
+      },
+      {
+        name: "Red Dead Redemption",
+        coverId: "co1q1e"
+      },
+      {
+        name: "Age of Empires II: The Age of Kings",
+        coverId: "co1t5t"
+      },
+      {
+        name: "Super Smash Bros. Melee",
+        coverId: "co1pxc"
+      }
+    ]
+  }
 };
 
 const App = () => {
@@ -147,7 +222,7 @@ const App = () => {
       <main className="pb-12">
         <Router>
           <Home path="/" {...authProps} />
-          {isLoggedIn && <User path="user/:id" {...authProps} />}
+          <User path="user/:id" {...authProps} />
         </Router>
       </main>
       <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
@@ -165,7 +240,7 @@ const App = () => {
         <button
           onClick={toggledLoggedIn}
           type="button"
-          className="fixed top-0 left-0 ml-4 mt-4 rounded-lg border-2 border-black py-2 px-4 font-semibold bg-white"
+          className="fixed hidden top-0 left-0 ml-4 mt-4 rounded-lg border-2 border-black py-2 px-4 font-semibold bg-white"
         >
           {isLoggedIn ? "Log Out" : "Log In"}
         </button>
@@ -176,51 +251,16 @@ const App = () => {
 };
 
 const Home = props => {
-  const onSearchSubmit = e => {
-    e.preventDefault();
-
-    alert(e.target.search.value);
-  };
-
   return (
     <React.Fragment>
       <div className="max-w-4xl mx-auto mt-8 mb-16">
         {/* <Logo className="h-24 mr-4" /> */}
-        <h1 className="text-6xl mb-2">Campus Gaming Network</h1>
+        <h1 className="logo text-6xl mb-2">Campus Gaming Network</h1>
         <h2 className="text-3xl text-gray-600">
           Connect with other collegiate gamers for casual or competitive gaming
           at your school or nearby.
         </h2>
       </div>
-      <article className="hidden">
-        <section className="max-w-4xl mx-auto bg-white p-8 border-2 rounded-lg flex items-center">
-          <img
-            className="h-40 pr-12"
-            src="https://st2.depositphotos.com/3834629/5652/v/950/depositphotos_56527995-stock-illustration-gamer-boy.jpg"
-            alt=""
-          />
-          <form onSubmit={onSearchSubmit} className="flex-auto">
-            <label className="text-4xl font-semibold text-gray-900 mb-4 block">
-              Find your next gaming party:
-            </label>
-            <div className="flex">
-              <input
-                id="search"
-                name="search"
-                type="text"
-                placeholder="Search for a game or school"
-                className="border-2 border-r-0 rounded-l w-full py-2 pl-3 text-gray-700"
-              />
-              <button
-                type="submit"
-                className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-r"
-              >
-                Search
-              </button>
-            </div>
-          </form>
-        </section>
-      </article>
       <article className="max-w-4xl mx-auto mb-12">
         <h3 className="text-3xl font-semibold text-gray-700">
           Upcoming events near Chicago, IL
@@ -229,6 +269,7 @@ const Home = props => {
           <ul>
             {TEST_DATA.eventList.map((event, i) => (
               <EventListItem
+                key={event.url}
                 isFirst={i === 0}
                 isLoggedIn={props.isLoggedIn}
                 {...event}
@@ -361,9 +402,125 @@ const Button = ({ children, variant = "", className = "", ...rest }) => {
   );
 };
 
+const VisuallyHidden = props => {
+  return <span className="visually-hidden" {...props} />;
+};
+
 const User = props => {
   console.log(props);
-  return <article className="max-w-4xl mx-auto mt-8 mb-16">User</article>;
+  return (
+    <article className="max-w-4xl mx-auto mt-8 mb-16 text-lg">
+      <header className="flex items-center">
+        <img
+          className="h-auto w-40 rounded-full border-4 border-gray-300"
+          src="https://randomuser.me/api/portraits/lego/8.jpg"
+          alt=""
+        />
+        <section className="pl-12">
+          <h1 className="text-4xl font-bold leading-none pb-4 flex items-center">
+            {TEST_DATA.user.firstName}
+            {TEST_DATA.user.lastName ? ` ${TEST_DATA.user.lastName}` : ""}
+            {TEST_DATA.user.isVerifiedStudent && (
+              <span className="text-base">
+                <VisuallyHidden>User is a verified student</VisuallyHidden>
+                <FontAwesomeIcon
+                  className="ml-4 text-2xl text-blue-600"
+                  icon={faStar}
+                />
+              </span>
+            )}
+          </h1>
+          <h2 className="italic">
+            {`${
+              TEST_DATA.user.status === "Alumni"
+                ? "Alumni of "
+                : TEST_DATA.user.status === "Grad"
+                ? "Graduate Student at "
+                : `${TEST_DATA.user.status} at `
+            }`}
+            <Link
+              to={`/schools/${TEST_DATA.user.school.abbreviation}`}
+              className={DEFAULT_LINK_CLASSNAMES}
+            >
+              {TEST_DATA.user.school.name}
+            </Link>
+          </h2>
+        </section>
+      </header>
+      <section className="pt-12">
+        <VisuallyHidden>Biography</VisuallyHidden>
+        <p className="pt-1">{TEST_DATA.user.bio}</p>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Information</h4>
+        <dl className="flex flex-wrap w-full">
+          {TEST_DATA.user.hometown && (
+            <React.Fragment>
+              <dt className="w-1/2">Hometown</dt>
+              <dd className="w-1/2">{TEST_DATA.user.hometown}</dd>
+            </React.Fragment>
+          )}
+          <dt className="w-1/2">Major</dt>
+          {TEST_DATA.user.major ? (
+            <dd className="w-1/2">{TEST_DATA.user.major}</dd>
+          ) : (
+            <dd className="w-1/2 text-gray-500">Nothing set</dd>
+          )}
+          <dt className="w-1/2">Minor</dt>
+          {TEST_DATA.user.minor ? (
+            <dd className="w-1/2">{TEST_DATA.user.minor}</dd>
+          ) : (
+            <dd className="w-1/2 text-gray-500">Nothing set</dd>
+          )}
+        </dl>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Game Accounts</h4>
+        <dl className="flex flex-wrap w-full">
+          {TEST_DATA.user.gameAccounts.map(account => (
+            <React.Fragment key={account.name}>
+              <dt className="w-1/2">{account.name}</dt>
+              <dd className="w-1/2">{account.value}</dd>
+            </React.Fragment>
+          ))}
+        </dl>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Events Attending</h4>
+        <p className="text-gray-500">
+          This user is currently not attending any upcoming events.
+        </p>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Currently Playing</h4>
+        <ul className=" flex flex-wrap">
+          {TEST_DATA.user.currentlyPlaying.map(game => (
+            <li key={game.name} className="w-1/5">
+              <img
+                className="rounded h-40 shadow-lg"
+                src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                alt={`The cover art for ${game.name}`}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Favorite Games</h4>
+        <ul className="flex flex-wrap">
+          {TEST_DATA.user.favoriteGames.map(game => (
+            <li key={game.name} className="w-1/5">
+              <img
+                className="rounded h-40 shadow-lg"
+                src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                alt={`The cover art for ${game.name}`}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    </article>
+  );
 };
 
 export default App;
