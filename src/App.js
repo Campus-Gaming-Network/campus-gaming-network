@@ -10,7 +10,6 @@ import {
   faCheck,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
-// import { ReactComponent as Logo } from "./logo.svg";
 import "./App.css";
 
 const DEFAULT_LINK_CLASSNAMES =
@@ -62,7 +61,80 @@ const TEST_DATA = {
     {
       id: "1",
       picture: "https://api.adorable.io/avatars/285/abott1@adorable",
-      name: "Hicks Garza"
+      username: "bsansone",
+      firstName: "Brandon",
+      lastName: "Sansone",
+      hometown: "Wheaton, Illinois",
+      major: "Information Technology & Management",
+      minor: "",
+      status: "Alumni",
+      isVerifiedStudent: true,
+      birthdate: "1994-01-25T00:00Z",
+      school: {
+        id: "1",
+        name: "Illinois Institute of Technology",
+        abbreviation: "iit"
+      },
+      bio:
+        "Hockey fan, ninja, drummer, Mad Men fan and product designer. Performing at the crossroads of art and sustainability to save the world from bad design. My opinions belong to nobody but myself. ",
+      gameAccounts: [
+        {
+          name: "Discord",
+          value: "#bsansone123"
+        },
+        {
+          name: "Steam",
+          value: "DJ Windows XP"
+        },
+        {
+          name: "PlayStation Network",
+          value: "BSansone52"
+        },
+        {
+          name: "Xbox Live",
+          value: "xXDestroyerXx"
+        },
+        {
+          name: "Battle.net",
+          value: "Kieji#1674"
+        }
+      ],
+      currentlyPlaying: [
+        {
+          name: "Terraria",
+          coverId: "co1rbo"
+        },
+        {
+          name: "World of Warcraft Classic",
+          coverId: "co1trz"
+        },
+        {
+          name: "League of Legends",
+          coverId: "lxoumgqbbj3erxgq6a6l"
+        }
+      ],
+      favoriteGames: [
+        {
+          name: "League of Legends",
+          coverId: "lxoumgqbbj3erxgq6a6l"
+        },
+        {
+          name: "Call of Duty 2",
+          coverId: "hjfe6xe6k5oqprn8vnkz"
+        },
+        {
+          name: "Red Dead Redemption",
+          coverId: "co1q1e"
+        },
+        {
+          name: "Age of Empires II: The Age of Kings",
+          coverId: "co1t5t"
+        },
+        {
+          name: "Super Smash Bros. Melee",
+          coverId: "co1pxc"
+        }
+      ]
     },
     {
       id: "2",
@@ -233,7 +305,7 @@ const App = () => {
         <button
           onClick={toggledLoggedIn}
           type="button"
-          className="fixed top-0 left-0 ml-4 mt-4 rounded-lg border-2 border-black py-2 px-4 font-semibold bg-white"
+          className="fixed hidden top-0 left-0 ml-4 mt-4 rounded-lg border-2 border-black py-2 px-4 font-semibold bg-white"
         >
           {isLoggedIn ? "Log Out" : "Log In"}
         </button>
@@ -450,6 +522,10 @@ const School = props => {
   );
 };
 
+const VisuallyHidden = props => {
+  return <span className="visually-hidden" {...props} />;
+};
+
 const User = props => {
   console.log(props);
   const user = TEST_DATA.users.find(user => user.id === props.id);
@@ -459,17 +535,116 @@ const User = props => {
   }
 
   return (
-    <article className="max-w-4xl mx-auto mt-8 mb-16 px-8">
-      <div className="flex items-center">
+    <article className="max-w-4xl mx-auto mt-8 mb-16 text-lg">
+      <header className="flex items-center">
         <img
-          className="w-20 mr-8 rounded-full"
-          src={user.picture}
-          alt={`Avatar for ${user.name}`}
+          className="h-auto w-40 rounded-full border-4 border-gray-300"
+          src="https://randomuser.me/api/portraits/lego/8.jpg"
+          alt=""
         />
-        <div>
-          <h1 className="font-bold text-5xl mb-2">{user.name}</h1>
-        </div>
-      </div>
+        <section className="pl-12">
+          <h1 className="text-4xl font-bold leading-none pb-4 flex items-center">
+            {user.firstName}
+            {user.lastName ? ` ${user.lastName}` : ""}
+            {user.isVerifiedStudent && (
+              <span className="text-base">
+                <VisuallyHidden>User is a verified student</VisuallyHidden>
+                <FontAwesomeIcon
+                  className="ml-4 text-2xl text-blue-600"
+                  icon={faStar}
+                />
+              </span>
+            )}
+          </h1>
+          <h2 className="italic">
+            {`${
+              user.status === "Alumni"
+                ? "Alumni of "
+                : user.status === "Grad"
+                ? "Graduate Student at "
+                : `${user.status} at `
+            }`}
+            <Link
+              to={`/schools/${user.school.abbreviation}`}
+              className={DEFAULT_LINK_CLASSNAMES}
+            >
+              {user.school.name}
+            </Link>
+          </h2>
+        </section>
+      </header>
+      <section className="pt-12">
+        <VisuallyHidden>Biography</VisuallyHidden>
+        <p className="pt-1">{user.bio}</p>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Information</h4>
+        <dl className="flex flex-wrap w-full">
+          {user.hometown && (
+            <React.Fragment>
+              <dt className="w-1/2">Hometown</dt>
+              <dd className="w-1/2">{user.hometown}</dd>
+            </React.Fragment>
+          )}
+          <dt className="w-1/2">Major</dt>
+          {user.major ? (
+            <dd className="w-1/2">{user.major}</dd>
+          ) : (
+            <dd className="w-1/2 text-gray-500">Nothing set</dd>
+          )}
+          <dt className="w-1/2">Minor</dt>
+          {user.minor ? (
+            <dd className="w-1/2">{user.minor}</dd>
+          ) : (
+            <dd className="w-1/2 text-gray-500">Nothing set</dd>
+          )}
+        </dl>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Game Accounts</h4>
+        <dl className="flex flex-wrap w-full">
+          {user.gameAccounts.map(account => (
+            <React.Fragment key={account.name}>
+              <dt className="w-1/2">{account.name}</dt>
+              <dd className="w-1/2">{account.value}</dd>
+            </React.Fragment>
+          ))}
+        </dl>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Events Attending</h4>
+        <p className="text-gray-500">
+          This user is currently not attending any upcoming events.
+        </p>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Currently Playing</h4>
+        <ul className=" flex flex-wrap">
+          {user.currentlyPlaying.map(game => (
+            <li key={game.name} className="w-1/5">
+              <img
+                className="rounded h-40 shadow-lg"
+                src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                alt={`The cover art for ${game.name}`}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="pt-12">
+        <h4 className="font-bold uppercase text-sm pb-4">Favorite Games</h4>
+        <ul className="flex flex-wrap">
+          {user.favoriteGames.map(game => (
+            <li key={game.name} className="w-1/5">
+              <img
+                className="rounded h-40 shadow-lg"
+                src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                alt={`The cover art for ${game.name}`}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
     </article>
   );
 };
