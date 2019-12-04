@@ -17,11 +17,12 @@ const DEFAULT_LINK_CLASSNAMES =
   "font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline";
 
 const TEST_DATA = {
-  eventList: [
+  events: [
     {
+      id: "1",
       title: "General Body Meeting",
       url: "uic/events/1",
-      logo: "https://theory.cs.uic.edu/images/uic.PNG",
+      schoolId: "1",
       dateTime: "2009-11-13T20:00Z",
       formattedDateTime: "Sun, Oct 3, 5:00pm",
       addressLink: "https://goo.gl/maps/hRWzpokHjpgQaon78",
@@ -31,10 +32,10 @@ const TEST_DATA = {
       going: "71"
     },
     {
+      id: "1",
       title: "CSGO and Mountain Dew",
       url: "iit/events/1",
-      logo:
-        "https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png",
+      schoolId: "2",
       dateTime: "2009-11-13T20:00Z",
       formattedDateTime: "Sun, Oct 3, 5:00pm",
       description:
@@ -43,10 +44,10 @@ const TEST_DATA = {
       response: "yes"
     },
     {
+      id: "1",
       title: "LoL and Doritos",
       url: "uiuc/events/1",
-      logo:
-        "http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png",
+      schoolId: "3",
       dateTime: "2009-11-13T20:00Z",
       formattedDateTime: "Sun, Oct 3, 5:00pm",
       addressLink: "https://goo.gl/maps/hRWzpokHjpgQaon78",
@@ -55,6 +56,71 @@ const TEST_DATA = {
         "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laborio...",
       going: "23",
       response: "maybe"
+    }
+  ],
+  users: [
+    {
+      id: "1",
+      picture: "https://api.adorable.io/avatars/285/abott1@adorable",
+      name: "Hicks Garza"
+    },
+    {
+      id: "2",
+      picture: "https://api.adorable.io/avatars/285/abott2@adorable",
+      name: "Virgie Bender"
+    },
+    {
+      id: "3",
+      picture: "https://api.adorable.io/avatars/285/abott3@adorable",
+      name: "Juanita Greer"
+    },
+    {
+      id: "4",
+      picture: "https://api.adorable.io/avatars/285/abott4@adorable",
+      name: "Austin Simmons"
+    },
+    {
+      id: "5",
+      picture: "https://api.adorable.io/avatars/285/abott5@adorable",
+      name: "Sasha Harding"
+    },
+    {
+      id: "6",
+      picture: "https://api.adorable.io/avatars/285/abott6@adorable",
+      name: "Manning Stafford"
+    },
+    {
+      id: "7",
+      picture: "https://api.adorable.io/avatars/285/abott7@adorable",
+      name: "James Wilkerson"
+    }
+  ],
+  schools: [
+    {
+      id: "1",
+      name: "University of Illinois at Chicago",
+      handle: "university-of-illinois-at-chicago",
+      abbreviation: "uic",
+      logo: "https://theory.cs.uic.edu/images/uic.PNG",
+      url: "school/uic"
+    },
+    {
+      id: "2",
+      name: "Illinois Institute of Technology",
+      handle: "illinois-institute-of-technology",
+      abbreviation: "iit",
+      logo:
+        "https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png",
+      url: "school/iit"
+    },
+    {
+      id: "3",
+      name: "University of Illinois Urbana-Champaign",
+      handle: "university-of-illinois-urbana-champaign",
+      abbreviation: "uiuc",
+      logo:
+        "http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png",
+      url: "school/uiuc"
     }
   ]
 };
@@ -147,7 +213,9 @@ const App = () => {
       <main className="pb-12">
         <Router>
           <Home path="/" {...authProps} />
-          {isLoggedIn && <User path="user/:id" {...authProps} />}
+          <User path="user/:id" {...authProps} />
+          <School path="school/:id" {...authProps} />
+          <SchoolEvent path="/:school/events/:id" {...authProps} />
         </Router>
       </main>
       <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
@@ -176,65 +244,32 @@ const App = () => {
 };
 
 const Home = props => {
-  const onSearchSubmit = e => {
-    e.preventDefault();
-
-    alert(e.target.search.value);
-  };
-
   return (
     <React.Fragment>
-      <div className="max-w-4xl mx-auto mt-8 mb-16">
-        {/* <Logo className="h-24 mr-4" /> */}
-        <h1 className="text-6xl mb-2">Campus Gaming Network</h1>
+      <div className="max-w-4xl mx-auto mt-8 mb-16 px-8">
+        <h1 className="text-logo text-6xl mb-8 leading-none">
+          Campus Gaming Network
+        </h1>
         <h2 className="text-3xl text-gray-600">
           Connect with other collegiate gamers for casual or competitive gaming
           at your school or nearby.
         </h2>
       </div>
-      <article className="hidden">
-        <section className="max-w-4xl mx-auto bg-white p-8 border-2 rounded-lg flex items-center">
-          <img
-            className="h-40 pr-12"
-            src="https://st2.depositphotos.com/3834629/5652/v/950/depositphotos_56527995-stock-illustration-gamer-boy.jpg"
-            alt=""
-          />
-          <form onSubmit={onSearchSubmit} className="flex-auto">
-            <label className="text-4xl font-semibold text-gray-900 mb-4 block">
-              Find your next gaming party:
-            </label>
-            <div className="flex">
-              <input
-                id="search"
-                name="search"
-                type="text"
-                placeholder="Search for a game or school"
-                className="border-2 border-r-0 rounded-l w-full py-2 pl-3 text-gray-700"
-              />
-              <button
-                type="submit"
-                className="bg-white border-2 border-gray-400 hover:bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-r"
-              >
-                Search
-              </button>
-            </div>
-          </form>
-        </section>
-      </article>
-      <article className="max-w-4xl mx-auto mb-12">
-        <h3 className="text-3xl font-semibold text-gray-700">
+      <article className="max-w-4xl mx-auto mb-12 px-8">
+        <h3 className="text-3xl font-semibold">
           Upcoming events near Chicago, IL
         </h3>
-        <section className="bg-white px-6 border-4 rounded-lg mt-4">
+        <section>
           <ul>
-            {TEST_DATA.eventList.map((event, i) => (
+            {TEST_DATA.events.map((event, i) => (
               <EventListItem
+                key={event.schoolId + event.id}
                 isFirst={i === 0}
                 isLoggedIn={props.isLoggedIn}
-                {...event}
+                event
               />
             ))}
-            <li className="flex items-center py-4 border-t-4 text-lg">
+            <li className="flex items-center py-4 text-lg">
               <Link to="events" className={DEFAULT_LINK_CLASSNAMES}>
                 See all upcoming events around Chicago, IL
               </Link>
@@ -257,44 +292,74 @@ const EventListItem = props => {
     }
   };
 
+  if (!props.event) {
+    return null;
+  }
+
+  const school = TEST_DATA.schools.find(
+    school => school.id === props.event.schoolId
+  );
+
+  if (!school) {
+    return null;
+  }
+
   return (
     <li
-      className={`flex items-center py-8 ${!props.isFirst ? "border-t-4" : ""}`}
+      className={`flex items-center border-4 bg-white rounded-lg mt-4 py-6 px-8 ${
+        !props.isFirst ? "border-t-4" : ""
+      }`}
     >
-      <img src={props.logo} alt="" className="w-auto flex-initial h-20 pr-8" />
       <div className="flex-initial">
-        <Link
-          to={props.url}
-          className="text-3xl font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:underline block"
-        >
-          {props.title}
-        </Link>
-        <div className="block pb-1">
+        <div className="flex items-center">
+          <div>
+            <Link
+              to={school.url}
+              className={`${DEFAULT_LINK_CLASSNAMES} text-xl`}
+            >
+              {school.name}
+            </Link>
+            <Link
+              to={props.url}
+              className={`${DEFAULT_LINK_CLASSNAMES} block font-semibold text-3xl`}
+            >
+              {props.title}
+            </Link>
+          </div>
+          <img
+            src={school.logo}
+            alt={`${school.name} Logo`}
+            className="w-auto ml-auto h-16"
+          />
+        </div>
+        <div className="block pb-1 mt-4">
           <FontAwesomeIcon icon={faCalendar} className="text-gray-700 mr-2" />
-          <time className="text-lg" dateTime={props.dateTime}>
-            {props.formattedDateTime}
+          <time className="text-lg" dateTime={props.event.dateTime}>
+            {props.event.formattedDateTime}
           </time>
         </div>
-        <div className="block pb-2">
+        <div className="block pb-2 mb-4 text-lg">
           <FontAwesomeIcon
             icon={faMapMarkerAlt}
             className="text-gray-700 mr-2"
           />
-          {props.address ? (
-            <OutsideLink href={props.addressLink}>{props.address}</OutsideLink>
+          {props.event.address ? (
+            <OutsideLink href={props.event.addressLink}>
+              {props.event.address}
+            </OutsideLink>
           ) : (
             <span>To be determined</span>
           )}
         </div>
-        <p className="text-lg">{props.description}</p>
-        <div className="pt-2">
+        <p className="text-lg">{truncate(props.event.description, 250)}</p>
+        <div className="pt-4">
           <FontAwesomeIcon
             icon={faUserFriends}
             className="text-gray-700 mr-2"
           />
-          <span>{props.going} Going</span>
+          <span>{props.event.going} Going</span>
         </div>
-        {props.isLoggedIn && (
+        {props.event.isLoggedIn && (
           <div className="pt-8">
             <Button
               type="button"
@@ -330,7 +395,7 @@ const EventListItem = props => {
   );
 };
 
-const OutsideLink = ({ children, ...rest }) => {
+const OutsideLink = ({ children, className, ...rest }) => {
   return (
     <a
       {...rest}
@@ -361,9 +426,134 @@ const Button = ({ children, variant = "", className = "", ...rest }) => {
   );
 };
 
+const School = props => {
+  console.log(props);
+  const school = TEST_DATA.schools.find(school => school.id === props.id);
+
+  if (!school) {
+    return null;
+  }
+
+  return (
+    <article className="max-w-4xl mx-auto mt-8 mb-16 px-8">
+      <div className="flex items-center">
+        <img
+          src={school.logo}
+          alt={`${school.name} school logo`}
+          className="w-auto ml-auto h-24"
+        />
+        <div>
+          <h1 className="font-bold text-5xl mb-2">{school.name}</h1>
+        </div>
+      </div>
+    </article>
+  );
+};
+
 const User = props => {
   console.log(props);
-  return <article className="max-w-4xl mx-auto mt-8 mb-16">User</article>;
+  const user = TEST_DATA.users.find(user => user.id === props.id);
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <article className="max-w-4xl mx-auto mt-8 mb-16 px-8">
+      <div className="flex items-center">
+        <img
+          className="w-20 mr-8 rounded-full"
+          src={user.picture}
+          alt={`Avatar for ${user.name}`}
+        />
+        <div>
+          <h1 className="font-bold text-5xl mb-2">{user.name}</h1>
+        </div>
+      </div>
+    </article>
+  );
+};
+
+const SchoolEvent = props => {
+  console.log(props);
+  const event = TEST_DATA.events.find(event => event.id === props.id);
+
+  if (!event) {
+    return null;
+  }
+
+  const school = TEST_DATA.schools.find(school => school.id === event.schoolId);
+
+  return (
+    <article className="max-w-4xl mx-auto mt-8 mb-16 px-8">
+      <div className="flex items-center">
+        <div>
+          <Link
+            to={`../../../${school.url}`}
+            className={`${DEFAULT_LINK_CLASSNAMES} text-xl`}
+          >
+            {school.name}
+          </Link>
+          <h1 className="font-bold text-5xl mb-2">{event.title}</h1>
+        </div>
+        <img
+          src={school.logo}
+          alt={`${school.name} school logo`}
+          className="w-auto ml-auto h-24"
+        />
+      </div>
+      <div className="block pb-1 mt-4 text-2xl">
+        <FontAwesomeIcon
+          icon={faCalendar}
+          className="text-gray-700 mr-2 text-xl"
+        />
+        <time dateTime={event.dateTime}>{event.formattedDateTime}</time>
+      </div>
+      <div className="block pb-2 text-2xl">
+        <FontAwesomeIcon
+          icon={faMapMarkerAlt}
+          className="text-gray-700 mr-2 text-xl"
+        />
+        {event.address ? (
+          <OutsideLink href={event.addressLink}>{event.address}</OutsideLink>
+        ) : (
+          <span>To be determined</span>
+        )}
+      </div>
+      <section className="mt-8">
+        <h2 className="text-2xl font-bold">Event Details</h2>
+        <p className="text-2xl pt-4">{event.description}</p>
+        <h3 className="text-2xl font-bold pt-12">{event.going} people going</h3>
+        <ul className="flex flex-wrap pt-4">
+          {TEST_DATA.users.map(user => (
+            <li key={user.id} className="w-1/3 md:w-1/4">
+              <div className="flex flex-col items-center justify-around pt-6 pb-1 my-4 mr-4 bg-white border-4 rounded-lg">
+                <img
+                  className="w-20 rounded-full"
+                  src={user.picture}
+                  alt={`Avatar for ${user.name}`}
+                />
+                <Link
+                  to={`../../../user/${user.id}`}
+                  className={`${DEFAULT_LINK_CLASSNAMES} m-4 mt-8 leading-tight font-bold text-center`}
+                >
+                  {user.name}
+                </Link>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </article>
+  );
+};
+
+const truncate = (str, length = 100, ending = "...") => {
+  if (str.length > length) {
+    return str.substring(0, length - ending.length) + ending;
+  } else {
+    return str;
+  }
 };
 
 export default App;
