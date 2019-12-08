@@ -7,195 +7,15 @@ import {
   faMapMarkerAlt,
   faCalendar,
   faUserFriends,
-  faCheck,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
+import _ from "lodash";
+import moment from "moment";
 import "./App.css";
+import TEST_DATA from "./test_data";
 
-const DEFAULT_LINK_CLASSNAMES =
-  "font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline";
-
-const TEST_DATA = {
-  events: [
-    {
-      id: "1",
-      title: "General Body Meeting",
-      url: "uic/events/1",
-      schoolId: "1",
-      dateTime: "2009-11-13T20:00Z",
-      formattedDateTime: "Sun, Oct 3, 5:00pm",
-      addressLink: "https://goo.gl/maps/hRWzpokHjpgQaon78",
-      address: "212 Northern Ave, Boston, MA 02210",
-      description:
-        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laboriosam fugiat commodi quam autem quaerat rem! Temporibus, aliquam!",
-      going: "71"
-    },
-    {
-      id: "1",
-      title: "CSGO and Mountain Dew",
-      url: "iit/events/1",
-      schoolId: "2",
-      dateTime: "2009-11-13T20:00Z",
-      formattedDateTime: "Sun, Oct 3, 5:00pm",
-      description:
-        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos.",
-      going: "4",
-      response: "yes"
-    },
-    {
-      id: "1",
-      title: "LoL and Doritos",
-      url: "uiuc/events/1",
-      schoolId: "3",
-      dateTime: "2009-11-13T20:00Z",
-      formattedDateTime: "Sun, Oct 3, 5:00pm",
-      addressLink: "https://goo.gl/maps/hRWzpokHjpgQaon78",
-      address: "212 Northern Ave, Boston, MA 02210",
-      description:
-        "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque ullam blanditiis ut et ab delectus, inventore quos. Totam nihil explicabo quibusdam laborio...",
-      going: "23",
-      response: "maybe"
-    }
-  ],
-  users: [
-    {
-      id: "1",
-      picture: "https://api.adorable.io/avatars/285/abott1@adorable",
-      username: "bsansone",
-      firstName: "Brandon",
-      lastName: "Sansone",
-      hometown: "Wheaton, Illinois",
-      major: "Information Technology & Management",
-      minor: "",
-      status: "Alumni",
-      isVerifiedStudent: true,
-      birthdate: "1994-01-25T00:00Z",
-      school: {
-        id: "1",
-        name: "Illinois Institute of Technology",
-        abbreviation: "iit"
-      },
-      bio:
-        "Hockey fan, ninja, drummer, Mad Men fan and product designer. Performing at the crossroads of art and sustainability to save the world from bad design. My opinions belong to nobody but myself. ",
-      gameAccounts: [
-        {
-          name: "Discord",
-          value: "#bsansone123"
-        },
-        {
-          name: "Steam",
-          value: "DJ Windows XP"
-        },
-        {
-          name: "PlayStation Network",
-          value: "BSansone52"
-        },
-        {
-          name: "Xbox Live",
-          value: "xXDestroyerXx"
-        },
-        {
-          name: "Battle.net",
-          value: "Kieji#1674"
-        }
-      ],
-      currentlyPlaying: [
-        {
-          name: "Terraria",
-          coverId: "co1rbo"
-        },
-        {
-          name: "World of Warcraft Classic",
-          coverId: "co1trz"
-        },
-        {
-          name: "League of Legends",
-          coverId: "lxoumgqbbj3erxgq6a6l"
-        }
-      ],
-      favoriteGames: [
-        {
-          name: "League of Legends",
-          coverId: "lxoumgqbbj3erxgq6a6l"
-        },
-        {
-          name: "Call of Duty 2",
-          coverId: "hjfe6xe6k5oqprn8vnkz"
-        },
-        {
-          name: "Red Dead Redemption",
-          coverId: "co1q1e"
-        },
-        {
-          name: "Age of Empires II: The Age of Kings",
-          coverId: "co1t5t"
-        },
-        {
-          name: "Super Smash Bros. Melee",
-          coverId: "co1pxc"
-        }
-      ]
-    },
-    {
-      id: "2",
-      picture: "https://api.adorable.io/avatars/285/abott2@adorable",
-      name: "Virgie Bender"
-    },
-    {
-      id: "3",
-      picture: "https://api.adorable.io/avatars/285/abott3@adorable",
-      name: "Juanita Greer"
-    },
-    {
-      id: "4",
-      picture: "https://api.adorable.io/avatars/285/abott4@adorable",
-      name: "Austin Simmons"
-    },
-    {
-      id: "5",
-      picture: "https://api.adorable.io/avatars/285/abott5@adorable",
-      name: "Sasha Harding"
-    },
-    {
-      id: "6",
-      picture: "https://api.adorable.io/avatars/285/abott6@adorable",
-      name: "Manning Stafford"
-    },
-    {
-      id: "7",
-      picture: "https://api.adorable.io/avatars/285/abott7@adorable",
-      name: "James Wilkerson"
-    }
-  ],
-  schools: [
-    {
-      id: "1",
-      name: "University of Illinois at Chicago",
-      handle: "university-of-illinois-at-chicago",
-      abbreviation: "uic",
-      logo: "https://theory.cs.uic.edu/images/uic.PNG",
-      url: "school/uic"
-    },
-    {
-      id: "2",
-      name: "Illinois Institute of Technology",
-      handle: "illinois-institute-of-technology",
-      abbreviation: "iit",
-      logo:
-        "https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png",
-      url: "school/iit"
-    },
-    {
-      id: "3",
-      name: "University of Illinois Urbana-Champaign",
-      handle: "university-of-illinois-urbana-champaign",
-      abbreviation: "uiuc",
-      logo:
-        "http://content.sportslogos.net/logos/32/706/full/7639_illinois_fighting_illini-alternate-1989.png",
-      url: "school/uiuc"
-    }
-  ]
-};
+////////////////////////////////////////////////////////////////////////////////
+// App
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -212,13 +32,9 @@ const App = () => {
 
   return (
     <React.Fragment>
-      {/* Start Header */}
       <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-5">
         <div className="flex items-center justify-between px-4 py-3 sm:p-0">
-          <div className="flex items-center">
-            <Link to="/">{/* <Logo className="h-16" /> */}</Link>
-          </div>
-          <div className="sm:hidden">
+          <div className="sm:hidden ml-auto">
             <button
               type="button"
               onClick={toggleMenu}
@@ -280,28 +96,29 @@ const App = () => {
           )}
         </nav>
       </header>
-      {/* End Header */}
-      {/* Start Body */}
       <main className="pb-12">
         <Router>
-          <Home path="/" {...authProps} />
-          <User path="user/:id" {...authProps} />
-          <School path="school/:id" {...authProps} />
-          <SchoolEvent path="/:school/events/:id" {...authProps} />
+          <ScrollToTop default>
+            <Home path="/" {...authProps} />
+            <User path="user/:id" {...authProps} />
+            <School path="school/:id" {...authProps} />
+            <Event path="/event/:id" {...authProps} />
+          </ScrollToTop>
         </Router>
       </main>
       <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
         <section className="max-w-4xl mx-auto p-8 flex items-center justify-around">
-          <Link to="about" className={DEFAULT_LINK_CLASSNAMES}>
+          <Link to="about" className={STYLES.LINK.DEFAULT}>
             About
           </Link>
-          <Link to="contribute" className={DEFAULT_LINK_CLASSNAMES}>
+          <Link to="contribute" className={STYLES.LINK.DEFAULT}>
             Contribute
           </Link>
-          <Link to="contact" className={DEFAULT_LINK_CLASSNAMES}>
+          <Link to="contact" className={STYLES.LINK.DEFAULT}>
             Contact
           </Link>
         </section>
+        {/* TODO: Delete button, this is used for testing logged in state */}
         <button
           onClick={toggledLoggedIn}
           type="button"
@@ -310,19 +127,29 @@ const App = () => {
           {isLoggedIn ? "Log Out" : "Log In"}
         </button>
       </footer>
-      {/* End Body */}
     </React.Fragment>
   );
 };
 
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// Home
+
 const Home = props => {
+  const randomSampleOfEvents = _.slice(
+    _.shuffle(TEST_DATA.events),
+    0,
+    Math.floor(Math.random() * 10)
+  );
+  console.log({ randomSampleOfEvents });
   return (
     <React.Fragment>
       <div className="max-w-4xl mx-auto mt-8 mb-16 px-8">
         <h1 className="text-logo text-6xl mb-8 leading-none">
           Campus Gaming Network
         </h1>
-        <h2 className="text-3xl text-gray-600">
+        <h2 className="text-3xl leading-tight text-gray-600">
           Connect with other collegiate gamers for casual or competitive gaming
           at your school or nearby.
         </h2>
@@ -331,71 +158,70 @@ const Home = props => {
         <h3 className="text-3xl font-semibold">
           Upcoming events near Chicago, IL
         </h3>
-        <section>
+        {!randomSampleOfEvents.length ? (
+          <p className="text-gray-400 text-lg">
+            There are no upcoming events coming up.
+          </p>
+        ) : (
           <ul>
-            {TEST_DATA.events.map((event, i) => (
+            {sortedEvents(randomSampleOfEvents).map((event, i) => (
               <EventListItem
-                key={event.schoolId + event.id}
+                key={event.id}
                 isFirst={i === 0}
                 isLoggedIn={props.isLoggedIn}
-                event
+                event={event}
               />
             ))}
             <li className="flex items-center py-4 text-lg">
-              <Link to="events" className={DEFAULT_LINK_CLASSNAMES}>
+              <Link to="events" className={STYLES.LINK.DEFAULT}>
                 See all upcoming events around Chicago, IL
               </Link>
             </li>
           </ul>
-        </section>
+        )}
       </article>
     </React.Fragment>
   );
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// EventListItem
+
 const EventListItem = props => {
-  const [currResponse, setResponse] = React.useState(props.response);
-
-  const toggleResponse = nextResponse => {
-    if (currResponse === nextResponse) {
-      setResponse("");
-    } else {
-      setResponse(nextResponse);
-    }
-  };
-
   if (!props.event) {
+    // TODO: Handle gracefully
+    console.log("no event");
     return null;
   }
 
-  const school = TEST_DATA.schools.find(
-    school => school.id === props.event.schoolId
-  );
+  const school = TEST_DATA.schools[props.event.schoolId];
 
   if (!school) {
+    // TODO: Handle gracefully
+    console.log("no school");
     return null;
   }
 
+  const eventResponses = getEventResponses(props.event.index);
+
+  console.log({ eventResponses });
+
   return (
-    <li
-      className={`flex items-center border-4 bg-white rounded-lg mt-4 py-6 px-8 ${
-        !props.isFirst ? "border-t-4" : ""
-      }`}
-    >
-      <div className="flex-initial">
+    <li className="flex items-center bg-gray-200 border-4 rounded-lg mt-4 py-6 px-8">
+      <div className="flex-initial w-full">
         <div className="flex items-center">
-          <div>
+          <div className="pr-2">
             <Link
-              to={school.url}
-              className={`${DEFAULT_LINK_CLASSNAMES} text-xl`}
+              to={`school/${school.id}`}
+              className={`${STYLES.LINK.DEFAULT} text-xl leading-none`}
             >
               {school.name}
             </Link>
             <Link
-              to={props.url}
-              className={`${DEFAULT_LINK_CLASSNAMES} block font-semibold text-3xl`}
+              to={`event/${props.event.id}`}
+              className={`${STYLES.LINK.DEFAULT} block font-semibold text-3xl mt-1 leading-none`}
             >
-              {props.title}
+              {props.event.title}
             </Link>
           </div>
           <img
@@ -406,8 +232,8 @@ const EventListItem = props => {
         </div>
         <div className="block pb-1 mt-4">
           <FontAwesomeIcon icon={faCalendar} className="text-gray-700 mr-2" />
-          <time className="text-lg" dateTime={props.event.dateTime}>
-            {props.event.formattedDateTime}
+          <time className="text-lg" dateTime={props.event.startDateTime}>
+            {moment(props.event.startDateTime).format(MOMENT_DISPLAY_FORMAT)}
           </time>
         </div>
         <div className="block pb-2 mb-4 text-lg">
@@ -415,160 +241,119 @@ const EventListItem = props => {
             icon={faMapMarkerAlt}
             className="text-gray-700 mr-2"
           />
-          {props.event.address ? (
-            <OutsideLink href={props.event.addressLink}>
-              {props.event.address}
+          {props.event.location ? (
+            <OutsideLink
+              href={`${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
+                props.event.location
+              )}`}
+            >
+              {props.event.location}
             </OutsideLink>
           ) : (
             <span>To be determined</span>
           )}
         </div>
-        <p className="text-lg">{truncate(props.event.description, 250)}</p>
-        <div className="pt-4">
-          <FontAwesomeIcon
-            icon={faUserFriends}
-            className="text-gray-700 mr-2"
-          />
-          <span>{props.event.going} Going</span>
-        </div>
-        {props.event.isLoggedIn && (
-          <div className="pt-8">
-            <Button
-              type="button"
-              onClick={() => toggleResponse("yes")}
-              variant={currResponse === "yes" ? "teal" : ""}
-            >
-              Going
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={`ml-2 ${
-                  currResponse === "yes" ? "text-teal-800" : "text-gray-800"
-                }`}
-              />
-            </Button>
-            <Button
-              type="button"
-              onClick={() => toggleResponse("maybe")}
-              variant={currResponse === "maybe" ? "yellow" : ""}
-              className="ml-4"
-            >
-              Interested
-              <FontAwesomeIcon
-                icon={faStar}
-                className={`ml-2 ${
-                  currResponse === "maybe" ? "text-yellow-800" : "text-gray-800"
-                }`}
-              />
-            </Button>
+        <p className="text-lg">{_.truncate(props.event.description, 250)}</p>
+        {eventResponses.length ? (
+          <div className="pt-4">
+            <FontAwesomeIcon
+              icon={faUserFriends}
+              className="text-gray-700 mr-2"
+            />
+            <span>{eventResponses.length} Going</span>
           </div>
-        )}
+        ) : null}
       </div>
     </li>
   );
 };
 
-const OutsideLink = ({ children, className, ...rest }) => {
-  return (
-    <a
-      {...rest}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={DEFAULT_LINK_CLASSNAMES}
-    >
-      {children}
-    </a>
-  );
-};
-
-const Button = ({ children, variant = "", className = "", ...rest }) => {
-  const variants = {
-    teal: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700",
-    yellow:
-      "bg-yellow-100 border-yellow-500 hover:bg-yellow-200 text-yellow-900",
-    default: "bg-white border-gray-400 hover:bg-gray-200 text-gray-900"
-  };
-  const defaultClass = `${
-    variants[variant || "default"]
-  } border-2 font-semibold py-2 px-4 rounded-lg`;
-
-  return (
-    <button {...rest} className={[defaultClass, className].join(" ")}>
-      {children}
-    </button>
-  );
-};
+////////////////////////////////////////////////////////////////////////////////
+// School
 
 const School = props => {
-  console.log(props);
   const school = TEST_DATA.schools.find(school => school.id === props.id);
 
   if (!school) {
+    // TODO: Handle gracefully
+    console.log("no school");
     return null;
   }
 
   return (
-    <article className="max-w-4xl mx-auto mt-8 mb-16 px-8">
-      <div className="flex items-center">
+    <article className="max-w-4xl mx-auto mt-8 mb-16 text-xl">
+      <header className="flex items-center">
         <img
           src={school.logo}
           alt={`${school.name} school logo`}
-          className="w-auto ml-auto h-24"
+          className="h-auto w-40 rounded-full border-4 border-gray-300"
         />
-        <div>
-          <h1 className="font-bold text-5xl mb-2">{school.name}</h1>
-        </div>
-      </div>
+        <section className="pl-12">
+          <h1 className="text-5xl font-bold leading-none pb-4 flex items-center">
+            {school.name}
+          </h1>
+        </section>
+      </header>
     </article>
   );
 };
 
-const VisuallyHidden = props => {
-  return <span className="visually-hidden" {...props} />;
-};
+////////////////////////////////////////////////////////////////////////////////
+// User
 
 const User = props => {
-  console.log(props);
   const user = TEST_DATA.users.find(user => user.id === props.id);
 
   if (!user) {
+    // TODO: Handle gracefully
+    console.log("no user");
     return null;
   }
 
+  const school = TEST_DATA.schools[user.schoolId];
+
+  if (!school) {
+    // TODO: Handle gracefully
+    console.log("no school");
+    return null;
+  }
+
+  const eventResponses = getEventResponses(user.index, "userId");
+
+  const events = getEventsByResponses(eventResponses);
+
   return (
-    <article className="max-w-4xl mx-auto mt-8 mb-16 text-lg">
+    <article className="max-w-4xl mx-auto mt-8 mb-16 text-xl">
       <header className="flex items-center">
         <img
-          className="h-auto w-40 rounded-full border-4 border-gray-300"
-          src="https://randomuser.me/api/portraits/lego/8.jpg"
+          className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
+          src={user.picture}
           alt=""
         />
         <section className="pl-12">
-          <h1 className="text-4xl font-bold leading-none pb-4 flex items-center">
+          <h1 className="text-5xl font-bold leading-none pb-4 flex items-center">
             {user.firstName}
             {user.lastName ? ` ${user.lastName}` : ""}
             {user.isVerifiedStudent && (
               <span className="text-base">
                 <VisuallyHidden>User is a verified student</VisuallyHidden>
-                <FontAwesomeIcon
-                  className="ml-4 text-2xl text-blue-600"
-                  icon={faStar}
-                />
+                <FontAwesomeIcon className="ml-4 text-blue-600" icon={faStar} />
               </span>
             )}
           </h1>
           <h2 className="italic">
             {`${
-              user.status === "Alumni"
+              user.status === "ALUMNI"
                 ? "Alumni of "
-                : user.status === "Grad"
+                : user.status === "GRAD"
                 ? "Graduate Student at "
-                : `${user.status} at `
+                : `${_.capitalize(user.status)} at `
             }`}
             <Link
-              to={`/schools/${user.school.abbreviation}`}
-              className={DEFAULT_LINK_CLASSNAMES}
+              to={`/schools/${school.abbreviation}`}
+              className={STYLES.LINK.DEFAULT}
             >
-              {user.school.name}
+              {school.name}
             </Link>
           </h2>
         </section>
@@ -578,141 +363,233 @@ const User = props => {
         <p className="pt-1">{user.bio}</p>
       </section>
       <section className="pt-12">
-        <h4 className="font-bold uppercase text-sm pb-4">Information</h4>
+        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+          Information
+        </h4>
         <dl className="flex flex-wrap w-full">
-          {user.hometown && (
-            <React.Fragment>
-              <dt className="w-1/2">Hometown</dt>
-              <dd className="w-1/2">{user.hometown}</dd>
-            </React.Fragment>
+          <dt className="w-1/2 font-bold">Hometown</dt>
+          {user.hometown ? (
+            <dd className="w-1/2">{user.hometown}</dd>
+          ) : (
+            <dd className="w-1/2 text-gray-400">Nothing set</dd>
           )}
-          <dt className="w-1/2">Major</dt>
+          <dt className="w-1/2 font-bold">Major</dt>
           {user.major ? (
             <dd className="w-1/2">{user.major}</dd>
           ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            <dd className="w-1/2 text-gray-400">Nothing set</dd>
           )}
-          <dt className="w-1/2">Minor</dt>
+          <dt className="w-1/2 font-bold">Minor</dt>
           {user.minor ? (
             <dd className="w-1/2">{user.minor}</dd>
           ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            <dd className="w-1/2 text-gray-400">Nothing set</dd>
           )}
         </dl>
       </section>
       <section className="pt-12">
-        <h4 className="font-bold uppercase text-sm pb-4">Game Accounts</h4>
-        <dl className="flex flex-wrap w-full">
-          {user.gameAccounts.map(account => (
-            <React.Fragment key={account.name}>
-              <dt className="w-1/2">{account.name}</dt>
-              <dd className="w-1/2">{account.value}</dd>
-            </React.Fragment>
-          ))}
-        </dl>
+        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+          Game Accounts
+        </h4>
+        {user.gameAccounts.length ? (
+          <dl className="flex flex-wrap w-full">
+            {user.gameAccounts.map(account => (
+              <React.Fragment key={account.name}>
+                <dt className="w-1/2 font-bold">{account.name}</dt>
+                <dd className="w-1/2">{account.value}</dd>
+              </React.Fragment>
+            ))}
+          </dl>
+        ) : (
+          <p className="text-gray-400">
+            This user has not added any game accounts.
+          </p>
+        )}
       </section>
       <section className="pt-12">
-        <h4 className="font-bold uppercase text-sm pb-4">Events Attending</h4>
-        <p className="text-gray-500">
-          This user is currently not attending any upcoming events.
-        </p>
+        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+          Events Attending
+        </h4>
+        {events.length ? (
+          <ul>
+            {sortedEvents(events).map(event => (
+              <li key={event.id} className="mb-4 flex items-center">
+                <img
+                  src={school.logo}
+                  alt={`${school.name} Logo`}
+                  className="w-12 mr-4 h-12"
+                />
+                <div className="leading-none">
+                  <Link
+                    to={`../../school/${school.id}`}
+                    className={`${STYLES.LINK.DEFAULT} text-sm`}
+                  >
+                    {school.name}
+                  </Link>
+                  <Link
+                    to={`../../event/${event.id}`}
+                    className={`${STYLES.LINK.DEFAULT} block font-semibold text-lg mt-1`}
+                  >
+                    {event.title}
+                  </Link>
+                  <div className="block text-xs mt-2">
+                    <FontAwesomeIcon
+                      icon={faCalendar}
+                      className="text-gray-700 mr-2"
+                    />
+                    <time className="" dateTime={event.startDateTime}>
+                      {moment(event.startDateTime).format(
+                        MOMENT_DISPLAY_FORMAT
+                      )}
+                    </time>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-400">
+            This user is currently not attending any upcoming events.
+          </p>
+        )}
       </section>
       <section className="pt-12">
-        <h4 className="font-bold uppercase text-sm pb-4">Currently Playing</h4>
-        <ul className=" flex flex-wrap">
-          {user.currentlyPlaying.map(game => (
-            <li key={game.name} className="w-1/5">
-              <img
-                className="rounded h-40 shadow-lg"
-                src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
-                alt={`The cover art for ${game.name}`}
-              />
-            </li>
-          ))}
-        </ul>
+        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+          Currently Playing
+        </h4>
+        {user.currentlyPlaying.length ? (
+          <ul className=" flex flex-wrap">
+            {user.currentlyPlaying.map(game => (
+              <li key={game.name} className="w-1/5">
+                <img
+                  className="rounded h-40 shadow-lg"
+                  src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                  alt={`The cover art for ${game.name}`}
+                />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-400">This user has not added any games.</p>
+        )}
       </section>
       <section className="pt-12">
-        <h4 className="font-bold uppercase text-sm pb-4">Favorite Games</h4>
-        <ul className="flex flex-wrap">
-          {user.favoriteGames.map(game => (
-            <li key={game.name} className="w-1/5">
-              <img
-                className="rounded h-40 shadow-lg"
-                src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
-                alt={`The cover art for ${game.name}`}
-              />
-            </li>
-          ))}
-        </ul>
+        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+          Favorite Games
+        </h4>
+        {user.favoriteGames.length ? (
+          <ul className="flex flex-wrap">
+            {user.favoriteGames.map(game => (
+              <li key={game.name} className="w-1/5">
+                <img
+                  className="rounded h-40 shadow-lg"
+                  src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                  alt={`The cover art for ${game.name}`}
+                />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-400">This user has not added any games.</p>
+        )}
       </section>
     </article>
   );
 };
 
-const SchoolEvent = props => {
-  console.log(props);
+////////////////////////////////////////////////////////////////////////////////
+// Event
+
+const Event = props => {
   const event = TEST_DATA.events.find(event => event.id === props.id);
 
   if (!event) {
+    // TODO: Handle gracefully
+    console.log("no event");
     return null;
   }
 
-  const school = TEST_DATA.schools.find(school => school.id === event.schoolId);
+  const school = TEST_DATA.schools[event.schoolId];
+
+  if (!school) {
+    // TODO: Handle gracefully
+    console.log("no school");
+    return null;
+  }
+
+  const eventResponses = getEventResponses(event.index);
+
+  const eventGoers = getEventGoers(eventResponses);
 
   return (
-    <article className="max-w-4xl mx-auto mt-8 mb-16 px-8">
+    <article className="max-w-4xl mx-auto mt-8 mb-16 px-8 text-xl">
       <div className="flex items-center">
-        <div>
+        <div className="pr-2">
           <Link
-            to={`../../../${school.url}`}
-            className={`${DEFAULT_LINK_CLASSNAMES} text-xl`}
+            to={`../../../school/${school.id}`}
+            className={`${STYLES.LINK.DEFAULT} text-lg`}
           >
             {school.name}
           </Link>
-          <h1 className="font-bold text-5xl mb-2">{event.title}</h1>
+          <h1 className="font-bold text-5xl mb-2 leading-none">
+            {event.title}
+          </h1>
         </div>
         <img
           src={school.logo}
           alt={`${school.name} school logo`}
-          className="w-auto ml-auto h-24"
+          className="w-auto ml-auto bg-gray-400 h-24"
         />
       </div>
-      <div className="block pb-1 mt-4 text-2xl">
+      <div className="block pb-1 mt-4">
         <FontAwesomeIcon
           icon={faCalendar}
-          className="text-gray-700 mr-2 text-xl"
+          className="text-gray-700 mr-2 text-lg"
         />
-        <time dateTime={event.dateTime}>{event.formattedDateTime}</time>
+        <time dateTime={event.startDateTime}>
+          {moment(event.startDateTime).format(MOMENT_DISPLAY_FORMAT)}
+        </time>
       </div>
-      <div className="block pb-2 text-2xl">
+      <div className="block pb-2">
         <FontAwesomeIcon
           icon={faMapMarkerAlt}
-          className="text-gray-700 mr-2 text-xl"
+          className="text-gray-700 mr-2 text-lg"
         />
-        {event.address ? (
-          <OutsideLink href={event.addressLink}>{event.address}</OutsideLink>
+        {event.location ? (
+          <OutsideLink
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              event.location
+            )}`}
+          >
+            {event.location}
+          </OutsideLink>
         ) : (
           <span>To be determined</span>
         )}
       </div>
       <section className="mt-8">
-        <h2 className="text-2xl font-bold">Event Details</h2>
-        <p className="text-2xl pt-4">{event.description}</p>
-        <h3 className="text-2xl font-bold pt-12">{event.going} people going</h3>
+        <h2 className="font-bold">Event Details</h2>
+        <p className="pt-4">{event.description}</p>
+        {eventResponses.length ? (
+          <h3 className="font-bold pt-12">
+            {eventResponses.length}{" "}
+            {eventResponses.length === 1 ? "person going" : "people going"}
+          </h3>
+        ) : null}
         <ul className="flex flex-wrap pt-4">
-          {TEST_DATA.users.map(user => (
+          {eventGoers.map(user => (
             <li key={user.id} className="w-1/3 md:w-1/4">
-              <div className="flex flex-col items-center justify-around pt-6 pb-1 my-4 mr-4 bg-white border-4 rounded-lg">
+              <div className="flex flex-col items-center justify-around pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg">
                 <img
-                  className="w-20 rounded-full"
+                  className="w-20 h-20 bg-gray-400 rounded-full"
                   src={user.picture}
-                  alt={`Avatar for ${user.name}`}
+                  alt={`Avatar for ${user.fullName}`}
                 />
                 <Link
                   to={`../../../user/${user.id}`}
-                  className={`${DEFAULT_LINK_CLASSNAMES} m-4 mt-8 leading-tight font-bold text-center`}
+                  className={`${STYLES.LINK.DEFAULT} text-base m-4 mt-8 leading-tight font-bold text-center`}
                 >
-                  {user.name}
+                  {user.fullName}
                 </Link>
               </div>
             </li>
@@ -723,12 +600,104 @@ const SchoolEvent = props => {
   );
 };
 
-const truncate = (str, length = 100, ending = "...") => {
-  if (str.length > length) {
-    return str.substring(0, length - ending.length) + ending;
-  } else {
-    return str;
-  }
+////////////////////////////////////////////////////////////////////////////////
+// OutsideLink
+
+const OutsideLink = ({ children, className, ...rest }) => {
+  return (
+    <a
+      {...rest}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={STYLES.LINK.DEFAULT}
+    >
+      {children}
+    </a>
+  );
 };
 
-export default App;
+////////////////////////////////////////////////////////////////////////////////
+// Button
+
+const Button = ({ children, variant = "", className = "", ...rest }) => {
+  const defaultClass = `${
+    STYLES.BUTTON[variant.toUpperCase() || STYLES.BUTTON.DEFAULT]
+  } border-2 font-semibold py-2 px-4 rounded-lg`;
+
+  return (
+    <button {...rest} className={[defaultClass, className].join(" ")}>
+      {children}
+    </button>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// VisuallyHidden
+
+const VisuallyHidden = props => {
+  return <span className="visually-hidden" {...props} />;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// ScrollToTop
+
+const ScrollToTop = ({ children, location }) => {
+  React.useEffect(() => window.scrollTo(0, 60), [location.pathname]);
+  return children;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Utilities
+
+const getEventResponses = function getEventResponses(id, field = "eventId") {
+  return TEST_DATA.event_responses.filter(function(event_response) {
+    return event_response[field] === id;
+  });
+};
+
+const getEventGoers = function getEventGoers(eventResponses) {
+  return TEST_DATA.users.filter(function(user) {
+    return eventResponses.find(function(eventResponse) {
+      return eventResponse.userId === user.index;
+    });
+  });
+};
+
+const getEventsByResponses = function getEventsByResponses(eventResponses) {
+  return TEST_DATA.events.filter(function(event) {
+    return eventResponses.find(function(eventResponse) {
+      return eventResponse.eventId === event.index;
+    });
+  });
+};
+
+const sortedEvents = function sortedEvents(events) {
+  return _.orderBy(
+    events,
+    function(event) {
+      return moment(moment(event.startDateTime));
+    },
+    ["desc"]
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Constants
+
+const MOMENT_DISPLAY_FORMAT = "ddd, MMM Do hh:mm a";
+
+const GOOGLE_MAPS_QUERY_URL =
+  "https://www.google.com/maps/search/?api=1&query=";
+
+const STYLES = {
+  BUTTON: {
+    DEFAULT: "bg-white border-gray-400 hover:bg-gray-200 text-gray-900",
+    YELLOW:
+      "bg-yellow-100 border-yellow-500 hover:bg-yellow-200 text-yellow-900",
+    TEAL: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700"
+  },
+  LINK: {
+    DEFAULT:
+      "font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+  }
+};
