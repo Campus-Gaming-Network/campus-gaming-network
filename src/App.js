@@ -5,11 +5,12 @@ import {
   faBars,
   faTimes,
   faMapMarkerAlt,
-  faCalendar,
   faUserFriends,
   faStar,
-  faHeartBroken
+  faHeartBroken,
+  faHome
 } from "@fortawesome/free-solid-svg-icons";
+import { faClock } from "@fortawesome/free-regular-svg-icons";
 import _ from "lodash";
 import moment from "moment";
 import { ReactComponent as Logo } from "./logo.svg";
@@ -72,7 +73,9 @@ const STYLES = {
     DEFAULT: "bg-white border-gray-400 hover:bg-gray-200 text-gray-900",
     YELLOW:
       "bg-yellow-100 border-yellow-500 hover:bg-yellow-200 text-yellow-900",
-    TEAL: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700"
+    TEAL: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700",
+    INDIGO:
+      "bg-indigo-100 border-indigo-700 hover:bg-indigo-200 text-indigo-700"
   },
   LINK: {
     DEFAULT:
@@ -117,10 +120,14 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-blue-700">
+      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-indigo-800">
         <div className="flex items-center justify-between px-4 py-3 sm:p-0">
-          <Link to="/">
-            <Logo className="h-16" />
+          <Link
+            to="/"
+            className="active:outline text-gray-200 hover:text-gray-300 hover:underline focus:underline flex items-center text-3xl"
+          >
+            <FontAwesomeIcon icon={faHome} />
+            <span className="font-medium pl-4 text-logo">CGN</span>
           </Link>
           <div className="sm:hidden ml-auto">
             <button
@@ -190,8 +197,8 @@ const App = () => {
             <Home path="/" {...authProps} />
             <User path="user/:id" {...authProps} />
             <School path="school/:id" {...authProps} />
-            <Event path="/event/:id" {...authProps} />
-            <NotFound default {...authProps} />
+            <Event path="event/:id" {...authProps} />
+            <NotFound default />
           </ScrollToTop>
         </Router>
       </main>
@@ -234,7 +241,7 @@ const Home = props => {
           Upcoming events near Chicago, IL
         </h3>
         {!randomSampleOfEvents.length ? (
-          <p className="text-gray-500">
+          <p className="text-gray-500 text-2xl">
             There are no upcoming events coming up.
           </p>
         ) : (
@@ -291,7 +298,7 @@ const School = props => {
         <p className="pt-1">{school.description}</p>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
           Information
         </h4>
         <dl className="flex flex-wrap w-full">
@@ -333,7 +340,7 @@ const School = props => {
         </dl>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600">
+        <h4 className="font-bold uppercase text-sm text-indigo-700">
           Upcoming Events
         </h4>
         {events.length ? (
@@ -349,7 +356,7 @@ const School = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600">Members</h4>
+        <h4 className="font-bold uppercase text-sm text-indigo-700">Members</h4>
         <ul className="flex flex-wrap pt-4">
           {users.map(user => (
             <li key={user.id} className="w-1/3 md:w-1/4">
@@ -436,10 +443,10 @@ const User = props => {
       </header>
       <PageSection>
         <VisuallyHidden>Biography</VisuallyHidden>
-        <p className="pt-1">{user.bio}</p>
+        {user.bio ? <p className="pt-1">{user.bio}</p> : null}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
           Information
         </h4>
         <dl className="flex flex-wrap w-full">
@@ -464,7 +471,7 @@ const User = props => {
         </dl>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
           Game Accounts
         </h4>
         {user.gameAccounts.length ? (
@@ -483,7 +490,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
           Currently Playing
         </h4>
         {user.currentlyPlaying.length ? (
@@ -503,7 +510,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-gray-600">
+        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
           Favorite Games
         </h4>
         {user.favoriteGames.length ? (
@@ -523,7 +530,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600">
+        <h4 className="font-bold uppercase text-sm text-indigo-700">
           Events Attending
         </h4>
         {events.length ? (
@@ -566,6 +573,47 @@ const Event = props => {
 
   const eventGoers = getEventGoers(eventResponses);
 
+  const hasResponded = TEST_DATA.event_responses.some(
+    eventResponse =>
+      eventResponse.userId === testUser.index && eventResponse.id === event.id
+  );
+
+  console.log({ hasResponded });
+
+  const handleAttendSubmit = () => {
+    if (!hasResponded) {
+      const maxIndex = _.maxBy(TEST_DATA.event_responses, "index").index;
+      console.log(maxIndex);
+      TEST_DATA.event_responses = [
+        ...TEST_DATA.event_responses,
+        [
+          {
+            id: Math.random(),
+            index: maxIndex + 1,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            eventId: event.index,
+            userId: testUser.index,
+            response: "YES"
+          }
+        ]
+      ];
+    }
+  };
+
+  const handleCancelSubmit = () => {
+    const response = window.confirm(
+      "Are you sure you want to cancel your RSVP?"
+    );
+    if (response) {
+      console.log("Confirmed");
+    } else {
+      console.log("Cancelled");
+    }
+  };
+
+  console.log(TEST_DATA);
+
   return (
     <PageWrapper>
       <div className="flex items-center">
@@ -588,11 +636,15 @@ const Event = props => {
       </div>
       <div className="block pb-1 mt-4">
         <FontAwesomeIcon
-          icon={faCalendar}
+          icon={faClock}
           className="text-gray-700 mr-2 text-lg"
         />
         <time dateTime={event.startDateTime}>
           {moment(event.startDateTime).calendar(null, MOMENT_CALENDAR_FORMAT)}
+        </time>{" "}
+        to{" "}
+        <time dateTime={event.endDateTime}>
+          {moment(event.endDateTime).calendar(null, MOMENT_CALENDAR_FORMAT)}
         </time>
       </div>
       <div className="block pb-2">
@@ -613,10 +665,30 @@ const Event = props => {
         )}
       </div>
       <PageSection>
+        {hasResponded ? (
+          <form onSubmit={handleAttendSubmit}>
+            <Button variant="indigo" type="submit">
+              Attend Event
+            </Button>
+          </form>
+        ) : (
+          <form onSubmit={handleCancelSubmit}>
+            <div className="bg-green-200 text-green-800 rounded-lg px-8 py-4">
+              <span className="font-bold block text-2xl">You're going!</span>
+              <button type="submit" className="text-base">
+                Cancel your RSVP
+              </button>
+            </div>
+          </form>
+        )}
+      </PageSection>
+      <PageSection>
         <h2 className="font-bold">Event Details</h2>
         <p className="pt-4">{event.description}</p>
+      </PageSection>
+      <PageSection>
         {eventResponses.length ? (
-          <h3 className="font-bold pt-12">
+          <h3 className="font-bold">
             {eventResponses.length}{" "}
             {eventResponses.length === 1 ? "person going" : "people going"}
           </h3>
@@ -680,7 +752,7 @@ const EventListItem = props => {
   const eventResponses = getEventResponses(props.event.index);
 
   return (
-    <li className="flex items-center bg-gray-200 border-4 rounded-lg mt-4 py-6 px-8">
+    <li className="flex items-center bg-white border-4 rounded-lg mt-4 py-6 px-8">
       <div className="flex-initial w-full">
         <div className="flex items-center">
           <div className="pr-2">
@@ -704,7 +776,7 @@ const EventListItem = props => {
           />
         </div>
         <div className="block pb-1 mt-4">
-          <FontAwesomeIcon icon={faCalendar} className="text-gray-700 mr-2" />
+          <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />
           <time className="text-lg" dateTime={props.event.startDateTime}>
             {moment(props.event.startDateTime).calendar(
               null,
