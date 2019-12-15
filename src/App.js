@@ -1,5 +1,8 @@
 import React from "react";
-import { Router, Link } from "@reach/router";
+import { Router, Link, Redirect } from "@reach/router";
+import { SkipNavLink, SkipNavContent } from "@reach/skip-nav";
+import { Alert as ReachAlert } from "@reach/alert";
+import "@reach/skip-nav/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
@@ -8,7 +11,8 @@ import {
   faUserFriends,
   faStar,
   faHeartBroken,
-  faHome
+  faHome,
+  faExclamationTriangle
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import _ from "lodash";
@@ -52,7 +56,7 @@ const sortedEvents = function sortedEvents(events) {
   );
 };
 
-const classNames = function classNamess(_classNames = []) {
+const classNames = function classNames(_classNames = []) {
   return _classNames.join(" ");
 };
 
@@ -75,11 +79,26 @@ const STYLES = {
       "bg-yellow-100 border-yellow-500 hover:bg-yellow-200 text-yellow-900",
     TEAL: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700",
     INDIGO:
-      "bg-indigo-100 border-indigo-700 hover:bg-indigo-200 text-indigo-700"
+      "bg-indigo-100 border-indigo-700 hover:bg-indigo-200 text-indigo-700",
+    PURPLE:
+      "bg-purple-100 border-purple-700 focus:bg-purple-200 hover:bg-purple-200 text-purple-700"
   },
   LINK: {
     DEFAULT:
       "font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+  },
+  INPUT: {
+    DEFAULT:
+      "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500"
+  },
+  SELECT: {
+    DEFAULT:
+      "block appearance-none w-full bg-gray-200 border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:bg-white focus:border-purple-500"
+  },
+  ALERT: {
+    DEFAULT: "bg-gray-200 text-gray-800",
+    YELLOW: "bg-yellow-200 text-yellow-800",
+    GREEN: "bg-green-200 text-green-800"
   }
 };
 
@@ -108,7 +127,7 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
   const toggledLoggedIn = () => setIsLoggedIn(!isLoggedIn);
 
@@ -120,7 +139,8 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-indigo-800">
+      <SkipNavLink />
+      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-purple-800 border-b-2">
         <div className="flex items-center justify-between px-4 py-3 sm:p-0">
           <Link
             to="/"
@@ -176,28 +196,36 @@ const App = () => {
           ) : (
             <React.Fragment>
               <Link
-                to="login"
-                className="text-xl block mx-3 py-1 active:outline font-medium sm:rounded-none rounded font-bold text-gray-200 hover:text-gray-300 hover:underline focus:underline"
+                to="/login"
+                className="text-xl block mx-3 py-1 active:outline sm:rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
-                Log in
+                Log In
               </Link>
               <Link
-                to="signup"
-                className="text-xl mt-1 block mx-3 py-1 font-medium sm:rounded-none rounded font-bold text-gray-200 hover:text-gray-300 hover:underline focus:underline sm:mt-0 sm:ml-2"
+                to="/register"
+                className="text-xl mt-1 block mx-3 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
               >
-                Sign up
+                Sign Up Free
               </Link>
             </React.Fragment>
           )}
         </nav>
       </header>
       <main className="pb-12">
+        <SkipNavContent />
         <Router>
           <ScrollToTop default>
             <Home path="/" {...authProps} />
             <User path="user/:id" {...authProps} />
             <School path="school/:id" {...authProps} />
             <Event path="event/:id" {...authProps} />
+            <Signup path="register" {...authProps} />
+            <Login path="login" {...authProps} />
+            <ForgotPassword path="forgot-password" {...authProps} />
+            <PasswordConfirmation
+              path="forgot-password-confirm"
+              {...authProps}
+            />
             <NotFound default />
           </ScrollToTop>
         </Router>
@@ -222,12 +250,386 @@ const App = () => {
 export default App;
 
 ////////////////////////////////////////////////////////////////////////////////
+// Signup
+
+const Signup = props => {
+  if (props.isLoggedIn) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log("Submitted!");
+  };
+
+  return (
+    <PageWrapper>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
+      >
+        <h1 className="text-5xl font-bold leading-none flex items-center">
+          Create an account
+        </h1>
+        <hr className="my-12" />
+        <div className="md:flex md:items mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="username"
+          >
+            Username
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="username"
+            name="username"
+            type="text"
+            placeholder="jdoe123"
+            required
+          />
+        </div>
+        <div className="md:flex md:items mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="first-name"
+          >
+            First Name
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="first-name"
+            name="first-name"
+            type="text"
+            placeholder="Jane"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="last-name"
+          >
+            Last Name
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="last-name"
+            name="last-name"
+            type="text"
+            placeholder="Doe"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="email"
+          >
+            Email
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="email"
+            name="email"
+            type="email"
+            placeholder="jdoe123@gmail.com"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="password"
+            name="password"
+            type="password"
+            placeholder="******************"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="school"
+          >
+            School
+          </label>
+          <Select
+            id="school"
+            required
+            options={[
+              { value: "", label: "Select your school" },
+              ...TEST_DATA.schools.map(school => ({
+                value: school.id,
+                label: school.name
+              }))
+            ]}
+          />
+        </div>
+        <div className="md:flex md:items-center">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="status"
+          >
+            Status
+          </label>
+          <Select
+            id="status"
+            required
+            options={[
+              { value: "", label: "Select your status" },
+              { value: "FRESHMAN", label: "Freshman" },
+              { value: "SOPHMORE", label: "Sophmore" },
+              { value: "JUNIOR", label: "Junior" },
+              { value: "SENIOR", label: "Senior" },
+              { value: "GRAD", label: "Grad" },
+              { value: "ALUMNI", label: "Alumni" },
+              { value: "FACULTY", label: "Faculty" },
+              { value: "OTHER", label: "Other" }
+            ]}
+          />
+        </div>
+        <Button variant="purple" type="submit" className="my-12 w-full">
+          Sign Up
+        </Button>
+        <p>
+          Already a member?{" "}
+          <Link to="/login" className={STYLES.LINK.DEFAULT}>
+            Log in
+          </Link>
+        </p>
+      </form>
+    </PageWrapper>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Login
+
+const Login = props => {
+  if (props.isLoggedIn) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log("Submitted!");
+  };
+
+  return (
+    <PageWrapper>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
+      >
+        <h1 className="text-5xl font-bold leading-none mb-4">Welcome back!</h1>
+        <p className="text-gray-600">Log in to your account</p>
+        <hr className="my-12" />
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="email"
+          >
+            Email
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="email"
+            name="email"
+            type="email"
+            placeholder="jdoe123@gmail.com"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="password"
+            name="password"
+            type="password"
+            placeholder="******************"
+            required
+          />
+        </div>
+        <Button variant="purple" type="submit" className="my-12 w-full">
+          Log In
+        </Button>
+        <div className="flex items-center justify-between">
+          <p>
+            Don't have an account?{" "}
+            <Link to="/register" className={STYLES.LINK.DEFAULT}>
+              Create one
+            </Link>
+          </p>
+          <Link to="/forgot-password" className={`${STYLES.LINK.DEFAULT}`}>
+            Forgot your password?
+          </Link>
+        </div>
+      </form>
+    </PageWrapper>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// ForgotPassword
+
+const ForgotPassword = props => {
+  if (props.isLoggedIn) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log("Submitted!");
+  };
+
+  return (
+    <PageWrapper>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
+      >
+        <h1 className="text-5xl font-bold leading-none mb-4">
+          Reset your password
+        </h1>
+        <p className="text-gray-600">
+          Enter the email you use for Campus Gaming Network, and we’ll help you
+          create a new password.
+        </p>
+        <hr className="my-12" />
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="email"
+          >
+            Email
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="email"
+            name="email"
+            type="email"
+            placeholder="jdoe123@gmail.com"
+            required
+          />
+        </div>
+        <Button variant="purple" type="submit" className="my-12 w-full">
+          Send Instructions
+        </Button>
+        <div className="flex items-center justify-between">
+          <p>
+            Go back to{" "}
+            <Link to="/login" className={STYLES.LINK.DEFAULT}>
+              Login page
+            </Link>
+            .
+          </p>
+        </div>
+      </form>
+    </PageWrapper>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// PasswordConfirmation
+
+const PasswordConfirmation = props => {
+  if (props.isLoggedIn) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log("Submitted!");
+  };
+
+  return (
+    <PageWrapper>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
+      >
+        <Alert variant="yellow">
+          <p className="font-medium">
+            <FontAwesomeIcon icon={faExclamationTriangle} className="mr-4" />
+            Please check your email (jdoe@gmail.com) for a confirmation code.
+          </p>
+        </Alert>
+        <hr className="my-12" />
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="code"
+          >
+            Confirmation Code
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="code"
+            name="code"
+            type="text"
+            placeholder="12345"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="password"
+          >
+            New Password
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="password"
+            name="password"
+            type="password"
+            placeholder="******************"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <label
+            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+            htmlFor="confirm-password"
+          >
+            Confirm Password
+          </label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="confirm-password"
+            name="confirm-password"
+            type="password"
+            placeholder="******************"
+            required
+          />
+        </div>
+        <Button variant="purple" type="submit" className="my-12 w-full">
+          Confirm Password Reset
+        </Button>
+      </form>
+    </PageWrapper>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // Home
 
 const Home = props => {
   return (
     <PageWrapper>
-      <PageSection>
+      <PageSection className="pt-0">
         <h1 className="text-logo text-6xl mb-8 leading-none">
           Campus Gaming Network
         </h1>
@@ -298,7 +700,7 @@ const School = props => {
         <p className="pt-1">{school.description}</p>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
+        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
           Information
         </h4>
         <dl className="flex flex-wrap w-full">
@@ -340,7 +742,7 @@ const School = props => {
         </dl>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-indigo-700">
+        <h4 className="font-bold uppercase text-sm text-purple-700">
           Upcoming Events
         </h4>
         {events.length ? (
@@ -356,7 +758,7 @@ const School = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-indigo-700">Members</h4>
+        <h4 className="font-bold uppercase text-sm text-purple-700">Members</h4>
         <ul className="flex flex-wrap pt-4">
           {users.map(user => (
             <li key={user.id} className="w-1/3 md:w-1/4">
@@ -446,7 +848,7 @@ const User = props => {
         {user.bio ? <p className="pt-1">{user.bio}</p> : null}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
+        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
           Information
         </h4>
         <dl className="flex flex-wrap w-full">
@@ -471,7 +873,7 @@ const User = props => {
         </dl>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
+        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
           Game Accounts
         </h4>
         {user.gameAccounts.length ? (
@@ -490,7 +892,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
+        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
           Currently Playing
         </h4>
         {user.currentlyPlaying.length ? (
@@ -510,7 +912,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-indigo-700">
+        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
           Favorite Games
         </h4>
         {user.favoriteGames.length ? (
@@ -530,7 +932,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-indigo-700">
+        <h4 className="font-bold uppercase text-sm text-purple-700">
           Events Attending
         </h4>
         {events.length ? (
@@ -667,23 +1069,25 @@ const Event = props => {
       <PageSection>
         {hasResponded ? (
           <form onSubmit={handleAttendSubmit}>
-            <Button variant="indigo" type="submit">
+            <Button variant="purple" type="submit">
               Attend Event
             </Button>
           </form>
         ) : (
           <form onSubmit={handleCancelSubmit}>
-            <div className="bg-green-200 text-green-800 rounded-lg px-8 py-4">
+            <Alert variant="green">
               <span className="font-bold block text-2xl">You're going!</span>
-              <button type="submit" className="text-base">
+              <button type="submit" className="text-base focus:underline">
                 Cancel your RSVP
               </button>
-            </div>
+            </Alert>
           </form>
         )}
       </PageSection>
       <PageSection>
-        <h2 className="font-bold">Event Details</h2>
+        <h2 className="font-bold uppercase text-sm text-purple-700">
+          Event Details
+        </h2>
         <p className="pt-4">{event.description}</p>
       </PageSection>
       <PageSection>
@@ -775,7 +1179,7 @@ const EventListItem = props => {
             className="w-auto ml-auto h-16"
           />
         </div>
-        <div className="block pb-1 mt-4">
+        <div className="block my-4">
           <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />
           <time className="text-lg" dateTime={props.event.startDateTime}>
             {moment(props.event.startDateTime).calendar(
@@ -783,23 +1187,6 @@ const EventListItem = props => {
               MOMENT_CALENDAR_FORMAT
             )}
           </time>
-        </div>
-        <div className="block pb-2 mb-4 text-lg">
-          <FontAwesomeIcon
-            icon={faMapMarkerAlt}
-            className="text-gray-700 mr-2"
-          />
-          {props.event.location ? (
-            <OutsideLink
-              href={`${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
-                props.event.location
-              )}`}
-            >
-              {props.event.location}
-            </OutsideLink>
-          ) : (
-            <span>To be determined</span>
-          )}
         </div>
         <p className="text-lg">
           {_.truncate(props.event.description, { length: 250 })}
@@ -846,6 +1233,46 @@ const Button = ({ variant = "", className = "", ...props }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// Alert
+
+const Alert = ({ variant = "", className = "", ...props }) => {
+  const defaultClass = `${
+    STYLES.ALERT[variant.toUpperCase() || STYLES.ALERT.DEFAULT]
+  } rounded-lg px-8 py-4`;
+
+  return (
+    <ReachAlert {...props} className={classNames([defaultClass, className])} />
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Select
+
+const Select = ({ options = [], className = "", ...props }) => {
+  return (
+    <div className="relative w-full">
+      <select
+        {...props}
+        className={classNames([STYLES.SELECT.DEFAULT, className])}
+      >
+        {options.map(option => (
+          <option {...option} />
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // VisuallyHidden
 
 const VisuallyHidden = ({ className = "", ...props }) => {
@@ -873,7 +1300,15 @@ const PageWrapper = ({ className = "", ...props }) => {
 // PageSection
 
 const PageSection = ({ className = "", ...props }) => {
-  return <article {...props} className={classNames(["pt-12", className])} />;
+  return (
+    <section
+      {...props}
+      className={classNames([
+        className.includes("pt-") ? "" : "pt-12",
+        className
+      ])}
+    />
+  );
 };
 
 ////////////////////////////////////////////////////////////////////////////////
