@@ -12,12 +12,12 @@ import {
   faStar,
   faHeartBroken,
   faHome,
-  faExclamationTriangle
+  faExclamationTriangle,
+  faPlus
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import _ from "lodash";
 import moment from "moment";
-import { ReactComponent as Logo } from "./logo.svg";
 import "./App.css";
 import TEST_DATA from "./test_data";
 
@@ -99,6 +99,9 @@ const STYLES = {
     DEFAULT: "bg-gray-200 text-gray-800",
     YELLOW: "bg-yellow-200 text-yellow-800",
     GREEN: "bg-green-200 text-green-800"
+  },
+  LABEL: {
+    DEFAULT: "block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
   }
 };
 
@@ -127,7 +130,7 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
 
   const toggledLoggedIn = () => setIsLoggedIn(!isLoggedIn);
 
@@ -140,7 +143,7 @@ const App = () => {
   return (
     <React.Fragment>
       <SkipNavLink />
-      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-purple-800 border-b-2">
+      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-purple-800">
         <div className="flex items-center justify-between px-4 py-3 sm:p-0">
           <Link
             to="/"
@@ -166,10 +169,16 @@ const App = () => {
           role="navigation"
           className={`${
             isMenuOpen ? "block" : "hidden"
-          } px-2 pt-2 pb-4 sm:flex sm:p-0`}
+          } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
         >
           {isLoggedIn ? (
             <React.Fragment>
+              <Link
+                to="/create-event"
+                className="text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline"
+              >
+                Create an Event
+              </Link>
               <Link
                 to={`school/${currentUser.school.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
@@ -217,8 +226,11 @@ const App = () => {
           <ScrollToTop default>
             <Home path="/" {...authProps} />
             <User path="user/:id" {...authProps} />
+            <EditUser path="edit-user" {...authProps} />
             <School path="school/:id" {...authProps} />
+            <EditSchool path="edit-school" {...authProps} />
             <Event path="event/:id" {...authProps} />
+            <CreateEvent path="create-event" {...authProps} />
             <Signup path="register" {...authProps} />
             <Login path="login" {...authProps} />
             <ForgotPassword path="forgot-password" {...authProps} />
@@ -273,28 +285,7 @@ const Signup = props => {
         </h1>
         <hr className="my-12" />
         <div className="md:flex md:items mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="username"
-          >
-            Username
-          </label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
-            id="username"
-            name="username"
-            type="text"
-            placeholder="jdoe123"
-            required
-          />
-        </div>
-        <div className="md:flex md:items mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="first-name"
-          >
-            First Name
-          </label>
+          <Label htmlFor="first-name">First Name</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="first-name"
@@ -305,12 +296,7 @@ const Signup = props => {
           />
         </div>
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="last-name"
-          >
-            Last Name
-          </label>
+          <Label htmlFor="last-name">Last Name</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="last-name"
@@ -321,28 +307,18 @@ const Signup = props => {
           />
         </div>
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="email"
-          >
-            Email
-          </label>
+          <Label htmlFor="email">Email</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="email"
             name="email"
             type="email"
-            placeholder="jdoe123@gmail.com"
+            placeholder="jdoe@gmail.com"
             required
           />
         </div>
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="password"
-          >
-            Password
-          </label>
+          <Label htmlFor="password">Password</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="password"
@@ -353,12 +329,7 @@ const Signup = props => {
           />
         </div>
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="school"
-          >
-            School
-          </label>
+          <Label htmlFor="school">School</Label>
           <Select
             id="school"
             required
@@ -372,12 +343,7 @@ const Signup = props => {
           />
         </div>
         <div className="md:flex md:items-center">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="status"
-          >
-            Status
-          </label>
+          <Label htmlFor="status">Status</Label>
           <Select
             id="status"
             required
@@ -431,12 +397,7 @@ const Login = props => {
         <p className="text-gray-600">Log in to your account</p>
         <hr className="my-12" />
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="email"
-          >
-            Email
-          </label>
+          <Label htmlFor="email">Email</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="email"
@@ -447,12 +408,7 @@ const Login = props => {
           />
         </div>
         <div className="md:flex md:items-center">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="password"
-          >
-            Password
-          </label>
+          <Label htmlFor="password">Password</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="password"
@@ -509,12 +465,7 @@ const ForgotPassword = props => {
         </p>
         <hr className="my-12" />
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="email"
-          >
-            Email
-          </label>
+          <Label htmlFor="email">Email</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="email"
@@ -584,12 +535,7 @@ const PasswordConfirmation = props => {
           />
         </div>
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="password"
-          >
-            New Password
-          </label>
+          <Label htmlFor="password">New Password</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="password"
@@ -600,12 +546,7 @@ const PasswordConfirmation = props => {
           />
         </div>
         <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="confirm-password"
-          >
-            Confirm Password
-          </label>
+          <Label htmlFor="confirm-password">Confirm New Password</Label>
           <input
             className={STYLES.INPUT.DEFAULT}
             id="confirm-password"
@@ -729,7 +670,7 @@ const School = props => {
           {school.address ? (
             <dd className="w-1/2">
               <OutsideLink
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                href={`${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
                   school.address
                 )}`}
               >
@@ -781,6 +722,17 @@ const School = props => {
       </PageSection>
     </PageWrapper>
   );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// EditSchool
+
+const EditSchool = props => {
+  if (!props.isLoggedIn) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  return null;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -952,6 +904,133 @@ const User = props => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// EditUser
+
+const EditUser = props => {
+  if (!props.isLoggedIn) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log("Submitted!");
+  };
+
+  return (
+    <PageWrapper>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
+      >
+        <h1 className="text-5xl font-bold leading-none mb-4">
+          Edit Your Profile
+        </h1>
+        <hr className="my-12" />
+        <div className="md:flex md:items-center mb-6">
+          <Label htmlFor="first-name">First Name</Label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="first-name"
+            name="first-name"
+            type="text"
+            placeholder="Jane"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <Label htmlFor="last-name">Last name</Label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="last-name"
+            name="last-name"
+            type="text"
+            placeholder="Doe"
+            required
+          />
+        </div>
+        <div className="md:flex md:items-start mb-6">
+          <Label htmlFor="email">Email</Label>
+          <div className="w-full">
+            <p className="w-full">jdoe@gmail.com</p>
+            <p className="text-gray-600 text-base italic">
+              Your email cannot be changed.
+            </p>
+          </div>
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <Label htmlFor="school">School</Label>
+          <Select
+            id="school"
+            required
+            options={[
+              { value: "", label: "Select your school" },
+              ...TEST_DATA.schools.map(school => ({
+                value: school.id,
+                label: school.name
+              }))
+            ]}
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <Label htmlFor="status">Status</Label>
+          <Select
+            id="status"
+            required
+            options={[
+              { value: "", label: "Select your status" },
+              { value: "FRESHMAN", label: "Freshman" },
+              { value: "SOPHMORE", label: "Sophmore" },
+              { value: "JUNIOR", label: "Junior" },
+              { value: "SENIOR", label: "Senior" },
+              { value: "GRAD", label: "Grad" },
+              { value: "ALUMNI", label: "Alumni" },
+              { value: "FACULTY", label: "Faculty" },
+              { value: "OTHER", label: "Other" }
+            ]}
+          />
+        </div>
+        <div className="md:flex md:items-start mb-6">
+          <Label htmlFor="bio">Bio</Label>
+          <div className="w-full">
+            <textarea
+              placeholder="Add your bio"
+              maxLength="250"
+              rows="4"
+              className={`${STYLES.INPUT.DEFAULT} resize-y`}
+            />
+            <p className="text-gray-600 text-base italic">
+              Max 250 characters.
+            </p>
+          </div>
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <Label htmlFor="hometown">Hometown</Label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="hometown"
+            name="hometown"
+            type="text"
+            placeholder="Chicago"
+          />
+        </div>
+        <div className="md:flex md:items-center mb-6">
+          <Label htmlFor="birthdate">Birthday</Label>
+          <input
+            className={STYLES.INPUT.DEFAULT}
+            id="birthdate"
+            name="birthdate"
+            type="date"
+          />
+        </div>
+        <Button variant="purple" type="submit" className="my-12 w-full">
+          Submit Changes
+        </Button>
+      </form>
+    </PageWrapper>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // Event
 
 const Event = props => {
@@ -1056,7 +1135,7 @@ const Event = props => {
         />
         {event.location ? (
           <OutsideLink
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            href={`${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
               event.location
             )}`}
           >
@@ -1092,9 +1171,8 @@ const Event = props => {
       </PageSection>
       <PageSection>
         {eventResponses.length ? (
-          <h3 className="font-bold">
-            {eventResponses.length}{" "}
-            {eventResponses.length === 1 ? "person going" : "people going"}
+          <h3 className="font-bold uppercase text-sm text-purple-700">
+            Going ({eventResponses.length})
           </h3>
         ) : null}
         <ul className="flex flex-wrap pt-4">
@@ -1119,6 +1197,17 @@ const Event = props => {
       </PageSection>
     </PageWrapper>
   );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// CreateEvent
+
+const CreateEvent = props => {
+  if (!props.isLoggedIn) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  return null;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1256,7 +1345,7 @@ const Select = ({ options = [], className = "", ...props }) => {
         className={classNames([STYLES.SELECT.DEFAULT, className])}
       >
         {options.map(option => (
-          <option {...option} />
+          <option key={option.value} {...option} />
         ))}
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -1269,6 +1358,18 @@ const Select = ({ options = [], className = "", ...props }) => {
         </svg>
       </div>
     </div>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Label
+
+const Label = ({ className = "", ...props }) => {
+  return (
+    <label
+      {...props}
+      className={classNames([STYLES.LABEL.DEFAULT, className])}
+    />
   );
 };
 
