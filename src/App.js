@@ -1155,7 +1155,7 @@ const Event = props => {
         ) : (
           <form onSubmit={handleCancelSubmit}>
             <Alert variant="green">
-              <span className="font-bold block text-2xl">You're going!</span>
+              <span className="font-bold block text-2xl">You’re going!</span>
               <button type="submit" className="text-base focus:underline">
                 Cancel your RSVP
               </button>
