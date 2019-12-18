@@ -423,7 +423,7 @@ const Login = props => {
         </Button>
         <div className="flex items-center justify-between">
           <p>
-            Don't have an account?{" "}
+            Don’t have an account?{" "}
             <Link to="/register" className={STYLES.LINK.DEFAULT}>
               Create one
             </Link>
