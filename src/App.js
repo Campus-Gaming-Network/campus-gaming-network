@@ -12,8 +12,7 @@ import {
   faStar,
   faHeartBroken,
   faHome,
-  faExclamationTriangle,
-  faPlus
+  faExclamationTriangle
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import _ from "lodash";
@@ -63,7 +62,7 @@ const classNames = function classNames(_classNames = []) {
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
 
-const MOMENT_DISPLAY_FORMAT = "ddd, MMM Do hh:mm a";
+const MOMENT_DISPLAY_FORMAT = "ddd, MMM Do h:mm a";
 
 const MOMENT_CALENDAR_FORMAT = {
   sameElse: MOMENT_DISPLAY_FORMAT
@@ -85,11 +84,13 @@ const STYLES = {
   },
   LINK: {
     DEFAULT:
-      "font-medium text-blue-700 hover:text-blue-800 hover:underline focus:underline"
+      "font-medium text-purple-700 hover:text-purple-800 hover:underline focus:underline"
   },
   INPUT: {
     DEFAULT:
-      "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500"
+      "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500",
+    ERROR:
+      "bg-red-200 appearance-none border-2 border-red-500 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500"
   },
   SELECT: {
     DEFAULT:
@@ -175,7 +176,7 @@ const App = () => {
             <React.Fragment>
               <Link
                 to="/create-event"
-                className="text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline"
+                className="leading-none text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-2 px-3 hover:underline focus:underline"
               >
                 Create an Event
               </Link>
@@ -286,8 +287,7 @@ const Signup = props => {
         <hr className="my-12" />
         <div className="md:flex md:items mb-6">
           <Label htmlFor="first-name">First Name</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="first-name"
             name="first-name"
             type="text"
@@ -297,8 +297,7 @@ const Signup = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="last-name">Last Name</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="last-name"
             name="last-name"
             type="text"
@@ -308,8 +307,7 @@ const Signup = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="email">Email</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="email"
             name="email"
             type="email"
@@ -319,8 +317,7 @@ const Signup = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="password">Password</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="password"
             name="password"
             type="password"
@@ -398,8 +395,7 @@ const Login = props => {
         <hr className="my-12" />
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="email">Email</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="email"
             name="email"
             type="email"
@@ -409,8 +405,7 @@ const Login = props => {
         </div>
         <div className="md:flex md:items-center">
           <Label htmlFor="password">Password</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="password"
             name="password"
             type="password"
@@ -466,8 +461,7 @@ const ForgotPassword = props => {
         <hr className="my-12" />
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="email">Email</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="email"
             name="email"
             type="email"
@@ -525,8 +519,7 @@ const PasswordConfirmation = props => {
           >
             Confirmation Code
           </label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="code"
             name="code"
             type="text"
@@ -536,8 +529,7 @@ const PasswordConfirmation = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="password">New Password</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="password"
             name="password"
             type="password"
@@ -547,8 +539,7 @@ const PasswordConfirmation = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="confirm-password">Confirm New Password</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="confirm-password"
             name="confirm-password"
             type="password"
@@ -641,7 +632,7 @@ const School = props => {
         <p className="pt-1">{school.description}</p>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
           Information
         </h4>
         <dl className="flex flex-wrap w-full">
@@ -683,7 +674,7 @@ const School = props => {
         </dl>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-purple-700">
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
           Upcoming Events
         </h4>
         {events.length ? (
@@ -699,7 +690,9 @@ const School = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-purple-700">Members</h4>
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
+          Members
+        </h4>
         <ul className="flex flex-wrap pt-4">
           {users.map(user => (
             <li key={user.id} className="w-1/3 md:w-1/4">
@@ -800,7 +793,7 @@ const User = props => {
         {user.bio ? <p className="pt-1">{user.bio}</p> : null}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
           Information
         </h4>
         <dl className="flex flex-wrap w-full">
@@ -825,7 +818,7 @@ const User = props => {
         </dl>
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
           Game Accounts
         </h4>
         {user.gameAccounts.length ? (
@@ -844,7 +837,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-8">
           Currently Playing
         </h4>
         {user.currentlyPlaying.length ? (
@@ -864,7 +857,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm pb-4 text-purple-700">
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-8">
           Favorite Games
         </h4>
         {user.favoriteGames.length ? (
@@ -884,7 +877,7 @@ const User = props => {
         )}
       </PageSection>
       <PageSection>
-        <h4 className="font-bold uppercase text-sm text-purple-700">
+        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-8">
           Events Attending
         </h4>
         {events.length ? (
@@ -894,7 +887,7 @@ const User = props => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500 mt-4">
+          <p className="text-gray-500">
             This user is currently not attending any upcoming events.
           </p>
         )}
@@ -928,8 +921,7 @@ const EditUser = props => {
         <hr className="my-12" />
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="first-name">First Name</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="first-name"
             name="first-name"
             type="text"
@@ -939,8 +931,7 @@ const EditUser = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="last-name">Last name</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="last-name"
             name="last-name"
             type="text"
@@ -1005,22 +996,16 @@ const EditUser = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="hometown">Hometown</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
+          <Input
             id="hometown"
             name="hometown"
             type="text"
-            placeholder="Chicago"
+            placeholder="Chicago, IL"
           />
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="birthdate">Birthday</Label>
-          <input
-            className={STYLES.INPUT.DEFAULT}
-            id="birthdate"
-            name="birthdate"
-            type="date"
-          />
+          <Input id="birthdate" name="birthdate" type="date" />
         </div>
         <Button variant="purple" type="submit" className="my-12 w-full">
           Submit Changes
@@ -1164,18 +1149,18 @@ const Event = props => {
         )}
       </PageSection>
       <PageSection>
-        <h2 className="font-bold uppercase text-sm text-purple-700">
+        <h2 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
           Event Details
         </h2>
-        <p className="pt-4">{event.description}</p>
+        <p>{event.description}</p>
       </PageSection>
       <PageSection>
         {eventResponses.length ? (
-          <h3 className="font-bold uppercase text-sm text-purple-700">
+          <h3 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
             Going ({eventResponses.length})
           </h3>
         ) : null}
-        <ul className="flex flex-wrap pt-4">
+        <ul className="flex flex-wrap">
           {eventGoers.map(user => (
             <li key={user.id} className="w-1/3 md:w-1/4">
               <div className="flex flex-col items-center justify-around pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg">
@@ -1299,6 +1284,7 @@ const EventListItem = props => {
 
 const OutsideLink = ({ className = "", ...props }) => {
   return (
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
     <a
       {...props}
       target="_blank"
@@ -1358,6 +1344,21 @@ const Select = ({ options = [], className = "", ...props }) => {
         </svg>
       </div>
     </div>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Input
+
+const Input = ({ error, className = "", ...props }) => {
+  return (
+    <input
+      {...props}
+      className={classNames([
+        STYLES.INPUT[error ? "ERROR" : "DEFAULT"],
+        className
+      ])}
+    />
   );
 };
 
