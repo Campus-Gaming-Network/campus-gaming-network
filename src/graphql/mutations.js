@@ -4,7 +4,6 @@
 export const createUser = `mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     id
-    username
     firstName
     lastName
     hometown
@@ -73,7 +72,6 @@ export const createUser = `mutation CreateUser($input: CreateUserInput!) {
 export const updateUser = `mutation UpdateUser($input: UpdateUserInput!) {
   updateUser(input: $input) {
     id
-    username
     firstName
     lastName
     hometown
@@ -142,7 +140,6 @@ export const updateUser = `mutation UpdateUser($input: UpdateUserInput!) {
 export const deleteUser = `mutation DeleteUser($input: DeleteUserInput!) {
   deleteUser(input: $input) {
     id
-    username
     firstName
     lastName
     hometown
@@ -233,7 +230,6 @@ export const createSchool = `mutation CreateSchool($input: CreateSchoolInput!) {
     users {
       items {
         id
-        username
         firstName
         lastName
         hometown
@@ -285,7 +281,6 @@ export const updateSchool = `mutation UpdateSchool($input: UpdateSchoolInput!) {
     users {
       items {
         id
-        username
         firstName
         lastName
         hometown
@@ -337,7 +332,6 @@ export const deleteSchool = `mutation DeleteSchool($input: DeleteSchoolInput!) {
     users {
       items {
         id
-        username
         firstName
         lastName
         hometown
@@ -396,7 +390,6 @@ export const createEvent = `mutation CreateEvent($input: CreateEventInput!) {
     updatedAt
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -479,7 +472,6 @@ export const updateEvent = `mutation UpdateEvent($input: UpdateEventInput!) {
     updatedAt
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -562,7 +554,6 @@ export const deleteEvent = `mutation DeleteEvent($input: DeleteEventInput!) {
     updatedAt
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -636,7 +627,6 @@ export const createEventResponse = `mutation CreateEventResponse($input: CreateE
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -659,7 +649,6 @@ export const createEventResponse = `mutation CreateEventResponse($input: CreateE
     }
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -725,7 +714,6 @@ export const updateEventResponse = `mutation UpdateEventResponse($input: UpdateE
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -748,7 +736,6 @@ export const updateEventResponse = `mutation UpdateEventResponse($input: UpdateE
     }
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -814,7 +801,6 @@ export const deleteEventResponse = `mutation DeleteEventResponse($input: DeleteE
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -837,7 +823,6 @@ export const deleteEventResponse = `mutation DeleteEventResponse($input: DeleteE
     }
     owner {
       id
-      username
       firstName
       lastName
       hometown

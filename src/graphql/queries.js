@@ -4,7 +4,6 @@
 export const getUser = `query GetUser($id: ID!) {
   getUser(id: $id) {
     id
-    username
     firstName
     lastName
     hometown
@@ -78,7 +77,6 @@ export const listUsers = `query ListUsers(
   listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
-      username
       firstName
       lastName
       hometown
@@ -144,7 +142,6 @@ export const getSchool = `query GetSchool($id: ID!) {
     users {
       items {
         id
-        username
         firstName
         lastName
         hometown
@@ -235,7 +232,6 @@ export const getEvent = `query GetEvent($id: ID!) {
     updatedAt
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -312,7 +308,6 @@ export const listEvents = `query ListEvents(
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -360,7 +355,6 @@ export const getEventResponse = `query GetEventResponse($id: ID!) {
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -383,7 +377,6 @@ export const getEventResponse = `query GetEventResponse($id: ID!) {
     }
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -446,7 +439,6 @@ export const listEventResponses = `query ListEventResponses(
       }
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -483,7 +475,6 @@ export const searchUsers = `query SearchUsers(
   ) {
     items {
       id
-      username
       firstName
       lastName
       hometown
@@ -594,7 +585,6 @@ export const searchEvents = `query SearchEvents(
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown

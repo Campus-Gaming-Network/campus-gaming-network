@@ -483,22 +483,6 @@
               "deprecationReason": null
             },
             {
-              "name": "username",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
               "name": "firstName",
               "description": null,
               "args": [],
@@ -1822,16 +1806,6 @@
               "defaultValue": null
             },
             {
-              "name": "username",
-              "description": null,
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "ModelStringFilterInput",
-                "ofType": null
-              },
-              "defaultValue": null
-            },
-            {
               "name": "firstName",
               "description": null,
               "type": {
@@ -2713,16 +2687,6 @@
               "defaultValue": null
             },
             {
-              "name": "username",
-              "description": null,
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "SearchableStringFilterInput",
-                "ofType": null
-              },
-              "defaultValue": null
-            },
-            {
               "name": "firstName",
               "description": null,
               "type": {
@@ -3149,12 +3113,6 @@
           "enumValues": [
             {
               "name": "id",
-              "description": null,
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
-              "name": "username",
               "description": null,
               "isDeprecated": false,
               "deprecationReason": null
@@ -4135,20 +4093,6 @@
               "defaultValue": null
             },
             {
-              "name": "username",
-              "description": null,
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "defaultValue": null
-            },
-            {
               "name": "firstName",
               "description": null,
               "type": {
@@ -4379,16 +4323,6 @@
                   "name": "ID",
                   "ofType": null
                 }
-              },
-              "defaultValue": null
-            },
-            {
-              "name": "username",
-              "description": null,
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
               },
               "defaultValue": null
             },
@@ -5541,7 +5475,7 @@
         },
         {
           "kind": "INPUT_OBJECT",
-          "name": "SearchableIntFilterInput",
+          "name": "SearchableFloatFilterInput",
           "description": null,
           "fields": null,
           "inputFields": [
@@ -5550,7 +5484,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Float",
                 "ofType": null
               },
               "defaultValue": null
@@ -5560,7 +5494,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Float",
                 "ofType": null
               },
               "defaultValue": null
@@ -5570,7 +5504,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Float",
                 "ofType": null
               },
               "defaultValue": null
@@ -5580,7 +5514,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Float",
                 "ofType": null
               },
               "defaultValue": null
@@ -5590,7 +5524,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Float",
                 "ofType": null
               },
               "defaultValue": null
@@ -5600,7 +5534,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Float",
                 "ofType": null
               },
               "defaultValue": null
@@ -5613,13 +5547,23 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "Int",
+                  "name": "Float",
                   "ofType": null
                 }
               },
               "defaultValue": null
             }
           ],
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "SCALAR",
+          "name": "Float",
+          "description": "Built-in Float",
+          "fields": null,
+          "inputFields": null,
           "interfaces": null,
           "enumValues": null,
           "possibleTypes": null
@@ -5731,7 +5675,7 @@
         },
         {
           "kind": "INPUT_OBJECT",
-          "name": "SearchableFloatFilterInput",
+          "name": "SearchableIntFilterInput",
           "description": null,
           "fields": null,
           "inputFields": [
@@ -5740,7 +5684,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               },
               "defaultValue": null
@@ -5750,7 +5694,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               },
               "defaultValue": null
@@ -5760,7 +5704,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               },
               "defaultValue": null
@@ -5770,7 +5714,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               },
               "defaultValue": null
@@ -5780,7 +5724,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               },
               "defaultValue": null
@@ -5790,7 +5734,7 @@
               "description": null,
               "type": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               },
               "defaultValue": null
@@ -5803,23 +5747,13 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "Float",
+                  "name": "Int",
                   "ofType": null
                 }
               },
               "defaultValue": null
             }
           ],
-          "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": null
-        },
-        {
-          "kind": "SCALAR",
-          "name": "Float",
-          "description": "Built-in Float",
-          "fields": null,
-          "inputFields": null,
           "interfaces": null,
           "enumValues": null,
           "possibleTypes": null
@@ -6821,9 +6755,9 @@
           "onField": false
         },
         {
-          "name": "aws_auth",
-          "description": "Directs the schema to enforce authorization on a field",
-          "locations": ["FIELD_DEFINITION"],
+          "name": "aws_cognito_user_pools",
+          "description": "Tells the service this field/object has access authorized by a Cognito User Pools token.",
+          "locations": ["OBJECT", "FIELD_DEFINITION"],
           "args": [
             {
               "name": "cognito_groups",
@@ -6849,6 +6783,39 @@
           "description": "Tells the service this field/object has access authorized by an OIDC token.",
           "locations": ["OBJECT", "FIELD_DEFINITION"],
           "args": [],
+          "onOperation": false,
+          "onFragment": false,
+          "onField": false
+        },
+        {
+          "name": "aws_api_key",
+          "description": "Tells the service this field/object has access authorized by an API key.",
+          "locations": ["OBJECT", "FIELD_DEFINITION"],
+          "args": [],
+          "onOperation": false,
+          "onFragment": false,
+          "onField": false
+        },
+        {
+          "name": "aws_auth",
+          "description": "Directs the schema to enforce authorization on a field",
+          "locations": ["FIELD_DEFINITION"],
+          "args": [
+            {
+              "name": "cognito_groups",
+              "description": "List of cognito user pool groups which have access on this field",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "defaultValue": null
+            }
+          ],
           "onOperation": false,
           "onFragment": false,
           "onField": false
@@ -6906,39 +6873,6 @@
               "defaultValue": null
             }
           ],
-          "onOperation": false,
-          "onFragment": false,
-          "onField": false
-        },
-        {
-          "name": "aws_cognito_user_pools",
-          "description": "Tells the service this field/object has access authorized by a Cognito User Pools token.",
-          "locations": ["OBJECT", "FIELD_DEFINITION"],
-          "args": [
-            {
-              "name": "cognito_groups",
-              "description": "List of cognito user pool groups which have access on this field",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              },
-              "defaultValue": null
-            }
-          ],
-          "onOperation": false,
-          "onFragment": false,
-          "onField": false
-        },
-        {
-          "name": "aws_api_key",
-          "description": "Tells the service this field/object has access authorized by an API key.",
-          "locations": ["OBJECT", "FIELD_DEFINITION"],
-          "args": [],
           "onOperation": false,
           "onFragment": false,
           "onField": false

@@ -19,21 +19,7 @@ import _ from "lodash";
 import moment from "moment";
 import "./App.css";
 import TEST_DATA from "./test_data";
-import {
-  MOMENT_CALENDAR_FORMAT,
-  GOOGLE_MAPS_QUERY_URL,
-  STYLES,
-  STUDENT_STATUS_OPTIONS,
-  RANDOM_SAMPLE_OF_EVENTS,
-  TEST_USER,
-  CURRENT_USER,
-  USER_EMPTY_GAME_ACCOUNTS_TEXT,
-  USER_EMPTY_CURRENTLY_PLAYING_TEXT,
-  USER_EMPTY_FAVORITE_GAMES_TEXT,
-  USER_EMPTY_UPCOMING_EVENTS_TEXT,
-  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT,
-  SCHOOL_OPTIONS
-} from "./constants";
+import * as constants from "./constants";
 import {
   getEventResponses,
   getEventGoers,
@@ -56,7 +42,7 @@ const App = () => {
   const authProps = {
     isLoggedIn,
     setIsLoggedIn,
-    CURRENT_USER
+    CURRENT_USER: constants.CURRENT_USER
   };
 
   return (
@@ -99,7 +85,7 @@ const App = () => {
                 Create an Event
               </Link>
               <Link
-                to={`school/${CURRENT_USER.school.id}`}
+                to={`school/${constants.CURRENT_USER.school.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
                 <img
@@ -110,12 +96,12 @@ const App = () => {
                 School
               </Link>
               <Link
-                to={`user/${CURRENT_USER.id}`}
+                to={`user/${constants.CURRENT_USER.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
                 <img
                   className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-                  src={CURRENT_USER.picture}
+                  src={constants.CURRENT_USER.picture}
                   alt=""
                 />
                 Profile
@@ -163,13 +149,13 @@ const App = () => {
       </main>
       <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
         <section className="max-w-4xl mx-auto p-8 flex items-center justify-around">
-          <Link to="about" className={STYLES.LINK.DEFAULT}>
+          <Link to="about" className={constants.STYLES.LINK.DEFAULT}>
             About
           </Link>
-          <Link to="contribute" className={STYLES.LINK.DEFAULT}>
+          <Link to="contribute" className={constants.STYLES.LINK.DEFAULT}>
             Contribute
           </Link>
-          <Link to="contact" className={STYLES.LINK.DEFAULT}>
+          <Link to="contact" className={constants.STYLES.LINK.DEFAULT}>
             Contact
           </Link>
         </section>
@@ -245,18 +231,22 @@ const Signup = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="school">School</Label>
-          <Select id="school" required options={SCHOOL_OPTIONS} />
+          <Select id="school" required options={constants.SCHOOL_OPTIONS} />
         </div>
         <div className="md:flex md:items-center">
           <Label htmlFor="status">Status</Label>
-          <Select id="status" required options={STUDENT_STATUS_OPTIONS} />
+          <Select
+            id="status"
+            required
+            options={constants.STUDENT_STATUS_OPTIONS}
+          />
         </div>
         <Button variant="purple" type="submit" className="my-12 w-full">
           Sign Up
         </Button>
         <p>
           Already a member?{" "}
-          <Link to="/login" className={STYLES.LINK.DEFAULT}>
+          <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
             Log in
           </Link>
         </p>
@@ -313,11 +303,14 @@ const Login = props => {
         <div className="flex items-center justify-between">
           <p>
             Don’t have an account?{" "}
-            <Link to="/register" className={STYLES.LINK.DEFAULT}>
+            <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
               Create one
             </Link>
           </p>
-          <Link to="/forgot-password" className={`${STYLES.LINK.DEFAULT}`}>
+          <Link
+            to="/forgot-password"
+            className={`${constants.STYLES.LINK.DEFAULT}`}
+          >
             Forgot your password?
           </Link>
         </div>
@@ -369,7 +362,7 @@ const ForgotPassword = props => {
         <div className="flex items-center justify-between">
           <p>
             Go back to{" "}
-            <Link to="/login" className={STYLES.LINK.DEFAULT}>
+            <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
               Login page
             </Link>
             .
@@ -468,17 +461,17 @@ const Home = () => {
         <h3 className="text-3xl font-semibold">
           Upcoming events near Chicago, IL
         </h3>
-        {!RANDOM_SAMPLE_OF_EVENTS.length ? (
+        {!constants.RANDOM_SAMPLE_OF_EVENTS.length ? (
           <p className="text-gray-500 text-2xl">
             There are no upcoming events coming up.
           </p>
         ) : (
           <ul>
-            {sortedEvents(RANDOM_SAMPLE_OF_EVENTS).map((event, i) => (
+            {sortedEvents(constants.RANDOM_SAMPLE_OF_EVENTS).map((event, i) => (
               <EventListItem key={event.id} event={event} />
             ))}
             <li className="flex items-center py-4 text-lg">
-              <Link to="events" className={STYLES.LINK.DEFAULT}>
+              <Link to="events" className={constants.STYLES.LINK.DEFAULT}>
                 See all upcoming events around Chicago, IL
               </Link>
             </li>
@@ -534,7 +527,7 @@ const School = props => {
           {school.contactEmail ? (
             <dd className="w-1/2">
               <a
-                className={STYLES.LINK.DEFAULT}
+                className={constants.STYLES.LINK.DEFAULT}
                 href={`mailto:${school.contactEmail}`}
               >
                 {school.contactEmail}
@@ -555,7 +548,7 @@ const School = props => {
           {school.address ? (
             <dd className="w-1/2">
               <OutsideLink
-                href={`${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
+                href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
                   school.address
                 )}`}
               >
@@ -579,7 +572,7 @@ const School = props => {
           </ul>
         ) : (
           <p className="text-gray-500 mt-4">
-            {SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
+            {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
           </p>
         )}
       </PageSection>
@@ -598,7 +591,7 @@ const School = props => {
                 />
                 <Link
                   to={`../../../user/${user.id}`}
-                  className={`${STYLES.LINK.DEFAULT} text-base m-4 mt-8 leading-tight font-bold text-center`}
+                  className={`${constants.STYLES.LINK.DEFAULT} text-base m-4 mt-8 leading-tight font-bold text-center`}
                 >
                   {user.fullName}
                 </Link>
@@ -675,7 +668,7 @@ const User = props => {
             }`}
             <Link
               to={`/school/${school.id}`}
-              className={`${STYLES.LINK.DEFAULT} ml-1`}
+              className={`${constants.STYLES.LINK.DEFAULT} ml-1`}
             >
               {school.name}
             </Link>
@@ -725,7 +718,9 @@ const User = props => {
             ))}
           </dl>
         ) : (
-          <p className="text-gray-500">{USER_EMPTY_GAME_ACCOUNTS_TEXT}</p>
+          <p className="text-gray-500">
+            {constants.USER_EMPTY_GAME_ACCOUNTS_TEXT}
+          </p>
         )}
       </PageSection>
       <PageSection>
@@ -745,7 +740,9 @@ const User = props => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">{USER_EMPTY_CURRENTLY_PLAYING_TEXT}</p>
+          <p className="text-gray-500">
+            {constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
+          </p>
         )}
       </PageSection>
       <PageSection>
@@ -765,7 +762,9 @@ const User = props => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">{USER_EMPTY_FAVORITE_GAMES_TEXT}</p>
+          <p className="text-gray-500">
+            {constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
+          </p>
         )}
       </PageSection>
       <PageSection>
@@ -779,7 +778,9 @@ const User = props => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">{USER_EMPTY_UPCOMING_EVENTS_TEXT}</p>
+          <p className="text-gray-500">
+            {constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}
+          </p>
         )}
       </PageSection>
     </PageWrapper>
@@ -840,11 +841,15 @@ const EditUser = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="school">School</Label>
-          <Select id="school" required options={SCHOOL_OPTIONS} />
+          <Select id="school" required options={constants.SCHOOL_OPTIONS} />
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="status">Status</Label>
-          <Select id="status" required options={STUDENT_STATUS_OPTIONS} />
+          <Select
+            id="status"
+            required
+            options={constants.STUDENT_STATUS_OPTIONS}
+          />
         </div>
         <div className="md:flex md:items-start mb-6">
           <Label htmlFor="bio">Bio</Label>
@@ -853,7 +858,7 @@ const EditUser = props => {
               placeholder="Add your bio"
               maxLength="250"
               rows="4"
-              className={`${STYLES.INPUT.DEFAULT} resize-y`}
+              className={`${constants.STYLES.INPUT.DEFAULT} resize-y`}
             />
             <p className="text-gray-600 text-base italic">
               Max 250 characters.
@@ -907,7 +912,8 @@ const Event = props => {
 
   const hasResponded = TEST_DATA.event_responses.some(
     eventResponse =>
-      eventResponse.userId === TEST_USER.index && eventResponse.id === event.id
+      eventResponse.userId === constants.TEST_USER.index &&
+      eventResponse.id === event.id
   );
 
   console.log({ hasResponded });
@@ -925,7 +931,7 @@ const Event = props => {
             createdAt: Date.now(),
             updatedAt: Date.now(),
             eventId: event.index,
-            userId: TEST_USER.index,
+            userId: constants.TEST_USER.index,
             response: "YES"
           }
         ]
@@ -952,7 +958,7 @@ const Event = props => {
         <div className="pr-2">
           <Link
             to={`../../../school/${school.id}`}
-            className={`${STYLES.LINK.DEFAULT} text-lg`}
+            className={`${constants.STYLES.LINK.DEFAULT} text-lg`}
           >
             {school.name}
           </Link>
@@ -972,11 +978,17 @@ const Event = props => {
           className="text-gray-700 mr-2 text-lg"
         />
         <time dateTime={event.startDateTime}>
-          {moment(event.startDateTime).calendar(null, MOMENT_CALENDAR_FORMAT)}
+          {moment(event.startDateTime).calendar(
+            null,
+            constants.MOMENT_CALENDAR_FORMAT
+          )}
         </time>{" "}
         to{" "}
         <time dateTime={event.endDateTime}>
-          {moment(event.endDateTime).calendar(null, MOMENT_CALENDAR_FORMAT)}
+          {moment(event.endDateTime).calendar(
+            null,
+            constants.MOMENT_CALENDAR_FORMAT
+          )}
         </time>
       </div>
       <div className="block pb-2">
@@ -986,7 +998,7 @@ const Event = props => {
         />
         {event.location ? (
           <OutsideLink
-            href={`${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
+            href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
               event.location
             )}`}
           >
@@ -1037,7 +1049,7 @@ const Event = props => {
                 />
                 <Link
                   to={`../../../user/${user.id}`}
-                  className={`${STYLES.LINK.DEFAULT} text-base m-4 mt-8 leading-tight font-bold text-center`}
+                  className={`${constants.STYLES.LINK.DEFAULT} text-base m-4 mt-8 leading-tight font-bold text-center`}
                 >
                   {user.fullName}
                 </Link>
@@ -1102,13 +1114,13 @@ const EventListItem = props => {
           <div className="pr-2">
             <Link
               to={`../../school/${school.id}`}
-              className={`${STYLES.LINK.DEFAULT} text-xl leading-none`}
+              className={`${constants.STYLES.LINK.DEFAULT} text-xl leading-none`}
             >
               {school.name}
             </Link>
             <Link
               to={`../../event/${props.event.id}`}
-              className={`${STYLES.LINK.DEFAULT} block font-semibold text-3xl mt-1 leading-none`}
+              className={`${constants.STYLES.LINK.DEFAULT} block font-semibold text-3xl mt-1 leading-none`}
             >
               {props.event.title}
             </Link>
@@ -1124,7 +1136,7 @@ const EventListItem = props => {
           <time className="text-lg" dateTime={props.event.startDateTime}>
             {moment(props.event.startDateTime).calendar(
               null,
-              MOMENT_CALENDAR_FORMAT
+              constants.MOMENT_CALENDAR_FORMAT
             )}
           </time>
         </div>
@@ -1155,7 +1167,7 @@ const OutsideLink = ({ className = "", ...props }) => {
       {...props}
       target="_blank"
       rel="noopener noreferrer"
-      className={classNames([STYLES.LINK.DEFAULT, className])}
+      className={classNames([constants.STYLES.LINK.DEFAULT, className])}
     />
   );
 };
@@ -1165,7 +1177,9 @@ const OutsideLink = ({ className = "", ...props }) => {
 
 const Button = ({ variant = "", className = "", ...props }) => {
   const defaultClass = `${
-    STYLES.BUTTON[variant.toUpperCase() || STYLES.BUTTON.DEFAULT]
+    constants.STYLES.BUTTON[
+      variant.toUpperCase() || constants.STYLES.BUTTON.DEFAULT
+    ]
   } border-2 font-semibold py-2 px-4 rounded-lg`;
 
   return (
@@ -1178,7 +1192,9 @@ const Button = ({ variant = "", className = "", ...props }) => {
 
 const Alert = ({ variant = "", className = "", ...props }) => {
   const defaultClass = `${
-    STYLES.ALERT[variant.toUpperCase() || STYLES.ALERT.DEFAULT]
+    constants.STYLES.ALERT[
+      variant.toUpperCase() || constants.STYLES.ALERT.DEFAULT
+    ]
   } rounded-lg px-8 py-4`;
 
   return (
@@ -1194,7 +1210,7 @@ const Select = ({ options = [], className = "", ...props }) => {
     <div className="relative w-full">
       <select
         {...props}
-        className={classNames([STYLES.SELECT.DEFAULT, className])}
+        className={classNames([constants.STYLES.SELECT.DEFAULT, className])}
       >
         {options.map(option => (
           <option key={option.value} {...option} />
@@ -1231,7 +1247,7 @@ const Input = ({ error, className = "", ...props }) => {
     <input
       {...props}
       className={classNames([
-        STYLES.INPUT[error ? "ERROR" : "DEFAULT"],
+        constants.STYLES.INPUT[error ? "ERROR" : "DEFAULT"],
         className
       ])}
     />
@@ -1245,7 +1261,7 @@ const Label = ({ className = "", ...props }) => {
   return (
     <label
       {...props}
-      className={classNames([STYLES.LABEL.DEFAULT, className])}
+      className={classNames([constants.STYLES.LABEL.DEFAULT, className])}
     />
   );
 };

@@ -4,7 +4,6 @@
 export const onCreateUser = `subscription OnCreateUser($owner: String!) {
   onCreateUser(owner: $owner) {
     id
-    username
     firstName
     lastName
     hometown
@@ -73,7 +72,6 @@ export const onCreateUser = `subscription OnCreateUser($owner: String!) {
 export const onUpdateUser = `subscription OnUpdateUser($owner: String!) {
   onUpdateUser(owner: $owner) {
     id
-    username
     firstName
     lastName
     hometown
@@ -142,7 +140,6 @@ export const onUpdateUser = `subscription OnUpdateUser($owner: String!) {
 export const onDeleteUser = `subscription OnDeleteUser {
   onDeleteUser {
     id
-    username
     firstName
     lastName
     hometown
@@ -233,7 +230,6 @@ export const onCreateSchool = `subscription OnCreateSchool {
     users {
       items {
         id
-        username
         firstName
         lastName
         hometown
@@ -285,7 +281,6 @@ export const onUpdateSchool = `subscription OnUpdateSchool {
     users {
       items {
         id
-        username
         firstName
         lastName
         hometown
@@ -337,7 +332,6 @@ export const onDeleteSchool = `subscription OnDeleteSchool {
     users {
       items {
         id
-        username
         firstName
         lastName
         hometown
@@ -396,7 +390,6 @@ export const onCreateEvent = `subscription OnCreateEvent($owner: String!) {
     updatedAt
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -479,7 +472,6 @@ export const onUpdateEvent = `subscription OnUpdateEvent($owner: String!) {
     updatedAt
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -562,7 +554,6 @@ export const onDeleteEvent = `subscription OnDeleteEvent($owner: String!) {
     updatedAt
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -636,7 +627,6 @@ export const onCreateEventResponse = `subscription OnCreateEventResponse($owner:
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -659,7 +649,6 @@ export const onCreateEventResponse = `subscription OnCreateEventResponse($owner:
     }
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -725,7 +714,6 @@ export const onUpdateEventResponse = `subscription OnUpdateEventResponse($owner:
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -748,7 +736,6 @@ export const onUpdateEventResponse = `subscription OnUpdateEventResponse($owner:
     }
     owner {
       id
-      username
       firstName
       lastName
       hometown
@@ -814,7 +801,6 @@ export const onDeleteEventResponse = `subscription OnDeleteEventResponse {
       updatedAt
       owner {
         id
-        username
         firstName
         lastName
         hometown
@@ -837,7 +823,6 @@ export const onDeleteEventResponse = `subscription OnDeleteEventResponse {
     }
     owner {
       id
-      username
       firstName
       lastName
       hometown
