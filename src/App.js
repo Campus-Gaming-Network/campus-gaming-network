@@ -19,110 +19,28 @@ import _ from "lodash";
 import moment from "moment";
 import "./App.css";
 import TEST_DATA from "./test_data";
-
-////////////////////////////////////////////////////////////////////////////////
-// Utilities
-
-const getEventResponses = function getEventResponses(id, field = "eventId") {
-  return TEST_DATA.event_responses.filter(function(event_response) {
-    return event_response[field] === id;
-  });
-};
-
-const getEventGoers = function getEventGoers(eventResponses) {
-  return TEST_DATA.users.filter(function(user) {
-    return eventResponses.find(function(eventResponse) {
-      return eventResponse.userId === user.index;
-    });
-  });
-};
-
-const getEventsByResponses = function getEventsByResponses(eventResponses) {
-  return TEST_DATA.events.filter(function(event) {
-    return eventResponses.find(function(eventResponse) {
-      return eventResponse.eventId === event.index;
-    });
-  });
-};
-
-const sortedEvents = function sortedEvents(events) {
-  return _.orderBy(
-    events,
-    function(event) {
-      return moment(moment(event.startDateTime));
-    },
-    ["desc"]
-  );
-};
-
-const classNames = function classNames(_classNames = []) {
-  return _classNames.join(" ");
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// Constants
-
-const MOMENT_DISPLAY_FORMAT = "ddd, MMM Do h:mm a";
-
-const MOMENT_CALENDAR_FORMAT = {
-  sameElse: MOMENT_DISPLAY_FORMAT
-};
-
-const GOOGLE_MAPS_QUERY_URL =
-  "https://www.google.com/maps/search/?api=1&query=";
-
-const STYLES = {
-  BUTTON: {
-    DEFAULT: "bg-white border-gray-400 hover:bg-gray-200 text-gray-900",
-    YELLOW:
-      "bg-yellow-100 border-yellow-500 hover:bg-yellow-200 text-yellow-900",
-    TEAL: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700",
-    INDIGO:
-      "bg-indigo-100 border-indigo-700 hover:bg-indigo-200 text-indigo-700",
-    PURPLE:
-      "bg-purple-100 border-purple-700 focus:bg-purple-200 hover:bg-purple-200 text-purple-700"
-  },
-  LINK: {
-    DEFAULT:
-      "font-medium text-purple-700 hover:text-purple-800 hover:underline focus:underline"
-  },
-  INPUT: {
-    DEFAULT:
-      "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500",
-    ERROR:
-      "bg-red-200 appearance-none border-2 border-red-500 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500"
-  },
-  SELECT: {
-    DEFAULT:
-      "block appearance-none w-full bg-gray-200 border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:bg-white focus:border-purple-500"
-  },
-  ALERT: {
-    DEFAULT: "bg-gray-200 text-gray-800",
-    YELLOW: "bg-yellow-200 text-yellow-800",
-    GREEN: "bg-green-200 text-green-800"
-  },
-  LABEL: {
-    DEFAULT: "block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-  }
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// TODO: Remove once actual data is implemented
-
-const randomSampleOfEvents = _.slice(
-  _.shuffle(TEST_DATA.events),
-  0,
-  Math.floor(Math.random() * 10)
-);
-const testUser = TEST_DATA.users[Math.floor(Math.random() * 250)];
-const currentUser = {
-  ...testUser,
-  school: {
-    ...TEST_DATA.schools[testUser.schoolId]
-  },
-  eventResponses: [...getEventResponses(testUser.index, "userId")],
-  events: [getEventsByResponses(getEventResponses(testUser.index, "userId"))]
-};
+import {
+  MOMENT_CALENDAR_FORMAT,
+  GOOGLE_MAPS_QUERY_URL,
+  STYLES,
+  STUDENT_STATUS_OPTIONS,
+  RANDOM_SAMPLE_OF_EVENTS,
+  TEST_USER,
+  CURRENT_USER,
+  USER_EMPTY_GAME_ACCOUNTS_TEXT,
+  USER_EMPTY_CURRENTLY_PLAYING_TEXT,
+  USER_EMPTY_FAVORITE_GAMES_TEXT,
+  USER_EMPTY_UPCOMING_EVENTS_TEXT,
+  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT,
+  SCHOOL_OPTIONS
+} from "./constants";
+import {
+  getEventResponses,
+  getEventGoers,
+  getEventsByResponses,
+  sortedEvents,
+  classNames
+} from "./utilities";
 
 ////////////////////////////////////////////////////////////////////////////////
 // App
@@ -133,12 +51,12 @@ const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
 
-  const toggledLoggedIn = () => setIsLoggedIn(!isLoggedIn);
+  // const toggledLoggedIn = () => setIsLoggedIn(!isLoggedIn);
 
   const authProps = {
     isLoggedIn,
     setIsLoggedIn,
-    currentUser
+    CURRENT_USER
   };
 
   return (
@@ -181,7 +99,7 @@ const App = () => {
                 Create an Event
               </Link>
               <Link
-                to={`school/${currentUser.school.id}`}
+                to={`school/${CURRENT_USER.school.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
                 <img
@@ -192,12 +110,12 @@ const App = () => {
                 School
               </Link>
               <Link
-                to={`user/${currentUser.id}`}
+                to={`user/${CURRENT_USER.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
                 <img
                   className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-                  src={currentUser.picture}
+                  src={CURRENT_USER.picture}
                   alt=""
                 />
                 Profile
@@ -327,35 +245,11 @@ const Signup = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="school">School</Label>
-          <Select
-            id="school"
-            required
-            options={[
-              { value: "", label: "Select your school" },
-              ...TEST_DATA.schools.map(school => ({
-                value: school.id,
-                label: school.name
-              }))
-            ]}
-          />
+          <Select id="school" required options={SCHOOL_OPTIONS} />
         </div>
         <div className="md:flex md:items-center">
           <Label htmlFor="status">Status</Label>
-          <Select
-            id="status"
-            required
-            options={[
-              { value: "", label: "Select your status" },
-              { value: "FRESHMAN", label: "Freshman" },
-              { value: "SOPHMORE", label: "Sophmore" },
-              { value: "JUNIOR", label: "Junior" },
-              { value: "SENIOR", label: "Senior" },
-              { value: "GRAD", label: "Grad" },
-              { value: "ALUMNI", label: "Alumni" },
-              { value: "FACULTY", label: "Faculty" },
-              { value: "OTHER", label: "Other" }
-            ]}
-          />
+          <Select id="status" required options={STUDENT_STATUS_OPTIONS} />
         </div>
         <Button variant="purple" type="submit" className="my-12 w-full">
           Sign Up
@@ -558,7 +452,7 @@ const PasswordConfirmation = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // Home
 
-const Home = props => {
+const Home = () => {
   return (
     <PageWrapper>
       <PageSection className="pt-0">
@@ -574,13 +468,13 @@ const Home = props => {
         <h3 className="text-3xl font-semibold">
           Upcoming events near Chicago, IL
         </h3>
-        {!randomSampleOfEvents.length ? (
+        {!RANDOM_SAMPLE_OF_EVENTS.length ? (
           <p className="text-gray-500 text-2xl">
             There are no upcoming events coming up.
           </p>
         ) : (
           <ul>
-            {sortedEvents(randomSampleOfEvents).map((event, i) => (
+            {sortedEvents(RANDOM_SAMPLE_OF_EVENTS).map((event, i) => (
               <EventListItem key={event.id} event={event} />
             ))}
             <li className="flex items-center py-4 text-lg">
@@ -685,7 +579,7 @@ const School = props => {
           </ul>
         ) : (
           <p className="text-gray-500 mt-4">
-            This school currently has no upcoming events.
+            {SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
           </p>
         )}
       </PageSection>
@@ -831,9 +725,7 @@ const User = props => {
             ))}
           </dl>
         ) : (
-          <p className="text-gray-500">
-            This user has not added any game accounts.
-          </p>
+          <p className="text-gray-500">{USER_EMPTY_GAME_ACCOUNTS_TEXT}</p>
         )}
       </PageSection>
       <PageSection>
@@ -853,7 +745,7 @@ const User = props => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">This user has not added any games.</p>
+          <p className="text-gray-500">{USER_EMPTY_CURRENTLY_PLAYING_TEXT}</p>
         )}
       </PageSection>
       <PageSection>
@@ -873,7 +765,7 @@ const User = props => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">This user has not added any games.</p>
+          <p className="text-gray-500">{USER_EMPTY_FAVORITE_GAMES_TEXT}</p>
         )}
       </PageSection>
       <PageSection>
@@ -887,9 +779,7 @@ const User = props => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">
-            This user is currently not attending any upcoming events.
-          </p>
+          <p className="text-gray-500">{USER_EMPTY_UPCOMING_EVENTS_TEXT}</p>
         )}
       </PageSection>
     </PageWrapper>
@@ -950,35 +840,11 @@ const EditUser = props => {
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="school">School</Label>
-          <Select
-            id="school"
-            required
-            options={[
-              { value: "", label: "Select your school" },
-              ...TEST_DATA.schools.map(school => ({
-                value: school.id,
-                label: school.name
-              }))
-            ]}
-          />
+          <Select id="school" required options={SCHOOL_OPTIONS} />
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="status">Status</Label>
-          <Select
-            id="status"
-            required
-            options={[
-              { value: "", label: "Select your status" },
-              { value: "FRESHMAN", label: "Freshman" },
-              { value: "SOPHMORE", label: "Sophmore" },
-              { value: "JUNIOR", label: "Junior" },
-              { value: "SENIOR", label: "Senior" },
-              { value: "GRAD", label: "Grad" },
-              { value: "ALUMNI", label: "Alumni" },
-              { value: "FACULTY", label: "Faculty" },
-              { value: "OTHER", label: "Other" }
-            ]}
-          />
+          <Select id="status" required options={STUDENT_STATUS_OPTIONS} />
         </div>
         <div className="md:flex md:items-start mb-6">
           <Label htmlFor="bio">Bio</Label>
@@ -1041,7 +907,7 @@ const Event = props => {
 
   const hasResponded = TEST_DATA.event_responses.some(
     eventResponse =>
-      eventResponse.userId === testUser.index && eventResponse.id === event.id
+      eventResponse.userId === TEST_USER.index && eventResponse.id === event.id
   );
 
   console.log({ hasResponded });
@@ -1059,7 +925,7 @@ const Event = props => {
             createdAt: Date.now(),
             updatedAt: Date.now(),
             eventId: event.index,
-            userId: testUser.index,
+            userId: TEST_USER.index,
             response: "YES"
           }
         ]
@@ -1335,15 +1201,25 @@ const Select = ({ options = [], className = "", ...props }) => {
         ))}
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-        <svg
-          className="fill-current h-4 w-4"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-        >
-          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-        </svg>
+        <SelectChevron />
       </div>
     </div>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// SelectChevron
+
+const SelectChevron = ({ className = "", ...props }) => {
+  return (
+    <svg
+      {...props}
+      className={classNames(["fill-current h-4 w-4", className])}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+    >
+      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+    </svg>
   );
 };
 
