@@ -46,6 +46,7 @@ const App = () => {
   const appProps = {
     isAuthenticated,
     setUserIsAuthenticated,
+    handleLogout,
     currentUser,
     CURRENT_USER: constants.CURRENT_USER
   };
@@ -57,7 +58,9 @@ const App = () => {
   const onLoad = async () => {
     try {
       await Auth.currentSession();
+
       const response = await Auth.currentAuthenticatedUser();
+
       setCurrenUser(response);
       setUserIsAuthenticated(true);
     } catch (e) {
@@ -67,6 +70,14 @@ const App = () => {
     }
 
     setIsAuthenticating(false);
+  };
+
+  const handleLogout = async () => {
+    await Auth.signOut();
+
+    setUserIsAuthenticated(false);
+
+    navigate("/");
   };
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -211,7 +222,7 @@ const Signup = props => {
   const [newUser, setNewUser] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  if (props.props.isAuthenticated) {
+  if (props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -255,7 +266,7 @@ const Signup = props => {
     try {
       await Auth.confirmSignUp(fields.email, fields.confirmationCode);
       await Auth.signIn(fields.email, fields.password);
-      props.setUserIsAuthenticated(true);
+      props.appProps.setUserIsAuthenticated(true);
       navigate("/");
     } catch (e) {
       setIsLoading(false);
@@ -410,13 +421,33 @@ const Signup = props => {
 // Login
 
 const Login = props => {
-  if (props.props.isAuthenticated) {
+  const [fields, handleFieldChange] = useFormFields({
+    email: "",
+    password: ""
+  });
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  if (props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    console.log("Submitted!");
+
+    setIsLoading(true);
+
+    try {
+      await Auth.signIn(fields.email, fields.password);
+      props.appProps.setUserIsAuthenticated(true);
+      navigate("/");
+    } catch (e) {
+      alert(e.message);
+      setIsLoading(false);
+    }
+  };
+
+  const validateForm = () => {
+    return fields.email.length > 0 && fields.password.length > 0;
   };
 
   return (
@@ -436,6 +467,8 @@ const Login = props => {
             type="email"
             placeholder="jdoe123@gmail.com"
             required
+            onChange={handleFieldChange}
+            value={fields.email}
           />
         </div>
         <div className="md:flex md:items-center">
@@ -446,10 +479,17 @@ const Login = props => {
             type="password"
             placeholder="******************"
             required
+            onChange={handleFieldChange}
+            value={fields.password}
           />
         </div>
-        <Button variant="purple" type="submit" className="my-12 w-full">
-          Log In
+        <Button
+          disabled={isLoading || !validateForm()}
+          variant="purple"
+          type="submit"
+          className="my-12 w-full"
+        >
+          {isLoading ? "Logging in..." : "Log In"}
         </Button>
         <div className="flex items-center justify-between">
           <p>
@@ -474,7 +514,7 @@ const Login = props => {
 // ForgotPassword
 
 const ForgotPassword = props => {
-  if (props.props.isAuthenticated) {
+  if (props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -690,7 +730,7 @@ const School = props => {
 // EditSchool
 
 const EditSchool = props => {
-  if (!props.props.isAuthenticated) {
+  if (!props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -873,7 +913,7 @@ const User = props => {
 // EditUser
 
 const EditUser = props => {
-  if (!props.props.isAuthenticated) {
+  if (!props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -1146,7 +1186,7 @@ const Event = props => {
 // CreateEvent
 
 const CreateEvent = props => {
-  if (!props.props.isAuthenticated) {
+  if (!props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
