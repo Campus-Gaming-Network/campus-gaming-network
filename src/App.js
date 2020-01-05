@@ -145,7 +145,7 @@ const App = () => {
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
                 <Gravatar
-                  email={currentUser.attributes.email}
+                  email={appProps.currentUser.attributes.email}
                   className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
                 />
                 Profile
@@ -514,14 +514,150 @@ const Login = props => {
 // ForgotPassword
 
 const ForgotPassword = props => {
+  const [fields, handleFieldChange] = useFormFields({
+    confirmationCode: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [isSendingCode, setIsSendingCode] = React.useState(false);
+  const [codeSent, setCodeSent] = React.useState(false);
+  const [isConfirming, setIsConfirming] = React.useState(false);
+  const [confirmed, setConfirmed] = React.useState(false);
+
   if (props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    console.log("Submitted!");
+
+    setIsSendingCode(true);
+
+    try {
+      await Auth.forgotPassword(fields.email);
+      setCodeSent(true);
+    } catch (e) {
+      alert(e.message);
+      setIsSendingCode(false);
+    }
   };
+
+  const handleConfirmationSubmit = async e => {
+    e.preventDefault();
+
+    setIsConfirming(true);
+
+    try {
+      await Auth.forgotPasswordSubmit(
+        fields.email,
+        fields.confirmationCode,
+        fields.password
+      );
+      setConfirmed(true);
+    } catch (e) {
+      alert(e.message);
+      setIsConfirming(false);
+    }
+  };
+
+  const validateCodeForm = () => {
+    return fields.email.length > 0;
+  };
+
+  const validateResetForm = () => {
+    return (
+      fields.confirmationCode.length > 0 &&
+      fields.password.length > 0 &&
+      fields.password === fields.confirmPassword
+    );
+  };
+
+  if (codeSent) {
+    if (confirmed) {
+      return (
+        <PageWrapper>
+          <Alert variant="green">
+            <span className="font-bold block text-2xl">
+              Your password has been reset.
+            </span>
+            <p>
+              <Link to="/login" className="hover:underline focus:underline">
+                Click here to login with your new credentials.
+              </Link>
+            </p>
+          </Alert>
+        </PageWrapper>
+      );
+    }
+
+    return (
+      <PageWrapper>
+        <form
+          onSubmit={handleConfirmationSubmit}
+          className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
+        >
+          <Alert variant="yellow">
+            <p className="font-medium">
+              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-4" />
+              Please check your email ({fields.email}) for a confirmation code.
+            </p>
+          </Alert>
+          <hr className="my-12" />
+          <div className="md:flex md:items-center mb-6">
+            <label
+              className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+              htmlFor="confirmationCode"
+            >
+              Confirmation Code
+            </label>
+            <Input
+              id="confirmationCode"
+              name="confirmationCode"
+              placeholder="12345"
+              required
+              autoFocus
+              type="tel"
+              onChange={handleFieldChange}
+              value={fields.confirmationCode}
+            />
+          </div>
+          <div className="md:flex md:items-center mb-6">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="******************"
+              required
+              onChange={handleFieldChange}
+              value={fields.password}
+            />
+          </div>
+          <div className="md:flex md:items-center mb-6">
+            <Label htmlFor="password">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="******************"
+              required
+              onChange={handleFieldChange}
+              value={fields.confirmPassword}
+            />
+          </div>
+          <Button
+            disabled={isConfirming || !validateResetForm()}
+            variant="purple"
+            type="submit"
+            className="my-12 w-full"
+          >
+            {isConfirming ? "Confirming..." : "Confirm"}
+          </Button>
+        </form>
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>
@@ -545,10 +681,17 @@ const ForgotPassword = props => {
             type="email"
             placeholder="jdoe123@gmail.com"
             required
+            onChange={handleFieldChange}
+            value={fields.email}
           />
         </div>
-        <Button variant="purple" type="submit" className="my-12 w-full">
-          Send Instructions
+        <Button
+          disabled={isSendingCode || !validateCodeForm()}
+          variant="purple"
+          type="submit"
+          className="my-12 w-full"
+        >
+          {isSendingCode ? "Sending..." : "Send Confirmation"}
         </Button>
         <div className="flex items-center justify-between">
           <p>
