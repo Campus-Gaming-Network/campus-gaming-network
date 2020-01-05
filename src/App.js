@@ -43,18 +43,6 @@ const App = () => {
   const [isAuthenticating, setIsAuthenticating] = React.useState(true);
   const [currentUser, setCurrenUser] = React.useState(null);
 
-  const appProps = {
-    isAuthenticated,
-    setUserIsAuthenticated,
-    handleLogout,
-    currentUser,
-    CURRENT_USER: constants.CURRENT_USER
-  };
-
-  React.useEffect(() => {
-    onLoad();
-  }, []);
-
   const onLoad = async () => {
     try {
       await Auth.currentSession();
@@ -82,6 +70,10 @@ const App = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  React.useEffect(() => {
+    onLoad();
+  }, []);
+
   // Since loading the user session is an asynchronous process,
   // we want to ensure that our app does not change states when
   // it first loads. To do this we’ll hold off rendering our app
@@ -89,6 +81,14 @@ const App = () => {
   if (isAuthenticating) {
     return null;
   }
+
+  const appProps = {
+    isAuthenticated,
+    setUserIsAuthenticated,
+    handleLogout,
+    currentUser,
+    CURRENT_USER: constants.CURRENT_USER
+  };
 
   return (
     <React.Fragment>
@@ -266,7 +266,7 @@ const Signup = props => {
     try {
       await Auth.confirmSignUp(fields.email, fields.confirmationCode);
       await Auth.signIn(fields.email, fields.password);
-      props.appProps.setUserIsAuthenticated(true);
+      props.setUserIsAuthenticated(true);
       navigate("/");
     } catch (e) {
       setIsLoading(false);
@@ -438,7 +438,7 @@ const Login = props => {
 
     try {
       await Auth.signIn(fields.email, fields.password);
-      props.appProps.setUserIsAuthenticated(true);
+      props.setUserIsAuthenticated(true);
       navigate("/");
     } catch (e) {
       alert(e.message);
