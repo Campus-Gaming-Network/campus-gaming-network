@@ -31,12 +31,8 @@ export const GOOGLE_MAPS_QUERY_URL =
 
 export const STYLES = {
   BUTTON: {
-    DEFAULT: "bg-white border-gray-400 hover:bg-gray-200 text-gray-900",
-    YELLOW:
-      "bg-yellow-100 border-yellow-500 hover:bg-yellow-200 text-yellow-900",
-    TEAL: "bg-teal-100 border-teal-700 hover:bg-teal-200 text-teal-700",
-    INDIGO:
-      "bg-indigo-100 border-indigo-700 hover:bg-indigo-200 text-indigo-700",
+    DEFAULT:
+      "bg-white border-gray-400 focus:bg-gray-200 hover:bg-gray-200 text-gray-900",
     PURPLE:
       "bg-purple-100 border-purple-700 focus:bg-purple-200 hover:bg-purple-200 text-purple-700"
   },

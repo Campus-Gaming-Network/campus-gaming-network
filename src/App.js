@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Link, Redirect } from "@reach/router";
+import { Router, Link, Redirect, navigate } from "@reach/router";
 import { SkipNavLink, SkipNavContent } from "@reach/skip-nav";
 import { Alert as ReachAlert } from "@reach/alert";
 import "@reach/skip-nav/styles.css";
@@ -16,8 +16,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import _ from "lodash";
+import Gravatar from "react-gravatar";
 import moment from "moment";
+import Amplify, { Auth } from "aws-amplify";
 import "./App.css";
+import awsconfig from "./aws-exports";
 import TEST_DATA from "./test_data";
 import * as constants from "./constants";
 import {
@@ -25,25 +28,56 @@ import {
   getEventGoers,
   getEventsByResponses,
   sortedEvents,
-  classNames
+  classNames,
+  useFormFields
 } from "./utilities";
+
+Amplify.configure(awsconfig);
 
 ////////////////////////////////////////////////////////////////////////////////
 // App
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const [isAuthenticated, setUserIsAuthenticated] = React.useState(false);
+  const [isAuthenticating, setIsAuthenticating] = React.useState(true);
+  const [currentUser, setCurrenUser] = React.useState(null);
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
-
-  // const toggledLoggedIn = () => setIsLoggedIn(!isLoggedIn);
-
-  const authProps = {
-    isLoggedIn,
-    setIsLoggedIn,
+  const appProps = {
+    isAuthenticated,
+    setUserIsAuthenticated,
+    currentUser,
     CURRENT_USER: constants.CURRENT_USER
   };
+
+  React.useEffect(() => {
+    onLoad();
+  }, []);
+
+  const onLoad = async () => {
+    try {
+      await Auth.currentSession();
+      const response = await Auth.currentAuthenticatedUser();
+      setCurrenUser(response);
+      setUserIsAuthenticated(true);
+    } catch (e) {
+      if (e !== "No current user") {
+        alert(e);
+      }
+    }
+
+    setIsAuthenticating(false);
+  };
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  // Since loading the user session is an asynchronous process,
+  // we want to ensure that our app does not change states when
+  // it first loads. To do this we’ll hold off rendering our app
+  // till isAuthenticating is false.
+  if (isAuthenticating) {
+    return null;
+  }
 
   return (
     <React.Fragment>
@@ -76,7 +110,7 @@ const App = () => {
             isMenuOpen ? "block" : "hidden"
           } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
         >
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <React.Fragment>
               <Link
                 to="/create-event"
@@ -99,10 +133,9 @@ const App = () => {
                 to={`user/${constants.CURRENT_USER.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
-                <img
+                <Gravatar
+                  email={currentUser.attributes.email}
                   className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-                  src={constants.CURRENT_USER.picture}
-                  alt=""
                 />
                 Profile
               </Link>
@@ -129,20 +162,16 @@ const App = () => {
         <SkipNavContent />
         <Router>
           <ScrollToTop default>
-            <Home path="/" {...authProps} />
-            <User path="user/:id" {...authProps} />
-            <EditUser path="edit-user" {...authProps} />
-            <School path="school/:id" {...authProps} />
-            <EditSchool path="edit-school" {...authProps} />
-            <Event path="event/:id" {...authProps} />
-            <CreateEvent path="create-event" {...authProps} />
-            <Signup path="register" {...authProps} />
-            <Login path="login" {...authProps} />
-            <ForgotPassword path="forgot-password" {...authProps} />
-            <PasswordConfirmation
-              path="forgot-password-confirm"
-              {...authProps}
-            />
+            <Home path="/" {...appProps} />
+            <User path="user/:id" {...appProps} />
+            <EditUser path="edit-user" {...appProps} />
+            <School path="school/:id" {...appProps} />
+            <EditSchool path="edit-school" {...appProps} />
+            <Event path="event/:id" {...appProps} />
+            <CreateEvent path="create-event" {...appProps} />
+            <Signup path="register" {...appProps} />
+            <Login path="login" {...appProps} />
+            <ForgotPassword path="forgot-password" {...appProps} />
             <NotFound default />
           </ScrollToTop>
         </Router>
@@ -170,14 +199,114 @@ export default App;
 // Signup
 
 const Signup = props => {
-  if (props.isLoggedIn) {
+  const [fields, handleFieldChange] = useFormFields({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    school: "",
+    status: "",
+    confirmationCode: ""
+  });
+  const [newUser, setNewUser] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  if (props.props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    console.log("Submitted!");
+
+    setIsLoading(true);
+
+    try {
+      const newUser = await Auth.signUp({
+        username: fields.email,
+        password: fields.password
+      });
+      setNewUser(newUser);
+    } catch (e) {
+      setIsLoading(false);
+      alert(e.message);
+    }
   };
+
+  const validateForm = () => {
+    return (
+      fields.firstName.length > 0 &&
+      fields.lastName.length > 0 &&
+      fields.email.length > 0 &&
+      fields.password.length > 0 &&
+      fields.school.length > 0 &&
+      fields.status.length > 0
+    );
+  };
+
+  const validateConfirmationForm = () => {
+    return fields.confirmationCode.length > 0;
+  };
+
+  const handleConfirmationSubmit = async e => {
+    e.preventDefault();
+
+    setIsLoading(true);
+
+    try {
+      await Auth.confirmSignUp(fields.email, fields.confirmationCode);
+      await Auth.signIn(fields.email, fields.password);
+      props.setUserIsAuthenticated(true);
+      navigate("/");
+    } catch (e) {
+      setIsLoading(false);
+      alert(e.message);
+    }
+  };
+
+  if (newUser) {
+    return (
+      <PageWrapper>
+        <form
+          onSubmit={handleConfirmationSubmit}
+          className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
+        >
+          <Alert variant="yellow">
+            <p className="font-medium">
+              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-4" />
+              Please check your email ({fields.email}) for a confirmation code.
+            </p>
+          </Alert>
+          <hr className="my-12" />
+          <div className="md:flex md:items-center mb-6">
+            <label
+              className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+              htmlFor="confirmationCode"
+            >
+              Confirmation Code
+            </label>
+            <Input
+              id="confirmationCode"
+              name="confirmationCode"
+              placeholder="12345"
+              required
+              autoFocus
+              type="tel"
+              onChange={handleFieldChange}
+              value={fields.confirmationCode}
+            />
+          </div>
+          <Button
+            disabled={isLoading || !validateConfirmationForm()}
+            variant="purple"
+            type="submit"
+            className="my-12 w-full"
+          >
+            {isLoading ? "Verifying..." : "Verify"}
+          </Button>
+        </form>
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>
@@ -190,23 +319,28 @@ const Signup = props => {
         </h1>
         <hr className="my-12" />
         <div className="md:flex md:items mb-6">
-          <Label htmlFor="first-name">First Name</Label>
+          <Label htmlFor="firstName">First Name</Label>
           <Input
-            id="first-name"
-            name="first-name"
+            autoFocus
+            id="firstName"
+            name="firstName"
             type="text"
             placeholder="Jane"
             required
+            onChange={handleFieldChange}
+            value={fields.firstName}
           />
         </div>
         <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="last-name">Last Name</Label>
+          <Label htmlFor="lastName">Last Name</Label>
           <Input
-            id="last-name"
-            name="last-name"
+            id="lastName"
+            name="lastName"
             type="text"
             placeholder="Doe"
             required
+            onChange={handleFieldChange}
+            value={fields.lastName}
           />
         </div>
         <div className="md:flex md:items-center mb-6">
@@ -217,6 +351,8 @@ const Signup = props => {
             type="email"
             placeholder="jdoe@gmail.com"
             required
+            onChange={handleFieldChange}
+            value={fields.email}
           />
         </div>
         <div className="md:flex md:items-center mb-6">
@@ -227,11 +363,19 @@ const Signup = props => {
             type="password"
             placeholder="******************"
             required
+            onChange={handleFieldChange}
+            value={fields.password}
           />
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="school">School</Label>
-          <Select id="school" required options={constants.SCHOOL_OPTIONS} />
+          <Select
+            id="school"
+            required
+            options={constants.SCHOOL_OPTIONS}
+            onChange={handleFieldChange}
+            value={fields.school}
+          />
         </div>
         <div className="md:flex md:items-center">
           <Label htmlFor="status">Status</Label>
@@ -239,10 +383,17 @@ const Signup = props => {
             id="status"
             required
             options={constants.STUDENT_STATUS_OPTIONS}
+            onChange={handleFieldChange}
+            value={fields.status}
           />
         </div>
-        <Button variant="purple" type="submit" className="my-12 w-full">
-          Sign Up
+        <Button
+          disabled={isLoading || !validateForm()}
+          variant="purple"
+          type="submit"
+          className="my-12 w-full"
+        >
+          {isLoading ? "Submitting..." : "Sign Up"}
         </Button>
         <p>
           Already a member?{" "}
@@ -259,7 +410,7 @@ const Signup = props => {
 // Login
 
 const Login = props => {
-  if (props.isLoggedIn) {
+  if (props.props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -323,7 +474,7 @@ const Login = props => {
 // ForgotPassword
 
 const ForgotPassword = props => {
-  if (props.isLoggedIn) {
+  if (props.props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -368,75 +519,6 @@ const ForgotPassword = props => {
             .
           </p>
         </div>
-      </form>
-    </PageWrapper>
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// PasswordConfirmation
-
-const PasswordConfirmation = props => {
-  if (props.isLoggedIn) {
-    return <Redirect to="/" noThrow />;
-  }
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    console.log("Submitted!");
-  };
-
-  return (
-    <PageWrapper>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
-      >
-        <Alert variant="yellow">
-          <p className="font-medium">
-            <FontAwesomeIcon icon={faExclamationTriangle} className="mr-4" />
-            Please check your email (jdoe@gmail.com) for a confirmation code.
-          </p>
-        </Alert>
-        <hr className="my-12" />
-        <div className="md:flex md:items-center mb-6">
-          <label
-            className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-            htmlFor="code"
-          >
-            Confirmation Code
-          </label>
-          <Input
-            id="code"
-            name="code"
-            type="text"
-            placeholder="12345"
-            required
-          />
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="password">New Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="******************"
-            required
-          />
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="confirm-password">Confirm New Password</Label>
-          <Input
-            id="confirm-password"
-            name="confirm-password"
-            type="password"
-            placeholder="******************"
-            required
-          />
-        </div>
-        <Button variant="purple" type="submit" className="my-12 w-full">
-          Confirm Password Reset
-        </Button>
       </form>
     </PageWrapper>
   );
@@ -608,7 +690,7 @@ const School = props => {
 // EditSchool
 
 const EditSchool = props => {
-  if (!props.isLoggedIn) {
+  if (!props.props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -791,7 +873,7 @@ const User = props => {
 // EditUser
 
 const EditUser = props => {
-  if (!props.isLoggedIn) {
+  if (!props.props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -916,12 +998,10 @@ const Event = props => {
       eventResponse.id === event.id
   );
 
-  console.log({ hasResponded });
-
   const handleAttendSubmit = () => {
     if (!hasResponded) {
       const maxIndex = _.maxBy(TEST_DATA.event_responses, "index").index;
-      console.log(maxIndex);
+
       TEST_DATA.event_responses = [
         ...TEST_DATA.event_responses,
         [
@@ -1066,7 +1146,7 @@ const Event = props => {
 // CreateEvent
 
 const CreateEvent = props => {
-  if (!props.isLoggedIn) {
+  if (!props.props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
@@ -1180,7 +1260,9 @@ const Button = ({ variant = "", className = "", ...props }) => {
     constants.STYLES.BUTTON[
       variant.toUpperCase() || constants.STYLES.BUTTON.DEFAULT
     ]
-  } border-2 font-semibold py-2 px-4 rounded-lg`;
+  } border-2 font-semibold py-2 px-4 rounded-lg ${
+    props.disabled ? "opacity-50 cursor-not-allowed" : ""
+  }`.trim();
 
   return (
     <button {...props} className={classNames([defaultClass, className])} />
@@ -1217,16 +1299,16 @@ const Select = ({ options = [], className = "", ...props }) => {
         ))}
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-        <SelectChevron />
+        <ChevronDown />
       </div>
     </div>
   );
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// SelectChevron
+// ChevronDown
 
-const SelectChevron = ({ className = "", ...props }) => {
+const ChevronDown = ({ className = "", ...props }) => {
   return (
     <svg
       {...props}

@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Utilities
 
+import React from "react";
 import _ from "lodash";
 import moment from "moment";
 import TEST_DATA from "../test_data";
@@ -51,4 +52,18 @@ export const classNames = (_classNames = []) => {
 
 export const isDev = () => {
   return !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+};
+
+export const useFormFields = initialState => {
+  const [fields, setValues] = React.useState(initialState);
+
+  return [
+    fields,
+    function(event) {
+      setValues({
+        ...fields,
+        [event.target.id]: event.target.value
+      });
+    }
+  ];
 };

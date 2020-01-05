@@ -512,6 +512,7 @@ export const searchUsers = `query SearchUsers(
       owner
     }
     nextToken
+    total
   }
 }
 `;
@@ -550,6 +551,7 @@ export const searchSchools = `query SearchSchools(
       }
     }
     nextToken
+    total
   }
 }
 `;
@@ -606,6 +608,7 @@ export const searchEvents = `query SearchEvents(
       }
     }
     nextToken
+    total
   }
 }
 `;
