@@ -146,10 +146,12 @@ const App = () => {
                 to={`user/${constants.CURRENT_USER.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
-                <Gravatar
-                  email={appProps.currentUser.attributes.email}
-                  className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-                />
+                {currentUser && (
+                  <Gravatar
+                    email={currentUser.attributes.email}
+                    className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
+                  />
+                )}
                 Profile
               </Link>
             </React.Fragment>
