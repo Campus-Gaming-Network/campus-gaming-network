@@ -43,7 +43,7 @@ const App = () => {
   const [isAuthenticating, setIsAuthenticating] = React.useState(true);
   const [currentUser, setCurrenUser] = React.useState(null);
 
-  const onLoad = async () => {
+  async function onLoad() {
     try {
       await Auth.currentSession();
 
@@ -58,17 +58,19 @@ const App = () => {
     }
 
     setIsAuthenticating(false);
-  };
+  }
 
-  const handleLogout = async () => {
+  async function handleLogout() {
     await Auth.signOut();
 
     setUserIsAuthenticated(false);
 
     navigate("/");
-  };
+  }
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  function toggleMenu() {
+    setIsMenuOpen(!isMenuOpen);
+  }
 
   React.useEffect(() => {
     onLoad();
@@ -221,12 +223,14 @@ const Signup = props => {
   });
   const [newUser, setNewUser] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isShowingPassword, setIsShowingPassword] = React.useState(false);
 
   if (props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
-  const handleSubmit = async e => {
+  async function handleSubmit(e) {
+    console.log("handlesubmit");
     e.preventDefault();
 
     setIsLoading(true);
@@ -241,9 +245,9 @@ const Signup = props => {
       setIsLoading(false);
       alert(e.message);
     }
-  };
+  }
 
-  const validateForm = () => {
+  function validateForm() {
     return (
       fields.firstName.length > 0 &&
       fields.lastName.length > 0 &&
@@ -252,13 +256,13 @@ const Signup = props => {
       fields.school.length > 0 &&
       fields.status.length > 0
     );
-  };
+  }
 
-  const validateConfirmationForm = () => {
+  function validateConfirmationForm() {
     return fields.confirmationCode.length > 0;
-  };
+  }
 
-  const handleConfirmationSubmit = async e => {
+  async function handleConfirmationSubmit(e) {
     e.preventDefault();
 
     setIsLoading(true);
@@ -272,7 +276,11 @@ const Signup = props => {
       setIsLoading(false);
       alert(e.message);
     }
-  };
+  }
+
+  function togglePasswordVisibility() {
+    setIsShowingPassword(!isShowingPassword);
+  }
 
   if (newUser) {
     return (
@@ -366,17 +374,36 @@ const Signup = props => {
             value={fields.email}
           />
         </div>
-        <div className="md:flex md:items-center mb-6">
+        <div className="md:flex md:items-stretch mb-6">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="******************"
-            required
-            onChange={handleFieldChange}
-            value={fields.password}
-          />
+          <div className="w-full">
+            <Input
+              id="password"
+              name="password"
+              type={isShowingPassword ? "text" : "password"}
+              placeholder="******************"
+              required
+              onChange={handleFieldChange}
+              value={fields.password}
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="text-sm italic"
+            >
+              {isShowingPassword ? "Hide" : "Show"} password
+            </button>
+            <div className="text-sm">
+              <p className="font-bold mt-4">Password Must</p>
+              <ul className="flex flex-wrap list-disc pl-4">
+                <li className="w-1/2">Have One number</li>
+                <li className="w-1/2">Have One uppercase character</li>
+                <li className="w-1/2">Have One lowercase character</li>
+                <li className="w-1/2">Have One special character</li>
+                <li className="w-1/2">Have 8 characters minimum</li>
+              </ul>
+            </div>
+          </div>
         </div>
         <div className="md:flex md:items-center mb-6">
           <Label htmlFor="school">School</Label>
@@ -431,7 +458,7 @@ const Login = props => {
     return <Redirect to="/" noThrow />;
   }
 
-  const handleSubmit = async e => {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     setIsLoading(true);
@@ -444,11 +471,11 @@ const Login = props => {
       alert(e.message);
       setIsLoading(false);
     }
-  };
+  }
 
-  const validateForm = () => {
+  function validateForm() {
     return fields.email.length > 0 && fields.password.length > 0;
-  };
+  }
 
   return (
     <PageWrapper>
@@ -529,7 +556,7 @@ const ForgotPassword = props => {
     return <Redirect to="/" noThrow />;
   }
 
-  const handleSubmit = async e => {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     setIsSendingCode(true);
@@ -541,9 +568,9 @@ const ForgotPassword = props => {
       alert(e.message);
       setIsSendingCode(false);
     }
-  };
+  }
 
-  const handleConfirmationSubmit = async e => {
+  async function handleConfirmationSubmit(e) {
     e.preventDefault();
 
     setIsConfirming(true);
@@ -559,19 +586,19 @@ const ForgotPassword = props => {
       alert(e.message);
       setIsConfirming(false);
     }
-  };
+  }
 
-  const validateCodeForm = () => {
+  function validateCodeForm() {
     return fields.email.length > 0;
-  };
+  }
 
-  const validateResetForm = () => {
+  function validateResetForm() {
     return (
       fields.confirmationCode.length > 0 &&
       fields.password.length > 0 &&
       fields.password === fields.confirmPassword
     );
-  };
+  }
 
   if (codeSent) {
     if (confirmed) {
@@ -1060,10 +1087,10 @@ const EditUser = props => {
     return <Redirect to="/" noThrow />;
   }
 
-  const handleSubmit = e => {
+  async function handleSubmit(e) {
     e.preventDefault();
     console.log("Submitted!");
-  };
+  }
 
   return (
     <PageWrapper>
