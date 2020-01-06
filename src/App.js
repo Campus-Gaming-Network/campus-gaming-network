@@ -230,7 +230,6 @@ const Signup = props => {
   }
 
   async function handleSubmit(e) {
-    console.log("handlesubmit");
     e.preventDefault();
 
     setIsLoading(true);
@@ -241,6 +240,7 @@ const Signup = props => {
         password: fields.password
       });
       setNewUser(newUser);
+      setIsLoading(false);
     } catch (e) {
       setIsLoading(false);
       alert(e.message);
