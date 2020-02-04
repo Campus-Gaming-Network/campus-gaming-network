@@ -12,7 +12,8 @@ import {
   faStar,
   faHeartBroken,
   faHome,
-  faExclamationTriangle
+  faExclamationTriangle,
+  faUserEdit
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import _ from "lodash";
@@ -96,7 +97,7 @@ const App = () => {
     <React.Fragment>
       <SkipNavLink />
       <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-purple-800">
-        <div className="flex items-center justify-between px-4 py-3 sm:p-0">
+        <Flex itemsCenter justifyBetween className="px-4 py-3 sm:p-0">
           <Link
             to="/"
             className="active:outline text-gray-200 hover:text-gray-300 hover:underline focus:underline flex items-center text-3xl"
@@ -116,7 +117,7 @@ const App = () => {
               />
             </button>
           </div>
-        </div>
+        </Flex>
         <nav
           role="navigation"
           className={`${
@@ -178,12 +179,12 @@ const App = () => {
         <Router>
           <ScrollToTop default>
             <Home path="/" {...appProps} />
+            <EditUser path="user/edit" {...appProps} />
             <User path="user/:id" {...appProps} />
-            <EditUser path="edit-user" {...appProps} />
+            <EditSchool path="school/edit" {...appProps} />
             <School path="school/:id" {...appProps} />
-            <EditSchool path="edit-school" {...appProps} />
+            <CreateEvent path="event/create" {...appProps} />
             <Event path="event/:id" {...appProps} />
-            <CreateEvent path="create-event" {...appProps} />
             <Signup path="register" {...appProps} />
             <Login path="login" {...appProps} />
             <ForgotPassword path="forgot-password" {...appProps} />
@@ -192,7 +193,12 @@ const App = () => {
         </Router>
       </main>
       <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
-        <section className="max-w-4xl mx-auto p-8 flex items-center justify-around">
+        <Flex
+          tag="section"
+          itemsCenter
+          justifyAround
+          className="max-w-4xl mx-auto p-8"
+        >
           <Link to="about" className={constants.STYLES.LINK.DEFAULT}>
             About
           </Link>
@@ -202,7 +208,7 @@ const App = () => {
           <Link to="contact" className={constants.STYLES.LINK.DEFAULT}>
             Contact
           </Link>
-        </section>
+        </Flex>
       </footer>
     </React.Fragment>
   );
@@ -270,7 +276,12 @@ const Signup = props => {
     setIsLoading(true);
 
     try {
-      await Auth.confirmSignUp(fields.email, fields.confirmationCode);
+      await Auth.confirmSignUp(fields.email, fields.confirmationCode, {
+        school: fields.school,
+        status: fields.status,
+        firstName: fields.firstName,
+        lastName: fields.lastName
+      });
       await Auth.signIn(fields.email, fields.password);
       props.setUserIsAuthenticated(true);
       navigate("/");
@@ -298,7 +309,7 @@ const Signup = props => {
             </p>
           </Alert>
           <hr className="my-12" />
-          <div className="md:flex md:items-center mb-6">
+          <FieldWrapper>
             <label
               className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
               htmlFor="confirmationCode"
@@ -315,7 +326,7 @@ const Signup = props => {
               onChange={handleFieldChange}
               value={fields.confirmationCode}
             />
-          </div>
+          </FieldWrapper>
           <Button
             disabled={isLoading || !validateConfirmationForm()}
             variant="purple"
@@ -335,9 +346,7 @@ const Signup = props => {
         onSubmit={handleSubmit}
         className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
       >
-        <h1 className="text-5xl font-bold leading-none flex items-center">
-          Create an account
-        </h1>
+        <h1 className="text-5xl font-bold leading-none">Create an account</h1>
         <hr className="my-12" />
         <div className="md:flex md:items mb-6">
           <Label htmlFor="firstName">First Name</Label>
@@ -449,6 +458,9 @@ const Signup = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // Login
 
+// TODO: Handle unconfirmed users. Allow confirmation code to be resent and
+// entered again.
+
 const Login = props => {
   const [fields, handleFieldChange] = useFormFields({
     email: "",
@@ -520,7 +532,7 @@ const Login = props => {
         >
           {isLoading ? "Logging in..." : "Log In"}
         </Button>
-        <div className="flex items-center justify-between">
+        <Flex itemsCenter justifyBetween>
           <p>
             Don’t have an account?{" "}
             <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
@@ -533,7 +545,7 @@ const Login = props => {
           >
             Forgot your password?
           </Link>
-        </div>
+        </Flex>
       </form>
     </PageWrapper>
   );
@@ -722,7 +734,7 @@ const ForgotPassword = props => {
         >
           {isSendingCode ? "Sending..." : "Send Confirmation"}
         </Button>
-        <div className="flex items-center justify-between">
+        <Flex itemsCenter justifyBetween>
           <p>
             Go back to{" "}
             <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
@@ -730,7 +742,7 @@ const ForgotPassword = props => {
             </Link>
             .
           </p>
-        </div>
+        </Flex>
       </form>
     </PageWrapper>
   );
@@ -935,7 +947,7 @@ const User = props => {
 
   return (
     <PageWrapper>
-      <header className="flex items-center">
+      <Flex tag="header" itemsCenter>
         <img
           className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
           src={user.picture}
@@ -968,7 +980,7 @@ const User = props => {
             </Link>
           </h2>
         </div>
-      </header>
+      </Flex>
       <PageSection>
         <VisuallyHidden>Biography</VisuallyHidden>
         {user.bio ? <p className="pt-1">{user.bio}</p> : null}
@@ -977,7 +989,7 @@ const User = props => {
         <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
           Information
         </h4>
-        <dl className="flex flex-wrap w-full">
+        <Flex tag="dl" wrap className="w-full">
           <dt className="w-1/2 font-bold">Hometown</dt>
           {user.hometown ? (
             <dd className="w-1/2">{user.hometown}</dd>
@@ -996,21 +1008,21 @@ const User = props => {
           ) : (
             <dd className="w-1/2 text-gray-500">Nothing set</dd>
           )}
-        </dl>
+        </Flex>
       </PageSection>
       <PageSection>
         <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
           Game Accounts
         </h4>
         {user.gameAccounts.length ? (
-          <dl className="flex flex-wrap w-full">
+          <Flex tag="dl" wrap className="w-full">
             {user.gameAccounts.map(account => (
               <React.Fragment key={account.name}>
                 <dt className="w-1/2 font-bold">{account.name}</dt>
                 <dd className="w-1/2">{account.value}</dd>
               </React.Fragment>
             ))}
-          </dl>
+          </Flex>
         ) : (
           <p className="text-gray-500">
             {constants.USER_EMPTY_GAME_ACCOUNTS_TEXT}
@@ -1022,7 +1034,7 @@ const User = props => {
           Currently Playing
         </h4>
         {user.currentlyPlaying.length ? (
-          <ul className=" flex flex-wrap">
+          <Flex tag="ul" wrap>
             {user.currentlyPlaying.map(game => (
               <li key={game.name} className="w-1/5">
                 <img
@@ -1032,7 +1044,7 @@ const User = props => {
                 />
               </li>
             ))}
-          </ul>
+          </Flex>
         ) : (
           <p className="text-gray-500">
             {constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
@@ -1044,7 +1056,7 @@ const User = props => {
           Favorite Games
         </h4>
         {user.favoriteGames.length ? (
-          <ul className="flex flex-wrap">
+          <Flex tag="ul" wrap>
             {user.favoriteGames.map(game => (
               <li key={game.name} className="w-1/5">
                 <img
@@ -1054,7 +1066,7 @@ const User = props => {
                 />
               </li>
             ))}
-          </ul>
+          </Flex>
         ) : (
           <p className="text-gray-500">
             {constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
@@ -1085,13 +1097,32 @@ const User = props => {
 // EditUser
 
 const EditUser = props => {
-  if (!props.isAuthenticated) {
-    return <Redirect to="/" noThrow />;
-  }
+  // if (!props.isAuthenticated) {
+  //   return <Redirect to="/" noThrow />;
+  // }
+  const [fields, handleFieldChange] = useFormFields({
+    firstName: "",
+    lastName: "",
+    school: "",
+    status: "",
+    bio: "",
+    hometown: "",
+    birthdate: "",
+    website: "",
+    twitter: "",
+    twitch: "",
+    youtube: "",
+    skype: "",
+    discord: "",
+    battlenet: "",
+    steam: "",
+    xbox: "",
+    psn: ""
+  });
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log("Submitted!");
+    console.log("Submitted!", fields);
   }
 
   return (
@@ -1101,30 +1132,38 @@ const EditUser = props => {
         className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
       >
         <h1 className="text-5xl font-bold leading-none mb-4">
+          <FontAwesomeIcon icon={faUserEdit} className="mr-4" />
           Edit Your Profile
         </h1>
-        <hr className="my-12" />
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="first-name">First Name</Label>
-          <Input
-            id="first-name"
-            name="first-name"
-            type="text"
-            placeholder="Jane"
-            required
-          />
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="last-name">Last name</Label>
-          <Input
-            id="last-name"
-            name="last-name"
-            type="text"
-            placeholder="Doe"
-            required
-          />
-        </div>
-        <div className="md:flex md:items-start mb-6">
+        <hr className="mt-12 mb-8" />
+        <Fieldset legend="Name">
+          <FieldWrapper>
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="Brandon"
+              required
+              onChange={handleFieldChange}
+              value={fields.firstName}
+            />
+          </FieldWrapper>
+          <FieldWrapper>
+            <Label htmlFor="lastName">Last name</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder="Sansone"
+              required
+              onChange={handleFieldChange}
+              value={fields.lastName}
+            />
+          </FieldWrapper>
+        </Fieldset>
+        <hr className="mb-6" />
+        <FieldWrapper align="start">
           <Label htmlFor="email">Email</Label>
           <div className="w-full">
             <p className="w-full">jdoe@gmail.com</p>
@@ -1132,46 +1171,106 @@ const EditUser = props => {
               Your email cannot be changed.
             </p>
           </div>
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="school">School</Label>
-          <Select id="school" required options={constants.SCHOOL_OPTIONS} />
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="status">Status</Label>
-          <Select
-            id="status"
-            required
-            options={constants.STUDENT_STATUS_OPTIONS}
-          />
-        </div>
-        <div className="md:flex md:items-start mb-6">
+        </FieldWrapper>
+        <hr className="mb-6" />
+        <Fieldset legend="School">
+          <FieldWrapper>
+            <Label htmlFor="school">School</Label>
+            <Select
+              id="school"
+              required
+              options={constants.SCHOOL_OPTIONS}
+              onChange={handleFieldChange}
+              value={fields.school}
+            />
+          </FieldWrapper>
+          <FieldWrapper>
+            <Label htmlFor="status">Status</Label>
+            <Select
+              id="status"
+              required
+              options={constants.STUDENT_STATUS_OPTIONS}
+              onChange={handleFieldChange}
+              value={fields.status}
+            />
+          </FieldWrapper>
+        </Fieldset>
+        <hr className="mb-6" />
+        <FieldWrapper align="start">
           <Label htmlFor="bio">Bio</Label>
           <div className="w-full">
             <textarea
+              id="bio"
+              name="bio"
               placeholder="Add your bio"
               maxLength="250"
               rows="4"
               className={`${constants.STYLES.INPUT.DEFAULT} resize-y`}
+              onChange={handleFieldChange}
+              value={fields.bio}
             />
             <p className="text-gray-600 text-base italic">
               Max 250 characters.
             </p>
           </div>
-        </div>
-        <div className="md:flex md:items-center mb-6">
+        </FieldWrapper>
+        <hr className="mb-6" />
+        <FieldWrapper>
           <Label htmlFor="hometown">Hometown</Label>
           <Input
             id="hometown"
             name="hometown"
             type="text"
             placeholder="Chicago, IL"
+            onChange={handleFieldChange}
+            value={fields.hometown}
           />
-        </div>
-        <div className="md:flex md:items-center mb-6">
+        </FieldWrapper>
+        <FieldWrapper>
           <Label htmlFor="birthdate">Birthday</Label>
-          <Input id="birthdate" name="birthdate" type="date" />
-        </div>
+          <Input
+            id="birthdate"
+            name="birthdate"
+            type="date"
+            onChange={handleFieldChange}
+            value={fields.birthdate}
+          />
+        </FieldWrapper>
+        <hr className="mb-6" />
+        <Fieldset legend="Accounts">
+          {Object.keys(constants.ACCOUNTS).map(id => {
+            const account = constants.ACCOUNTS[id];
+
+            return (
+              <FieldWrapper key={id}>
+                <Label htmlFor={id}>
+                  <FontAwesomeIcon icon={account.icon} className="mr-4" />
+                  {account.label}
+                </Label>
+                <ConditionalWrapper
+                  condition={!!account.url}
+                  wrapper={children => (
+                    <Flex itemsCenter className="w-full">
+                      {children}
+                    </Flex>
+                  )}
+                >
+                  <React.Fragment>
+                    <span className="mr-2 text-gray-500">{account.url}</span>
+                    <Input
+                      id={id}
+                      name={id}
+                      type="text"
+                      placeholder={account.placeholder}
+                      onChange={handleFieldChange}
+                      value={fields[id]}
+                    />
+                  </React.Fragment>
+                </ConditionalWrapper>
+              </FieldWrapper>
+            );
+          })}
+        </Fieldset>
         <Button variant="purple" type="submit" className="my-12 w-full">
           Submit Changes
         </Button>
@@ -1246,7 +1345,7 @@ const Event = props => {
 
   return (
     <PageWrapper>
-      <div className="flex items-center">
+      <Flex itemsCenter>
         <div className="pr-2">
           <Link
             to={`../../../school/${school.id}`}
@@ -1263,7 +1362,7 @@ const Event = props => {
           alt={`${school.name} school logo`}
           className="w-auto ml-auto bg-gray-400 h-24"
         />
-      </div>
+      </Flex>
       <div className="block pb-1 mt-4">
         <FontAwesomeIcon
           icon={faClock}
@@ -1330,10 +1429,15 @@ const Event = props => {
             Going ({eventResponses.length})
           </h3>
         ) : null}
-        <ul className="flex flex-wrap">
+        <Flex tag="ul" wrap>
           {eventGoers.map(user => (
             <li key={user.id} className="w-1/3 md:w-1/4">
-              <div className="flex flex-col items-center justify-around pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg">
+              <Flex
+                direction="col"
+                itemsCenter
+                justifyAround
+                className="pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg"
+              >
                 <img
                   className="w-20 h-20 bg-gray-400 rounded-full"
                   src={user.picture}
@@ -1345,10 +1449,10 @@ const Event = props => {
                 >
                   {user.fullName}
                 </Link>
-              </div>
+              </Flex>
             </li>
           ))}
-        </ul>
+        </Flex>
       </PageSection>
     </PageWrapper>
   );
@@ -1400,9 +1504,13 @@ const EventListItem = props => {
   const eventResponses = getEventResponses(props.event.index);
 
   return (
-    <li className="flex items-center bg-white border-4 rounded-lg mt-4 py-6 px-8">
+    <Flex
+      tag="li"
+      itemsCenter
+      className="bg-white border-4 rounded-lg mt-4 py-6 px-8"
+    >
       <div className="flex-initial w-full">
-        <div className="flex items-center">
+        <Flex itemsCenter>
           <div className="pr-2">
             <Link
               to={`../../school/${school.id}`}
@@ -1422,7 +1530,7 @@ const EventListItem = props => {
             alt={`${school.name} Logo`}
             className="w-auto ml-auto h-16"
           />
-        </div>
+        </Flex>
         <div className="block my-4">
           <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />
           <time className="text-lg" dateTime={props.event.startDateTime}>
@@ -1445,7 +1553,7 @@ const EventListItem = props => {
           </div>
         ) : null}
       </div>
-    </li>
+    </Flex>
   );
 };
 
@@ -1510,9 +1618,12 @@ const Select = ({ options = [], className = "", ...props }) => {
           <option key={option.value} {...option} />
         ))}
       </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+      <Flex
+        className="pointer-events-none absolute inset-y-0 right-0 px-2 text-gray-700"
+        itemsCenter
+      >
         <ChevronDown />
-      </div>
+      </Flex>
     </div>
   );
 };
@@ -1561,6 +1672,21 @@ const Label = ({ className = "", ...props }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// FieldWrapper
+
+const FieldWrapper = ({ align = "center", className = "", ...props }) => {
+  let defaultClass = "md:flex mb-6";
+
+  if (align === "center") {
+    defaultClass = `${defaultClass} md:items-center`;
+  } else if (align === "start") {
+    defaultClass = `${defaultClass} md:items-start`;
+  }
+
+  return <div {...props} className={classNames([defaultClass, className])} />;
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // VisuallyHidden
 
 const VisuallyHidden = ({ className = "", ...props }) => {
@@ -1598,6 +1724,80 @@ const PageSection = ({ className = "", ...props }) => {
     />
   );
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Fieldset
+
+const Fieldset = ({ legend = "", legendProps, children, ...props }) => {
+  return (
+    <fieldset {...props}>
+      {legend && (
+        <VisuallyHidden>
+          <legend {...legendProps}>{legend}</legend>
+        </VisuallyHidden>
+      )}
+      {children}
+    </fieldset>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Flex
+
+const Flex = ({
+  tag = "div",
+  direction = "row",
+  className = "",
+  itemsCenter,
+  itemsEnd,
+  itemsBaseline,
+  itemsStart,
+  itemsStretch,
+  justifyAround,
+  justifyCenter,
+  justifyBetween,
+  justifyStart,
+  justifyEnd,
+  wrap,
+  noWrap,
+  wrapReverse,
+  ...props
+}) => {
+  const CustomTag = `${tag}`;
+
+  return (
+    <CustomTag
+      {...props}
+      className={classNames([
+        "flex",
+        direction === "row" ? "flex-row" : "",
+        direction === "row-reverse" ? "flex-row-reverse" : "",
+        direction === "col" ? "flex-col" : "",
+        direction === "col-reverse" ? "flex-col-reverse" : "",
+        itemsCenter ? "items-center" : "",
+        itemsEnd ? "items-end" : "",
+        itemsBaseline ? "items-baseline" : "",
+        itemsStart ? "items-start" : "",
+        itemsStretch ? "items-stretch" : "",
+        justifyCenter ? "justify-center" : "",
+        justifyEnd ? "justify-end" : "",
+        justifyBetween ? "justify-between" : "",
+        justifyStart ? "justify-start" : "",
+        justifyAround ? "justify-around" : "",
+        noWrap ? "flex-no-wrap" : "",
+        wrap ? "flex-wrap" : "",
+        wrapReverse ? "flex-wrap-reverse" : "",
+        className
+      ])}
+    />
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// ConditionalWrapper
+
+const ConditionalWrapper = ({ condition, wrapper, children }) =>
+  condition ? wrapper(children) : children;
 
 ////////////////////////////////////////////////////////////////////////////////
 // ScrollToTop

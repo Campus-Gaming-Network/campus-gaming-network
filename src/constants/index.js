@@ -4,6 +4,18 @@
 import _ from "lodash";
 import TEST_DATA from "../test_data";
 import { getEventResponses, getEventsByResponses } from "../utilities";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTwitter,
+  faTwitch,
+  faYoutube,
+  faSkype,
+  faDiscord,
+  faBattleNet,
+  faSteam,
+  faXbox,
+  faPlaystation
+} from "@fortawesome/free-brands-svg-icons";
 
 export const RANDOM_SAMPLE_OF_EVENTS = _.slice(
   _.shuffle(TEST_DATA.events),
@@ -91,3 +103,60 @@ export const USER_EMPTY_UPCOMING_EVENTS_TEXT =
 
 export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
   "This school currently has no upcoming events.";
+
+export const ACCOUNTS = {
+  website: {
+    label: "Website",
+    placeholder: "https://campusgamingnetwork.com",
+    icon: faGlobe
+  },
+  twitter: {
+    label: "Twitter",
+    placeholder: "bsans",
+    icon: faTwitter,
+    url: "twitter.com/"
+  },
+  twitch: {
+    label: "Twitch",
+    placeholder: "lolkieji",
+    icon: faTwitch,
+    url: "twitch.tv/"
+  },
+  youtube: {
+    label: "YouTube",
+    placeholder: "videogamedunkey",
+    icon: faYoutube,
+    url: "youtube.com/user/"
+  },
+  skype: {
+    label: "Skype",
+    placeholder: "brandon.sansone1",
+    icon: faSkype
+  },
+  discord: {
+    label: "Discord",
+    placeholder: "kieji#3981",
+    icon: faDiscord
+  },
+  battlenet: {
+    label: "Battle.net",
+    placeholder: "Kieji#1674",
+    icon: faBattleNet
+  },
+  steam: {
+    label: "Steam",
+    placeholder: "kieji",
+    icon: faSteam,
+    url: "steamcommunity.com/id/"
+  },
+  xbox: {
+    label: "Xbox Live",
+    placeholder: "xXxDestroyerxXx",
+    icon: faXbox
+  },
+  psn: {
+    label: "PSN",
+    placeholder: "xXxDestroyerxXx1",
+    icon: faPlaystation
+  }
+};

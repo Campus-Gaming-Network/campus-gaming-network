@@ -47,7 +47,10 @@ export const classNames = (_classNames = []) => {
       );
     }
   }
-  return _classNames.map(str => str.trim()).join(" ");
+  return _classNames
+    .map(str => str.trim())
+    .join(" ")
+    .trim();
 };
 
 export const isDev = () => {
