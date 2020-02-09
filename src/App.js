@@ -298,159 +298,161 @@ const Signup = props => {
   if (newUser) {
     return (
       <PageWrapper>
-        <form
-          onSubmit={handleConfirmationSubmit}
-          className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
-        >
-          <Alert variant="yellow">
-            <p className="font-medium">
-              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-4" />
-              Please check your email ({fields.email}) for a confirmation code.
-            </p>
-          </Alert>
-          <hr className="my-12" />
-          <FieldWrapper>
-            <label
-              className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-              htmlFor="confirmationCode"
+        <Card className="w-full mx-auto p-12">
+          <form onSubmit={handleConfirmationSubmit}>
+            <Alert variant="yellow">
+              <p className="font-medium">
+                <FontAwesomeIcon
+                  icon={faExclamationTriangle}
+                  className="mr-4"
+                />
+                Please check your email ({fields.email}) for a confirmation
+                code.
+              </p>
+            </Alert>
+            <hr className="my-12" />
+            <FieldWrapper>
+              <label
+                className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+                htmlFor="confirmationCode"
+              >
+                Confirmation Code
+              </label>
+              <Input
+                id="confirmationCode"
+                name="confirmationCode"
+                placeholder="12345"
+                required
+                autoFocus
+                type="tel"
+                onChange={handleFieldChange}
+                value={fields.confirmationCode}
+              />
+            </FieldWrapper>
+            <Button
+              disabled={isLoading || !validateConfirmationForm()}
+              variant="purple"
+              type="submit"
+              className="my-12 w-full"
             >
-              Confirmation Code
-            </label>
-            <Input
-              id="confirmationCode"
-              name="confirmationCode"
-              placeholder="12345"
-              required
-              autoFocus
-              type="tel"
-              onChange={handleFieldChange}
-              value={fields.confirmationCode}
-            />
-          </FieldWrapper>
-          <Button
-            disabled={isLoading || !validateConfirmationForm()}
-            variant="purple"
-            type="submit"
-            className="my-12 w-full"
-          >
-            {isLoading ? "Verifying..." : "Verify"}
-          </Button>
-        </form>
+              {isLoading ? "Verifying..." : "Verify"}
+            </Button>
+          </form>
+        </Card>
       </PageWrapper>
     );
   }
 
   return (
     <PageWrapper>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
-      >
-        <h1 className="text-5xl font-bold leading-none">Create an account</h1>
-        <hr className="my-12" />
-        <div className="md:flex md:items mb-6">
-          <Label htmlFor="firstName">First Name</Label>
-          <Input
-            autoFocus
-            id="firstName"
-            name="firstName"
-            type="text"
-            placeholder="Jane"
-            required
-            onChange={handleFieldChange}
-            value={fields.firstName}
-          />
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="lastName">Last Name</Label>
-          <Input
-            id="lastName"
-            name="lastName"
-            type="text"
-            placeholder="Doe"
-            required
-            onChange={handleFieldChange}
-            value={fields.lastName}
-          />
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="jdoe@gmail.com"
-            required
-            onChange={handleFieldChange}
-            value={fields.email}
-          />
-        </div>
-        <div className="md:flex md:items-stretch mb-6">
-          <Label htmlFor="password">Password</Label>
-          <div className="w-full">
+      <Card className="w-full mx-auto p-12">
+        <form onSubmit={handleSubmit}>
+          <h1 className="text-5xl font-bold leading-none">Create an account</h1>
+          <hr className="my-12" />
+          <div className="md:flex md:items mb-6">
+            <Label htmlFor="firstName">First Name</Label>
             <Input
-              id="password"
-              name="password"
-              type={isShowingPassword ? "text" : "password"}
-              placeholder="******************"
+              autoFocus
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="Jane"
               required
               onChange={handleFieldChange}
-              value={fields.password}
+              value={fields.firstName}
             />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="text-sm italic"
-            >
-              {isShowingPassword ? "Hide" : "Show"} password
-            </button>
-            <div className="text-sm">
-              <p className="font-bold mt-4">Password Must</p>
-              <ul className="flex flex-wrap list-disc pl-4">
-                <li className="w-1/2">Have One number</li>
-                <li className="w-1/2">Have One uppercase character</li>
-                <li className="w-1/2">Have One lowercase character</li>
-                <li className="w-1/2">Have One special character</li>
-                <li className="w-1/2">Have 8 characters minimum</li>
-              </ul>
+          </div>
+          <div className="md:flex md:items-center mb-6">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder="Doe"
+              required
+              onChange={handleFieldChange}
+              value={fields.lastName}
+            />
+          </div>
+          <div className="md:flex md:items-center mb-6">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="jdoe@gmail.com"
+              required
+              onChange={handleFieldChange}
+              value={fields.email}
+            />
+          </div>
+          <div className="md:flex md:items-stretch mb-6">
+            <Label htmlFor="password">Password</Label>
+            <div className="w-full">
+              <Input
+                id="password"
+                name="password"
+                type={isShowingPassword ? "text" : "password"}
+                placeholder="******************"
+                required
+                onChange={handleFieldChange}
+                value={fields.password}
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="text-sm italic"
+              >
+                {isShowingPassword ? "Hide" : "Show"} password
+              </button>
+              <div className="text-sm">
+                <p className="font-bold mt-4">Password Must</p>
+                <ul className="flex flex-wrap list-disc pl-4">
+                  <li className="w-1/2">Have One number</li>
+                  <li className="w-1/2">Have One uppercase character</li>
+                  <li className="w-1/2">Have One lowercase character</li>
+                  <li className="w-1/2">Have One special character</li>
+                  <li className="w-1/2">Have 8 characters minimum</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="school">School</Label>
-          <Select
-            id="school"
-            required
-            options={constants.SCHOOL_OPTIONS}
-            onChange={handleFieldChange}
-            value={fields.school}
-          />
-        </div>
-        <div className="md:flex md:items-center">
-          <Label htmlFor="status">Status</Label>
-          <Select
-            id="status"
-            required
-            options={constants.STUDENT_STATUS_OPTIONS}
-            onChange={handleFieldChange}
-            value={fields.status}
-          />
-        </div>
-        <Button
-          disabled={isLoading || !validateForm()}
-          variant="purple"
-          type="submit"
-          className="my-12 w-full"
-        >
-          {isLoading ? "Submitting..." : "Sign Up"}
-        </Button>
-        <p>
-          Already a member?{" "}
-          <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
-            Log in
-          </Link>
-        </p>
-      </form>
+          <div className="md:flex md:items-center mb-6">
+            <Label htmlFor="school">School</Label>
+            <Select
+              id="school"
+              required
+              options={constants.SCHOOL_OPTIONS}
+              onChange={handleFieldChange}
+              value={fields.school}
+            />
+          </div>
+          <div className="md:flex md:items-center">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              id="status"
+              required
+              options={constants.STUDENT_STATUS_OPTIONS}
+              onChange={handleFieldChange}
+              value={fields.status}
+            />
+          </div>
+          <Button
+            disabled={isLoading || !validateForm()}
+            variant="purple"
+            type="submit"
+            className="my-12 w-full"
+          >
+            {isLoading ? "Submitting..." : "Sign Up"}
+          </Button>
+          <p>
+            Already a member?{" "}
+            <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
+              Log in
+            </Link>
+          </p>
+        </form>
+      </Card>
     </PageWrapper>
   );
 };
@@ -493,60 +495,61 @@ const Login = props => {
 
   return (
     <PageWrapper>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
-      >
-        <h1 className="text-5xl font-bold leading-none mb-4">Welcome back!</h1>
-        <p className="text-gray-600">Log in to your account</p>
-        <hr className="my-12" />
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="jdoe123@gmail.com"
-            required
-            onChange={handleFieldChange}
-            value={fields.email}
-          />
-        </div>
-        <div className="md:flex md:items-center">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="******************"
-            required
-            onChange={handleFieldChange}
-            value={fields.password}
-          />
-        </div>
-        <Button
-          disabled={isLoading || !validateForm()}
-          variant="purple"
-          type="submit"
-          className="my-12 w-full"
-        >
-          {isLoading ? "Logging in..." : "Log In"}
-        </Button>
-        <Flex itemsCenter justifyBetween>
-          <p>
-            Don’t have an account?{" "}
-            <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
-              Create one
-            </Link>
-          </p>
-          <Link
-            to="/forgot-password"
-            className={`${constants.STYLES.LINK.DEFAULT}`}
+      <Card className="w-full mx-auto p-12">
+        <form onSubmit={handleSubmit}>
+          <h1 className="text-5xl font-bold leading-none mb-4">
+            Welcome back!
+          </h1>
+          <p className="text-gray-600">Log in to your account</p>
+          <hr className="my-12" />
+          <div className="md:flex md:items-center mb-6">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="jdoe123@gmail.com"
+              required
+              onChange={handleFieldChange}
+              value={fields.email}
+            />
+          </div>
+          <div className="md:flex md:items-center">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="******************"
+              required
+              onChange={handleFieldChange}
+              value={fields.password}
+            />
+          </div>
+          <Button
+            disabled={isLoading || !validateForm()}
+            variant="purple"
+            type="submit"
+            className="my-12 w-full"
           >
-            Forgot your password?
-          </Link>
-        </Flex>
-      </form>
+            {isLoading ? "Logging in..." : "Log In"}
+          </Button>
+          <Flex itemsCenter justifyBetween>
+            <p>
+              Don’t have an account?{" "}
+              <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
+                Create one
+              </Link>
+            </p>
+            <Link
+              to="/forgot-password"
+              className={`${constants.STYLES.LINK.DEFAULT}`}
+            >
+              Forgot your password?
+            </Link>
+          </Flex>
+        </form>
+      </Card>
     </PageWrapper>
   );
 };
@@ -634,116 +637,118 @@ const ForgotPassword = props => {
 
     return (
       <PageWrapper>
-        <form
-          onSubmit={handleConfirmationSubmit}
-          className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
-        >
-          <Alert variant="yellow">
-            <p className="font-medium">
-              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-4" />
-              Please check your email ({fields.email}) for a confirmation code.
-            </p>
-          </Alert>
-          <hr className="my-12" />
-          <div className="md:flex md:items-center mb-6">
-            <label
-              className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-              htmlFor="confirmationCode"
+        <Card className="w-full mx-auto p-12">
+          <form onSubmit={handleConfirmationSubmit}>
+            <Alert variant="yellow">
+              <p className="font-medium">
+                <FontAwesomeIcon
+                  icon={faExclamationTriangle}
+                  className="mr-4"
+                />
+                Please check your email ({fields.email}) for a confirmation
+                code.
+              </p>
+            </Alert>
+            <hr className="my-12" />
+            <div className="md:flex md:items-center mb-6">
+              <label
+                className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
+                htmlFor="confirmationCode"
+              >
+                Confirmation Code
+              </label>
+              <Input
+                id="confirmationCode"
+                name="confirmationCode"
+                placeholder="12345"
+                required
+                autoFocus
+                type="tel"
+                onChange={handleFieldChange}
+                value={fields.confirmationCode}
+              />
+            </div>
+            <div className="md:flex md:items-center mb-6">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="******************"
+                required
+                onChange={handleFieldChange}
+                value={fields.password}
+              />
+            </div>
+            <div className="md:flex md:items-center mb-6">
+              <Label htmlFor="password">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="******************"
+                required
+                onChange={handleFieldChange}
+                value={fields.confirmPassword}
+              />
+            </div>
+            <Button
+              disabled={isConfirming || !validateResetForm()}
+              variant="purple"
+              type="submit"
+              className="my-12 w-full"
             >
-              Confirmation Code
-            </label>
-            <Input
-              id="confirmationCode"
-              name="confirmationCode"
-              placeholder="12345"
-              required
-              autoFocus
-              type="tel"
-              onChange={handleFieldChange}
-              value={fields.confirmationCode}
-            />
-          </div>
-          <div className="md:flex md:items-center mb-6">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="******************"
-              required
-              onChange={handleFieldChange}
-              value={fields.password}
-            />
-          </div>
-          <div className="md:flex md:items-center mb-6">
-            <Label htmlFor="password">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              placeholder="******************"
-              required
-              onChange={handleFieldChange}
-              value={fields.confirmPassword}
-            />
-          </div>
-          <Button
-            disabled={isConfirming || !validateResetForm()}
-            variant="purple"
-            type="submit"
-            className="my-12 w-full"
-          >
-            {isConfirming ? "Confirming..." : "Confirm"}
-          </Button>
-        </form>
+              {isConfirming ? "Confirming..." : "Confirm"}
+            </Button>
+          </form>
+        </Card>
       </PageWrapper>
     );
   }
 
   return (
     <PageWrapper>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
-      >
-        <h1 className="text-5xl font-bold leading-none mb-4">
-          Reset your password
-        </h1>
-        <p className="text-gray-600">
-          Enter the email you use for Campus Gaming Network, and we’ll help you
-          create a new password.
-        </p>
-        <hr className="my-12" />
-        <div className="md:flex md:items-center mb-6">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="jdoe123@gmail.com"
-            required
-            onChange={handleFieldChange}
-            value={fields.email}
-          />
-        </div>
-        <Button
-          disabled={isSendingCode || !validateCodeForm()}
-          variant="purple"
-          type="submit"
-          className="my-12 w-full"
-        >
-          {isSendingCode ? "Sending..." : "Send Confirmation"}
-        </Button>
-        <Flex itemsCenter justifyBetween>
-          <p>
-            Go back to{" "}
-            <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
-              Login page
-            </Link>
-            .
+      <Card className="w-full mx-auto p-12">
+        <form onSubmit={handleSubmit}>
+          <h1 className="text-5xl font-bold leading-none mb-4">
+            Reset your password
+          </h1>
+          <p className="text-gray-600">
+            Enter the email you use for Campus Gaming Network, and we’ll help
+            you create a new password.
           </p>
-        </Flex>
-      </form>
+          <hr className="my-12" />
+          <div className="md:flex md:items-center mb-6">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="jdoe123@gmail.com"
+              required
+              onChange={handleFieldChange}
+              value={fields.email}
+            />
+          </div>
+          <Button
+            disabled={isSendingCode || !validateCodeForm()}
+            variant="purple"
+            type="submit"
+            className="my-12 w-full"
+          >
+            {isSendingCode ? "Sending..." : "Send Confirmation"}
+          </Button>
+          <Flex itemsCenter justifyBetween>
+            <p>
+              Go back to{" "}
+              <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
+                Login page
+              </Link>
+              .
+            </p>
+          </Flex>
+        </form>
+      </Card>
     </PageWrapper>
   );
 };
@@ -890,10 +895,10 @@ const School = props => {
           {users.map(user => (
             <li key={user.id} className="w-1/3 md:w-1/4">
               <div className="flex flex-col items-center justify-around pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg">
-                <img
-                  className="w-20 h-20 bg-gray-400 rounded-full"
+                <Avatar
                   src={user.picture}
                   alt={`Avatar for ${user.fullName}`}
+                  rounded
                 />
                 <Link
                   to={`../../../user/${user.id}`}
@@ -948,10 +953,11 @@ const User = props => {
   return (
     <PageWrapper>
       <Flex tag="header" itemsCenter>
-        <img
-          className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
+        <Avatar
+          size="lg"
+          className="border-4 border-gray-300"
           src={user.picture}
-          alt=""
+          rounded
         />
         <div className="pl-12">
           <h1 className="text-5xl font-bold leading-none pb-2 flex items-center">
@@ -1127,154 +1133,153 @@ const EditUser = props => {
 
   return (
     <PageWrapper>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full mx-auto p-12 bg-white border-4 rounded-lg"
-      >
-        <h1 className="text-5xl font-bold leading-none mb-4">
-          <FontAwesomeIcon icon={faUserEdit} className="mr-4" />
-          Edit Your Profile
-        </h1>
-        <hr className="mt-12 mb-8" />
-        <Fieldset legend="Name">
+      <Card className="w-full mx-auto p-12">
+        <form onSubmit={handleSubmit}>
+          <h1 className="text-5xl font-bold leading-none mb-4">
+            <FontAwesomeIcon icon={faUserEdit} className="mr-4" />
+            Edit Your Profile
+          </h1>
+          <hr className="mt-12 mb-8" />
+          <Fieldset legend="Name">
+            <FieldWrapper>
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="Brandon"
+                required
+                onChange={handleFieldChange}
+                value={fields.firstName}
+              />
+            </FieldWrapper>
+            <FieldWrapper>
+              <Label htmlFor="lastName">Last name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Sansone"
+                required
+                onChange={handleFieldChange}
+                value={fields.lastName}
+              />
+            </FieldWrapper>
+          </Fieldset>
+          <hr className="mb-6" />
+          <FieldWrapper align="start">
+            <Label htmlFor="email">Email</Label>
+            <div className="w-full">
+              <p className="w-full">jdoe@gmail.com</p>
+              <p className="text-gray-600 text-base italic">
+                Your email cannot be changed.
+              </p>
+            </div>
+          </FieldWrapper>
+          <hr className="mb-6" />
+          <Fieldset legend="School">
+            <FieldWrapper>
+              <Label htmlFor="school">School</Label>
+              <Select
+                id="school"
+                required
+                options={constants.SCHOOL_OPTIONS}
+                onChange={handleFieldChange}
+                value={fields.school}
+              />
+            </FieldWrapper>
+            <FieldWrapper>
+              <Label htmlFor="status">Status</Label>
+              <Select
+                id="status"
+                required
+                options={constants.STUDENT_STATUS_OPTIONS}
+                onChange={handleFieldChange}
+                value={fields.status}
+              />
+            </FieldWrapper>
+          </Fieldset>
+          <hr className="mb-6" />
+          <FieldWrapper align="start">
+            <Label htmlFor="bio">Bio</Label>
+            <div className="w-full">
+              <textarea
+                id="bio"
+                name="bio"
+                placeholder="Add your bio"
+                maxLength="250"
+                rows="4"
+                className={`${constants.STYLES.INPUT.DEFAULT} resize-y`}
+                onChange={handleFieldChange}
+                value={fields.bio}
+              />
+              <p className="text-gray-600 text-base italic">
+                Max 250 characters.
+              </p>
+            </div>
+          </FieldWrapper>
+          <hr className="mb-6" />
           <FieldWrapper>
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="hometown">Hometown</Label>
             <Input
-              id="firstName"
-              name="firstName"
+              id="hometown"
+              name="hometown"
               type="text"
-              placeholder="Brandon"
-              required
+              placeholder="Chicago, IL"
               onChange={handleFieldChange}
-              value={fields.firstName}
+              value={fields.hometown}
             />
           </FieldWrapper>
           <FieldWrapper>
-            <Label htmlFor="lastName">Last name</Label>
+            <Label htmlFor="birthdate">Birthday</Label>
             <Input
-              id="lastName"
-              name="lastName"
-              type="text"
-              placeholder="Sansone"
-              required
+              id="birthdate"
+              name="birthdate"
+              type="date"
               onChange={handleFieldChange}
-              value={fields.lastName}
+              value={fields.birthdate}
             />
           </FieldWrapper>
-        </Fieldset>
-        <hr className="mb-6" />
-        <FieldWrapper align="start">
-          <Label htmlFor="email">Email</Label>
-          <div className="w-full">
-            <p className="w-full">jdoe@gmail.com</p>
-            <p className="text-gray-600 text-base italic">
-              Your email cannot be changed.
-            </p>
-          </div>
-        </FieldWrapper>
-        <hr className="mb-6" />
-        <Fieldset legend="School">
-          <FieldWrapper>
-            <Label htmlFor="school">School</Label>
-            <Select
-              id="school"
-              required
-              options={constants.SCHOOL_OPTIONS}
-              onChange={handleFieldChange}
-              value={fields.school}
-            />
-          </FieldWrapper>
-          <FieldWrapper>
-            <Label htmlFor="status">Status</Label>
-            <Select
-              id="status"
-              required
-              options={constants.STUDENT_STATUS_OPTIONS}
-              onChange={handleFieldChange}
-              value={fields.status}
-            />
-          </FieldWrapper>
-        </Fieldset>
-        <hr className="mb-6" />
-        <FieldWrapper align="start">
-          <Label htmlFor="bio">Bio</Label>
-          <div className="w-full">
-            <textarea
-              id="bio"
-              name="bio"
-              placeholder="Add your bio"
-              maxLength="250"
-              rows="4"
-              className={`${constants.STYLES.INPUT.DEFAULT} resize-y`}
-              onChange={handleFieldChange}
-              value={fields.bio}
-            />
-            <p className="text-gray-600 text-base italic">
-              Max 250 characters.
-            </p>
-          </div>
-        </FieldWrapper>
-        <hr className="mb-6" />
-        <FieldWrapper>
-          <Label htmlFor="hometown">Hometown</Label>
-          <Input
-            id="hometown"
-            name="hometown"
-            type="text"
-            placeholder="Chicago, IL"
-            onChange={handleFieldChange}
-            value={fields.hometown}
-          />
-        </FieldWrapper>
-        <FieldWrapper>
-          <Label htmlFor="birthdate">Birthday</Label>
-          <Input
-            id="birthdate"
-            name="birthdate"
-            type="date"
-            onChange={handleFieldChange}
-            value={fields.birthdate}
-          />
-        </FieldWrapper>
-        <hr className="mb-6" />
-        <Fieldset legend="Accounts">
-          {Object.keys(constants.ACCOUNTS).map(id => {
-            const account = constants.ACCOUNTS[id];
+          <hr className="mb-6" />
+          <Fieldset legend="Accounts">
+            {Object.keys(constants.ACCOUNTS).map(id => {
+              const account = constants.ACCOUNTS[id];
 
-            return (
-              <FieldWrapper key={id}>
-                <Label htmlFor={id}>
-                  <FontAwesomeIcon icon={account.icon} className="mr-4" />
-                  {account.label}
-                </Label>
-                <ConditionalWrapper
-                  condition={!!account.url}
-                  wrapper={children => (
-                    <Flex itemsCenter className="w-full">
-                      {children}
-                    </Flex>
-                  )}
-                >
-                  <React.Fragment>
-                    <span className="mr-2 text-gray-500">{account.url}</span>
-                    <Input
-                      id={id}
-                      name={id}
-                      type="text"
-                      placeholder={account.placeholder}
-                      onChange={handleFieldChange}
-                      value={fields[id]}
-                    />
-                  </React.Fragment>
-                </ConditionalWrapper>
-              </FieldWrapper>
-            );
-          })}
-        </Fieldset>
-        <Button variant="purple" type="submit" className="my-12 w-full">
-          Submit Changes
-        </Button>
-      </form>
+              return (
+                <FieldWrapper key={id}>
+                  <Label htmlFor={id}>
+                    <FontAwesomeIcon icon={account.icon} className="mr-4" />
+                    {account.label}
+                  </Label>
+                  <ConditionalWrapper
+                    condition={!!account.url}
+                    wrapper={children => (
+                      <Flex itemsCenter className="w-full">
+                        {children}
+                      </Flex>
+                    )}
+                  >
+                    <React.Fragment>
+                      <span className="mr-2 text-gray-500">{account.url}</span>
+                      <Input
+                        id={id}
+                        name={id}
+                        type="text"
+                        placeholder={account.placeholder}
+                        onChange={handleFieldChange}
+                        value={fields[id]}
+                      />
+                    </React.Fragment>
+                  </ConditionalWrapper>
+                </FieldWrapper>
+              );
+            })}
+          </Fieldset>
+          <Button variant="purple" type="submit" className="my-12 w-full">
+            Submit Changes
+          </Button>
+        </form>
+      </Card>
     </PageWrapper>
   );
 };
@@ -1438,10 +1443,10 @@ const Event = props => {
                 justifyAround
                 className="pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg"
               >
-                <img
-                  className="w-20 h-20 bg-gray-400 rounded-full"
+                <Avatar
                   src={user.picture}
                   alt={`Avatar for ${user.fullName}`}
+                  rounded
                 />
                 <Link
                   to={`../../../user/${user.id}`}
@@ -1504,11 +1509,7 @@ const EventListItem = props => {
   const eventResponses = getEventResponses(props.event.index);
 
   return (
-    <Flex
-      tag="li"
-      itemsCenter
-      className="bg-white border-4 rounded-lg mt-4 py-6 px-8"
-    >
+    <Card tag="li" className="mt-4 py-6 px-8 flex items-center">
       <div className="flex-initial w-full">
         <Flex itemsCenter>
           <div className="pr-2">
@@ -1553,7 +1554,7 @@ const EventListItem = props => {
           </div>
         ) : null}
       </div>
-    </Flex>
+    </Card>
   );
 };
 
@@ -1739,6 +1740,58 @@ const Fieldset = ({ legend = "", legendProps, children, ...props }) => {
       {children}
     </fieldset>
   );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Card
+
+const Card = ({ tag = "div", className = "", ...props }) => {
+  const CustomTag = `${tag}`;
+
+  return (
+    <CustomTag
+      {...props}
+      className={classNames(["bg-white border-4 rounded-lg", className])}
+    />
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Avatar
+
+const Avatar = ({
+  size = "md",
+  rounded = false,
+  alt = "",
+  className = "",
+  ...props
+}) => {
+  let defaultClass = "bg-gray-400";
+
+  if (rounded) {
+    defaultClass += " rounded-full";
+  }
+
+  const sizes = {
+    sm: "h-10 w-10",
+    md: "h-20 w-40",
+    lg: "h-40 w-40"
+  };
+
+  defaultClass += ` ${sizes[size]}`;
+
+  if (props.children) {
+    return (
+      <Flex
+        itemsCenter
+        justifyCenter
+        className={classNames([defaultClass, className])}
+        {...props}
+      />
+    );
+  }
+
+  return <img {...props} className={classNames([defaultClass, className])} />;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
