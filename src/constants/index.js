@@ -112,7 +112,7 @@ export const ACCOUNTS = {
   },
   twitter: {
     label: "Twitter",
-    placeholder: "bsans",
+    placeholder: "lolkieji",
     icon: faTwitter,
     url: "twitter.com/"
   },

@@ -12,13 +12,30 @@ import {
   faStar,
   faHeartBroken,
   faHome,
-  faExclamationTriangle,
-  faUserEdit
+  faExclamationTriangle
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import _ from "lodash";
 import Gravatar from "react-gravatar";
 import moment from "moment";
+import {
+  ThemeProvider,
+  CSSReset,
+  Input as ChakraInput,
+  InputGroup as ChakraInputGroup,
+  InputLeftAddon,
+  Stack,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Box,
+  Select as ChakraSelect,
+  Button as ChakraButton,
+  Textarea,
+  Heading,
+  Text,
+  InputRightElement
+} from "@chakra-ui/core";
 import Amplify, { Auth } from "aws-amplify";
 import "./App.css";
 import awsconfig from "./aws-exports";
@@ -94,7 +111,8 @@ const App = () => {
   };
 
   return (
-    <React.Fragment>
+    <ThemeProvider>
+      <CSSReset />
       <SkipNavLink />
       <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-purple-800">
         <Flex itemsCenter justifyBetween className="px-4 py-3 sm:p-0">
@@ -210,7 +228,7 @@ const App = () => {
           </Link>
         </Flex>
       </footer>
-    </React.Fragment>
+    </ThemeProvider>
   );
 };
 
@@ -311,7 +329,7 @@ const Signup = props => {
               </p>
             </Alert>
             <hr className="my-12" />
-            <FieldWrapper>
+            <InputGroup>
               <label
                 className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
                 htmlFor="confirmationCode"
@@ -328,7 +346,7 @@ const Signup = props => {
                 onChange={handleFieldChange}
                 value={fields.confirmationCode}
               />
-            </FieldWrapper>
+            </InputGroup>
             <Button
               disabled={isLoading || !validateConfirmationForm()}
               variant="purple"
@@ -1103,14 +1121,13 @@ const User = props => {
 // EditUser
 
 const EditUser = props => {
-  // if (!props.isAuthenticated) {
-  //   return <Redirect to="/" noThrow />;
-  // }
   const [fields, handleFieldChange] = useFormFields({
     firstName: "",
     lastName: "",
     school: "",
     status: "",
+    major: "",
+    minor: "",
     bio: "",
     hometown: "",
     birthdate: "",
@@ -1123,163 +1140,372 @@ const EditUser = props => {
     battlenet: "",
     steam: "",
     xbox: "",
-    psn: ""
+    psn: "",
+    favoriteGameSearch: "",
+    currentGameSearch: ""
   });
+
+  // const [favoriteGames, toggleFavoriteGame] = React.useState([]);
+  // const [currentlyPlaying, toggleCurrentGame] = React.useState([]);
+
+  // toggleFavoriteGame(games => _.xorBy([games], 'id'));
+  // toggleCurrentGame(games => _.xorBy([games], 'id'));
+
+  // if (!props.isAuthenticated) {
+  //   return <Redirect to="/" noThrow />;
+  // }
 
   async function handleSubmit(e) {
     e.preventDefault();
     console.log("Submitted!", fields);
   }
 
+  // function validateForm() {
+  //   return (
+  //     fields.firstName.length > 0 &&
+  //     fields.lastName.length > 0 &&
+  //     fields.school.length > 0 &&
+  //     fields.status.length > 0
+  //   );
+  // }
+
   return (
     <PageWrapper>
-      <Card className="w-full mx-auto p-12">
-        <form onSubmit={handleSubmit}>
-          <h1 className="text-5xl font-bold leading-none mb-4">
-            <FontAwesomeIcon icon={faUserEdit} className="mr-4" />
-            Edit Your Profile
-          </h1>
-          <hr className="mt-12 mb-8" />
-          <Fieldset legend="Name">
-            <FieldWrapper>
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
+      <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+        <Heading as="h1" size="2xl">
+          Your Profile
+        </Heading>
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+        >
+          <Box pos="absolute" top="-5rem">
+            <Text as="legend" fontWeight="bold" fontSize="2xl">
+              Details
+            </Text>
+            <Text color="gray.500">Personal information about you.</Text>
+          </Box>
+          <Stack spacing={6} p={8}>
+            <FormControl isRequired>
+              <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
+                First Name:
+              </FormLabel>
+              <ChakraInput
                 id="firstName"
                 name="firstName"
                 type="text"
                 placeholder="Brandon"
-                required
                 onChange={handleFieldChange}
                 value={fields.firstName}
+                size="lg"
               />
-            </FieldWrapper>
-            <FieldWrapper>
-              <Label htmlFor="lastName">Last name</Label>
-              <Input
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
+                Last Name:
+              </FormLabel>
+              <ChakraInput
                 id="lastName"
                 name="lastName"
                 type="text"
                 placeholder="Sansone"
-                required
                 onChange={handleFieldChange}
                 value={fields.lastName}
+                roundedLeft="0"
+                size="lg"
               />
-            </FieldWrapper>
-          </Fieldset>
-          <hr className="mb-6" />
-          <FieldWrapper align="start">
-            <Label htmlFor="email">Email</Label>
-            <div className="w-full">
-              <p className="w-full">jdoe@gmail.com</p>
-              <p className="text-gray-600 text-base italic">
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
+                Email:
+              </FormLabel>
+              <ChakraInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="jdoe@gmail.com"
+                value="jdoe@gmail.com"
+                size="lg"
+                disabled
+                aria-describedby="email-helper-text"
+              />
+              <FormHelperText id="email-helper-text">
                 Your email cannot be changed.
-              </p>
-            </div>
-          </FieldWrapper>
-          <hr className="mb-6" />
-          <Fieldset legend="School">
-            <FieldWrapper>
-              <Label htmlFor="school">School</Label>
-              <Select
-                id="school"
-                required
-                options={constants.SCHOOL_OPTIONS}
+              </FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="hometown" fontSize="lg" fontWeight="bold">
+                Hometown:
+              </FormLabel>
+              <ChakraInput
+                id="hometown"
+                name="hometown"
+                type="text"
+                placeholder="Chicago, IL"
                 onChange={handleFieldChange}
-                value={fields.school}
+                value={fields.hometown}
+                size="lg"
               />
-            </FieldWrapper>
-            <FieldWrapper>
-              <Label htmlFor="status">Status</Label>
-              <Select
-                id="status"
-                required
-                options={constants.STUDENT_STATUS_OPTIONS}
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="birthdate" fontSize="lg" fontWeight="bold">
+                Birthday:
+              </FormLabel>
+              <ChakraInput
+                id="birthdate"
+                name="birthdate"
+                type="date"
                 onChange={handleFieldChange}
-                value={fields.status}
+                value={fields.birthdate}
+                size="lg"
               />
-            </FieldWrapper>
-          </Fieldset>
-          <hr className="mb-6" />
-          <FieldWrapper align="start">
-            <Label htmlFor="bio">Bio</Label>
-            <div className="w-full">
-              <textarea
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="bio" fontSize="lg" fontWeight="bold">
+                Bio:
+              </FormLabel>
+              <Textarea
                 id="bio"
                 name="bio"
-                placeholder="Add your bio"
-                maxLength="250"
-                rows="4"
-                className={`${constants.STYLES.INPUT.DEFAULT} resize-y`}
                 onChange={handleFieldChange}
                 value={fields.bio}
+                placeholder="Add your bio"
+                size="lg"
+                resize="vertical"
+                aria-describedby="bio-helper-text"
+                maxLength="300"
+                h="150px"
               />
-              <p className="text-gray-600 text-base italic">
-                Max 250 characters.
-              </p>
-            </div>
-          </FieldWrapper>
-          <hr className="mb-6" />
-          <FieldWrapper>
-            <Label htmlFor="hometown">Hometown</Label>
-            <Input
-              id="hometown"
-              name="hometown"
-              type="text"
-              placeholder="Chicago, IL"
-              onChange={handleFieldChange}
-              value={fields.hometown}
-            />
-          </FieldWrapper>
-          <FieldWrapper>
-            <Label htmlFor="birthdate">Birthday</Label>
-            <Input
-              id="birthdate"
-              name="birthdate"
-              type="date"
-              onChange={handleFieldChange}
-              value={fields.birthdate}
-            />
-          </FieldWrapper>
-          <hr className="mb-6" />
-          <Fieldset legend="Accounts">
+              <FormHelperText id="bio-helper-text">
+                Describe yourself in fewer than 300 characters.
+              </FormHelperText>
+            </FormControl>
+          </Stack>
+        </Box>
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+        >
+          <Box pos="absolute" top="-5rem">
+            <Text as="legend" fontWeight="bold" fontSize="2xl">
+              School
+            </Text>
+            <Text color="gray.500">Where you study, what you study.</Text>
+          </Box>
+          <Stack spacing={6} p={8}>
+            <FormControl isRequired>
+              <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
+                School:
+              </FormLabel>
+              <ChakraSelect
+                id="school"
+                onChange={handleFieldChange}
+                value={fields.school}
+                size="lg"
+              >
+                {constants.SCHOOL_OPTIONS.map(option => (
+                  <option key={option.value} {...option} />
+                ))}
+              </ChakraSelect>
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
+                Status:
+              </FormLabel>
+              <ChakraSelect
+                id="status"
+                onChange={handleFieldChange}
+                value={fields.status}
+                size="lg"
+              >
+                {constants.STUDENT_STATUS_OPTIONS.map(option => (
+                  <option key={option.value} {...option} />
+                ))}
+              </ChakraSelect>
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
+                Major:
+              </FormLabel>
+              <ChakraInput
+                id="major"
+                name="major"
+                type="text"
+                onChange={handleFieldChange}
+                value={fields.major}
+                size="lg"
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
+                Minor:
+              </FormLabel>
+              <ChakraInput
+                id="minor"
+                name="minor"
+                type="text"
+                onChange={handleFieldChange}
+                value={fields.minor}
+                size="lg"
+              />
+            </FormControl>
+          </Stack>
+        </Box>
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+        >
+          <Box pos="absolute" top="-5rem">
+            <Text as="legend" fontWeight="bold" fontSize="2xl">
+              Social Accounts
+            </Text>
+            <Text color="gray.500">
+              Other places where people can find you at.
+            </Text>
+          </Box>
+          <Stack spacing={6} p={8}>
             {Object.keys(constants.ACCOUNTS).map(id => {
               const account = constants.ACCOUNTS[id];
 
               return (
-                <FieldWrapper key={id}>
-                  <Label htmlFor={id}>
-                    <FontAwesomeIcon icon={account.icon} className="mr-4" />
-                    {account.label}
-                  </Label>
-                  <ConditionalWrapper
-                    condition={!!account.url}
-                    wrapper={children => (
-                      <Flex itemsCenter className="w-full">
-                        {children}
-                      </Flex>
-                    )}
-                  >
-                    <React.Fragment>
-                      <span className="mr-2 text-gray-500">{account.url}</span>
-                      <Input
-                        id={id}
-                        name={id}
-                        type="text"
-                        placeholder={account.placeholder}
-                        onChange={handleFieldChange}
-                        value={fields[id]}
+                <FormControl key={id}>
+                  <FormLabel htmlFor={id} fontSize="lg" fontWeight="bold">
+                    {account.label}:
+                  </FormLabel>
+                  <ChakraInputGroup size="lg">
+                    {account.icon || !!account.url ? (
+                      <InputLeftAddon
+                        children={
+                          <React.Fragment>
+                            <FontAwesomeIcon icon={account.icon} />
+                            {!!account.url ? (
+                              <Text ml={4}>{account.url}</Text>
+                            ) : null}
+                          </React.Fragment>
+                        }
                       />
-                    </React.Fragment>
-                  </ConditionalWrapper>
-                </FieldWrapper>
+                    ) : null}
+                    <ChakraInput
+                      id={id}
+                      name={id}
+                      type="text"
+                      placeholder={account.placeholder}
+                      onChange={handleFieldChange}
+                      value={fields[id]}
+                      roundedLeft="0"
+                    />
+                  </ChakraInputGroup>
+                </FormControl>
               );
             })}
-          </Fieldset>
-          <Button variant="purple" type="submit" className="my-12 w-full">
-            Submit Changes
-          </Button>
-        </form>
-      </Card>
+          </Stack>
+        </Box>
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+        >
+          <Box pos="absolute" top="-5rem">
+            <Text as="legend" fontWeight="bold" fontSize="2xl">
+              Favorite Games
+            </Text>
+            <Text color="gray.500">
+              Your top 5 favorite games (if you can even choose).
+            </Text>
+          </Box>
+          <Stack spacing={6} p={8}>
+            <FormControl>
+              <FormLabel
+                htmlFor="favoriteGameSearch"
+                fontSize="lg"
+                fontWeight="bold"
+              >
+                Search for a game:
+              </FormLabel>
+              <ChakraInputGroup size="lg">
+                <ChakraInput
+                  id="favoriteGameSearch"
+                  name="favoriteGameSearch"
+                  type="text"
+                  onChange={handleFieldChange}
+                  value={fields.favoriteGameSearch}
+                  pr="5rem"
+                />
+                <InputRightElement w="5rem" mr={2}>
+                  <ChakraButton h="1.75rem" size="sm" variantColor="purple">
+                    Add Game
+                  </ChakraButton>
+                </InputRightElement>
+              </ChakraInputGroup>
+            </FormControl>
+          </Stack>
+        </Box>
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+        >
+          <Box pos="absolute" top="-5rem">
+            <Text as="legend" fontWeight="bold" fontSize="2xl">
+              Currently Playing
+            </Text>
+            <Text color="gray.500">What are you currently playing? Max 5.</Text>
+          </Box>
+          <Stack spacing={6} p={8}>
+            <FormControl>
+              <FormLabel
+                htmlFor="currentGameSearch"
+                fontSize="lg"
+                fontWeight="bold"
+              >
+                Search for a game:
+              </FormLabel>
+              <ChakraInputGroup size="lg">
+                <ChakraInput
+                  id="currentGameSearch"
+                  name="currentGameSearch"
+                  type="text"
+                  onChange={handleFieldChange}
+                  value={fields.currentGameSearch}
+                  pr="5rem"
+                />
+                <InputRightElement w="5rem" mr={2}>
+                  <ChakraButton h="1.75rem" size="sm" variantColor="purple">
+                    Add Game
+                  </ChakraButton>
+                </InputRightElement>
+              </ChakraInputGroup>
+            </FormControl>
+          </Stack>
+        </Box>
+        <ChakraButton
+          variantColor="purple"
+          type="submit"
+          size="lg"
+          w="full"
+          mt={-12}
+        >
+          Update Profile
+        </ChakraButton>
+      </Stack>
     </PageWrapper>
   );
 };
@@ -1467,11 +1693,113 @@ const Event = props => {
 // CreateEvent
 
 const CreateEvent = props => {
-  if (!props.isAuthenticated) {
-    return <Redirect to="/" noThrow />;
+  const [fields, handleFieldChange] = useFormFields({
+    firstName: "",
+    lastName: "",
+    school: "",
+    status: "",
+    bio: "",
+    hometown: "",
+    birthdate: "",
+    website: "",
+    twitter: "",
+    twitch: "",
+    youtube: "",
+    skype: "",
+    discord: "",
+    battlenet: "",
+    steam: "",
+    xbox: "",
+    psn: ""
+  });
+
+  // if (!props.isAuthenticated) {
+  //   return <Redirect to="/" noThrow />;
+  // }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    console.log("Submitted!", fields);
   }
 
-  return null;
+  function validateForm() {
+    return (
+      fields.firstName.length > 0 &&
+      fields.lastName.length > 0 &&
+      fields.school.length > 0 &&
+      fields.status.length > 0
+    );
+  }
+
+  return (
+    <PageWrapper>
+      <Card className="w-full mx-auto p-12">
+        <form onSubmit={handleSubmit}>
+          <h1 className="text-5xl font-bold leading-none mb-4">
+            Create an Event
+          </h1>
+          <hr className="mt-12 mb-8" />
+          <Fieldset legend="Name">
+            <InputGroup>
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                placeholder="CSGO and Pizza"
+                required
+                onChange={handleFieldChange}
+                value={fields.title}
+              />
+            </InputGroup>
+            <InputGroup align="start">
+              <Label htmlFor="description">Description</Label>
+              <div className="w-full">
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Describe the event"
+                  maxLength="250"
+                  rows="6"
+                  className={`${constants.STYLES.INPUT.DEFAULT} resize-y`}
+                  onChange={handleFieldChange}
+                  value={fields.description}
+                />
+              </div>
+            </InputGroup>
+            <InputGroup>
+              <Label htmlFor="school">Start Date</Label>
+              <Select
+                id="school"
+                required
+                options={constants.SCHOOL_OPTIONS}
+                onChange={handleFieldChange}
+                value={fields.school}
+              />
+            </InputGroup>
+            <InputGroup>
+              <Label htmlFor="school">End Date</Label>
+              <Select
+                id="school"
+                required
+                options={constants.SCHOOL_OPTIONS}
+                onChange={handleFieldChange}
+                value={fields.school}
+              />
+            </InputGroup>
+          </Fieldset>
+          <Button
+            disabled={!validateForm()}
+            variant="purple"
+            type="submit"
+            className="my-12 w-full"
+          >
+            Submit Changes
+          </Button>
+        </form>
+      </Card>
+    </PageWrapper>
+  );
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1673,9 +2001,9 @@ const Label = ({ className = "", ...props }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// FieldWrapper
+// InputGroup
 
-const FieldWrapper = ({ align = "center", className = "", ...props }) => {
+const InputGroup = ({ align = "center", className = "", ...props }) => {
   let defaultClass = "md:flex mb-6";
 
   if (align === "center") {
@@ -1729,17 +2057,8 @@ const PageSection = ({ className = "", ...props }) => {
 ////////////////////////////////////////////////////////////////////////////////
 // Fieldset
 
-const Fieldset = ({ legend = "", legendProps, children, ...props }) => {
-  return (
-    <fieldset {...props}>
-      {legend && (
-        <VisuallyHidden>
-          <legend {...legendProps}>{legend}</legend>
-        </VisuallyHidden>
-      )}
-      {children}
-    </fieldset>
-  );
+const Fieldset = props => {
+  return <fieldset {...props} />;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1774,7 +2093,7 @@ const Avatar = ({
 
   const sizes = {
     sm: "h-10 w-10",
-    md: "h-20 w-40",
+    md: "h-20 w-20",
     lg: "h-40 w-40"
   };
 
