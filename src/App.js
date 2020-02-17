@@ -34,9 +34,16 @@ import {
   Textarea,
   Heading,
   Text,
-  InputRightElement
+  Image,
+  FormErrorMessage,
+  Spinner,
+  Tooltip
 } from "@chakra-ui/core";
+import momentLocalizer from "react-widgets-moment";
+import "react-widgets/dist/css/react-widgets.css";
+import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import Amplify, { Auth } from "aws-amplify";
+import PlacesAutocomplete from "react-places-autocomplete";
 import "./App.css";
 import awsconfig from "./aws-exports";
 import TEST_DATA from "./test_data";
@@ -49,6 +56,10 @@ import {
   classNames,
   useFormFields
 } from "./utilities";
+import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
+
+moment.locale("en");
+momentLocalizer();
 
 Amplify.configure(awsconfig);
 
@@ -316,7 +327,15 @@ const Signup = props => {
   if (newUser) {
     return (
       <PageWrapper>
-        <Card className="w-full mx-auto p-12">
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+          p={12}
+        >
           <form onSubmit={handleConfirmationSubmit}>
             <Alert variant="yellow">
               <p className="font-medium">
@@ -356,14 +375,22 @@ const Signup = props => {
               {isLoading ? "Verifying..." : "Verify"}
             </Button>
           </form>
-        </Card>
+        </Box>
       </PageWrapper>
     );
   }
 
   return (
     <PageWrapper>
-      <Card className="w-full mx-auto p-12">
+      <Box
+        as="fieldset"
+        borderWidth="1px"
+        boxShadow="lg"
+        rounded="lg"
+        bg="white"
+        pos="relative"
+        p={12}
+      >
         <form onSubmit={handleSubmit}>
           <h1 className="text-5xl font-bold leading-none">Create an account</h1>
           <hr className="my-12" />
@@ -470,7 +497,7 @@ const Signup = props => {
             </Link>
           </p>
         </form>
-      </Card>
+      </Box>
     </PageWrapper>
   );
 };
@@ -513,7 +540,15 @@ const Login = props => {
 
   return (
     <PageWrapper>
-      <Card className="w-full mx-auto p-12">
+      <Box
+        as="fieldset"
+        borderWidth="1px"
+        boxShadow="lg"
+        rounded="lg"
+        bg="white"
+        pos="relative"
+        p={12}
+      >
         <form onSubmit={handleSubmit}>
           <h1 className="text-5xl font-bold leading-none mb-4">
             Welcome back!
@@ -567,7 +602,7 @@ const Login = props => {
             </Link>
           </Flex>
         </form>
-      </Card>
+      </Box>
     </PageWrapper>
   );
 };
@@ -655,7 +690,15 @@ const ForgotPassword = props => {
 
     return (
       <PageWrapper>
-        <Card className="w-full mx-auto p-12">
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+          p={12}
+        >
           <form onSubmit={handleConfirmationSubmit}>
             <Alert variant="yellow">
               <p className="font-medium">
@@ -719,14 +762,22 @@ const ForgotPassword = props => {
               {isConfirming ? "Confirming..." : "Confirm"}
             </Button>
           </form>
-        </Card>
+        </Box>
       </PageWrapper>
     );
   }
 
   return (
     <PageWrapper>
-      <Card className="w-full mx-auto p-12">
+      <Box
+        as="fieldset"
+        borderWidth="1px"
+        boxShadow="lg"
+        rounded="lg"
+        bg="white"
+        pos="relative"
+        p={12}
+      >
         <form onSubmit={handleSubmit}>
           <h1 className="text-5xl font-bold leading-none mb-4">
             Reset your password
@@ -766,7 +817,7 @@ const ForgotPassword = props => {
             </p>
           </Flex>
         </form>
-      </Card>
+      </Box>
     </PageWrapper>
   );
 };
@@ -1144,12 +1195,31 @@ const EditUser = props => {
     favoriteGameSearch: "",
     currentGameSearch: ""
   });
+  const testFavoriteGames = Array.from({ length: 1 }, () => ({
+    id: Math.floor(Math.random() * 100),
+    name: "League of Legends",
+    picture:
+      "https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg"
+  }));
+  const testCurrentlyPlaying = Array.from({ length: 5 }, () => ({
+    id: Math.floor(Math.random() * 100),
+    name: "League of Legends",
+    picture:
+      "https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg"
+  }));
 
-  // const [favoriteGames, toggleFavoriteGame] = React.useState([]);
-  // const [currentlyPlaying, toggleCurrentGame] = React.useState([]);
+  const [favoriteGames, setFavoriteGames] = React.useState(testFavoriteGames);
+  const [currentlyPlaying, setCurrentGames] = React.useState(
+    testCurrentlyPlaying
+  );
 
-  // toggleFavoriteGame(games => _.xorBy([games], 'id'));
-  // toggleCurrentGame(games => _.xorBy([games], 'id'));
+  function toggleFavoriteGame(game) {
+    setFavoriteGames(_.xorBy(favoriteGames, [game], "id"));
+  }
+
+  function toggleCurrentGame(game) {
+    setCurrentGames(_.xorBy(currentlyPlaying, [game], "id"));
+  }
 
   // if (!props.isAuthenticated) {
   //   return <Redirect to="/" noThrow />;
@@ -1437,22 +1507,55 @@ const EditUser = props => {
               >
                 Search for a game:
               </FormLabel>
-              <ChakraInputGroup size="lg">
-                <ChakraInput
-                  id="favoriteGameSearch"
-                  name="favoriteGameSearch"
-                  type="text"
-                  onChange={handleFieldChange}
-                  value={fields.favoriteGameSearch}
-                  pr="5rem"
-                />
-                <InputRightElement w="5rem" mr={2}>
-                  <ChakraButton h="1.75rem" size="sm" variantColor="purple">
-                    Add Game
-                  </ChakraButton>
-                </InputRightElement>
-              </ChakraInputGroup>
+              <ChakraInput
+                id="favoriteGameSearch"
+                name="favoriteGameSearch"
+                type="text"
+                onChange={handleFieldChange}
+                value={fields.favoriteGameSearch}
+                size="lg"
+                disabled={favoriteGames.length === 5}
+              />
             </FormControl>
+            <Stack spacing={2}>
+              <Text fontWeight="bold">
+                Your favorites{" "}
+                <Text
+                  as="span"
+                  color={`${favoriteGames.length === 5 ? "red" : undefined}`}
+                >
+                  ({favoriteGames.length}/5)
+                </Text>
+              </Text>
+              :
+              {favoriteGames.length === 0 ? (
+                <Text color="gray.500">You haven’t selected any.</Text>
+              ) : (
+                <Stack isInline>
+                  {favoriteGames.map(game => (
+                    <Box key={game.id} w="100px" textAlign="center" mt={4}>
+                      <Image
+                        src={game.picture}
+                        alt={`The cover art for ${game.name}`}
+                      />
+                      <Tooltip label={game.name}>
+                        <Text fontSize="sm" lineHeight="1.2" p={2} isTruncated>
+                          {game.name}
+                        </Text>
+                      </Tooltip>
+                      <ChakraButton
+                        size="xs"
+                        variant="ghost"
+                        variantColor="red"
+                        onClick={() => toggleFavoriteGame(game)}
+                      >
+                        Remove
+                      </ChakraButton>
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+            </Stack>
           </Stack>
         </Box>
         <Box
@@ -1478,22 +1581,56 @@ const EditUser = props => {
               >
                 Search for a game:
               </FormLabel>
-              <ChakraInputGroup size="lg">
-                <ChakraInput
-                  id="currentGameSearch"
-                  name="currentGameSearch"
-                  type="text"
-                  onChange={handleFieldChange}
-                  value={fields.currentGameSearch}
-                  pr="5rem"
-                />
-                <InputRightElement w="5rem" mr={2}>
-                  <ChakraButton h="1.75rem" size="sm" variantColor="purple">
-                    Add Game
-                  </ChakraButton>
-                </InputRightElement>
-              </ChakraInputGroup>
+              <ChakraInput
+                id="currentGameSearch"
+                name="currentGameSearch"
+                type="text"
+                onChange={handleFieldChange}
+                value={fields.currentGameSearch}
+                size="lg"
+                disabled={currentlyPlaying.length === 5}
+              />
             </FormControl>
+            <Stack spacing={2}>
+              <Text fontWeight="bold">
+                What you’re playing{" "}
+                <Text
+                  as="span"
+                  color={`${
+                    currentlyPlaying.length === 5 ? "red.500" : undefined
+                  }`}
+                >
+                  ({currentlyPlaying.length}/5)
+                </Text>
+              </Text>
+              {currentlyPlaying.length === 0 ? (
+                <Text color="gray.500">You haven’t selected any.</Text>
+              ) : (
+                <Stack isInline spacing={12} wrap="wrap">
+                  {currentlyPlaying.map(game => (
+                    <Box key={game.id} w="100px" textAlign="center" mt={4}>
+                      <Image
+                        src={game.picture}
+                        alt={`The cover art for ${game.name}`}
+                      />
+                      <Tooltip label={game.name}>
+                        <Text fontSize="sm" lineHeight="1.2" p={2} isTruncated>
+                          {game.name}
+                        </Text>
+                      </Tooltip>
+                      <ChakraButton
+                        size="xs"
+                        variant="ghost"
+                        variantColor="red"
+                        onClick={() => toggleCurrentGame(game)}
+                      >
+                        Remove
+                      </ChakraButton>
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+            </Stack>
           </Stack>
         </Box>
         <ChakraButton
@@ -1694,110 +1831,245 @@ const Event = props => {
 
 const CreateEvent = props => {
   const [fields, handleFieldChange] = useFormFields({
-    firstName: "",
-    lastName: "",
-    school: "",
-    status: "",
-    bio: "",
-    hometown: "",
-    birthdate: "",
-    website: "",
-    twitter: "",
-    twitch: "",
-    youtube: "",
-    skype: "",
-    discord: "",
-    battlenet: "",
-    steam: "",
-    xbox: "",
-    psn: ""
+    name: "",
+    description: "",
+    eventHost: null
   });
-
+  const [locationSearch, setLocationSearch] = React.useState("");
+  const [startDateTime, setStartDateTime] = React.useState(new Date());
+  const [endDateTime, setEndDateTime] = React.useState(new Date());
+  const [placeId, setPlaceId] = React.useState("");
   // if (!props.isAuthenticated) {
   //   return <Redirect to="/" noThrow />;
   // }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    console.log("Submitted!", fields);
+  // const user = TEST_DATA.users.find(user => user.id === props.id);
+
+  // if (!user) {
+  //   // TODO: Handle gracefully
+  //   console.log("no user");
+  //   return null;
+  // }
+
+  function setLocation(address, placeId) {
+    setLocationSearch(address);
+    setPlaceId(placeId);
   }
 
-  function validateForm() {
-    return (
-      fields.firstName.length > 0 &&
-      fields.lastName.length > 0 &&
-      fields.school.length > 0 &&
-      fields.status.length > 0
-    );
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    // Double check the address for a geocode if they blur or something
+    // Probably want to save the address and lat/long
+    // If we save the placeId, it may be easier to render the map for that place
+    geocodeByAddress(locationSearch)
+      .then(results => console.log({ results }))
+      .catch(error => console.error({ error }));
+
+    console.log("Submitted!", {
+      ...fields,
+      ...{ startDateTime, endDateTime, locationSearch, placeId }
+    });
   }
+
+  // function validateForm() {
+  //   return (
+  //     fields.firstName.length > 0 &&
+  //     fields.lastName.length > 0 &&
+  //     fields.school.length > 0 &&
+  //     fields.status.length > 0
+  //   );
+  // }
 
   return (
     <PageWrapper>
-      <Card className="w-full mx-auto p-12">
-        <form onSubmit={handleSubmit}>
-          <h1 className="text-5xl font-bold leading-none mb-4">
-            Create an Event
-          </h1>
-          <hr className="mt-12 mb-8" />
-          <Fieldset legend="Name">
-            <InputGroup>
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                name="title"
+      <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+        <Heading as="h1" size="2xl">
+          Create an Event
+        </Heading>
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+        >
+          <Box pos="absolute" top="-5rem">
+            <Text as="legend" fontWeight="bold" fontSize="2xl">
+              Details
+            </Text>
+            <Text color="gray.500">The information for event goers.</Text>
+          </Box>
+          <Stack spacing={6} p={8}>
+            <Box>
+              <Text fontSize="lg" fontWeight="bold" pb={2}>
+                Event Organizer:
+              </Text>
+              <Flex>
+                <Avatar
+                  name="Brandon Sansone"
+                  size="sm"
+                  src="https://api.adorable.io/avatars/285/abott249@adorable"
+                  rounded
+                />
+                <Text ml={4} as="span" alignSelf="center">
+                  Brandon Sansone
+                </Text>
+              </Flex>
+            </Box>
+            <FormControl isRequired>
+              <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
+                Event Name:
+              </FormLabel>
+              <ChakraInput
+                id="name"
+                name="name"
                 type="text"
                 placeholder="CSGO and Pizza"
-                required
+                maxLength="64"
                 onChange={handleFieldChange}
-                value={fields.title}
+                value={fields.name}
+                size="lg"
               />
-            </InputGroup>
-            <InputGroup align="start">
-              <Label htmlFor="description">Description</Label>
-              <div className="w-full">
-                <textarea
-                  id="description"
-                  name="description"
-                  placeholder="Describe the event"
-                  maxLength="250"
-                  rows="6"
-                  className={`${constants.STYLES.INPUT.DEFAULT} resize-y`}
-                  onChange={handleFieldChange}
-                  value={fields.description}
-                />
-              </div>
-            </InputGroup>
-            <InputGroup>
-              <Label htmlFor="school">Start Date</Label>
-              <Select
-                id="school"
-                required
-                options={constants.SCHOOL_OPTIONS}
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
+                Location:
+              </FormLabel>
+              <PlacesAutocomplete
+                value={locationSearch}
+                onChange={value => setLocationSearch(value)}
+                onSelect={(address, placeId) => setLocation(address, placeId)}
+                debounce={600}
+                shouldFetchSuggestions={locationSearch.length >= 3}
+              >
+                {({
+                  getInputProps,
+                  suggestions,
+                  getSuggestionItemProps,
+                  loading
+                }) => (
+                  <div>
+                    <ChakraInput
+                      {...getInputProps({
+                        placeholder: "Add a place or address",
+                        className: "location-search-input"
+                      })}
+                      size="lg"
+                    />
+                    <Box className="autocomplete-dropdown-container">
+                      {loading && (
+                        <Box w="100%" textAlign="center">
+                          <Spinner
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="purple.500"
+                            size="xl"
+                            mt={4}
+                          />
+                        </Box>
+                      )}
+                      {suggestions.map((suggestion, index, arr) => {
+                        const isLast = arr.length - 1 === index;
+                        const style = {
+                          backgroundColor: suggestion.active
+                            ? "#edf2f7"
+                            : "#ffffff",
+                          cursor: "pointer",
+                          padding: "12px",
+                          borderLeft: "1px solid #e2e8f0",
+                          borderRight: "1px solid #e2e8f0",
+                          borderBottom: isLast
+                            ? "1px solid #e2e8f0"
+                            : undefined,
+                          borderBottomLeftRadius: "0.25rem",
+                          borderBottomRightRadius: "0.25rem"
+                        };
+                        return (
+                          <div
+                            {...getSuggestionItemProps(suggestion, {
+                              style
+                            })}
+                          >
+                            <FontAwesomeIcon
+                              icon={faMapMarkerAlt}
+                              className="mr-4"
+                            />
+                            <Text as="span">{suggestion.description}</Text>
+                          </div>
+                        );
+                      })}
+                    </Box>
+                  </div>
+                )}
+              </PlacesAutocomplete>
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
+                Description:
+              </FormLabel>
+              <Textarea
+                id="description"
+                name="description"
                 onChange={handleFieldChange}
-                value={fields.school}
+                value={fields.description}
+                placeholder="Tell people what your event is about."
+                size="lg"
+                resize="vertical"
+                maxLength="300"
+                h="150px"
               />
-            </InputGroup>
-            <InputGroup>
-              <Label htmlFor="school">End Date</Label>
-              <Select
-                id="school"
-                required
-                options={constants.SCHOOL_OPTIONS}
-                onChange={handleFieldChange}
-                value={fields.school}
+            </FormControl>
+            <FormControl isRequired isInvalid={!startDateTime}>
+              <FormLabel
+                htmlFor="startDateTime"
+                fontSize="lg"
+                fontWeight="bold"
+              >
+                Starts:
+              </FormLabel>
+              <DateTimePicker
+                id="startDateTime"
+                name="startDateTime"
+                value={startDateTime}
+                onChange={value => setStartDateTime(value)}
+                min={new Date()}
+                step={15}
               />
-            </InputGroup>
-          </Fieldset>
-          <Button
-            disabled={!validateForm()}
-            variant="purple"
-            type="submit"
-            className="my-12 w-full"
-          >
-            Submit Changes
-          </Button>
-        </form>
-      </Card>
+              <FormErrorMessage>
+                Please select an end date and time.
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isRequired isInvalid={!endDateTime}>
+              <FormLabel htmlFor="endDateTime" fontSize="lg" fontWeight="bold">
+                Ends:
+              </FormLabel>
+              <DateTimePicker
+                id="endDateTime"
+                name="endDateTime"
+                value={endDateTime}
+                onChange={value => setEndDateTime(value)}
+                min={new Date()}
+                step={15}
+              />
+              <FormErrorMessage>
+                Please select an end date and time.
+              </FormErrorMessage>
+            </FormControl>
+          </Stack>
+        </Box>
+        <ChakraButton
+          variantColor="purple"
+          type="submit"
+          size="lg"
+          w="full"
+          mt={-12}
+        >
+          Create Event
+        </ChakraButton>
+      </Stack>
     </PageWrapper>
   );
 };
@@ -2055,13 +2327,6 @@ const PageSection = ({ className = "", ...props }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// Fieldset
-
-const Fieldset = props => {
-  return <fieldset {...props} />;
-};
-
-////////////////////////////////////////////////////////////////////////////////
 // Card
 
 const Card = ({ tag = "div", className = "", ...props }) => {
@@ -2168,6 +2433,7 @@ const Flex = ({
 ////////////////////////////////////////////////////////////////////////////////
 // ConditionalWrapper
 
+// eslint-disable-next-line
 const ConditionalWrapper = ({ condition, wrapper, children }) =>
   condition ? wrapper(children) : children;
 
