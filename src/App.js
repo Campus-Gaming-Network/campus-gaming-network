@@ -81,9 +81,7 @@ const App = () => {
       setCurrenUser(response);
       setUserIsAuthenticated(true);
     } catch (e) {
-      if (e !== "No current user") {
-        alert(e);
-      }
+      console.log(e);
     }
 
     setIsAuthenticating(false);
@@ -1515,6 +1513,7 @@ const EditUser = props => {
                 value={fields.favoriteGameSearch}
                 size="lg"
                 disabled={favoriteGames.length === 5}
+                placeholder="Search"
               />
             </FormControl>
             <Stack spacing={2}>
@@ -1589,6 +1588,7 @@ const EditUser = props => {
                 value={fields.currentGameSearch}
                 size="lg"
                 disabled={currentlyPlaying.length === 5}
+                placeholder="Search"
               />
             </FormControl>
             <Stack spacing={2}>
@@ -1634,7 +1634,7 @@ const EditUser = props => {
           </Stack>
         </Box>
         <ChakraButton
-          variantColor="purple"
+          variantColor="blue"
           type="submit"
           size="lg"
           w="full"
@@ -1839,6 +1839,7 @@ const CreateEvent = props => {
   const [startDateTime, setStartDateTime] = React.useState(new Date());
   const [endDateTime, setEndDateTime] = React.useState(new Date());
   const [placeId, setPlaceId] = React.useState("");
+
   // if (!props.isAuthenticated) {
   //   return <Redirect to="/" noThrow />;
   // }
