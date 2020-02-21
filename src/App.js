@@ -84,9 +84,7 @@ const App = () => {
       setCurrenUser(response);
       setUserIsAuthenticated(true);
     } catch (e) {
-      if (e !== "No current user") {
-        alert(e);
-      }
+      console.log(e);
     }
 
     setIsAuthenticating(false);
@@ -1518,6 +1516,7 @@ const EditUser = props => {
                 value={fields.favoriteGameSearch}
                 size="lg"
                 disabled={favoriteGames.length === 5}
+                placeholder="Search"
               />
             </FormControl>
             <Stack spacing={2}>
@@ -1592,6 +1591,7 @@ const EditUser = props => {
                 value={fields.currentGameSearch}
                 size="lg"
                 disabled={currentlyPlaying.length === 5}
+                placeholder="Search"
               />
             </FormControl>
             <Stack spacing={2}>
@@ -1637,7 +1637,7 @@ const EditUser = props => {
           </Stack>
         </Box>
         <ChakraButton
-          variantColor="purple"
+          variantColor="blue"
           type="submit"
           size="lg"
           w="full"
@@ -1845,6 +1845,7 @@ const CreateEvent = props => {
   const [isOnlineEvent, setIsOnlineEvent] = React.useState(false);
   // TODO: Tournament feature
   // const [isTournament, setIsTournament] = React.useState("no");
+
   // if (!props.isAuthenticated) {
   //   return <Redirect to="/" noThrow />;
   // }
