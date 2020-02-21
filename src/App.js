@@ -37,7 +37,10 @@ import {
   Image,
   FormErrorMessage,
   Spinner,
-  Tooltip
+  Tooltip,
+  Checkbox,
+  RadioGroup,
+  Radio
 } from "@chakra-ui/core";
 import momentLocalizer from "react-widgets-moment";
 import "react-widgets/dist/css/react-widgets.css";
@@ -1839,6 +1842,9 @@ const CreateEvent = props => {
   const [startDateTime, setStartDateTime] = React.useState(new Date());
   const [endDateTime, setEndDateTime] = React.useState(new Date());
   const [placeId, setPlaceId] = React.useState("");
+  const [isOnlineEvent, setIsOnlineEvent] = React.useState(false);
+  // TODO: Tournament feature
+  // const [isTournament, setIsTournament] = React.useState("no");
   // if (!props.isAuthenticated) {
   //   return <Redirect to="/" noThrow />;
   // }
@@ -1856,6 +1862,10 @@ const CreateEvent = props => {
     setPlaceId(placeId);
   }
 
+  function toggleIsOnlineEvent() {
+    setIsOnlineEvent(!isOnlineEvent);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -1866,10 +1876,17 @@ const CreateEvent = props => {
       .then(results => console.log({ results }))
       .catch(error => console.error({ error }));
 
-    console.log("Submitted!", {
+    const data = {
       ...fields,
-      ...{ startDateTime, endDateTime, locationSearch, placeId }
-    });
+      ...{
+        startDateTime,
+        endDateTime,
+        locationSearch,
+        placeId
+      }
+    };
+
+    console.log(data);
   }
 
   // function validateForm() {
@@ -1933,78 +1950,91 @@ const CreateEvent = props => {
                 size="lg"
               />
             </FormControl>
+            <FormControl></FormControl>
             <FormControl>
               <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
                 Location:
               </FormLabel>
-              <PlacesAutocomplete
-                value={locationSearch}
-                onChange={value => setLocationSearch(value)}
-                onSelect={(address, placeId) => setLocation(address, placeId)}
-                debounce={600}
-                shouldFetchSuggestions={locationSearch.length >= 3}
-              >
-                {({
-                  getInputProps,
-                  suggestions,
-                  getSuggestionItemProps,
-                  loading
-                }) => (
-                  <div>
-                    <ChakraInput
-                      {...getInputProps({
-                        placeholder: "Add a place or address",
-                        className: "location-search-input"
-                      })}
-                      size="lg"
-                    />
-                    <Box className="autocomplete-dropdown-container">
-                      {loading && (
-                        <Box w="100%" textAlign="center">
-                          <Spinner
-                            thickness="4px"
-                            speed="0.65s"
-                            emptyColor="gray.200"
-                            color="purple.500"
-                            size="xl"
-                            mt={4}
-                          />
-                        </Box>
-                      )}
-                      {suggestions.map((suggestion, index, arr) => {
-                        const isLast = arr.length - 1 === index;
-                        const style = {
-                          backgroundColor: suggestion.active
-                            ? "#edf2f7"
-                            : "#ffffff",
-                          cursor: "pointer",
-                          padding: "12px",
-                          borderLeft: "1px solid #e2e8f0",
-                          borderRight: "1px solid #e2e8f0",
-                          borderBottom: isLast
-                            ? "1px solid #e2e8f0"
-                            : undefined,
-                          borderBottomLeftRadius: "0.25rem",
-                          borderBottomRightRadius: "0.25rem"
-                        };
-                        return (
-                          <div
-                            {...getSuggestionItemProps(suggestion, {
-                              style
-                            })}
-                          >
-                            <FontAwesomeIcon
-                              icon={faMapMarkerAlt}
-                              className="mr-4"
+              <Stack>
+                <PlacesAutocomplete
+                  value={locationSearch}
+                  onChange={value => setLocationSearch(value)}
+                  onSelect={(address, placeId) => setLocation(address, placeId)}
+                  debounce={600}
+                  shouldFetchSuggestions={locationSearch.length >= 3}
+                >
+                  {({
+                    getInputProps,
+                    suggestions,
+                    getSuggestionItemProps,
+                    loading
+                  }) => (
+                    <div>
+                      <ChakraInput
+                        {...getInputProps({
+                          placeholder: "Add a place or address",
+                          className: "location-search-input",
+                          disabled: isOnlineEvent
+                        })}
+                        size="lg"
+                      />
+                      <Box className="autocomplete-dropdown-container">
+                        {loading && (
+                          <Box w="100%" textAlign="center">
+                            <Spinner
+                              thickness="4px"
+                              speed="0.65s"
+                              emptyColor="gray.200"
+                              color="purple.500"
+                              size="xl"
+                              mt={4}
                             />
-                            <Text as="span">{suggestion.description}</Text>
-                          </div>
-                        );
-                      })}
-                    </Box>
-                  </div>
-                )}
-              </PlacesAutocomplete>
+                          </Box>
+                        )}
+                        {suggestions.map((suggestion, index, arr) => {
+                          const isLast = arr.length - 1 === index;
+                          const style = {
+                            backgroundColor: suggestion.active
+                              ? "#edf2f7"
+                              : "#ffffff",
+                            cursor: "pointer",
+                            padding: "12px",
+                            borderLeft: "1px solid #e2e8f0",
+                            borderRight: "1px solid #e2e8f0",
+                            borderBottom: isLast
+                              ? "1px solid #e2e8f0"
+                              : undefined,
+                            borderBottomLeftRadius: "0.25rem",
+                            borderBottomRightRadius: "0.25rem"
+                          };
+                          return (
+                            <div
+                              {...getSuggestionItemProps(suggestion, {
+                                style
+                              })}
+                            >
+                              <FontAwesomeIcon
+                                icon={faMapMarkerAlt}
+                                className="mr-4"
+                              />
+                              <Text as="span">{suggestion.description}</Text>
+                            </div>
+                          );
+                        })}
+                      </Box>
+                    </div>
+                  )}
+                </PlacesAutocomplete>
+                <Text>or</Text>
+                <Checkbox
+                  size="lg"
+                  disabled={!!placeId}
+                  value={false}
+                  onChange={toggleIsOnlineEvent}
+                >
+                  This is an online event
+                </Checkbox>
+              </Stack>
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
@@ -2058,6 +2088,27 @@ const CreateEvent = props => {
                 Please select an end date and time.
               </FormErrorMessage>
             </FormControl>
+            {/* TODO: Tournament feature */}
+            {/* <FormControl>
+              <FormLabel htmlFor="isTournament" fontSize="lg" fontWeight="bold">
+                Is this event a tournament?
+              </FormLabel>
+              <RadioGroup
+                id="isTournament"
+                name="isTournament"
+                onChange={e => setIsTournament(e.target.value)}
+                value={isTournament}
+                spacing={0}
+              >
+                <Radio size="md" value="yes">Yes</Radio>
+                <Radio size="md" value="no">No</Radio>
+              </RadioGroup>
+            </FormControl>
+            {isTournament === "yes" ? (
+              <React.Fragment>
+                <span>TODO: Tournament form</span>
+              </React.Fragment>
+            ) : null} */}
           </Stack>
         </Box>
         <ChakraButton
