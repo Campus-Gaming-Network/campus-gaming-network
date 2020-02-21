@@ -92,8 +92,7 @@ export const SCHOOL_OPTIONS = [
   }))
 ];
 
-export const USER_EMPTY_GAME_ACCOUNTS_TEXT =
-  "This user has not added any game accounts.";
+export const USER_EMPTY_ACCOUNTS_TEXT = "This user has not added any accounts.";
 export const USER_EMPTY_CURRENTLY_PLAYING_TEXT =
   "This user has not added any games.";
 export const USER_EMPTY_FAVORITE_GAMES_TEXT =

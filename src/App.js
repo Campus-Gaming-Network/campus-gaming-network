@@ -1,7 +1,6 @@
 import React from "react";
-import { Router, Link, Redirect, navigate } from "@reach/router";
+import { Router, Link as ReachLink, Redirect, navigate } from "@reach/router";
 import { SkipNavLink, SkipNavContent } from "@reach/skip-nav";
-import { Alert as ReachAlert } from "@reach/alert";
 import "@reach/skip-nav/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -39,8 +38,17 @@ import {
   Spinner,
   Tooltip,
   Checkbox,
-  RadioGroup,
-  Radio
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  Alert,
+  Badge,
+  Link as ChakraLink,
+  List,
+  ListItem
 } from "@chakra-ui/core";
 import momentLocalizer from "react-widgets-moment";
 import "react-widgets/dist/css/react-widgets.css";
@@ -338,7 +346,7 @@ const Signup = props => {
           p={12}
         >
           <form onSubmit={handleConfirmationSubmit}>
-            <Alert variant="yellow">
+            <Alert status="warning" variant="subtle">
               <p className="font-medium">
                 <FontAwesomeIcon
                   icon={faExclamationTriangle}
@@ -675,7 +683,7 @@ const ForgotPassword = props => {
     if (confirmed) {
       return (
         <PageWrapper>
-          <Alert variant="green">
+          <Alert status="success" variant="subtle">
             <span className="font-bold block text-2xl">
               Your password has been reset.
             </span>
@@ -701,7 +709,7 @@ const ForgotPassword = props => {
           p={12}
         >
           <form onSubmit={handleConfirmationSubmit}>
-            <Alert variant="yellow">
+            <Alert status="warning" variant="sbutle">
               <p className="font-medium">
                 <FontAwesomeIcon
                   icon={faExclamationTriangle}
@@ -883,104 +891,145 @@ const School = props => {
 
   return (
     <PageWrapper>
-      <header className="flex items-center">
-        <img
-          src={school.logo}
-          alt={`${school.name} school logo`}
-          className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
-        />
-        <div className="pl-12">
-          <h1 className="text-5xl font-bold leading-none pb-4 flex items-center">
-            {school.name}
-          </h1>
-        </div>
-      </header>
-      <PageSection>
-        <VisuallyHidden>Description</VisuallyHidden>
-        <p className="pt-1">{school.description}</p>
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
-          Information
-        </h4>
-        <dl className="flex flex-wrap w-full">
-          <dt className="w-1/2 font-bold">Contact Email</dt>
-          {school.contactEmail ? (
-            <dd className="w-1/2">
-              <a
-                className={constants.STYLES.LINK.DEFAULT}
-                href={`mailto:${school.contactEmail}`}
-              >
-                {school.contactEmail}
-              </a>
-            </dd>
-          ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
-          )}
-          <dt className="w-1/2 font-bold">Website</dt>
-          {school.website ? (
-            <dd className="w-1/2">
-              <OutsideLink href={school.website}>{school.website}</OutsideLink>
-            </dd>
-          ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
-          )}
-          <dt className="w-1/2 font-bold">Address</dt>
-          {school.address ? (
-            <dd className="w-1/2">
-              <OutsideLink
-                href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
-                  school.address
-                )}`}
-              >
-                {school.address}
-              </OutsideLink>
-            </dd>
-          ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
-          )}
-        </dl>
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
-          Upcoming Events
-        </h4>
-        {events.length ? (
-          <ul>
-            {sortedEvents(events).map(event => (
-              <EventListItem key={event.id} event={event} />
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500 mt-4">
-            {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
-          </p>
-        )}
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
-          Members
-        </h4>
-        <ul className="flex flex-wrap pt-4">
-          {users.map(user => (
-            <li key={user.id} className="w-1/3 md:w-1/4">
-              <div className="flex flex-col items-center justify-around pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg">
-                <Avatar
-                  src={user.picture}
-                  alt={`Avatar for ${user.fullName}`}
-                  rounded
-                />
-                <Link
-                  to={`../../../user/${user.id}`}
-                  className={`${constants.STYLES.LINK.DEFAULT} text-base m-4 mt-8 leading-tight font-bold text-center`}
+      <Stack spacing={10}>
+        <Box as="header" display="flex" alignItems="center">
+          <Image
+            src={school.logo}
+            alt={`${school.name} school logo`}
+            className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
+          />
+          <Box pl={12}>
+            <Heading
+              as="h1"
+              fontSize="5xl"
+              fontWeight="bold"
+              pb={2}
+              display="flex"
+              alignItems="center"
+            >
+              {school.name}
+            </Heading>
+          </Box>
+        </Box>
+        <Box as="section" pt={4}>
+          <VisuallyHidden as="h2">Description</VisuallyHidden>
+          <Text>{school.description}</Text>
+        </Box>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Information
+          </Heading>
+          <dl className="flex flex-wrap w-full">
+            <dt className="w-1/2 font-bold">Contact Email</dt>
+            {school.contactEmail ? (
+              <dd className="w-1/2">
+                <a
+                  className={constants.STYLES.LINK.DEFAULT}
+                  href={`mailto:${school.contactEmail}`}
                 >
-                  {user.fullName}
-                </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </PageSection>
+                  {school.contactEmail}
+                </a>
+              </dd>
+            ) : (
+              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            )}
+            <dt className="w-1/2 font-bold">Website</dt>
+            {school.website ? (
+              <dd className="w-1/2">
+                <OutsideLink href={school.website}>
+                  {school.website}
+                </OutsideLink>
+              </dd>
+            ) : (
+              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            )}
+            <dt className="w-1/2 font-bold">Address</dt>
+            {school.address ? (
+              <dd className="w-1/2">
+                <OutsideLink
+                  href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
+                    school.address
+                  )}`}
+                >
+                  {school.address}
+                </OutsideLink>
+              </dd>
+            ) : (
+              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            )}
+          </dl>
+        </Stack>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Upcoming Events
+          </Heading>
+          {events.length ? (
+            <List>
+              {sortedEvents(events).map(event => (
+                <EventListItem key={event.id} event={event} />
+              ))}
+            </List>
+          ) : (
+            <Text mt={4} className="text-gray-500">
+              {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
+            </Text>
+          )}
+        </Stack>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Members
+          </Heading>
+          <List display="flex" flexWrap="wrap">
+            {users.map(user => (
+              <ListItem key={user.id} width="25%">
+                <Box
+                  borderWidth="1px"
+                  boxShadow="lg"
+                  rounded="lg"
+                  bg="white"
+                  pos="relative"
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  m={2}
+                  p={4}
+                  height="calc(100% - 1rem)"
+                >
+                  <Avatar
+                    src={user.picture}
+                    alt={`Avatar for ${user.fullName}`}
+                    rounded
+                  />
+                  <Link
+                    to={`../../../user/${user.id}`}
+                    className={`${constants.STYLES.LINK.DEFAULT} text-base leading-tight`}
+                    fontWeight="bold"
+                    mt={4}
+                  >
+                    {user.fullName}
+                  </Link>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </Stack>
+      </Stack>
     </PageWrapper>
   );
 };
@@ -989,11 +1038,192 @@ const School = props => {
 // EditSchool
 
 const EditSchool = props => {
-  if (!props.isAuthenticated) {
-    return <Redirect to="/" noThrow />;
+  const [fields, handleFieldChange] = useFormFields({
+    description: "",
+    email: "",
+    website: ""
+  });
+  const [locationSearch, setLocationSearch] = React.useState("");
+  const [placeId, setPlaceId] = React.useState("");
+
+  // if (!props.isAuthenticated) {
+  //   return <Redirect to="/" noThrow />;
+  // }
+
+  // const user = TEST_DATA.users.find(user => user.id === props.id);
+
+  // if (!user) {
+  //   // TODO: Handle gracefully
+  //   console.log("no user");
+  //   return null;
+  // }
+
+  function setLocation(address, placeId) {
+    setLocationSearch(address);
+    setPlaceId(placeId);
   }
 
-  return null;
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    // Double check the address for a geocode if they blur or something
+    // Probably want to save the address and lat/long
+    // If we save the placeId, it may be easier to render the map for that place
+    geocodeByAddress(locationSearch)
+      .then(results => console.log({ results }))
+      .catch(error => console.error({ error }));
+
+    const data = {
+      ...fields,
+      ...{
+        locationSearch,
+        placeId
+      }
+    };
+
+    console.log(data);
+  }
+
+  return (
+    <PageWrapper>
+      <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+        <Heading as="h1" size="2xl">
+          Edit School
+        </Heading>
+        <Box
+          as="fieldset"
+          borderWidth="1px"
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+        >
+          <Box pos="absolute" top="-5rem">
+            <Text as="legend" fontWeight="bold" fontSize="2xl">
+              Details
+            </Text>
+            <Text color="gray.500">Information about the school.</Text>
+          </Box>
+          <Stack spacing={6} p={8}>
+            <FormControl>
+              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
+                Contact email:
+              </FormLabel>
+              <ChakraInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="esports@school.edu"
+                onChange={handleFieldChange}
+                value={fields.email}
+                size="lg"
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
+                Location:
+              </FormLabel>
+              <Stack>
+                <PlacesAutocomplete
+                  value={locationSearch}
+                  onChange={value => setLocationSearch(value)}
+                  onSelect={(address, placeId) => setLocation(address, placeId)}
+                  debounce={600}
+                  shouldFetchSuggestions={locationSearch.length >= 3}
+                >
+                  {({
+                    getInputProps,
+                    suggestions,
+                    getSuggestionItemProps,
+                    loading
+                  }) => (
+                    <div>
+                      <ChakraInput
+                        {...getInputProps({
+                          placeholder: "Where is the school located?",
+                          className: "location-search-input"
+                        })}
+                        size="lg"
+                      />
+                      <Box className="autocomplete-dropdown-container">
+                        {loading && (
+                          <Box w="100%" textAlign="center">
+                            <Spinner
+                              thickness="4px"
+                              speed="0.65s"
+                              emptyColor="gray.200"
+                              color="purple.500"
+                              size="xl"
+                              mt={4}
+                            />
+                          </Box>
+                        )}
+                        {suggestions.map((suggestion, index, arr) => {
+                          const isLast = arr.length - 1 === index;
+                          const style = {
+                            backgroundColor: suggestion.active
+                              ? "#edf2f7"
+                              : "#ffffff",
+                            cursor: "pointer",
+                            padding: "12px",
+                            borderLeft: "1px solid #e2e8f0",
+                            borderRight: "1px solid #e2e8f0",
+                            borderBottom: isLast
+                              ? "1px solid #e2e8f0"
+                              : undefined,
+                            borderBottomLeftRadius: "0.25rem",
+                            borderBottomRightRadius: "0.25rem"
+                          };
+                          return (
+                            <div
+                              {...getSuggestionItemProps(suggestion, {
+                                style
+                              })}
+                            >
+                              <FontAwesomeIcon
+                                icon={faMapMarkerAlt}
+                                className="mr-4"
+                              />
+                              <Text as="span">{suggestion.description}</Text>
+                            </div>
+                          );
+                        })}
+                      </Box>
+                    </div>
+                  )}
+                </PlacesAutocomplete>
+              </Stack>
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="Description" fontSize="lg" fontWeight="bold">
+                Description:
+              </FormLabel>
+              <Textarea
+                id="Description"
+                name="Description"
+                onChange={handleFieldChange}
+                value={fields.Description}
+                placeholder="Write a little something about the school"
+                size="lg"
+                resize="vertical"
+                maxLength="300"
+                h="150px"
+              />
+            </FormControl>
+          </Stack>
+        </Box>
+        <ChakraButton
+          variantColor="purple"
+          type="submit"
+          size="lg"
+          w="full"
+          mt={-12}
+        >
+          Update School
+        </ChakraButton>
+      </Stack>
+    </PageWrapper>
+  );
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1022,24 +1252,38 @@ const User = props => {
 
   return (
     <PageWrapper>
-      <Flex tag="header" itemsCenter>
+      <Box as="header" display="flex" alignItems="center">
         <Avatar
           size="lg"
           className="border-4 border-gray-300"
           src={user.picture}
           rounded
         />
-        <div className="pl-12">
-          <h1 className="text-5xl font-bold leading-none pb-2 flex items-center">
+        <Box pl={12}>
+          <Heading
+            as="h1"
+            fontSize="5xl"
+            fontWeight="bold"
+            pb={2}
+            display="flex"
+            alignItems="center"
+          >
             {user.firstName}
             {user.lastName ? ` ${user.lastName}` : ""}
-          </h1>
-          <h2 className="italic flex items-center">
+          </Heading>
+          <Heading
+            as="h2"
+            fontSize="2xl"
+            fontWeight="normal"
+            fontStyle="italic"
+            display="flex"
+            alignItems="center"
+          >
             {user.isVerifiedStudent && (
-              <span className="text-base">
+              <Text className="text-base">
                 <VisuallyHidden>User is a verified student</VisuallyHidden>
                 <FontAwesomeIcon className="mr-1 text-blue-600" icon={faStar} />
-              </span>
+              </Text>
             )}
             {`${
               user.status === "ALUMNI"
@@ -1054,117 +1298,169 @@ const User = props => {
             >
               {school.name}
             </Link>
-          </h2>
-        </div>
-      </Flex>
-      <PageSection>
-        <VisuallyHidden>Biography</VisuallyHidden>
-        {user.bio ? <p className="pt-1">{user.bio}</p> : null}
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
-          Information
-        </h4>
-        <Flex tag="dl" wrap className="w-full">
-          <dt className="w-1/2 font-bold">Hometown</dt>
-          {user.hometown ? (
-            <dd className="w-1/2">{user.hometown}</dd>
-          ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
-          )}
-          <dt className="w-1/2 font-bold">Major</dt>
-          {user.major ? (
-            <dd className="w-1/2">{user.major}</dd>
-          ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
-          )}
-          <dt className="w-1/2 font-bold">Minor</dt>
-          {user.minor ? (
-            <dd className="w-1/2">{user.minor}</dd>
-          ) : (
-            <dd className="w-1/2 text-gray-500">Nothing set</dd>
-          )}
-        </Flex>
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
-          Game Accounts
-        </h4>
-        {user.gameAccounts.length ? (
+          </Heading>
+        </Box>
+      </Box>
+      <Stack spacing={10}>
+        <Box as="section" pt={4}>
+          <VisuallyHidden as="h2">Biography</VisuallyHidden>
+          {user.bio ? <Text>{user.bio}</Text> : null}
+        </Box>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Information
+          </Heading>
           <Flex tag="dl" wrap className="w-full">
-            {user.gameAccounts.map(account => (
-              <React.Fragment key={account.name}>
-                <dt className="w-1/2 font-bold">{account.name}</dt>
-                <dd className="w-1/2">{account.value}</dd>
-              </React.Fragment>
-            ))}
+            <dt className="w-1/2 font-bold">Hometown</dt>
+            {user.hometown ? (
+              <dd className="w-1/2">{user.hometown}</dd>
+            ) : (
+              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            )}
+            <dt className="w-1/2 font-bold">Major</dt>
+            {user.major ? (
+              <dd className="w-1/2">{user.major}</dd>
+            ) : (
+              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            )}
+            <dt className="w-1/2 font-bold">Minor</dt>
+            {user.minor ? (
+              <dd className="w-1/2">{user.minor}</dd>
+            ) : (
+              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+            )}
           </Flex>
-        ) : (
-          <p className="text-gray-500">
-            {constants.USER_EMPTY_GAME_ACCOUNTS_TEXT}
-          </p>
-        )}
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-8">
-          Currently Playing
-        </h4>
-        {user.currentlyPlaying.length ? (
-          <Flex tag="ul" wrap>
-            {user.currentlyPlaying.map(game => (
-              <li key={game.name} className="w-1/5">
-                <img
-                  className="rounded h-40 shadow-lg"
-                  src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
-                  alt={`The cover art for ${game.name}`}
-                />
-              </li>
-            ))}
-          </Flex>
-        ) : (
-          <p className="text-gray-500">
-            {constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
-          </p>
-        )}
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-8">
-          Favorite Games
-        </h4>
-        {user.favoriteGames.length ? (
-          <Flex tag="ul" wrap>
-            {user.favoriteGames.map(game => (
-              <li key={game.name} className="w-1/5">
-                <img
-                  className="rounded h-40 shadow-lg"
-                  src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
-                  alt={`The cover art for ${game.name}`}
-                />
-              </li>
-            ))}
-          </Flex>
-        ) : (
-          <p className="text-gray-500">
-            {constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
-          </p>
-        )}
-      </PageSection>
-      <PageSection>
-        <h4 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-8">
-          Events Attending
-        </h4>
-        {events.length ? (
-          <ul>
-            {sortedEvents(events).map(event => (
-              <EventListItem key={event.id} event={event} />
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">
-            {constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}
-          </p>
-        )}
-      </PageSection>
+        </Stack>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Accounts
+          </Heading>
+          {Object.keys(constants.ACCOUNTS).length ? (
+            <Box display="flex" as="ul" flexWrap="wrap" width="100%">
+              {Object.keys(constants.ACCOUNTS).map(key => {
+                const account = constants.ACCOUNTS[key];
+
+                return (
+                  <Box as="li">
+                    <Box
+                      borderWidth="1px"
+                      boxShadow="lg"
+                      rounded="lg"
+                      bg="white"
+                      pos="relative"
+                      alignItems="center"
+                      display="flex"
+                      px={4}
+                      py={2}
+                      mr={4}
+                      mb={4}
+                    >
+                      <Box borderRight="1px" borderColor="gray.300" pr={4}>
+                        <FontAwesomeIcon icon={account.icon} />
+                      </Box>
+                      <Box pl={4}>
+                        <Text fontSize="sm">{account.label}</Text>
+                        <Text fontSize="sm" fontWeight="bold">
+                          {account.placeholder}
+                        </Text>
+                      </Box>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          ) : (
+            <Text className="text-gray-500">
+              {constants.USER_EMPTY_ACCOUNTS_TEXT}
+            </Text>
+          )}
+        </Stack>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Currently Playing
+          </Heading>
+          {user.currentlyPlaying.length ? (
+            <List display="flex" flexWrap="wrap">
+              {user.currentlyPlaying.map(game => (
+                <ListItem key={game.name} className="w-1/5">
+                  <img
+                    className="rounded h-40 shadow-lg"
+                    src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                    alt={`The cover art for ${game.name}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <p className="text-gray-500">
+              {constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
+            </p>
+          )}
+        </Stack>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Favorite Games
+          </Heading>
+          {user.favoriteGames.length ? (
+            <List display="flex" flexWrap="wrap">
+              {user.favoriteGames.map(game => (
+                <ListItem key={game.name} className="w-1/5">
+                  <img
+                    className="rounded h-40 shadow-lg"
+                    src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                    alt={`The cover art for ${game.name}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <p className="text-gray-500">
+              {constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
+            </p>
+          )}
+        </Stack>
+        <Stack as="section" spacing={4}>
+          <Heading
+            as="h3"
+            fontSize="sm"
+            textTransform="uppercase"
+            color="gray.500"
+          >
+            Events Attending
+          </Heading>
+          {events.length ? (
+            <List>
+              {sortedEvents(events).map(event => (
+                <EventListItem key={event.id} event={event} />
+              ))}
+            </List>
+          ) : (
+            <p className="text-gray-500">
+              {constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}
+            </p>
+          )}
+        </Stack>
+      </Stack>
     </PageWrapper>
   );
 };
@@ -1230,15 +1526,6 @@ const EditUser = props => {
     e.preventDefault();
     console.log("Submitted!", fields);
   }
-
-  // function validateForm() {
-  //   return (
-  //     fields.firstName.length > 0 &&
-  //     fields.lastName.length > 0 &&
-  //     fields.school.length > 0 &&
-  //     fields.status.length > 0
-  //   );
-  // }
 
   return (
     <PageWrapper>
@@ -1637,7 +1924,7 @@ const EditUser = props => {
           </Stack>
         </Box>
         <ChakraButton
-          variantColor="blue"
+          variantColor="purple"
           type="submit"
           size="lg"
           w="full"
@@ -1654,6 +1941,15 @@ const EditUser = props => {
 // Event
 
 const Event = props => {
+  const [isCancellationAlertOpen, setCancellationAlertIsOpen] = React.useState(
+    false
+  );
+  const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
+  const [isAttendingAlertOpen, setAttendingAlertOpen] = React.useState(false);
+  const onAttendingAlertClose = () => setAttendingAlertOpen(false);
+  const cancelRef = React.useRef();
+  const attendRef = React.useRef();
+
   const event = TEST_DATA.events.find(event => event.id === props.id);
 
   if (!event) {
@@ -1680,7 +1976,11 @@ const Event = props => {
       eventResponse.id === event.id
   );
 
-  const handleAttendSubmit = () => {
+  function handleAttendSubmit(e) {
+    e.preventDefault();
+
+    setAttendingAlertOpen(true);
+
     if (!hasResponded) {
       const maxIndex = _.maxBy(TEST_DATA.event_responses, "index").index;
 
@@ -1699,133 +1999,238 @@ const Event = props => {
         ]
       ];
     }
-  };
+  }
 
-  const handleCancelSubmit = () => {
-    const response = window.confirm(
-      "Are you sure you want to cancel your RSVP?"
-    );
-    if (response) {
-      console.log("Confirmed");
-    } else {
-      console.log("Cancelled");
-    }
-  };
+  function handleCancelSubmit(e) {
+    e.preventDefault();
+    setCancellationAlertIsOpen(true);
+    // const response = window.confirm(
+    //   "Are you sure you want to cancel your RSVP?"
+    // );
+    // if (response) {
+    //   console.log("Confirmed");
+    // } else {
+    //   console.log("Cancelled");
+    // }
+  }
 
   console.log(TEST_DATA);
 
   return (
-    <PageWrapper>
-      <Flex itemsCenter>
-        <div className="pr-2">
-          <Link
-            to={`../../../school/${school.id}`}
-            className={`${constants.STYLES.LINK.DEFAULT} text-lg`}
-          >
-            {school.name}
-          </Link>
-          <h1 className="font-bold text-5xl mb-2 leading-none">
-            {event.title}
-          </h1>
-        </div>
-        <img
-          src={school.logo}
-          alt={`${school.name} school logo`}
-          className="w-auto ml-auto bg-gray-400 h-24"
-        />
-      </Flex>
-      <div className="block pb-1 mt-4">
-        <FontAwesomeIcon
-          icon={faClock}
-          className="text-gray-700 mr-2 text-lg"
-        />
-        <time dateTime={event.startDateTime}>
-          {moment(event.startDateTime).calendar(
-            null,
-            constants.MOMENT_CALENDAR_FORMAT
-          )}
-        </time>{" "}
-        to{" "}
-        <time dateTime={event.endDateTime}>
-          {moment(event.endDateTime).calendar(
-            null,
-            constants.MOMENT_CALENDAR_FORMAT
-          )}
-        </time>
-      </div>
-      <div className="block pb-2">
-        <FontAwesomeIcon
-          icon={faMapMarkerAlt}
-          className="text-gray-700 mr-2 text-lg"
-        />
-        {event.location ? (
-          <OutsideLink
-            href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
-              event.location
-            )}`}
-          >
-            {event.location}
-          </OutsideLink>
-        ) : (
-          <span>To be determined</span>
-        )}
-      </div>
-      <PageSection>
-        {hasResponded ? (
-          <form onSubmit={handleAttendSubmit}>
-            <Button variant="purple" type="submit">
-              Attend Event
-            </Button>
-          </form>
-        ) : (
-          <form onSubmit={handleCancelSubmit}>
-            <Alert variant="green">
-              <span className="font-bold block text-2xl">You’re going!</span>
-              <button type="submit" className="text-base focus:underline">
-                Cancel your RSVP
-              </button>
-            </Alert>
-          </form>
-        )}
-      </PageSection>
-      <PageSection>
-        <h2 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
-          Event Details
-        </h2>
-        <p>{event.description}</p>
-      </PageSection>
-      <PageSection>
-        {eventResponses.length ? (
-          <h3 className="font-bold uppercase text-sm text-gray-600 bg-gray-200 rounded-lg px-8 py-1 inline-block mb-6">
-            Going ({eventResponses.length})
-          </h3>
-        ) : null}
-        <Flex tag="ul" wrap>
-          {eventGoers.map(user => (
-            <li key={user.id} className="w-1/3 md:w-1/4">
-              <Flex
-                direction="col"
-                itemsCenter
-                justifyAround
-                className="pt-6 pb-1 my-4 mr-4 bg-gray-200 border-4 rounded-lg"
+    <React.Fragment>
+      <PageWrapper>
+        <Stack spacing={10}>
+          <Flex itemsCenter>
+            <Box pr={2}>
+              <Link
+                to={`../../../school/${school.id}`}
+                className={`${constants.STYLES.LINK.DEFAULT} text-lg`}
               >
-                <Avatar
-                  src={user.picture}
-                  alt={`Avatar for ${user.fullName}`}
-                  rounded
-                />
-                <Link
-                  to={`../../../user/${user.id}`}
-                  className={`${constants.STYLES.LINK.DEFAULT} text-base m-4 mt-8 leading-tight font-bold text-center`}
+                {school.name}
+              </Link>
+              <Heading as="h1" fontWeight="bold" fontSize="5xl" mb={2}>
+                {event.title}
+              </Heading>
+            </Box>
+            <Image
+              src={school.logo}
+              alt={`${school.name} school logo`}
+              className="w-auto ml-auto bg-gray-400 h-24"
+            />
+          </Flex>
+          <Stack as="section">
+            <Box>
+              <FontAwesomeIcon
+                icon={faClock}
+                className="text-gray-700 mr-2 text-lg"
+              />
+              <time dateTime={event.startDateTime}>
+                {moment(event.startDateTime).calendar(
+                  null,
+                  constants.MOMENT_CALENDAR_FORMAT
+                )}
+              </time>{" "}
+              to{" "}
+              <time dateTime={event.endDateTime}>
+                {moment(event.endDateTime).calendar(
+                  null,
+                  constants.MOMENT_CALENDAR_FORMAT
+                )}
+              </time>
+            </Box>
+            <Box>
+              <FontAwesomeIcon
+                icon={faMapMarkerAlt}
+                className="text-gray-700 mr-2 text-lg"
+              />
+              {event.location ? (
+                <OutsideLink
+                  href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
+                    event.location
+                  )}`}
                 >
-                  {user.fullName}
-                </Link>
-              </Flex>
-            </li>
-          ))}
-        </Flex>
-      </PageSection>
-    </PageWrapper>
+                  {event.location}
+                </OutsideLink>
+              ) : (
+                <Text>To be determined</Text>
+              )}
+            </Box>
+          </Stack>
+          <Stack as="section" spacing={4}>
+            {hasResponded ? (
+              <form onSubmit={handleAttendSubmit}>
+                <ChakraButton type="submit" variantColor="purple">
+                  Attend Event
+                </ChakraButton>
+              </form>
+            ) : (
+              <form onSubmit={handleCancelSubmit}>
+                <Alert
+                  status="success"
+                  variant="subtle"
+                  flexDirection="column"
+                  justifyContent="center"
+                  textAlign="center"
+                  height="100px"
+                  rounded="lg"
+                >
+                  <Stack>
+                    <Text fontWeight="bold" fontSize="2xl" color="green.500">
+                      You’re going!
+                    </Text>
+                    <ChakraButton
+                      type="submit"
+                      variant="link"
+                      color="green.500"
+                      display="inline"
+                    >
+                      Cancel your RSVP
+                    </ChakraButton>
+                  </Stack>
+                </Alert>
+              </form>
+            )}
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h2"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+            >
+              Event Details
+            </Heading>
+            <p>{event.description}</p>
+          </Stack>
+          <Stack as="section" spacing={4}>
+            {eventResponses.length ? (
+              <Heading
+                as="h4"
+                fontSize="sm"
+                textTransform="uppercase"
+                color="gray.500"
+              >
+                Going ({eventResponses.length})
+              </Heading>
+            ) : null}
+            <List display="flex" flexWrap="wrap">
+              {eventGoers.map(user => (
+                <ListItem key={user.id} width="25%">
+                  <Box
+                    borderWidth="1px"
+                    boxShadow="lg"
+                    rounded="lg"
+                    bg="white"
+                    pos="relative"
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    m={2}
+                    p={4}
+                    height="calc(100% - 1rem)"
+                  >
+                    <Avatar
+                      src={user.picture}
+                      alt={`Avatar for ${user.fullName}`}
+                      rounded
+                    />
+                    <Link
+                      to={`../../../user/${user.id}`}
+                      className={`${constants.STYLES.LINK.DEFAULT} text-base leading-tight`}
+                      fontWeight="bold"
+                      mt={4}
+                    >
+                      {user.fullName}
+                    </Link>
+                  </Box>
+                </ListItem>
+              ))}
+            </List>
+          </Stack>
+        </Stack>
+      </PageWrapper>
+
+      <AlertDialog
+        isOpen={isAttendingAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onAttendingAlertClose}
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            RSVP
+          </AlertDialogHeader>
+
+          <AlertDialogBody>
+            Are you sure you want to RSVP for {event.title}?
+          </AlertDialogBody>
+
+          <AlertDialogFooter>
+            <ChakraButton ref={attendRef} onClick={onAttendingAlertClose}>
+              No, nevermind
+            </ChakraButton>
+            <ChakraButton
+              variantColor="purple"
+              onClick={onAttendingAlertClose}
+              ml={3}
+            >
+              Yes, I want to go
+            </ChakraButton>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        isOpen={isCancellationAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onCancellationAlertClose}
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Cancel RSVP
+          </AlertDialogHeader>
+
+          <AlertDialogBody>
+            Are you sure you want to cancel your RSVP for {event.title}?
+          </AlertDialogBody>
+
+          <AlertDialogFooter>
+            <ChakraButton ref={cancelRef} onClick={onCancellationAlertClose}>
+              No, nevermind
+            </ChakraButton>
+            <ChakraButton
+              variantColor="red"
+              onClick={onCancellationAlertClose}
+              ml={3}
+            >
+              Yes, cancel the RSVP
+            </ChakraButton>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </React.Fragment>
   );
 };
 
@@ -1883,21 +2288,13 @@ const CreateEvent = props => {
         startDateTime,
         endDateTime,
         locationSearch,
-        placeId
+        placeId,
+        isOnlineEvent
       }
     };
 
     console.log(data);
   }
-
-  // function validateForm() {
-  //   return (
-  //     fields.firstName.length > 0 &&
-  //     fields.lastName.length > 0 &&
-  //     fields.school.length > 0 &&
-  //     fields.status.length > 0
-  //   );
-  // }
 
   return (
     <PageWrapper>
@@ -1951,7 +2348,6 @@ const CreateEvent = props => {
                 size="lg"
               />
             </FormControl>
-            <FormControl></FormControl>
             <FormControl>
               <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
                 Location:
@@ -2161,10 +2557,22 @@ const EventListItem = props => {
   const eventResponses = getEventResponses(props.event.index);
 
   return (
-    <Card tag="li" className="mt-4 py-6 px-8 flex items-center">
-      <div className="flex-initial w-full">
-        <Flex itemsCenter>
-          <div className="pr-2">
+    <Box
+      as="li"
+      borderWidth="1px"
+      boxShadow="lg"
+      rounded="lg"
+      bg="white"
+      pos="relative"
+      mt={4}
+      py={6}
+      px={8}
+      display="flex"
+      alignItems="center"
+    >
+      <Stack spacing={4}>
+        <Box display="flex" alignItems="center">
+          <Box pr={2}>
             <Link
               to={`../../school/${school.id}`}
               className={`${constants.STYLES.LINK.DEFAULT} text-xl leading-none`}
@@ -2177,14 +2585,14 @@ const EventListItem = props => {
             >
               {props.event.title}
             </Link>
-          </div>
-          <img
+          </Box>
+          <Image
             src={school.logo}
             alt={`${school.name} Logo`}
             className="w-auto ml-auto h-16"
           />
-        </Flex>
-        <div className="block my-4">
+        </Box>
+        <Box display="block">
           <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />
           <time className="text-lg" dateTime={props.event.startDateTime}>
             {moment(props.event.startDateTime).calendar(
@@ -2192,21 +2600,27 @@ const EventListItem = props => {
               constants.MOMENT_CALENDAR_FORMAT
             )}
           </time>
-        </div>
-        <p className="text-lg">
+        </Box>
+        <Text fontSize="lg">
           {_.truncate(props.event.description, { length: 250 })}
-        </p>
+        </Text>
         {eventResponses.length ? (
-          <div className="pt-4">
-            <FontAwesomeIcon
-              icon={faUserFriends}
-              className="text-gray-700 mr-2"
-            />
-            <span>{eventResponses.length} Going</span>
-          </div>
+          <Badge
+            variantColor="gray"
+            variant="subtle"
+            px={2}
+            py={1}
+            rounded="full"
+            mr="auto"
+          >
+            <Box display="flex" alignItems="center">
+              <FontAwesomeIcon icon={faUserFriends} className="mr-2" />
+              <Text>{eventResponses.length} Going</Text>
+            </Box>
+          </Badge>
         ) : null}
-      </div>
-    </Card>
+      </Stack>
+    </Box>
   );
 };
 
@@ -2216,7 +2630,7 @@ const EventListItem = props => {
 const OutsideLink = ({ className = "", ...props }) => {
   return (
     // eslint-disable-next-line jsx-a11y/anchor-has-content
-    <a
+    <ChakraLink
       {...props}
       target="_blank"
       rel="noopener noreferrer"
@@ -2239,21 +2653,6 @@ const Button = ({ variant = "", className = "", ...props }) => {
 
   return (
     <button {...props} className={classNames([defaultClass, className])} />
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// Alert
-
-const Alert = ({ variant = "", className = "", ...props }) => {
-  const defaultClass = `${
-    constants.STYLES.ALERT[
-      variant.toUpperCase() || constants.STYLES.ALERT.DEFAULT
-    ]
-  } rounded-lg px-8 py-4`;
-
-  return (
-    <ReachAlert {...props} className={classNames([defaultClass, className])} />
   );
 };
 
@@ -2342,9 +2741,14 @@ const InputGroup = ({ align = "center", className = "", ...props }) => {
 ////////////////////////////////////////////////////////////////////////////////
 // VisuallyHidden
 
-const VisuallyHidden = ({ className = "", ...props }) => {
+const VisuallyHidden = ({ className = "", as = "span", ...props }) => {
+  const CustomTag = `${as}`;
+
   return (
-    <span {...props} className={classNames(["visually-hidden", className])} />
+    <CustomTag
+      {...props}
+      className={classNames(["visually-hidden", className])}
+    />
   );
 };
 
@@ -2379,18 +2783,9 @@ const PageSection = ({ className = "", ...props }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// Card
+// Link
 
-const Card = ({ tag = "div", className = "", ...props }) => {
-  const CustomTag = `${tag}`;
-
-  return (
-    <CustomTag
-      {...props}
-      className={classNames(["bg-white border-4 rounded-lg", className])}
-    />
-  );
-};
+const Link = props => <ChakraLink as={ReachLink} {...props} />;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Avatar
