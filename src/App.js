@@ -57,6 +57,8 @@ import Amplify, { Auth } from "aws-amplify";
 import PlacesAutocomplete from "react-places-autocomplete";
 import "./App.css";
 import awsconfig from "./aws-exports";
+import * as firebase from "firebase";
+import firebaseConfig from "./firebase-config";
 import TEST_DATA from "./test_data";
 import * as constants from "./constants";
 import {
@@ -73,6 +75,8 @@ moment.locale("en");
 momentLocalizer();
 
 Amplify.configure(awsconfig);
+
+firebase.initializeApp(firebaseConfig);
 
 ////////////////////////////////////////////////////////////////////////////////
 // App
@@ -280,17 +284,25 @@ const Signup = props => {
 
     setIsLoading(true);
 
-    try {
-      const newUser = await Auth.signUp({
-        username: fields.email,
-        password: fields.password
-      });
-      setNewUser(newUser);
-      setIsLoading(false);
-    } catch (e) {
-      setIsLoading(false);
-      alert(e.message);
-    }
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(fields.email, fields.password)
+      .then(results => console.log({ results }))
+      .catch(error => console.error({ error }));
+
+    setIsLoading(false);
+
+    // try {
+    //   const newUser = await Auth.signUp({
+    //     username: fields.email,
+    //     password: fields.password
+    //   });
+    //   setNewUser(newUser);
+    //   setIsLoading(false);
+    // } catch (e) {
+    //   setIsLoading(false);
+    //   alert(e.message);
+    // }
   }
 
   function validateForm() {
@@ -533,14 +545,18 @@ const Login = props => {
 
     setIsLoading(true);
 
-    try {
-      await Auth.signIn(fields.email, fields.password);
-      props.setUserIsAuthenticated(true);
-      navigate("/");
-    } catch (e) {
-      alert(e.message);
-      setIsLoading(false);
-    }
+    firebase.auth().signInWithEmailAndPassword(fields.email, fields.password);
+
+    setIsLoading(false);
+
+    // try {
+    //   await Auth.signIn(fields.email, fields.password);
+    //   props.setUserIsAuthenticated(true);
+    //   navigate("/");
+    // } catch (e) {
+    //   alert(e.message);
+    //   setIsLoading(false);
+    // }
   }
 
   function validateForm() {
@@ -2279,8 +2295,12 @@ const CreateEvent = props => {
     // Probably want to save the address and lat/long
     // If we save the placeId, it may be easier to render the map for that place
     geocodeByAddress(locationSearch)
-      .then(results => console.log({ results }))
-      .catch(error => console.error({ error }));
+      .then(results => {
+        console.log({ results });
+      })
+      .catch(error => {
+        console.error({ error });
+      });
 
     const data = {
       ...fields,
@@ -2294,6 +2314,24 @@ const CreateEvent = props => {
     };
 
     console.log(data);
+
+    const db = firebase.firestore();
+
+    db.collection("events")
+      .add({
+        name: fields.name,
+        description: fields.description,
+        isOnlineEvent,
+        startDateTime: firebase.firestore.Timestamp.fromDate(startDateTime),
+        endDateTime: firebase.firestore.Timestamp.fromDate(endDateTime),
+        placeId
+      })
+      .then(docRef => {
+        console.log("Document written with ID: ", docRef.id);
+      })
+      .catch(error => {
+        console.error("Error adding document: ", error);
+      });
   }
 
   return (
