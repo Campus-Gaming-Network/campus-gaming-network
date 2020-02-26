@@ -14,7 +14,11 @@ import {
   faExclamationTriangle
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import _ from "lodash";
+import capitalize from "lodash.capitalize";
+import xorBy from "lodash.xorby";
+import sortBy from "lodash.sortby";
+import maxBy from "lodash.maxby";
+import truncate from "lodash.truncate";
 import Gravatar from "react-gravatar";
 import moment from "moment";
 import {
@@ -293,7 +297,15 @@ const Signup = props => {
       db.collection("schools")
         .get()
         .then(snapshot => {
-          setSchools(snapshot.docs.map(doc => doc.data()));
+          setSchools(
+            sortBy(
+              snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              })),
+              ["name"]
+            )
+          );
         });
     };
 
@@ -430,17 +442,23 @@ const Signup = props => {
           </div>
           <div className="md:flex md:items-center mb-6">
             <Label htmlFor="school">School</Label>
-            <Select
+            <ChakraSelect
               id="school"
               required
-              options={constants.SCHOOL_OPTIONS}
               onChange={handleFieldChange}
               value={fields.school}
-            />
+            >
+              <option value="">Select a school</option>
+              {schools.map(school => (
+                <option key={school.id} value={school.id}>
+                  {school.name}
+                </option>
+              ))}
+            </ChakraSelect>
           </div>
           <div className="md:flex md:items-center">
             <Label htmlFor="status">Status</Label>
-            <Select
+            <ChakraSelect
               id="status"
               required
               options={constants.STUDENT_STATUS_OPTIONS}
@@ -1250,7 +1268,7 @@ const User = props => {
                 ? "Alumni of "
                 : user.status === "GRAD"
                 ? "Graduate Student at "
-                : `${_.capitalize(user.status)} at `
+                : `${capitalize(user.status)} at `
             }`}
             <Link
               to={`/school/${school.id}`}
@@ -1521,11 +1539,11 @@ const EditUser = props => {
   }, [user]);
 
   function toggleFavoriteGame(game) {
-    setFavoriteGames(_.xorBy(favoriteGames, [game], "id"));
+    setFavoriteGames(xorBy(favoriteGames, [game], "id"));
   }
 
   function toggleCurrentGame(game) {
-    setCurrentGames(_.xorBy(currentlyPlaying, [game], "id"));
+    setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
   }
 
   // if (!props.isAuthenticated) {
@@ -2004,7 +2022,7 @@ const Event = props => {
     setAttendingAlertOpen(true);
 
     if (!hasResponded) {
-      const maxIndex = _.maxBy(TEST_DATA.event_responses, "index").index;
+      const maxIndex = maxBy(TEST_DATA.event_responses, "index").index;
 
       TEST_DATA.event_responses = [
         ...TEST_DATA.event_responses,
@@ -2644,7 +2662,7 @@ const EventListItem = props => {
           </time>
         </Box>
         <Text fontSize="lg">
-          {_.truncate(props.event.description, { length: 250 })}
+          {truncate(props.event.description, { length: 250 })}
         </Text>
         {eventResponses.length ? (
           <Badge
@@ -2695,46 +2713,6 @@ const Button = ({ variant = "", className = "", ...props }) => {
 
   return (
     <button {...props} className={classNames([defaultClass, className])} />
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// Select
-
-const Select = ({ options = [], className = "", ...props }) => {
-  return (
-    <div className="relative w-full">
-      <select
-        {...props}
-        className={classNames([constants.STYLES.SELECT.DEFAULT, className])}
-      >
-        {options.map(option => (
-          <option key={option.value} {...option} />
-        ))}
-      </select>
-      <Flex
-        className="pointer-events-none absolute inset-y-0 right-0 px-2 text-gray-700"
-        itemsCenter
-      >
-        <ChevronDown />
-      </Flex>
-    </div>
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// ChevronDown
-
-const ChevronDown = ({ className = "", ...props }) => {
-  return (
-    <svg
-      {...props}
-      className={classNames(["fill-current h-4 w-4", className])}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-    >
-      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-    </svg>
   );
 };
 

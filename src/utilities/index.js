@@ -2,7 +2,7 @@
 // Utilities
 
 import React from "react";
-import _ from "lodash";
+import orderBy from "lodash.orderby";
 import moment from "moment";
 import md5 from "md5";
 import TEST_DATA from "../test_data";
@@ -30,7 +30,7 @@ export const getEventsByResponses = eventResponses => {
 };
 
 export const sortedEvents = events => {
-  return _.orderBy(
+  return orderBy(
     events,
     event => {
       return moment(moment(event.startDateTime));
@@ -41,7 +41,7 @@ export const sortedEvents = events => {
 
 export const classNames = (_classNames = []) => {
   if (isDev()) {
-    if (!_.isArray(_classNames)) {
+    if (!Array.isArray(_classNames)) {
       throw new Error(
         `classNames() was expecting value with type 'array' but got type '${typeof _classNames}'.`,
         _classNames

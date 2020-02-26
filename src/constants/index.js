@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
 
-import _ from "lodash";
+import shuffle from "lodash.shuffle";
+import slice from "lodash.slice";
 import TEST_DATA from "../test_data";
 import { getEventResponses, getEventsByResponses } from "../utilities";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
@@ -17,8 +18,8 @@ import {
   faPlaystation
 } from "@fortawesome/free-brands-svg-icons";
 
-export const RANDOM_SAMPLE_OF_EVENTS = _.slice(
-  _.shuffle(TEST_DATA.events),
+export const RANDOM_SAMPLE_OF_EVENTS = slice(
+  shuffle(TEST_DATA.events),
   0,
   Math.floor(Math.random() * TEST_DATA.events.length)
 );
