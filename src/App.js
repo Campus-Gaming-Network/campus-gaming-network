@@ -67,9 +67,11 @@ import {
   getEventsByResponses,
   sortedEvents,
   classNames,
-  useFormFields
+  useFormFields,
+  createGravatarHash
 } from "./utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 moment.locale("en");
 momentLocalizer();
@@ -78,45 +80,30 @@ Amplify.configure(awsconfig);
 
 firebase.initializeApp(firebaseConfig);
 
+const db = firebase.firestore();
+
 ////////////////////////////////////////////////////////////////////////////////
 // App
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isAuthenticated, setUserIsAuthenticated] = React.useState(false);
-  const [isAuthenticating, setIsAuthenticating] = React.useState(true);
-  const [currentUser, setCurrenUser] = React.useState(null);
-
-  async function onLoad() {
-    try {
-      await Auth.currentSession();
-
-      const response = await Auth.currentAuthenticatedUser();
-
-      setCurrenUser(response);
-      setUserIsAuthenticated(true);
-    } catch (e) {
-      console.log(e);
-    }
-
-    setIsAuthenticating(false);
-  }
-
-  async function handleLogout() {
-    await Auth.signOut();
-
-    setUserIsAuthenticated(false);
-
-    navigate("/");
-  }
+  const [authenticatedUser, isAuthenticating, error] = useAuthState(
+    firebase.auth()
+  );
+  const [user, setUser] = React.useState(null);
+  const isAuthenticated = !!authenticatedUser;
 
   function toggleMenu() {
     setIsMenuOpen(!isMenuOpen);
   }
 
   React.useEffect(() => {
-    onLoad();
-  }, []);
+    if (authenticatedUser) {
+      loadUser();
+    }
+  }, [authenticatedUser]);
+
+  console.log({ authenticatedUser, isAuthenticating, error });
 
   // Since loading the user session is an asynchronous process,
   // we want to ensure that our app does not change states when
@@ -126,13 +113,35 @@ const App = () => {
     return null;
   }
 
+  function loadUser() {
+    db.collection("users")
+      .doc(authenticatedUser.uid)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          setUser(doc.data());
+        }
+      })
+      .catch(error => {
+        console.error({ error });
+      });
+  }
+
+  function handleLogout() {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => navigate("/"));
+  }
+
   const appProps = {
     isAuthenticated,
-    setUserIsAuthenticated,
-    handleLogout,
-    currentUser,
+    authenticatedUser,
+    user,
     CURRENT_USER: constants.CURRENT_USER
   };
+
+  console.log({ appProps });
 
   return (
     <ThemeProvider>
@@ -168,6 +177,8 @@ const App = () => {
         >
           {isAuthenticated ? (
             <React.Fragment>
+              {/* TODO: Remove when better spot is found */}
+              <ChakraButton onClick={handleLogout}>Log out</ChakraButton>
               <Link
                 to="/create-event"
                 className="leading-none text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-2 px-3 hover:underline focus:underline"
@@ -189,12 +200,12 @@ const App = () => {
                 to={`user/${constants.CURRENT_USER.id}`}
                 className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
               >
-                {currentUser && (
-                  <Gravatar
-                    email={currentUser.attributes.email}
-                    className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-                  />
-                )}
+                <Gravatar
+                  default="mp"
+                  md5={user ? user.gravatar : null}
+                  rating="pg"
+                  className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
+                />
                 Profile
               </Link>
             </React.Fragment>
@@ -268,10 +279,8 @@ const Signup = props => {
     email: "",
     password: "",
     school: "",
-    status: "",
-    confirmationCode: ""
+    status: ""
   });
-  const [newUser, setNewUser] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
 
@@ -279,7 +288,7 @@ const Signup = props => {
     return <Redirect to="/" noThrow />;
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
 
     setIsLoading(true);
@@ -287,22 +296,21 @@ const Signup = props => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(fields.email, fields.password)
-      .then(results => console.log({ results }))
-      .catch(error => console.error({ error }));
-
-    setIsLoading(false);
-
-    // try {
-    //   const newUser = await Auth.signUp({
-    //     username: fields.email,
-    //     password: fields.password
-    //   });
-    //   setNewUser(newUser);
-    //   setIsLoading(false);
-    // } catch (e) {
-    //   setIsLoading(false);
-    //   alert(e.message);
-    // }
+      .then(({ user }) => {
+        db.collection("users")
+          .doc(user.uid)
+          .set({
+            firstName: fields.firstName,
+            lastName: fields.lastName,
+            status: fields.status,
+            gravatar: createGravatarHash(fields.email)
+          });
+        setIsLoading(false);
+      })
+      .catch(error => {
+        alert(error.message);
+        setIsLoading(false);
+      });
   }
 
   function validateForm() {
@@ -316,89 +324,8 @@ const Signup = props => {
     );
   }
 
-  function validateConfirmationForm() {
-    return fields.confirmationCode.length > 0;
-  }
-
-  async function handleConfirmationSubmit(e) {
-    e.preventDefault();
-
-    setIsLoading(true);
-
-    try {
-      await Auth.confirmSignUp(fields.email, fields.confirmationCode, {
-        school: fields.school,
-        status: fields.status,
-        firstName: fields.firstName,
-        lastName: fields.lastName
-      });
-      await Auth.signIn(fields.email, fields.password);
-      props.setUserIsAuthenticated(true);
-      navigate("/");
-    } catch (e) {
-      setIsLoading(false);
-      alert(e.message);
-    }
-  }
-
   function togglePasswordVisibility() {
     setIsShowingPassword(!isShowingPassword);
-  }
-
-  if (newUser) {
-    return (
-      <PageWrapper>
-        <Box
-          as="fieldset"
-          borderWidth="1px"
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-          p={12}
-        >
-          <form onSubmit={handleConfirmationSubmit}>
-            <Alert status="warning" variant="subtle">
-              <p className="font-medium">
-                <FontAwesomeIcon
-                  icon={faExclamationTriangle}
-                  className="mr-4"
-                />
-                Please check your email ({fields.email}) for a confirmation
-                code.
-              </p>
-            </Alert>
-            <hr className="my-12" />
-            <InputGroup>
-              <label
-                className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-                htmlFor="confirmationCode"
-              >
-                Confirmation Code
-              </label>
-              <Input
-                id="confirmationCode"
-                name="confirmationCode"
-                placeholder="12345"
-                required
-                autoFocus
-                type="tel"
-                onChange={handleFieldChange}
-                value={fields.confirmationCode}
-              />
-            </InputGroup>
-            <Button
-              disabled={isLoading || !validateConfirmationForm()}
-              variant="purple"
-              type="submit"
-              className="my-12 w-full"
-            >
-              {isLoading ? "Verifying..." : "Verify"}
-            </Button>
-          </form>
-        </Box>
-      </PageWrapper>
-    );
   }
 
   return (
@@ -540,23 +467,22 @@ const Login = props => {
     return <Redirect to="/" noThrow />;
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
 
     setIsLoading(true);
 
-    firebase.auth().signInWithEmailAndPassword(fields.email, fields.password);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(fields.email, fields.password)
+      .then(results => {
+        navigate("/");
+      })
+      .catch(error => {
+        alert(error.message);
+      });
 
     setIsLoading(false);
-
-    // try {
-    //   await Auth.signIn(fields.email, fields.password);
-    //   props.setUserIsAuthenticated(true);
-    //   navigate("/");
-    // } catch (e) {
-    //   alert(e.message);
-    //   setIsLoading(false);
-    // }
   }
 
   function validateForm() {
@@ -1367,7 +1293,7 @@ const User = props => {
                 const account = constants.ACCOUNTS[key];
 
                 return (
-                  <Box as="li">
+                  <Box as="li" key={key}>
                     <Box
                       borderWidth="1px"
                       boxShadow="lg"
@@ -1485,6 +1411,10 @@ const User = props => {
 // EditUser
 
 const EditUser = props => {
+  const [user, setUser] = React.useState(null);
+  const [schools, setSchools] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
   const [fields, handleFieldChange] = useFormFields({
     firstName: "",
     lastName: "",
@@ -1526,6 +1456,52 @@ const EditUser = props => {
     testCurrentlyPlaying
   );
 
+  function loadUser() {
+    db.collection("users")
+      .doc(props.authenticatedUser.uid)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          setUser(doc.data());
+        } else {
+          console.log("No such document!");
+        }
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error({ error });
+        setIsLoading(false);
+      });
+    setIsLoading(false);
+  }
+
+  function loadSchools() {
+    db.collection("schools")
+      .get()
+      .then(a => {
+        setSchools(a.docs.map(doc => doc.data()));
+      });
+  }
+
+  React.useEffect(() => {
+    loadUser();
+    loadSchools();
+  }, []);
+
+  React.useEffect(() => {
+    if (user) {
+      for (const key in user) {
+        console.log(key);
+        handleFieldChange({
+          target: {
+            id: key,
+            value: user[key]
+          }
+        });
+      }
+    }
+  }, [user]);
+
   function toggleFavoriteGame(game) {
     setFavoriteGames(_.xorBy(favoriteGames, [game], "id"));
   }
@@ -1542,6 +1518,14 @@ const EditUser = props => {
     e.preventDefault();
     console.log("Submitted!", fields);
   }
+
+  if (isLoading || !user) {
+    return null;
+  }
+
+  console.log(schools);
+
+  // console.log(fields)
 
   return (
     <PageWrapper>
@@ -1602,7 +1586,7 @@ const EditUser = props => {
                 name="email"
                 type="email"
                 placeholder="jdoe@gmail.com"
-                value="jdoe@gmail.com"
+                value={props.authenticatedUser.email}
                 size="lg"
                 disabled
                 aria-describedby="email-helper-text"
@@ -1685,8 +1669,12 @@ const EditUser = props => {
                 value={fields.school}
                 size="lg"
               >
-                {constants.SCHOOL_OPTIONS.map(option => (
-                  <option key={option.value} {...option} />
+                {schools.map(school => (
+                  <option
+                    key={school.name}
+                    label={school.name}
+                    value={school.name}
+                  />
                 ))}
               </ChakraSelect>
             </FormControl>
@@ -2314,8 +2302,6 @@ const CreateEvent = props => {
     };
 
     console.log(data);
-
-    const db = firebase.firestore();
 
     db.collection("events")
       .add({

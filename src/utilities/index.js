@@ -4,6 +4,7 @@
 import React from "react";
 import _ from "lodash";
 import moment from "moment";
+import md5 from "md5";
 import TEST_DATA from "../test_data";
 
 export const getEventResponses = (id, field = "eventId") => {
@@ -64,10 +65,21 @@ export const useFormFields = initialState => {
   return [
     fields,
     function(event) {
+      console.log(event);
       setValues({
         ...fields,
         [event.target.id]: event.target.value
       });
     }
   ];
+};
+
+export const createGravatarHash = (email = "") => {
+  const trimmedEmail = email.trim();
+
+  if (!trimmedEmail) {
+    return undefined;
+  }
+
+  return md5(trimmedEmail.toLowerCase());
 };
