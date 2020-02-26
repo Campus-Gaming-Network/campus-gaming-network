@@ -57,7 +57,9 @@ import Amplify, { Auth } from "aws-amplify";
 import PlacesAutocomplete from "react-places-autocomplete";
 import "./App.css";
 import awsconfig from "./aws-exports";
-import * as firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
 import firebaseConfig from "./firebase-config";
 import TEST_DATA from "./test_data";
 import * as constants from "./constants";
@@ -98,6 +100,21 @@ const App = () => {
   }
 
   React.useEffect(() => {
+    const loadUser = async () => {
+      console.log("loadUser");
+      db.collection("users")
+        .doc(authenticatedUser.uid)
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            setUser(doc.data());
+          }
+        })
+        .catch(error => {
+          console.error({ error });
+        });
+    };
+
     if (authenticatedUser) {
       loadUser();
     }
@@ -111,20 +128,6 @@ const App = () => {
   // till isAuthenticating is false.
   if (isAuthenticating) {
     return null;
-  }
-
-  function loadUser() {
-    db.collection("users")
-      .doc(authenticatedUser.uid)
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          setUser(doc.data());
-        }
-      })
-      .catch(error => {
-        console.error({ error });
-      });
   }
 
   function handleLogout() {
@@ -282,7 +285,20 @@ const Signup = props => {
     status: ""
   });
   const [isLoading, setIsLoading] = React.useState(false);
+  const [schools, setSchools] = React.useState([]);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
+
+  React.useEffect(() => {
+    const loadSchools = async () => {
+      db.collection("schools")
+        .get()
+        .then(snapshot => {
+          setSchools(snapshot.docs.map(doc => doc.data()));
+        });
+    };
+
+    loadSchools();
+  }, []);
 
   if (props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
@@ -327,6 +343,8 @@ const Signup = props => {
   function togglePasswordVisibility() {
     setIsShowingPassword(!isShowingPassword);
   }
+
+  console.log({ schools });
 
   return (
     <PageWrapper>
@@ -475,7 +493,7 @@ const Login = props => {
     firebase
       .auth()
       .signInWithEmailAndPassword(fields.email, fields.password)
-      .then(results => {
+      .then(() => {
         navigate("/");
       })
       .catch(error => {
@@ -2748,21 +2766,6 @@ const Label = ({ className = "", ...props }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// InputGroup
-
-const InputGroup = ({ align = "center", className = "", ...props }) => {
-  let defaultClass = "md:flex mb-6";
-
-  if (align === "center") {
-    defaultClass = `${defaultClass} md:items-center`;
-  } else if (align === "start") {
-    defaultClass = `${defaultClass} md:items-start`;
-  }
-
-  return <div {...props} className={classNames([defaultClass, className])} />;
-};
-
-////////////////////////////////////////////////////////////////////////////////
 // VisuallyHidden
 
 const VisuallyHidden = ({ className = "", as = "span", ...props }) => {
@@ -2846,6 +2849,7 @@ const Avatar = ({
     );
   }
 
+  // eslint-disable-next-line
   return <img {...props} className={classNames([defaultClass, className])} />;
 };
 

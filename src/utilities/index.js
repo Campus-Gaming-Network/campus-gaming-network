@@ -64,8 +64,7 @@ export const useFormFields = initialState => {
 
   return [
     fields,
-    function(event) {
-      console.log(event);
+    event => {
       setValues({
         ...fields,
         [event.target.id]: event.target.value
