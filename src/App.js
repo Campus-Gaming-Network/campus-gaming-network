@@ -92,6 +92,8 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
 ////////////////////////////////////////////////////////////////////////////////
 // App
 
@@ -102,7 +104,7 @@ const App = () => {
   const isAuthenticated = !!authenticatedUser;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [user, isLoadingUserProfile, userProfileError] = useFetchUserProfile(
-    authenticatedUser
+    authenticatedUser ? authenticatedUser.uid : null
   );
   const [school, isLoadingSchool, schoolError] = useFetchUserSchool(user);
 
@@ -116,8 +118,6 @@ const App = () => {
       .signOut()
       .then(() => navigate("/"));
   }
-
-  console.log({ authenticatedUser, isAuthenticating, error });
 
   // Since loading the user session is an asynchronous process,
   // we want to ensure that our app does not change states when
@@ -141,8 +141,6 @@ const App = () => {
     setIsMenuOpen,
     CURRENT_USER: constants.CURRENT_USER
   };
-
-  console.log({ appProps });
 
   return (
     <ThemeProvider>
@@ -789,12 +787,28 @@ const Home = () => {
 // School
 
 const School = props => {
-  const [events, setEvents] = React.useState(null);
-  const [users, setUsers] = React.useState(null);
+  const [events, setEvents] = React.useState([]);
+  // const [users, setUsers] = React.useState([]);
 
-  if (!props.school) {
+  let fetchId = null;
+
+  if (props.school && props.school.ref && props.id !== props.school.ref.id) {
+    fetchId = props.id;
+  }
+
+  const [
+    fetchedSchool,
+    isLoadingFetchedSchool,
+    fetchedSchoolError
+  ] = useFetchSchoolProfile(fetchId);
+
+  const school = fetchId ? fetchedSchool : props.school;
+
+  const [users, isLoadingUsers, usersError] = useFetchSchoolUsers(school);
+
+  if (!school) {
     // TODO: Handle gracefully
-    console.log("no school", { props });
+    console.log("no school");
     return null;
   }
 
@@ -803,8 +817,8 @@ const School = props => {
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
           <Image
-            src={props.school.logo}
-            alt={`${props.school.name} school logo`}
+            src={school.logo}
+            alt={`${school.name} school logo`}
             className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
           />
           <Box pl={12}>
@@ -816,13 +830,13 @@ const School = props => {
               display="flex"
               alignItems="center"
             >
-              {startCase(props.school.name.toLowerCase())}
+              {startCase(school.name.toLowerCase())}
             </Heading>
           </Box>
         </Box>
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Description</VisuallyHidden>
-          <Text>{props.school.description}</Text>
+          <Text>{school.description}</Text>
         </Box>
         <Stack as="section" spacing={4}>
           <Heading
@@ -835,37 +849,37 @@ const School = props => {
           </Heading>
           <dl className="flex flex-wrap w-full">
             <dt className="w-1/2 font-bold">Contact Email</dt>
-            {props.school.contactEmail ? (
+            {school.contactEmail ? (
               <dd className="w-1/2">
                 <a
                   className={constants.STYLES.LINK.DEFAULT}
-                  href={`mailto:${props.school.contactEmail}`}
+                  href={`mailto:${school.contactEmail}`}
                 >
-                  {props.school.contactEmail}
+                  {school.contactEmail}
                 </a>
               </dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Website</dt>
-            {props.school.website ? (
+            {school.website ? (
               <dd className="w-1/2">
-                <OutsideLink href={props.school.website}>
-                  {props.school.website}
+                <OutsideLink href={`//${school.website}`}>
+                  {school.website}
                 </OutsideLink>
               </dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Address</dt>
-            {props.school.address ? (
+            {school.address ? (
               <dd className="w-1/2">
                 <OutsideLink
                   href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
-                    props.school.address
+                    school.address
                   )}`}
                 >
-                  {startCase(props.school.address.toLowerCase())}
+                  {startCase(school.address.toLowerCase())}
                 </OutsideLink>
               </dd>
             ) : (
@@ -1147,14 +1161,24 @@ const EditSchool = props => {
 const User = props => {
   const [events, setEvents] = React.useState([]);
 
-  if (!props.user) {
+  let fetchId = null;
+
+  if (props.user && props.user.ref && props.id !== props.user.ref.id) {
+    fetchId = props.id;
+  }
+
+  const [
+    fetchedUser,
+    isLoadingFetchedUser,
+    fetchedUserError
+  ] = useFetchUserProfile(fetchId);
+
+  const user = fetchId ? fetchedUser : props.user;
+
+  if (!user) {
     // TODO: Handle gracefully
     console.log("no user");
     return null;
-  }
-
-  if (!props.school) {
-    console.log("no school");
   }
 
   return (
@@ -1163,7 +1187,7 @@ const User = props => {
         <Gravatar
           default={constants.GRAVATAR.DEFAULT}
           rating={constants.GRAVATAR.RA}
-          md5={props.user ? props.user.gravatar : null}
+          md5={user ? user.gravatar : null}
           className="rounded-full border-4 bg-white border-gray-300 mr-2"
           size={150}
         />
@@ -1176,8 +1200,8 @@ const User = props => {
             display="flex"
             alignItems="center"
           >
-            {props.user.firstName}
-            {props.user.lastName ? ` ${props.user.lastName}` : ""}
+            {user.firstName}
+            {user.lastName ? ` ${user.lastName}` : ""}
           </Heading>
           <Heading
             as="h2"
@@ -1187,18 +1211,18 @@ const User = props => {
             display="flex"
             alignItems="center"
           >
-            {props.user.isVerifiedStudent && (
+            {user.isVerifiedStudent && (
               <Text className="text-base">
                 <VisuallyHidden>User is a verified student</VisuallyHidden>
                 <FontAwesomeIcon className="mr-1 text-blue-600" icon={faStar} />
               </Text>
             )}
             {`${
-              props.user.status === "ALUMNI"
+              user.status === "ALUMNI"
                 ? "Alumni of "
-                : props.user.status === "GRAD"
+                : user.status === "GRAD"
                 ? "Graduate Student at "
-                : `${capitalize(props.user.status)} at `
+                : `${capitalize(user.status)} at `
             }`}
             {props.school ? (
               <Link
@@ -1214,7 +1238,7 @@ const User = props => {
       <Stack spacing={10}>
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Biography</VisuallyHidden>
-          {props.user.bio ? <Text>{props.user.bio}</Text> : null}
+          {user.bio ? <Text>{user.bio}</Text> : null}
         </Box>
         <Stack as="section" spacing={4}>
           <Heading
@@ -1227,20 +1251,20 @@ const User = props => {
           </Heading>
           <Flex tag="dl" wrap className="w-full">
             <dt className="w-1/2 font-bold">Hometown</dt>
-            {props.user.hometown ? (
-              <dd className="w-1/2">{props.user.hometown}</dd>
+            {user.hometown ? (
+              <dd className="w-1/2">{user.hometown}</dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Major</dt>
-            {props.user.major ? (
-              <dd className="w-1/2">{props.user.major}</dd>
+            {user.major ? (
+              <dd className="w-1/2">{user.major}</dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Minor</dt>
-            {props.user.minor ? (
-              <dd className="w-1/2">{props.user.minor}</dd>
+            {user.minor ? (
+              <dd className="w-1/2">{user.minor}</dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
@@ -1259,7 +1283,7 @@ const User = props => {
             <Box display="flex" as="ul" flexWrap="wrap" width="100%">
               {Object.keys(constants.ACCOUNTS).map(key => {
                 const account = constants.ACCOUNTS[key];
-                const value = props.user[key];
+                const value = user[key];
 
                 if (!value) {
                   return null;
@@ -1309,9 +1333,9 @@ const User = props => {
           >
             Currently Playing
           </Heading>
-          {props.user.hasCurrentlyPlaying ? (
+          {user.hasCurrentlyPlaying ? (
             <List display="flex" flexWrap="wrap">
-              {props.user.currentlyPlaying.map(game => (
+              {user.currentlyPlaying.map(game => (
                 <ListItem key={game.name} className="w-1/5">
                   <img
                     className="rounded h-40 shadow-lg"
@@ -1336,9 +1360,9 @@ const User = props => {
           >
             Favorite Games
           </Heading>
-          {props.user.hasCurrentlyPlaying ? (
+          {user.hasCurrentlyPlaying ? (
             <List display="flex" flexWrap="wrap">
-              {props.user.favoriteGames.map(game => (
+              {user.favoriteGames.map(game => (
                 <ListItem key={game.name} className="w-1/5">
                   <img
                     className="rounded h-40 shadow-lg"
@@ -2689,9 +2713,8 @@ const OutsideLink = ({ className = "", ...props }) => {
     // eslint-disable-next-line jsx-a11y/anchor-has-content
     <ChakraLink
       {...props}
-      target="_blank"
-      rel="noopener noreferrer"
       className={classNames([constants.STYLES.LINK.DEFAULT, className])}
+      isExternal
     />
   );
 };
@@ -3001,9 +3024,86 @@ export const useFetchUserSchool = user => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// useFetchSchoolProfile
+
+export const useFetchSchoolProfile = id => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [schoolProfile, setSchoolProfile] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    const loadSchoolProfile = async () => {
+      setIsLoading(true);
+      db.collection("schools")
+        .doc(id)
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            setSchoolProfile({
+              ref: doc,
+              ...doc.data()
+            });
+            setIsLoading(false);
+          }
+        })
+        .catch(error => {
+          console.error({ error });
+          setError(error);
+          setIsLoading(false);
+        });
+    };
+
+    if (id) {
+      loadSchoolProfile();
+    }
+  }, [id]);
+
+  console.log({ isLoading, schoolProfile, error });
+
+  return [schoolProfile, isLoading, error];
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// useFetchSchoolUsers
+
+export const useFetchSchoolUsers = (school, limit = 25) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [users, setUsers] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  console.log({ school });
+
+  React.useEffect(() => {
+    const loadSchoolUsers = async () => {
+      setIsLoading(true);
+      db.collection("users")
+        .where("school", "==", school.ref)
+        .limit(limit)
+        .get()
+        .then(snapshot => {
+          console.log(snapshot.docs);
+        })
+        .catch(error => {
+          console.error({ error });
+          setError(error);
+          setIsLoading(false);
+        });
+    };
+
+    if (school) {
+      loadSchoolUsers();
+    }
+  }, [school]);
+
+  console.log({ isLoading, school, error });
+
+  return [school, isLoading, error];
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // useFetchUserProfile
 
-export const useFetchUserProfile = user => {
+export const useFetchUserProfile = id => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [userProfile, setUserProfile] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -3012,7 +3112,7 @@ export const useFetchUserProfile = user => {
     const loadUserProfile = async () => {
       setIsLoading(true);
       db.collection("users")
-        .doc(user.uid)
+        .doc(id)
         .get()
         .then(doc => {
           if (doc.exists) {
@@ -3040,10 +3140,10 @@ export const useFetchUserProfile = user => {
         });
     };
 
-    if (user) {
+    if (id) {
       loadUserProfile();
     }
-  }, [user]);
+  }, [id]);
 
   console.log({ isLoading, userProfile, error });
 
