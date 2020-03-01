@@ -1,19 +1,19 @@
-const firebase = require("firebase");
+require("dotenv").config({ path: "./.env.local" });
+const firebase = require("firebase/app");
+require("firebase/firestore");
 const chunk = require("lodash.chunk");
 const kebabCase = require("lodash.kebabcase");
 const geohash = require("ngeohash");
-const dotenv = require("dotenv");
 
 // Source:
 // https://hifld-geoplatform.opendata.arcgis.com/datasets/colleges-and-universities
 const DATA = require("../../data/schools.json");
 
-// Points to local dotenv used in main project
-const result = dotenv.config({ path: "../../.env.local" });
+// Each transaction or batch of writes can write to a maximum of 500 documents.
+const MAX_DOCUMENTS = 500;
 
-if (result.error) {
-  throw result.error;
-}
+// Track duplicate names
+let names = {};
 
 firebase.initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -25,14 +25,8 @@ firebase.initializeApp({
   appId: process.env.REACT_APP_FIREBASE_APP_ID
 });
 
-// Each transaction or batch of writes can write to a maximum of 500 documents.
-const MAX_DOCUMENTS = 500;
-
-// Track duplicate names
-const names = {};
-
 // Map the school data fields for use in the db
-const mapSchool = ({
+const mapSchool = () => ({
   NAME,
   ADDRESS,
   CITY,
@@ -44,7 +38,7 @@ const mapSchool = ({
   TELEPHONE,
   LATITUDE,
   LONGITUDE
-}) => {
+}) {
   const school = {
     name: NAME,
     address: ADDRESS,
@@ -68,7 +62,7 @@ const mapSchool = ({
   }
 
   return school;
-};
+}
 
 // Wear the magic happens
 const main = async () => {
@@ -111,6 +105,6 @@ const main = async () => {
   console.log("====================");
 
   process.exit(1);
-};
+}
 
 main();

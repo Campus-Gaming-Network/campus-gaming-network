@@ -19,7 +19,11 @@ import xorBy from "lodash.xorby";
 import sortBy from "lodash.sortby";
 import maxBy from "lodash.maxby";
 import truncate from "lodash.truncate";
+import omitBy from "lodash.omitby";
+import isNil from "lodash.isnil";
+import startCase from "lodash.startcase";
 import Gravatar from "react-gravatar";
+// TODO: Replace moment with something smaller
 import moment from "moment";
 import {
   ThemeProvider,
@@ -52,7 +56,8 @@ import {
   Badge,
   Link as ChakraLink,
   List,
-  ListItem
+  ListItem,
+  useToast
 } from "@chakra-ui/core";
 import momentLocalizer from "react-widgets-moment";
 import "react-widgets/dist/css/react-widgets.css";
@@ -70,7 +75,6 @@ import * as constants from "./constants";
 import {
   getEventResponses,
   getEventGoers,
-  getEventsByResponses,
   sortedEvents,
   classNames,
   useFormFields,
@@ -92,46 +96,18 @@ const db = firebase.firestore();
 // App
 
 const App = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [authenticatedUser, isAuthenticating, error] = useAuthState(
     firebase.auth()
   );
-  const [user, setUser] = React.useState(null);
   const isAuthenticated = !!authenticatedUser;
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [user, isLoadingUserProfile, userProfileError] = useFetchUserProfile(
+    authenticatedUser
+  );
+  const [school, isLoadingSchool, schoolError] = useFetchUserSchool(user);
 
   function toggleMenu() {
     setIsMenuOpen(!isMenuOpen);
-  }
-
-  React.useEffect(() => {
-    const loadUser = async () => {
-      console.log("loadUser");
-      db.collection("users")
-        .doc(authenticatedUser.uid)
-        .get()
-        .then(doc => {
-          if (doc.exists) {
-            setUser(doc.data());
-          }
-        })
-        .catch(error => {
-          console.error({ error });
-        });
-    };
-
-    if (authenticatedUser) {
-      loadUser();
-    }
-  }, [authenticatedUser]);
-
-  console.log({ authenticatedUser, isAuthenticating, error });
-
-  // Since loading the user session is an asynchronous process,
-  // we want to ensure that our app does not change states when
-  // it first loads. To do this we’ll hold off rendering our app
-  // till isAuthenticating is false.
-  if (isAuthenticating) {
-    return null;
   }
 
   function handleLogout() {
@@ -141,10 +117,28 @@ const App = () => {
       .then(() => navigate("/"));
   }
 
+  console.log({ authenticatedUser, isAuthenticating, error });
+
+  // Since loading the user session is an asynchronous process,
+  // we want to ensure that our app does not change states when
+  // it first loads. To do this we’ll hold off rendering our app
+  // till isAuthenticating is false.
+  //
+  // TODO: Display non-interactive silhouette instead?
+  // Staring at a white screen while waiting for these is kind of
+  // a bad user experience IMO.
+  if (isAuthenticating || (!isAuthenticating && isLoadingUserProfile)) {
+    return null;
+  }
+
   const appProps = {
     isAuthenticated,
     authenticatedUser,
     user,
+    school,
+    handleLogout,
+    isMenuOpen,
+    setIsMenuOpen,
     CURRENT_USER: constants.CURRENT_USER
   };
 
@@ -176,63 +170,7 @@ const App = () => {
             </button>
           </div>
         </Flex>
-        <nav
-          role="navigation"
-          className={`${
-            isMenuOpen ? "block" : "hidden"
-          } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
-        >
-          {isAuthenticated ? (
-            <React.Fragment>
-              {/* TODO: Remove when better spot is found */}
-              <ChakraButton onClick={handleLogout}>Log out</ChakraButton>
-              <Link
-                to="/create-event"
-                className="leading-none text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-2 px-3 hover:underline focus:underline"
-              >
-                Create an Event
-              </Link>
-              <Link
-                to={`school/${constants.CURRENT_USER.school.id}`}
-                className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
-              >
-                <img
-                  className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-                  src="https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png"
-                  alt=""
-                />
-                School
-              </Link>
-              <Link
-                to={`user/${constants.CURRENT_USER.id}`}
-                className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
-              >
-                <Gravatar
-                  default="mp"
-                  md5={user ? user.gravatar : null}
-                  rating="pg"
-                  className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-                />
-                Profile
-              </Link>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <Link
-                to="/login"
-                className="text-xl block mx-3 py-1 active:outline sm:rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
-              >
-                Log In
-              </Link>
-              <Link
-                to="/register"
-                className="text-xl mt-1 block mx-3 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
-              >
-                Sign Up Free
-              </Link>
-            </React.Fragment>
-          )}
-        </nav>
+        <Nav {...appProps} />
       </header>
       <main className="pb-12">
         <SkipNavContent />
@@ -288,16 +226,19 @@ const Signup = props => {
     school: "",
     status: ""
   });
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [schools, setSchools] = React.useState([]);
+  const [schoolOptions, setSchoolOptions] = React.useState([]);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
 
+  // TODO: Impractical, we should use Algolia or ElasticSearch to query these
   React.useEffect(() => {
     const loadSchools = async () => {
       db.collection("schools")
         .get()
         .then(snapshot => {
-          setSchools(
+          setSchools(snapshot.docs);
+          setSchoolOptions(
             sortBy(
               snapshot.docs.map(doc => ({
                 id: doc.id,
@@ -319,7 +260,7 @@ const Signup = props => {
   function handleSubmit(e) {
     e.preventDefault();
 
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     firebase
       .auth()
@@ -331,32 +272,20 @@ const Signup = props => {
             firstName: fields.firstName,
             lastName: fields.lastName,
             status: fields.status,
-            gravatar: createGravatarHash(fields.email)
+            gravatar: createGravatarHash(fields.email),
+            school: schools.find(school => school.id === fields.school).ref
           });
-        setIsLoading(false);
+        setIsSubmitting(false);
       })
       .catch(error => {
         alert(error.message);
-        setIsLoading(false);
+        setIsSubmitting(false);
       });
-  }
-
-  function validateForm() {
-    return (
-      fields.firstName.length > 0 &&
-      fields.lastName.length > 0 &&
-      fields.email.length > 0 &&
-      fields.password.length > 0 &&
-      fields.school.length > 0 &&
-      fields.status.length > 0
-    );
   }
 
   function togglePasswordVisibility() {
     setIsShowingPassword(!isShowingPassword);
   }
-
-  console.log({ schools });
 
   return (
     <PageWrapper>
@@ -447,9 +376,10 @@ const Signup = props => {
               required
               onChange={handleFieldChange}
               value={fields.school}
+              size="lg"
             >
               <option value="">Select a school</option>
-              {schools.map(school => (
+              {schoolOptions.map(school => (
                 <option key={school.id} value={school.id}>
                   {school.name}
                 </option>
@@ -461,18 +391,24 @@ const Signup = props => {
             <ChakraSelect
               id="status"
               required
-              options={constants.STUDENT_STATUS_OPTIONS}
               onChange={handleFieldChange}
               value={fields.status}
-            />
+              size="lg"
+            >
+              {constants.STUDENT_STATUS_OPTIONS.map(status => (
+                <option key={status.value} value={status.value}>
+                  {status.label}
+                </option>
+              ))}
+            </ChakraSelect>
           </div>
           <Button
-            disabled={isLoading || !validateForm()}
+            disabled={isSubmitting}
             variant="purple"
             type="submit"
             className="my-12 w-full"
           >
-            {isLoading ? "Submitting..." : "Sign Up"}
+            {isSubmitting ? "Submitting..." : "Sign Up"}
           </Button>
           <p>
             Already a member?{" "}
@@ -853,27 +789,22 @@ const Home = () => {
 // School
 
 const School = props => {
-  const school = TEST_DATA.schools.find(school => school.id === props.id);
+  const [events, setEvents] = React.useState(null);
+  const [users, setUsers] = React.useState(null);
 
-  if (!school) {
+  if (!props.school) {
     // TODO: Handle gracefully
-    console.log("no school");
+    console.log("no school", { props });
     return null;
   }
-
-  const events = TEST_DATA.events.filter(
-    event => event.schoolId === school.index
-  );
-
-  const users = TEST_DATA.users.filter(user => user.schoolId === school.index);
 
   return (
     <PageWrapper>
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
           <Image
-            src={school.logo}
-            alt={`${school.name} school logo`}
+            src={props.school.logo}
+            alt={`${props.school.name} school logo`}
             className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
           />
           <Box pl={12}>
@@ -885,13 +816,13 @@ const School = props => {
               display="flex"
               alignItems="center"
             >
-              {school.name}
+              {startCase(props.school.name.toLowerCase())}
             </Heading>
           </Box>
         </Box>
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Description</VisuallyHidden>
-          <Text>{school.description}</Text>
+          <Text>{props.school.description}</Text>
         </Box>
         <Stack as="section" spacing={4}>
           <Heading
@@ -904,37 +835,37 @@ const School = props => {
           </Heading>
           <dl className="flex flex-wrap w-full">
             <dt className="w-1/2 font-bold">Contact Email</dt>
-            {school.contactEmail ? (
+            {props.school.contactEmail ? (
               <dd className="w-1/2">
                 <a
                   className={constants.STYLES.LINK.DEFAULT}
-                  href={`mailto:${school.contactEmail}`}
+                  href={`mailto:${props.school.contactEmail}`}
                 >
-                  {school.contactEmail}
+                  {props.school.contactEmail}
                 </a>
               </dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Website</dt>
-            {school.website ? (
+            {props.school.website ? (
               <dd className="w-1/2">
-                <OutsideLink href={school.website}>
-                  {school.website}
+                <OutsideLink href={props.school.website}>
+                  {props.school.website}
                 </OutsideLink>
               </dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Address</dt>
-            {school.address ? (
+            {props.school.address ? (
               <dd className="w-1/2">
                 <OutsideLink
                   href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
-                    school.address
+                    props.school.address
                   )}`}
                 >
-                  {school.address}
+                  {startCase(props.school.address.toLowerCase())}
                 </OutsideLink>
               </dd>
             ) : (
@@ -951,7 +882,7 @@ const School = props => {
           >
             Upcoming Events
           </Heading>
-          {events.length ? (
+          {events && events.length ? (
             <List>
               {sortedEvents(events).map(event => (
                 <EventListItem key={event.id} event={event} />
@@ -972,40 +903,46 @@ const School = props => {
           >
             Members
           </Heading>
-          <List display="flex" flexWrap="wrap">
-            {users.map(user => (
-              <ListItem key={user.id} width="25%">
-                <Box
-                  borderWidth="1px"
-                  boxShadow="lg"
-                  rounded="lg"
-                  bg="white"
-                  pos="relative"
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  m={2}
-                  p={4}
-                  height="calc(100% - 1rem)"
-                >
-                  <Avatar
-                    src={user.picture}
-                    alt={`Avatar for ${user.fullName}`}
-                    rounded
-                  />
-                  <Link
-                    to={`../../../user/${user.id}`}
-                    className={`${constants.STYLES.LINK.DEFAULT} text-base leading-tight`}
-                    fontWeight="bold"
-                    mt={4}
+          {users && users.length ? (
+            <List display="flex" flexWrap="wrap">
+              {users.map(user => (
+                <ListItem key={user.id} width="25%">
+                  <Box
+                    borderWidth="1px"
+                    boxShadow="lg"
+                    rounded="lg"
+                    bg="white"
+                    pos="relative"
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    m={2}
+                    p={4}
+                    height="calc(100% - 1rem)"
                   >
-                    {user.fullName}
-                  </Link>
-                </Box>
-              </ListItem>
-            ))}
-          </List>
+                    <Avatar
+                      src={user.picture}
+                      alt={`Avatar for ${user.fullName}`}
+                      rounded
+                    />
+                    <Link
+                      to={`../../../user/${user.id}`}
+                      className={`${constants.STYLES.LINK.DEFAULT} text-base leading-tight`}
+                      fontWeight="bold"
+                      mt={4}
+                    >
+                      {user.fullName}
+                    </Link>
+                  </Box>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Text mt={4} color="gray.500">
+              {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
+            </Text>
+          )}
         </Stack>
       </Stack>
     </PageWrapper>
@@ -1208,34 +1145,27 @@ const EditSchool = props => {
 // User
 
 const User = props => {
-  const user = TEST_DATA.users.find(user => user.id === props.id);
+  const [events, setEvents] = React.useState([]);
 
-  if (!user) {
+  if (!props.user) {
     // TODO: Handle gracefully
     console.log("no user");
     return null;
   }
 
-  const school = TEST_DATA.schools[user.schoolId];
-
-  if (!school) {
-    // TODO: Handle gracefully
+  if (!props.school) {
     console.log("no school");
-    return null;
   }
-
-  const eventResponses = getEventResponses(user.index, "userId");
-
-  const events = getEventsByResponses(eventResponses);
 
   return (
     <PageWrapper>
       <Box as="header" display="flex" alignItems="center">
-        <Avatar
-          size="lg"
-          className="border-4 border-gray-300"
-          src={user.picture}
-          rounded
+        <Gravatar
+          default={constants.GRAVATAR.DEFAULT}
+          rating={constants.GRAVATAR.RA}
+          md5={props.user ? props.user.gravatar : null}
+          className="rounded-full border-4 bg-white border-gray-300 mr-2"
+          size={150}
         />
         <Box pl={12}>
           <Heading
@@ -1246,8 +1176,8 @@ const User = props => {
             display="flex"
             alignItems="center"
           >
-            {user.firstName}
-            {user.lastName ? ` ${user.lastName}` : ""}
+            {props.user.firstName}
+            {props.user.lastName ? ` ${props.user.lastName}` : ""}
           </Heading>
           <Heading
             as="h2"
@@ -1257,32 +1187,34 @@ const User = props => {
             display="flex"
             alignItems="center"
           >
-            {user.isVerifiedStudent && (
+            {props.user.isVerifiedStudent && (
               <Text className="text-base">
                 <VisuallyHidden>User is a verified student</VisuallyHidden>
                 <FontAwesomeIcon className="mr-1 text-blue-600" icon={faStar} />
               </Text>
             )}
             {`${
-              user.status === "ALUMNI"
+              props.user.status === "ALUMNI"
                 ? "Alumni of "
-                : user.status === "GRAD"
+                : props.user.status === "GRAD"
                 ? "Graduate Student at "
-                : `${capitalize(user.status)} at `
+                : `${capitalize(props.user.status)} at `
             }`}
-            <Link
-              to={`/school/${school.id}`}
-              className={`${constants.STYLES.LINK.DEFAULT} ml-1`}
-            >
-              {school.name}
-            </Link>
+            {props.school ? (
+              <Link
+                to={`/school/${props.school.ref.id}`}
+                className={`${constants.STYLES.LINK.DEFAULT} ml-2`}
+              >
+                {startCase(props.school.name.toLowerCase())}
+              </Link>
+            ) : null}
           </Heading>
         </Box>
       </Box>
       <Stack spacing={10}>
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Biography</VisuallyHidden>
-          {user.bio ? <Text>{user.bio}</Text> : null}
+          {props.user.bio ? <Text>{props.user.bio}</Text> : null}
         </Box>
         <Stack as="section" spacing={4}>
           <Heading
@@ -1295,20 +1227,20 @@ const User = props => {
           </Heading>
           <Flex tag="dl" wrap className="w-full">
             <dt className="w-1/2 font-bold">Hometown</dt>
-            {user.hometown ? (
-              <dd className="w-1/2">{user.hometown}</dd>
+            {props.user.hometown ? (
+              <dd className="w-1/2">{props.user.hometown}</dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Major</dt>
-            {user.major ? (
-              <dd className="w-1/2">{user.major}</dd>
+            {props.user.major ? (
+              <dd className="w-1/2">{props.user.major}</dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Minor</dt>
-            {user.minor ? (
-              <dd className="w-1/2">{user.minor}</dd>
+            {props.user.minor ? (
+              <dd className="w-1/2">{props.user.minor}</dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
@@ -1327,6 +1259,11 @@ const User = props => {
             <Box display="flex" as="ul" flexWrap="wrap" width="100%">
               {Object.keys(constants.ACCOUNTS).map(key => {
                 const account = constants.ACCOUNTS[key];
+                const value = props.user[key];
+
+                if (!value) {
+                  return null;
+                }
 
                 return (
                   <Box as="li" key={key}>
@@ -1349,7 +1286,7 @@ const User = props => {
                       <Box pl={4}>
                         <Text fontSize="sm">{account.label}</Text>
                         <Text fontSize="sm" fontWeight="bold">
-                          {account.placeholder}
+                          {value}
                         </Text>
                       </Box>
                     </Box>
@@ -1372,9 +1309,9 @@ const User = props => {
           >
             Currently Playing
           </Heading>
-          {user.currentlyPlaying.length ? (
+          {props.user.hasCurrentlyPlaying ? (
             <List display="flex" flexWrap="wrap">
-              {user.currentlyPlaying.map(game => (
+              {props.user.currentlyPlaying.map(game => (
                 <ListItem key={game.name} className="w-1/5">
                   <img
                     className="rounded h-40 shadow-lg"
@@ -1399,9 +1336,9 @@ const User = props => {
           >
             Favorite Games
           </Heading>
-          {user.favoriteGames.length ? (
+          {props.user.hasCurrentlyPlaying ? (
             <List display="flex" flexWrap="wrap">
-              {user.favoriteGames.map(game => (
+              {props.user.favoriteGames.map(game => (
                 <ListItem key={game.name} className="w-1/5">
                   <img
                     className="rounded h-40 shadow-lg"
@@ -1447,33 +1384,36 @@ const User = props => {
 // EditUser
 
 const EditUser = props => {
-  const [user, setUser] = React.useState(null);
   const [schools, setSchools] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
-  const [fields, handleFieldChange] = useFormFields({
-    firstName: "",
-    lastName: "",
-    school: "",
-    status: "",
-    major: "",
-    minor: "",
-    bio: "",
-    hometown: "",
-    birthdate: "",
-    website: "",
-    twitter: "",
-    twitch: "",
-    youtube: "",
-    skype: "",
-    discord: "",
-    battlenet: "",
-    steam: "",
-    xbox: "",
-    psn: "",
-    favoriteGameSearch: "",
-    currentGameSearch: ""
-  });
+  const [schoolOptions, setSchoolOptions] = React.useState([]);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const toast = useToast();
+  const initialFormState = props.user
+    ? {
+        firstName: props.user.firstName,
+        lastName: props.user.lastName,
+        school: props.user.school.id,
+        status: props.user.status,
+        major: props.user.major,
+        minor: props.user.minor,
+        bio: props.user.bio,
+        hometown: props.user.hometown,
+        birthdate: props.user.birthdate,
+        website: props.user.website,
+        twitter: props.user.twitter,
+        twitch: props.user.twitch,
+        youtube: props.user.youtube,
+        skype: props.user.skype,
+        discord: props.user.discord,
+        battlenet: props.user.battlenet,
+        steam: props.user.steam,
+        xbox: props.user.xbox,
+        psn: props.user.psn,
+        favoriteGameSearch: "",
+        currentGameSearch: ""
+      }
+    : {};
+  const [fields, handleFieldChange] = useFormFields({ ...initialFormState });
   const testFavoriteGames = Array.from({ length: 1 }, () => ({
     id: Math.floor(Math.random() * 100),
     name: "League of Legends",
@@ -1492,51 +1432,41 @@ const EditUser = props => {
     testCurrentlyPlaying
   );
 
-  function loadUser() {
-    db.collection("users")
-      .doc(props.authenticatedUser.uid)
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          setUser(doc.data());
-        } else {
-          console.log("No such document!");
-        }
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error({ error });
-        setIsLoading(false);
-      });
-    setIsLoading(false);
-  }
+  // TODO: Impractical, we should use Algolia or ElasticSearch to query these
+  // React.useEffect(() => {
+  //   const loadSchools = async () => {
+  //     db.collection("schools")
+  //       .get()
+  //       .then(snapshot => {
+  //         setSchools(snapshot.docs);
+  //         setSchoolOptions(
+  //           sortBy(
+  //             snapshot.docs.map(doc => ({
+  //               id: doc.id,
+  //               ...doc.data()
+  //             })),
+  //             ["name"]
+  //           )
+  //         );
+  //       });
+  //   };
 
-  function loadSchools() {
-    db.collection("schools")
-      .get()
-      .then(a => {
-        setSchools(a.docs.map(doc => doc.data()));
-      });
-  }
+  //   loadSchools();
+  // }, []);
 
-  React.useEffect(() => {
-    loadUser();
-    loadSchools();
-  }, []);
-
-  React.useEffect(() => {
-    if (user) {
-      for (const key in user) {
-        console.log(key);
-        handleFieldChange({
-          target: {
-            id: key,
-            value: user[key]
-          }
-        });
-      }
-    }
-  }, [user]);
+  // React.useEffect(() => {
+  //   if (user) {
+  //     for (const key in user) {
+  //       console.log(key);
+  //       handleFieldChange({
+  //         target: {
+  //           id: key,
+  //           value: user[key]
+  //         }
+  //       });
+  //     }
+  //   }
+  // }, [user]);
 
   function toggleFavoriteGame(game) {
     setFavoriteGames(xorBy(favoriteGames, [game], "id"));
@@ -1546,22 +1476,77 @@ const EditUser = props => {
     setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
   }
 
-  // if (!props.isAuthenticated) {
-  //   return <Redirect to="/" noThrow />;
-  // }
+  if (!props.isAuthenticated) {
+    return <Redirect to="/" noThrow />;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log("Submitted!", fields);
+
+    setIsSubmitting(true);
+
+    const data = {
+      firstName: fields.firstName,
+      lastName: fields.lastName,
+      status: fields.status,
+      hometown: fields.hometown,
+      birthdate: new Date(moment(fields.birthdate)),
+      major: fields.major,
+      minor: fields.minor,
+      bio: fields.bio,
+      website: fields.website,
+      twitter: fields.twitter,
+      twitch: fields.twitch,
+      youtube: fields.youtube,
+      skype: fields.skype,
+      discord: fields.discord,
+      battlenet: fields.battlenet,
+      steam: fields.steam,
+      xbox: fields.xbox,
+      psn: fields.psn
+    };
+    const matchedSchool = schools.find(school => school.id === fields.school);
+
+    if (!!matchedSchool) {
+      data.school = matchedSchool.ref;
+    }
+
+    const cleanedData = omitBy(data, isNil);
+
+    db.collection("users")
+      .doc(props.user.ref.id)
+      .update(cleanedData)
+      .then(() => {
+        setIsSubmitting(false);
+        toast({
+          title: "Profile updated.",
+          description: "Your profile has been updated.",
+          status: "success",
+          isClosable: true
+        });
+      })
+      .catch(error => {
+        setIsSubmitting(false);
+        toast({
+          title: "An error occurred.",
+          description: error,
+          status: "error",
+          isClosable: true
+        });
+      });
   }
 
-  if (isLoading || !user) {
+  if (!props.user) {
+    // TODO: Handle gracefully
+    console.log("no user");
     return null;
   }
 
-  console.log(schools);
-
-  // console.log(fields)
+  if (!props.authenticatedUser) {
+    // TODO: Handle gracefully
+    console.log("no authenticated user");
+    return null;
+  }
 
   return (
     <PageWrapper>
@@ -1569,6 +1554,16 @@ const EditUser = props => {
         <Heading as="h1" size="2xl">
           Your Profile
         </Heading>
+        <ChakraButton
+          variantColor="purple"
+          type="submit"
+          size="lg"
+          w="full"
+          mt={-12}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Update Profile"}
+        </ChakraButton>
         <Box
           as="fieldset"
           borderWidth="1px"
@@ -1695,7 +1690,7 @@ const EditUser = props => {
             <Text color="gray.500">Where you study, what you study.</Text>
           </Box>
           <Stack spacing={6} p={8}>
-            <FormControl isRequired>
+            <FormControl>
               <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
                 School:
               </FormLabel>
@@ -1705,12 +1700,11 @@ const EditUser = props => {
                 value={fields.school}
                 size="lg"
               >
-                {schools.map(school => (
-                  <option
-                    key={school.name}
-                    label={school.name}
-                    value={school.name}
-                  />
+                <option value="">Select a school</option>
+                {schoolOptions.map(school => (
+                  <option key={school.id} value={school.id}>
+                    {school.name}
+                  </option>
                 ))}
               </ChakraSelect>
             </FormControl>
@@ -1724,8 +1718,10 @@ const EditUser = props => {
                 value={fields.status}
                 size="lg"
               >
-                {constants.STUDENT_STATUS_OPTIONS.map(option => (
-                  <option key={option.value} {...option} />
+                {constants.STUDENT_STATUS_OPTIONS.map(status => (
+                  <option key={status.value} value={status.value}>
+                    {status.label}
+                  </option>
                 ))}
               </ChakraSelect>
             </FormControl>
@@ -1969,8 +1965,9 @@ const EditUser = props => {
           size="lg"
           w="full"
           mt={-12}
+          disabled={isSubmitting}
         >
-          Update Profile
+          {isSubmitting ? "Submitting..." : "Update Profile"}
         </ChakraButton>
       </Stack>
     </PageWrapper>
@@ -2884,6 +2881,71 @@ const Flex = ({
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+// Nav
+
+const Nav = props => {
+  return (
+    <nav
+      role="navigation"
+      className={`${
+        props.isMenuOpen ? "block" : "hidden"
+      } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
+    >
+      {props.isAuthenticated && props.user && props.school ? (
+        <React.Fragment>
+          {/* TODO: Remove when better spot is found */}
+          <ChakraButton onClick={props.handleLogout}>Log out</ChakraButton>
+          <Link
+            to="/event/create"
+            className="leading-none text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-2 px-3 hover:underline focus:underline"
+          >
+            Create an Event
+          </Link>
+          <Link
+            to={`school/${props.school.ref.id}`}
+            className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
+          >
+            <img
+              className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
+              src="https://i.pinimg.com/originals/da/63/b5/da63b5fb77c701640556c489b755a241.png"
+              alt=""
+            />
+            School
+          </Link>
+          <Link
+            to={`user/${props.user.ref.id}`}
+            className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
+          >
+            <Gravatar
+              default={constants.GRAVATAR.DEFAULT}
+              rating={constants.GRAVATAR.RA}
+              md5={props.user ? props.user.gravatar : null}
+              className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
+            />
+            Profile
+          </Link>
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <Link
+            to="/login"
+            className="text-xl block mx-3 py-1 active:outline sm:rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
+          >
+            Log In
+          </Link>
+          <Link
+            to="/register"
+            className="text-xl mt-1 block mx-3 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
+          >
+            Sign Up Free
+          </Link>
+        </React.Fragment>
+      )}
+    </nav>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // ConditionalWrapper
 
 // eslint-disable-next-line
@@ -2896,4 +2958,94 @@ const ConditionalWrapper = ({ condition, wrapper, children }) =>
 const ScrollToTop = ({ children, location }) => {
   React.useEffect(() => window.scrollTo(0, 0), [location.pathname]);
   return children;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// useFetchUserSchool
+
+export const useFetchUserSchool = user => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [school, setSchool] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    const loadSchool = async () => {
+      setIsLoading(true);
+      user.school
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            setSchool({
+              ref: doc,
+              ...data
+            });
+            setIsLoading(false);
+          }
+        })
+        .catch(error => {
+          console.error({ error });
+          setError(error);
+          setIsLoading(false);
+        });
+    };
+
+    if (user) {
+      loadSchool();
+    }
+  }, [user]);
+
+  console.log({ isLoading, school, error });
+
+  return [school, isLoading, error];
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// useFetchUserProfile
+
+export const useFetchUserProfile = user => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [userProfile, setUserProfile] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    const loadUserProfile = async () => {
+      setIsLoading(true);
+      db.collection("users")
+        .doc(user.uid)
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            const hasFavoriteGames =
+              data.favoriteGames && data.favoriteGames.length;
+            const hasCurrentlyPlaying =
+              data.currentlyPlaying && data.currentlyPlaying.length;
+
+            setUserProfile({
+              ref: doc,
+              ...data,
+              ...{
+                hasFavoriteGames,
+                hasCurrentlyPlaying
+              }
+            });
+            setIsLoading(false);
+          }
+        })
+        .catch(error => {
+          console.error({ error });
+          setError(error);
+          setIsLoading(false);
+        });
+    };
+
+    if (user) {
+      loadUserProfile();
+    }
+  }, [user]);
+
+  console.log({ isLoading, userProfile, error });
+
+  return [userProfile, isLoading, error];
 };

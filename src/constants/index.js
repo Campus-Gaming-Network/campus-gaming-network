@@ -107,56 +107,46 @@ export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
 export const ACCOUNTS = {
   website: {
     label: "Website",
-    placeholder: "https://campusgamingnetwork.com",
     icon: faGlobe
   },
   twitter: {
     label: "Twitter",
-    placeholder: "lolkieji",
     icon: faTwitter,
     url: "twitter.com/"
   },
   twitch: {
     label: "Twitch",
-    placeholder: "lolkieji",
     icon: faTwitch,
     url: "twitch.tv/"
   },
   youtube: {
     label: "YouTube",
-    placeholder: "videogamedunkey",
     icon: faYoutube,
     url: "youtube.com/user/"
   },
   skype: {
     label: "Skype",
-    placeholder: "brandon.sansone1",
     icon: faSkype
   },
   discord: {
     label: "Discord",
-    placeholder: "kieji#3981",
     icon: faDiscord
   },
   battlenet: {
     label: "Battle.net",
-    placeholder: "Kieji#1674",
     icon: faBattleNet
   },
   steam: {
     label: "Steam",
-    placeholder: "kieji",
     icon: faSteam,
     url: "steamcommunity.com/id/"
   },
   xbox: {
     label: "Xbox Live",
-    placeholder: "xXxDestroyerxXx",
     icon: faXbox
   },
   psn: {
     label: "PSN",
-    placeholder: "xXxDestroyerxXx1",
     icon: faPlaystation
   }
 };
@@ -172,4 +162,8 @@ export const FIREBASE_ERRORS = {
   "auth/wrong-password": ""
 };
 
-export const BASE_GRAVATAR_AVATAR_URL = "https://www.gravatar.com/avatar/";
+export const GRAVATAR = {
+  URL: "https://www.gravatar.com/avatar/",
+  RATING: "pg",
+  DEFAULT: "retro"
+};
