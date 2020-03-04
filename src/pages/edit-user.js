@@ -27,8 +27,8 @@ import {
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import * as constants from "./constants";
-import { useFormFields } from "./utilities";
+import * as constants from "../constants";
+import { useFormFields } from "../utilities";
 import PageWrapper from "../components/PageWrapper";
 
 const db = firebase.firestore();

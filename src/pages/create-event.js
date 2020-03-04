@@ -20,9 +20,11 @@ import PlacesAutocomplete from "react-places-autocomplete";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import { useFormFields } from "./utilities";
+import { useFormFields } from "../utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import PageWrapper from "../components/PageWrapper";
+import Flex from "../components/Flex";
+import Avatar from "../components/Avatar";
 
 const db = firebase.firestore();
 

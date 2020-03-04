@@ -4,11 +4,14 @@ import { Box } from "@chakra-ui/core";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import * as constants from "./constants";
-import { useFormFields } from "./utilities";
+import * as constants from "../constants";
+import { useFormFields } from "../utilities";
 import PageWrapper from "../components/PageWrapper";
 import Label from "../components/Label";
+import Flex from "../components/Flex";
 import Input from "../components/Input";
+import Button from "../components/Button";
+import Link from "../components/Link";
 
 const Login = props => {
   const [fields, handleFieldChange] = useFormFields({

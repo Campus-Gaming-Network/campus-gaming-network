@@ -3,9 +3,14 @@ import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { Box, Alert } from "@chakra-ui/core";
-import * as constants from "./constants";
-import { useFormFields } from "./utilities";
+import * as constants from "../constants";
+import { useFormFields } from "../utilities";
 import PageWrapper from "../components/PageWrapper";
+import Flex from "../components/Flex";
+import Input from "../components/Input";
+import Label from "../components/Label";
+import Button from "../components/Button";
+import Link from "../components/Link";
 
 const ForgotPassword = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -29,7 +34,8 @@ const ForgotPassword = props => {
     setIsSendingCode(true);
 
     try {
-      await Auth.forgotPassword(fields.email);
+      // TODO:
+      // await Auth.forgotPassword(fields.email);
       setCodeSent(true);
     } catch (e) {
       alert(e.message);
@@ -43,11 +49,12 @@ const ForgotPassword = props => {
     setIsConfirming(true);
 
     try {
-      await Auth.forgotPasswordSubmit(
-        fields.email,
-        fields.confirmationCode,
-        fields.password
-      );
+      // TODO:
+      // await Auth.forgotPasswordSubmit(
+      //   fields.email,
+      //   fields.confirmationCode,
+      //   fields.password
+      // );
       setConfirmed(true);
     } catch (e) {
       alert(e.message);

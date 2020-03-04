@@ -9,8 +9,16 @@ import {
   List,
   ListItem
 } from "@chakra-ui/core";
-import * as constants from "./constants";
-import { sortedEvents } from "./utilities";
+import * as constants from "../constants";
+import { sortedEvents } from "../utilities";
+import OutsideLink from "../components/OutsideLink";
+import PageWrapper from "../components/PageWrapper";
+import VisuallyHidden from "../components/VisuallyHidden";
+import Avatar from "../components/Avatar";
+import Link from "../components/Link";
+import EventListItem from "../components/EventListItem";
+import useFetchSchoolProfile from "../hooks/useFetchSchoolProfile";
+import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 
 const School = props => {
   const [events, setEvents] = React.useState([]);

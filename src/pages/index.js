@@ -1,8 +1,10 @@
 import React from "react";
-import * as constants from "./constants";
-import { sortedEvents } from "./utilities";
+import * as constants from "../constants";
+import { sortedEvents } from "../utilities";
 import PageWrapper from "../components/PageWrapper";
 import PageSection from "../components/PageSection";
+import EventListItem from "../components/EventListItem";
+import Link from "../components/Link";
 
 const Home = () => {
   return (

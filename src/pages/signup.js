@@ -1,19 +1,17 @@
 import React from "react";
 import { Redirect } from "@reach/router";
 import sortBy from "lodash.sortby";
-import { Box, Select as ChakraSelect, } from "@chakra-ui/core";
-import "./App.css";
+import { Box, Select as ChakraSelect } from "@chakra-ui/core";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import * as constants from "./constants";
-import {
-  useFormFields,
-  createGravatarHash
-} from "./utilities";
+import * as constants from "../constants";
+import { useFormFields, createGravatarHash } from "../utilities";
 import PageWrapper from "../components/PageWrapper";
 import Label from "../components/Label";
 import Input from "../components/Input";
+import Button from "../components/Button";
+import Link from "../components/Link";
 
 const db = firebase.firestore();
 
