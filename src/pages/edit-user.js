@@ -24,16 +24,10 @@ import {
   Tooltip,
   useToast
 } from "@chakra-ui/core";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
 import * as constants from "../constants";
 import { useFormFields } from "../utilities";
 import PageWrapper from "../components/PageWrapper";
-
-const db = firebase.firestore();
-
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+import { firebaseFirestore } from "../firebase";
 
 const EditUser = props => {
   const [schools, setSchools] = React.useState([]);
@@ -69,14 +63,12 @@ const EditUser = props => {
   const testFavoriteGames = Array.from({ length: 1 }, () => ({
     id: Math.floor(Math.random() * 100),
     name: "League of Legends",
-    picture:
-      "https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg"
+    picture: constants.TEST_VIDEO_GAME_COVER
   }));
   const testCurrentlyPlaying = Array.from({ length: 5 }, () => ({
     id: Math.floor(Math.random() * 100),
     name: "League of Legends",
-    picture:
-      "https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg"
+    picture: constants.TEST_VIDEO_GAME_COVER
   }));
 
   const [favoriteGames, setFavoriteGames] = React.useState(testFavoriteGames);
@@ -87,7 +79,7 @@ const EditUser = props => {
   // TODO: Impractical, we should use Algolia or ElasticSearch to query these
   // React.useEffect(() => {
   //   const loadSchools = async () => {
-  //     db.collection("schools")
+  //     firebaseFirestore.collection("schools")
   //       .get()
   //       .then(snapshot => {
   //         setSchools(snapshot.docs);
@@ -165,7 +157,8 @@ const EditUser = props => {
 
     const cleanedData = omitBy(data, isNil);
 
-    db.collection("users")
+    firebaseFirestore
+      .collection("users")
       .doc(props.user.ref.id)
       .update(cleanedData)
       .then(() => {

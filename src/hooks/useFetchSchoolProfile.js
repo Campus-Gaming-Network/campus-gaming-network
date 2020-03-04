@@ -1,7 +1,5 @@
 import React from "react";
-import firebase from "firebase/app";
-
-const db = firebase.firestore();
+import { firebaseFirestore } from "../firebase";
 
 const useFetchSchoolProfile = id => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -11,7 +9,8 @@ const useFetchSchoolProfile = id => {
   React.useEffect(() => {
     const loadSchoolProfile = async () => {
       setIsLoading(true);
-      db.collection("schools")
+      firebaseFirestore
+        .collection("schools")
         .doc(id)
         .get()
         .then(doc => {

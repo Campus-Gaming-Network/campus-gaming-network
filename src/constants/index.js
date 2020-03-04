@@ -18,6 +18,9 @@ import {
   faPlaystation
 } from "@fortawesome/free-brands-svg-icons";
 
+export const TEST_VIDEO_GAME_COVER =
+  "https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg";
+
 export const RANDOM_SAMPLE_OF_EVENTS = slice(
   shuffle(TEST_DATA.events),
   0,

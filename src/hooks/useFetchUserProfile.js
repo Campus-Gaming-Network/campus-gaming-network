@@ -1,7 +1,5 @@
 import React from "react";
-import firebase from "firebase/app";
-
-const db = firebase.firestore();
+import { firebaseFirestore } from "../firebase";
 
 const useFetchUserProfile = id => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -11,7 +9,8 @@ const useFetchUserProfile = id => {
   React.useEffect(() => {
     const loadUserProfile = async () => {
       setIsLoading(true);
-      db.collection("users")
+      firebaseFirestore
+        .collection("users")
         .doc(id)
         .get()
         .then(doc => {

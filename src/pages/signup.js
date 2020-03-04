@@ -1,19 +1,24 @@
 import React from "react";
 import { Redirect } from "@reach/router";
 import sortBy from "lodash.sortby";
-import { Box, Select as ChakraSelect } from "@chakra-ui/core";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Input as ChakraInput,
+  Stack,
+  FormControl,
+  FormLabel,
+  Box,
+  Text,
+  Select as ChakraSelect,
+  Button as ChakraButton
+} from "@chakra-ui/core";
 import * as constants from "../constants";
 import { useFormFields, createGravatarHash } from "../utilities";
 import PageWrapper from "../components/PageWrapper";
-import Label from "../components/Label";
-import Input from "../components/Input";
-import Button from "../components/Button";
 import Link from "../components/Link";
-
-const db = firebase.firestore();
+import { firebaseFirestore, firebaseAuth } from "../firebase";
 
 const Signup = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -24,6 +29,7 @@ const Signup = props => {
     school: "",
     status: ""
   });
+  const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [schools, setSchools] = React.useState([]);
   const [schoolOptions, setSchoolOptions] = React.useState([]);
@@ -32,7 +38,8 @@ const Signup = props => {
   // TODO: Impractical, we should use Algolia or ElasticSearch to query these
   React.useEffect(() => {
     const loadSchools = async () => {
-      db.collection("schools")
+      firebaseFirestore
+        .collection("schools")
         .get()
         .then(snapshot => {
           setSchools(snapshot.docs);
@@ -60,11 +67,11 @@ const Signup = props => {
 
     setIsSubmitting(true);
 
-    firebase
-      .auth()
+    firebaseAuth
       .createUserWithEmailAndPassword(fields.email, fields.password)
       .then(({ user }) => {
-        db.collection("users")
+        firebaseFirestore
+          .collection("users")
           .doc(user.uid)
           .set({
             firstName: fields.firstName,
@@ -76,7 +83,7 @@ const Signup = props => {
         setIsSubmitting(false);
       })
       .catch(error => {
-        alert(error.message);
+        setError(error.message);
         setIsSubmitting(false);
       });
   }
@@ -99,54 +106,67 @@ const Signup = props => {
         <form onSubmit={handleSubmit}>
           <h1 className="text-5xl font-bold leading-none">Create an account</h1>
           <hr className="my-12" />
-          <div className="md:flex md:items mb-6">
-            <Label htmlFor="firstName">First Name</Label>
-            <Input
-              autoFocus
-              id="firstName"
-              name="firstName"
-              type="text"
-              placeholder="Jane"
-              required
-              onChange={handleFieldChange}
-              value={fields.firstName}
-            />
-          </div>
-          <div className="md:flex md:items-center mb-6">
-            <Label htmlFor="lastName">Last Name</Label>
-            <Input
-              id="lastName"
-              name="lastName"
-              type="text"
-              placeholder="Doe"
-              required
-              onChange={handleFieldChange}
-              value={fields.lastName}
-            />
-          </div>
-          <div className="md:flex md:items-center mb-6">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="jdoe@gmail.com"
-              required
-              onChange={handleFieldChange}
-              value={fields.email}
-            />
-          </div>
-          <div className="md:flex md:items-stretch mb-6">
-            <Label htmlFor="password">Password</Label>
-            <div className="w-full">
-              <Input
+          {error ? (
+            <Alert status="error" mb={12}>
+              <AlertIcon />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          ) : null}
+          <Stack spacing={6}>
+            <FormControl isRequired>
+              <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
+                First Name:
+              </FormLabel>
+              <ChakraInput
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="Jane"
+                onChange={handleFieldChange}
+                value={fields.firstName}
+                size="lg"
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
+                Last Name:
+              </FormLabel>
+              <ChakraInput
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Doe"
+                onChange={handleFieldChange}
+                value={fields.lastName}
+                size="lg"
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
+                Email:
+              </FormLabel>
+              <ChakraInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="jdoe@gmail.com"
+                onChange={handleFieldChange}
+                value={fields.email}
+                size="lg"
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
+                Password:
+              </FormLabel>
+              <ChakraInput
                 id="password"
                 name="password"
                 type={isShowingPassword ? "text" : "password"}
                 placeholder="******************"
-                required
                 onChange={handleFieldChange}
                 value={fields.password}
+                size="lg"
               />
               <button
                 type="button"
@@ -155,65 +175,59 @@ const Signup = props => {
               >
                 {isShowingPassword ? "Hide" : "Show"} password
               </button>
-              <div className="text-sm">
-                <p className="font-bold mt-4">Password Must</p>
-                <ul className="flex flex-wrap list-disc pl-4">
-                  <li className="w-1/2">Have One number</li>
-                  <li className="w-1/2">Have One uppercase character</li>
-                  <li className="w-1/2">Have One lowercase character</li>
-                  <li className="w-1/2">Have One special character</li>
-                  <li className="w-1/2">Have 8 characters minimum</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="md:flex md:items-center mb-6">
-            <Label htmlFor="school">School</Label>
-            <ChakraSelect
-              id="school"
-              required
-              onChange={handleFieldChange}
-              value={fields.school}
-              size="lg"
-            >
-              <option value="">Select a school</option>
-              {schoolOptions.map(school => (
-                <option key={school.id} value={school.id}>
-                  {school.name}
-                </option>
-              ))}
-            </ChakraSelect>
-          </div>
-          <div className="md:flex md:items-center">
-            <Label htmlFor="status">Status</Label>
-            <ChakraSelect
-              id="status"
-              required
-              onChange={handleFieldChange}
-              value={fields.status}
-              size="lg"
-            >
-              {constants.STUDENT_STATUS_OPTIONS.map(status => (
-                <option key={status.value} value={status.value}>
-                  {status.label}
-                </option>
-              ))}
-            </ChakraSelect>
-          </div>
-          <Button
-            disabled={isSubmitting}
-            variant="purple"
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
+                School:
+              </FormLabel>
+              <ChakraSelect
+                id="school"
+                onChange={handleFieldChange}
+                value={fields.school}
+                size="lg"
+              >
+                <option value="">Select a school</option>
+                {schoolOptions.map(school => (
+                  <option key={school.id} value={school.id}>
+                    {school.name}
+                  </option>
+                ))}
+              </ChakraSelect>
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
+                Status:
+              </FormLabel>
+              <ChakraSelect
+                id="status"
+                onChange={handleFieldChange}
+                value={fields.status}
+                size="lg"
+              >
+                {constants.STUDENT_STATUS_OPTIONS.map(status => (
+                  <option key={status.value} value={status.value}>
+                    {status.label}
+                  </option>
+                ))}
+              </ChakraSelect>
+            </FormControl>
+          </Stack>
+          <ChakraButton
+            variantColor="purple"
             type="submit"
-            className="my-12 w-full"
+            size="lg"
+            w="full"
+            disabled={isSubmitting}
+            my={12}
           >
             {isSubmitting ? "Submitting..." : "Sign Up"}
-          </Button>
-          <p>
+          </ChakraButton>
+          <Text>
             Already a member?{" "}
             <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
               Log in
             </Link>
-          </p>
+          </Text>
         </form>
       </Box>
     </PageWrapper>

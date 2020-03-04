@@ -191,7 +191,7 @@ const User = props => {
                 <ListItem key={game.name} className="w-1/5">
                   <img
                     className="rounded h-40 shadow-lg"
-                    src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                    src={constants.TEST_VIDEO_GAME_COVER}
                     alt={`The cover art for ${game.name}`}
                   />
                 </ListItem>
@@ -218,7 +218,7 @@ const User = props => {
                 <ListItem key={game.name} className="w-1/5">
                   <img
                     className="rounded h-40 shadow-lg"
-                    src={`https://images.igdb.com/igdb/image/upload/t_cover_big/${game.coverId}.jpg`}
+                    src={constants.TEST_VIDEO_GAME_COVER}
                     alt={`The cover art for ${game.name}`}
                   />
                 </ListItem>

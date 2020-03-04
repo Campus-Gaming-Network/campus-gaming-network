@@ -1,7 +1,5 @@
 import React from "react";
-import firebase from "firebase/app";
-
-const db = firebase.firestore();
+import { firebaseFirestore } from "../firebase";
 
 const useFetchSchoolUsers = (school, limit = 25) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -13,7 +11,8 @@ const useFetchSchoolUsers = (school, limit = 25) => {
   React.useEffect(() => {
     const loadSchoolUsers = async () => {
       setIsLoading(true);
-      db.collection("users")
+      firebaseFirestore
+        .collection("users")
         .where("school", "==", school.ref)
         .limit(limit)
         .get()

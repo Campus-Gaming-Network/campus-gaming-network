@@ -17,16 +17,12 @@ import {
 } from "@chakra-ui/core";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
 import { useFormFields } from "../utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import PageWrapper from "../components/PageWrapper";
 import Flex from "../components/Flex";
 import Avatar from "../components/Avatar";
-
-const db = firebase.firestore();
+import { firebase, firebaseFirestore } from "../firebase";
 
 const CreateEvent = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -90,7 +86,8 @@ const CreateEvent = props => {
 
     console.log(data);
 
-    db.collection("events")
+    firebaseFirestore
+      .collection("events")
       .add({
         name: fields.name,
         description: fields.description,

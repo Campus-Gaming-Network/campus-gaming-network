@@ -1,16 +1,25 @@
 import React from "react";
 import { Redirect, navigate } from "@reach/router";
-import { Box } from "@chakra-ui/core";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
+import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Box,
+  Input as ChakraInput,
+  Stack,
+  FormControl,
+  FormLabel,
+  Text,
+  Button as ChakraButton
+} from "@chakra-ui/core";
 import * as constants from "../constants";
+
 import { useFormFields } from "../utilities";
+
+import { firebaseAuth } from "../firebase";
+
 import PageWrapper from "../components/PageWrapper";
-import Label from "../components/Label";
 import Flex from "../components/Flex";
-import Input from "../components/Input";
-import Button from "../components/Button";
 import Link from "../components/Link";
 
 const Login = props => {
@@ -18,6 +27,7 @@ const Login = props => {
     email: "",
     password: ""
   });
+  const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
   if (props.isAuthenticated) {
@@ -27,19 +37,18 @@ const Login = props => {
   function handleSubmit(e) {
     e.preventDefault();
 
+    setError(null);
     setIsLoading(true);
 
-    firebase
-      .auth()
+    firebaseAuth
       .signInWithEmailAndPassword(fields.email, fields.password)
       .then(() => {
         navigate("/");
       })
       .catch(error => {
-        alert(error.message);
+        setError(error.message);
+        setIsLoading(false);
       });
-
-    setIsLoading(false);
   }
 
   function validateForm() {
@@ -63,51 +72,66 @@ const Login = props => {
           </h1>
           <p className="text-gray-600">Log in to your account</p>
           <hr className="my-12" />
-          <div className="md:flex md:items-center mb-6">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="jdoe123@gmail.com"
-              required
-              onChange={handleFieldChange}
-              value={fields.email}
-            />
-          </div>
-          <div className="md:flex md:items-center">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="******************"
-              required
-              onChange={handleFieldChange}
-              value={fields.password}
-            />
-          </div>
-          <Button
-            disabled={isLoading || !validateForm()}
-            variant="purple"
+          {error ? (
+            <Alert status="error" mb={12}>
+              <AlertIcon />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          ) : null}
+          <Stack spacing={6}>
+            <FormControl isRequired>
+              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
+                Email:
+              </FormLabel>
+              <ChakraInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="jdoe123@gmail.com"
+                onChange={handleFieldChange}
+                value={fields.email}
+                size="lg"
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
+                Password:
+              </FormLabel>
+              <ChakraInput
+                id="password"
+                name="password"
+                type="password"
+                placeholder="******************"
+                onChange={handleFieldChange}
+                value={fields.password}
+                size="lg"
+              />
+            </FormControl>
+          </Stack>
+          <ChakraButton
+            variantColor="purple"
             type="submit"
-            className="my-12 w-full"
+            size="lg"
+            w="full"
+            disabled={isLoading || !validateForm()}
+            my={12}
           >
             {isLoading ? "Logging in..." : "Log In"}
-          </Button>
+          </ChakraButton>
           <Flex itemsCenter justifyBetween>
-            <p>
+            <Text>
               Don’t have an account?{" "}
               <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
                 Create one
               </Link>
-            </p>
-            <Link
+            </Text>
+            {/* TODO: Reimplment with firebase */}
+            {/* <Link
               to="/forgot-password"
               className={`${constants.STYLES.LINK.DEFAULT}`}
             >
               Forgot your password?
-            </Link>
+            </Link> */}
           </Flex>
         </form>
       </Box>

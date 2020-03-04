@@ -1,7 +1,4 @@
 import React from "react";
-import firebase from "firebase/app";
-
-const db = firebase.firestore();
 
 const useFetchUserSchool = user => {
   const [isLoading, setIsLoading] = React.useState(false);

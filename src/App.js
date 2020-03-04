@@ -10,12 +10,11 @@ import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 import momentLocalizer from "react-widgets-moment";
 import "react-widgets/dist/css/react-widgets.css";
 import "./App.css";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import firebaseConfig from "./firebase-config";
 import * as constants from "./constants";
+import { firebase, firebaseAuth } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+
+// Pages
 import Home from "./pages";
 import School from "./pages/school";
 import Signup from "./pages/signup";
@@ -28,26 +27,27 @@ import EditSchool from "./pages/edit-school";
 import CreateEvent from "./pages/create-event";
 import NotFound from "./pages/not-found";
 
+// Components
 import Link from "./components/Link";
 import Flex from "./components/Flex";
 import Nav from "./components/Nav";
 import ScrollToTop from "./components/ScrollToTop";
 
+// Hooks
 import useFetchUserSchool from "./hooks/useFetchUserSchool";
 import useFetchUserProfile from "./hooks/useFetchUserProfile";
 
 moment.locale("en");
 momentLocalizer();
 
-firebase.initializeApp(firebaseConfig);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 ////////////////////////////////////////////////////////////////////////////////
 // App
 
 const App = () => {
   const [authenticatedUser, isAuthenticating, error] = useAuthState(
-    firebase.auth()
+    firebaseAuth
   );
   const isAuthenticated = !!authenticatedUser;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -61,10 +61,7 @@ const App = () => {
   }
 
   function handleLogout() {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => navigate("/"));
+    firebaseAuth.signOut().then(() => navigate("/"));
   }
 
   // Since loading the user session is an asynchronous process,
@@ -131,7 +128,8 @@ const App = () => {
             <Event path="event/:id" {...appProps} />
             <Signup path="register" {...appProps} />
             <Login path="login" {...appProps} />
-            <ForgotPassword path="forgot-password" {...appProps} />
+            {/* TODO: Reimplment with firebase */}
+            {/* <ForgotPassword path="forgot-password" {...appProps} /> */}
             <NotFound default />
           </ScrollToTop>
         </Router>
