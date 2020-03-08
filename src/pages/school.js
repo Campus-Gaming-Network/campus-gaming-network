@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "@reach/router";
 import startCase from "lodash.startcase";
 import {
   Stack,
@@ -40,9 +41,8 @@ const School = props => {
   const [users, isLoadingUsers, usersError] = useFetchSchoolUsers(school);
 
   if (!school) {
-    // TODO: Handle gracefully
-    console.log("no school");
-    return null;
+    console.error(`No school found ${props.uri}`);
+    return <Redirect to="not-found" noThrow />;
   }
 
   return (

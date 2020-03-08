@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import capitalize from "lodash.capitalize";
@@ -27,9 +28,8 @@ const User = props => {
   const user = fetchId ? fetchedUser : props.user;
 
   if (!user) {
-    // TODO: Handle gracefully
-    console.log("no user");
-    return null;
+    console.error(`No user found ${props.uri}`);
+    return <Redirect to="not-found" noThrow />;
   }
 
   return (

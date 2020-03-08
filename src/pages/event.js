@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
@@ -43,17 +44,15 @@ const Event = props => {
   const event = TEST_DATA.events.find(event => event.id === props.id);
 
   if (!event) {
-    // TODO: Handle gracefully
-    console.log("no event");
-    return null;
+    console.error(`No event found ${props.uri}`);
+    return <Redirect to="not-found" noThrow />;
   }
 
   const school = TEST_DATA.schools[event.schoolId];
 
   if (!school) {
-    // TODO: Handle gracefully
-    console.log("no school");
-    return null;
+    console.error(`No school found ${props.uri}`);
+    return <Redirect to="not-found" noThrow />;
   }
 
   const eventResponses = getEventResponses(event.index);
