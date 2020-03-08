@@ -26,7 +26,6 @@ import {
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { useFormFields } from "../utilities";
-import PageWrapper from "../components/PageWrapper";
 import { firebaseFirestore } from "../firebase";
 
 const EditUser = props => {
@@ -194,7 +193,7 @@ const EditUser = props => {
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           Your Profile
@@ -615,7 +614,7 @@ const EditUser = props => {
           {isSubmitting ? "Submitting..." : "Update Profile"}
         </ChakraButton>
       </Stack>
-    </PageWrapper>
+    </Box>
   );
 };
 

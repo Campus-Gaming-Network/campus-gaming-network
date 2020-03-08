@@ -5,7 +5,6 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { Box, Alert } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { useFormFields } from "../utilities";
-import PageWrapper from "../components/PageWrapper";
 import Flex from "../components/Flex";
 import Input from "../components/Input";
 import Label from "../components/Label";
@@ -77,7 +76,7 @@ const ForgotPassword = props => {
   if (codeSent) {
     if (confirmed) {
       return (
-        <PageWrapper>
+        <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
           <Alert status="success" variant="subtle">
             <span className="font-bold block text-2xl">
               Your password has been reset.
@@ -88,12 +87,12 @@ const ForgotPassword = props => {
               </Link>
             </p>
           </Alert>
-        </PageWrapper>
+        </Box>
       );
     }
 
     return (
-      <PageWrapper>
+      <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
         <Box
           as="fieldset"
           borderWidth="1px"
@@ -167,12 +166,12 @@ const ForgotPassword = props => {
             </Button>
           </form>
         </Box>
-      </PageWrapper>
+      </Box>
     );
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Box
         as="fieldset"
         borderWidth="1px"
@@ -222,7 +221,7 @@ const ForgotPassword = props => {
           </Flex>
         </form>
       </Box>
-    </PageWrapper>
+    </Box>
   );
 };
 

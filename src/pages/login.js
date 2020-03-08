@@ -18,7 +18,6 @@ import { useFormFields } from "../utilities";
 
 import { firebaseAuth } from "../firebase";
 
-import PageWrapper from "../components/PageWrapper";
 import Flex from "../components/Flex";
 import Link from "../components/Link";
 
@@ -56,7 +55,7 @@ const Login = props => {
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Box
         as="fieldset"
         borderWidth="1px"
@@ -135,7 +134,7 @@ const Login = props => {
           </Flex>
         </form>
       </Box>
-    </PageWrapper>
+    </Box>
   );
 };
 

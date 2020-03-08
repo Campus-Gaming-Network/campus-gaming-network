@@ -7,7 +7,6 @@ import Gravatar from "react-gravatar";
 import { Stack, Box, Heading, Text, List, ListItem } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
-import PageWrapper from "../components/PageWrapper";
 import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
@@ -34,7 +33,7 @@ const User = props => {
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Box as="header" display="flex" alignItems="center">
         <Gravatar
           default={constants.GRAVATAR.DEFAULT}
@@ -252,7 +251,7 @@ const User = props => {
           )}
         </Stack>
       </Stack>
-    </PageWrapper>
+    </Box>
   );
 };
 

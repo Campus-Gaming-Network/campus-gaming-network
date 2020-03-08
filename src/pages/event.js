@@ -26,7 +26,6 @@ import TEST_DATA from "../test_data";
 import * as constants from "../constants";
 import { getEventResponses, getEventGoers } from "../utilities";
 import OutsideLink from "../components/OutsideLink";
-import PageWrapper from "../components/PageWrapper";
 import Avatar from "../components/Avatar";
 import Link from "../components/Link";
 import Flex from "../components/Flex";
@@ -109,7 +108,7 @@ const Event = props => {
 
   return (
     <React.Fragment>
-      <PageWrapper>
+      <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
         <Stack spacing={10}>
           <Flex itemsCenter>
             <Box pr={2}>
@@ -260,7 +259,7 @@ const Event = props => {
             </List>
           </Stack>
         </Stack>
-      </PageWrapper>
+      </Box>
 
       <AlertDialog
         isOpen={isAttendingAlertOpen}

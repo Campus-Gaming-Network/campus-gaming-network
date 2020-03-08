@@ -12,7 +12,6 @@ import {
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
 import OutsideLink from "../components/OutsideLink";
-import PageWrapper from "../components/PageWrapper";
 import VisuallyHidden from "../components/VisuallyHidden";
 import Avatar from "../components/Avatar";
 import Link from "../components/Link";
@@ -47,7 +46,7 @@ const School = props => {
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
           <Image
@@ -193,7 +192,7 @@ const School = props => {
           )}
         </Stack>
       </Stack>
-    </PageWrapper>
+    </Box>
   );
 };
 

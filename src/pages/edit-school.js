@@ -19,7 +19,6 @@ import "firebase/auth";
 import "firebase/firestore";
 import { useFormFields } from "../utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
-import PageWrapper from "../components/PageWrapper";
 
 const db = firebase.firestore();
 
@@ -71,7 +70,7 @@ const EditSchool = props => {
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           Edit School
@@ -208,7 +207,7 @@ const EditSchool = props => {
           Update School
         </ChakraButton>
       </Stack>
-    </PageWrapper>
+    </Box>
   );
 };
 

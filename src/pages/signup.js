@@ -16,7 +16,6 @@ import {
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { useFormFields, createGravatarHash } from "../utilities";
-import PageWrapper from "../components/PageWrapper";
 import Link from "../components/Link";
 import { firebaseFirestore, firebaseAuth } from "../firebase";
 
@@ -93,7 +92,7 @@ const Signup = props => {
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Box
         as="fieldset"
         borderWidth="1px"
@@ -230,7 +229,7 @@ const Signup = props => {
           </Text>
         </form>
       </Box>
-    </PageWrapper>
+    </Box>
   );
 };
 

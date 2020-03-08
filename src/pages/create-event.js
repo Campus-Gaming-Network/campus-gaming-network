@@ -19,7 +19,6 @@ import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { useFormFields } from "../utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
-import PageWrapper from "../components/PageWrapper";
 import Flex from "../components/Flex";
 import Avatar from "../components/Avatar";
 import { firebase, firebaseFirestore } from "../firebase";
@@ -105,7 +104,7 @@ const CreateEvent = props => {
   }
 
   return (
-    <PageWrapper>
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           Create an Event
@@ -326,7 +325,7 @@ const CreateEvent = props => {
           Create Event
         </ChakraButton>
       </Stack>
-    </PageWrapper>
+    </Box>
   );
 };
 

@@ -1,15 +1,14 @@
 import React from "react";
+import { Box } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
-import PageWrapper from "../components/PageWrapper";
-import PageSection from "../components/PageSection";
 import EventListItem from "../components/EventListItem";
 import Link from "../components/Link";
 
 const Home = () => {
   return (
-    <PageWrapper>
-      <PageSection className="pt-0">
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+      <Box>
         <h1 className="text-logo text-6xl mb-8 leading-none">
           Campus Gaming Network
         </h1>
@@ -17,8 +16,8 @@ const Home = () => {
           Connect with other collegiate gamers for casual or competitive gaming
           at your school or nearby.
         </h2>
-      </PageSection>
-      <PageSection>
+      </Box>
+      <Box pt={12}>
         <h3 className="text-3xl font-semibold">
           Upcoming events near Chicago, IL
         </h3>
@@ -38,8 +37,8 @@ const Home = () => {
             </li>
           </ul>
         )}
-      </PageSection>
-    </PageWrapper>
+      </Box>
+    </Box>
   );
 };
 
