@@ -1,32 +1,32 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
 
-const useFetchSchoolUsers = (id, limit = 25) => {
+const useFetchSchoolEvents = (id, limit = 25) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [users, setUsers] = React.useState(null);
+  const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const fetchSchoolUsers = async () => {
-      console.log("fetchSchoolUsers...");
+    const fetchSchoolEvents = async () => {
+      console.log("fetchSchoolEvents...");
       setIsLoading(true);
       const schoolDocRef = firebaseFirestore.collection("schools").doc(id);
       firebaseFirestore
-        .collection("users")
+        .collection("events")
         .where("school", "==", schoolDocRef)
         .limit(limit)
         .get()
         .then(snapshot => {
           if (!snapshot.empty) {
-            let schoolUsers = [];
+            let schoolEvents = [];
             snapshot.forEach(doc => {
               const data = doc.data();
-              schoolUsers.push({
+              schoolEvents.push({
                 id: doc.id,
                 ...data
               });
             });
-            setUsers(schoolUsers);
+            setEvents(schoolEvents);
           }
           setIsLoading(false);
         })
@@ -38,11 +38,11 @@ const useFetchSchoolUsers = (id, limit = 25) => {
     };
 
     if (id) {
-      fetchSchoolUsers();
+      fetchSchoolEvents();
     }
   }, [id, limit]);
 
-  return [users, isLoading, error];
+  return [events, isLoading, error];
 };
 
-export default useFetchSchoolUsers;
+export default useFetchSchoolEvents;

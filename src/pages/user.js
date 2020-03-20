@@ -5,7 +5,15 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import capitalize from "lodash.capitalize";
 import startCase from "lodash.startcase";
 import Gravatar from "react-gravatar";
-import { Stack, Box, Heading, Text, List, ListItem } from "@chakra-ui/core";
+import {
+  Stack,
+  Box,
+  Heading,
+  Text,
+  List,
+  ListItem,
+  Spinner
+} from "@chakra-ui/core";
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
 import VisuallyHidden from "../components/VisuallyHidden";
@@ -13,19 +21,42 @@ import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 import Flex from "../components/Flex";
 import useFetchUserProfile from "../hooks/useFetchUserProfile";
+import useFetchUserEvents from "../hooks/useFetchUserEvents";
+
+const CACHED_USERS = {};
 
 const User = props => {
-  const [events] = React.useState([]);
+  const hasCachedUser = !!CACHED_USERS[props.id];
+  const shouldFetchUser = !hasCachedUser && props.id !== props.user.ref.id;
+  const userFetchId = shouldFetchUser ? props.id : null;
+  const [fetchedUser, isLoadingFetchedUser] = useFetchUserProfile(userFetchId);
+  const [events] = useFetchUserEvents(props.id);
+  console.log({ events });
 
-  let fetchId = null;
+  const user = hasCachedUser
+    ? CACHED_USERS[props.id]
+    : userFetchId
+    ? fetchedUser
+    : props.user;
 
-  if (props.user && props.user.ref && props.id !== props.user.ref.id) {
-    fetchId = props.id;
+  if (!hasCachedUser) {
+    CACHED_USERS[props.id] = { ...user };
   }
 
-  const [fetchedUser] = useFetchUserProfile(fetchId);
-
-  const user = fetchId ? fetchedUser : props.user;
+  if (isLoadingFetchedUser) {
+    return (
+      <Box w="100%" textAlign="center">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="purple.500"
+          size="xl"
+          mt={4}
+        />
+      </Box>
+    );
+  }
 
   if (!user) {
     console.error(`No user found ${props.uri}`);
@@ -238,7 +269,7 @@ const User = props => {
           >
             Events Attending
           </Heading>
-          {events.length ? (
+          {events && events.length ? (
             <List>
               {sortedEvents(events).map(event => (
                 <EventListItem key={event.id} event={event} />

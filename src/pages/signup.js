@@ -104,7 +104,7 @@ const Signup = props => {
       >
         <form onSubmit={handleSubmit}>
           <h1 className="text-5xl font-bold leading-none">Create an account</h1>
-          <hr className="my-12" />
+          <hr className="mt-12 mb-10" />
           {error ? (
             <Alert status="error" mb={12}>
               <AlertIcon />

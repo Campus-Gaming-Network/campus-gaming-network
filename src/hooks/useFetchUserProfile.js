@@ -3,11 +3,12 @@ import { firebaseFirestore } from "../firebase";
 
 const useFetchUserProfile = id => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [userProfile, setUserProfile] = React.useState(null);
+  const [profile, setProfile] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const loadUserProfile = async () => {
+    const fetchUserProfile = async () => {
+      console.log("fetchUserProfile...");
       setIsLoading(true);
       firebaseFirestore
         .collection("users")
@@ -21,7 +22,7 @@ const useFetchUserProfile = id => {
             const hasCurrentlyPlaying =
               data.currentlyPlaying && data.currentlyPlaying.length;
 
-            setUserProfile({
+            setProfile({
               ref: doc,
               ...data,
               ...{
@@ -29,8 +30,8 @@ const useFetchUserProfile = id => {
                 hasCurrentlyPlaying
               }
             });
-            setIsLoading(false);
           }
+          setIsLoading(false);
         })
         .catch(error => {
           console.error({ error });
@@ -40,13 +41,11 @@ const useFetchUserProfile = id => {
     };
 
     if (id) {
-      loadUserProfile();
+      fetchUserProfile();
     }
   }, [id]);
 
-  console.log({ isLoading, userProfile, error });
-
-  return [userProfile, isLoading, error];
+  return [profile, isLoading, error];
 };
 
 export default useFetchUserProfile;

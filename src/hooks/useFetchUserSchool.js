@@ -6,7 +6,8 @@ const useFetchUserSchool = user => {
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const loadSchool = async () => {
+    const fetchUserSchool = async () => {
+      console.log("fetchUserSchool...");
       setIsLoading(true);
       user.school
         .get()
@@ -17,8 +18,8 @@ const useFetchUserSchool = user => {
               ref: doc,
               ...data
             });
-            setIsLoading(false);
           }
+          setIsLoading(false);
         })
         .catch(error => {
           console.error({ error });
@@ -28,11 +29,9 @@ const useFetchUserSchool = user => {
     };
 
     if (user) {
-      loadSchool();
+      fetchUserSchool();
     }
   }, [user]);
-
-  console.log({ isLoading, school, error });
 
   return [school, isLoading, error];
 };

@@ -70,7 +70,7 @@ const Login = props => {
             Welcome back!
           </h1>
           <p className="text-gray-600">Log in to your account</p>
-          <hr className="my-12" />
+          <hr className="mt-12 mb-10" />
           {error ? (
             <Alert status="error" mb={12}>
               <AlertIcon />

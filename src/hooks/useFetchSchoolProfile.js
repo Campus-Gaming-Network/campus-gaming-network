@@ -3,11 +3,12 @@ import { firebaseFirestore } from "../firebase";
 
 const useFetchSchoolProfile = id => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [schoolProfile, setSchoolProfile] = React.useState(null);
+  const [profile, setProfile] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const loadSchoolProfile = async () => {
+    const fetchSchoolProfile = async () => {
+      console.log("fetchSchoolProfile...");
       setIsLoading(true);
       firebaseFirestore
         .collection("schools")
@@ -15,12 +16,12 @@ const useFetchSchoolProfile = id => {
         .get()
         .then(doc => {
           if (doc.exists) {
-            setSchoolProfile({
+            setProfile({
               ref: doc,
               ...doc.data()
             });
-            setIsLoading(false);
           }
+          setIsLoading(false);
         })
         .catch(error => {
           console.error({ error });
@@ -30,13 +31,11 @@ const useFetchSchoolProfile = id => {
     };
 
     if (id) {
-      loadSchoolProfile();
+      fetchSchoolProfile();
     }
   }, [id]);
 
-  console.log({ isLoading, schoolProfile, error });
-
-  return [schoolProfile, isLoading, error];
+  return [profile, isLoading, error];
 };
 
 export default useFetchSchoolProfile;

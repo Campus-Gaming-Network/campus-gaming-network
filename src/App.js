@@ -46,15 +46,13 @@ firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 // App
 
 const App = () => {
-  const [authenticatedUser, isAuthenticating, error] = useAuthState(
-    firebaseAuth
-  );
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const isAuthenticated = !!authenticatedUser;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [user, isLoadingUserProfile, userProfileError] = useFetchUserProfile(
+  const [user, isLoadingUserProfile] = useFetchUserProfile(
     authenticatedUser ? authenticatedUser.uid : null
   );
-  const [school, isLoadingSchool, schoolError] = useFetchUserSchool(user);
+  const [school, isLoadingUserSchool] = useFetchUserSchool(user);
 
   function toggleMenu() {
     setIsMenuOpen(!isMenuOpen);
@@ -72,7 +70,21 @@ const App = () => {
   // TODO: Display non-interactive silhouette instead?
   // Staring at a white screen while waiting for these is kind of
   // a bad user experience IMO.
-  if (isAuthenticating || (!isAuthenticating && isLoadingUserProfile)) {
+  const shouldNotRender =
+    isAuthenticating ||
+    ((!isAuthenticating && isLoadingUserProfile) ||
+      (!isAuthenticating && isLoadingUserSchool) ||
+      (!isAuthenticating && !school) ||
+      (!isAuthenticating && !user));
+
+  console.log({
+    shouldNotRender,
+    isAuthenticating,
+    isLoadingUserProfile,
+    isLoadingUserSchool
+  });
+
+  if (shouldNotRender) {
     return null;
   }
 
@@ -134,7 +146,8 @@ const App = () => {
           </ScrollToTop>
         </Router>
       </main>
-      <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
+      {/* TODO: When we have actual content here */}
+      {/* <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
         <Flex
           tag="section"
           itemsCenter
@@ -151,7 +164,7 @@ const App = () => {
             Contact
           </Link>
         </Flex>
-      </footer>
+      </footer> */}
     </ThemeProvider>
   );
 };

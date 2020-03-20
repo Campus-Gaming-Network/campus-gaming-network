@@ -8,37 +8,85 @@ import {
   Text,
   Image,
   List,
-  ListItem
+  ListItem,
+  Spinner
 } from "@chakra-ui/core";
+import Gravatar from "react-gravatar";
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
 import OutsideLink from "../components/OutsideLink";
 import VisuallyHidden from "../components/VisuallyHidden";
-import Avatar from "../components/Avatar";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 import useFetchSchoolProfile from "../hooks/useFetchSchoolProfile";
+import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 
+const CACHED_SCHOOLS = {};
+
 const School = props => {
-  const [events, setEvents] = React.useState([]);
-  // const [users, setUsers] = React.useState([]);
+  const hasCachedSchool = !!CACHED_SCHOOLS[props.id];
+  const shouldFetchSchool =
+    !hasCachedSchool && props.id !== props.school.ref.id;
+  const schoolFetchId = shouldFetchSchool ? props.id : null;
+  const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolProfile(
+    schoolFetchId
+  );
+  const school = hasCachedSchool
+    ? CACHED_SCHOOLS[props.id]
+    : schoolFetchId
+    ? fetchedSchool
+    : props.school;
 
-  let fetchId = null;
-
-  if (props.school && props.school.ref && props.id !== props.school.ref.id) {
-    fetchId = props.id;
+  if (!hasCachedSchool) {
+    CACHED_SCHOOLS[props.id] = { ...school };
   }
 
-  const [
-    fetchedSchool,
-    isLoadingFetchedSchool,
-    fetchedSchoolError
-  ] = useFetchSchoolProfile(fetchId);
+  const hasCachedSchoolEvents = !!CACHED_SCHOOLS[props.id].events;
+  const shouldFetchSchoolEvents = !(
+    hasCachedSchoolEvents && hasCachedSchoolEvents
+  );
+  const eventsSchoolToFetch = shouldFetchSchoolEvents ? props.id : null;
+  const [schoolEvents, isLoadingSchoolEvents] = useFetchSchoolEvents(
+    eventsSchoolToFetch
+  );
 
-  const school = fetchId ? fetchedSchool : props.school;
+  const events = hasCachedSchoolEvents
+    ? CACHED_SCHOOLS[props.id].events
+    : schoolEvents;
 
-  const [users, isLoadingUsers, usersError] = useFetchSchoolUsers(school);
+  const hasCachedSchoolUsers = !!CACHED_SCHOOLS[props.id].users;
+  const shouldFetchSchoolUsers = !(hasCachedSchool && hasCachedSchoolUsers);
+  const usersSchoolToFetch = shouldFetchSchoolUsers ? props.id : null;
+  const [schoolUsers, isLoadingSchoolUsers] = useFetchSchoolUsers(
+    usersSchoolToFetch
+  );
+
+  if (isLoadingFetchedSchool) {
+    return (
+      <Box w="100%" textAlign="center">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="purple.500"
+          size="xl"
+          mt={4}
+        />
+      </Box>
+    );
+  }
+
+  const users = hasCachedSchoolUsers
+    ? CACHED_SCHOOLS[props.id].users
+    : schoolUsers;
+
+  if (schoolUsers) {
+    CACHED_SCHOOLS[props.id] = {
+      ...CACHED_SCHOOLS[props.id],
+      users: [...schoolUsers]
+    };
+  }
 
   if (!school) {
     console.error(`No school found ${props.uri}`);
@@ -129,7 +177,18 @@ const School = props => {
           >
             Upcoming Events
           </Heading>
-          {events && events.length ? (
+          {isLoadingSchoolEvents ? (
+            <Box w="100%" textAlign="center">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="purple.500"
+                size="xl"
+                mt={4}
+              />
+            </Box>
+          ) : events && events.length ? (
             <List>
               {sortedEvents(events).map(event => (
                 <EventListItem key={event.id} event={event} />
@@ -150,7 +209,18 @@ const School = props => {
           >
             Members
           </Heading>
-          {users && users.length ? (
+          {isLoadingSchoolUsers ? (
+            <Box w="100%" textAlign="center">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="purple.500"
+                size="xl"
+                mt={4}
+              />
+            </Box>
+          ) : users && users.length ? (
             <List display="flex" flexWrap="wrap">
               {users.map(user => (
                 <ListItem key={user.id} width="25%">
@@ -168,10 +238,12 @@ const School = props => {
                     p={4}
                     height="calc(100% - 1rem)"
                   >
-                    <Avatar
-                      src={user.picture}
-                      alt={`Avatar for ${user.fullName}`}
-                      rounded
+                    <Gravatar
+                      default={constants.GRAVATAR.DEFAULT}
+                      rating={constants.GRAVATAR.RA}
+                      md5={user.gravatar}
+                      className="rounded-full"
+                      size={60}
                     />
                     <Link
                       to={`../../../user/${user.id}`}
@@ -179,7 +251,8 @@ const School = props => {
                       fontWeight="bold"
                       mt={4}
                     >
-                      {user.fullName}
+                      {user.firstName}
+                      {user.lastName ? ` ${user.lastName}` : ""}
                     </Link>
                   </Box>
                 </ListItem>
