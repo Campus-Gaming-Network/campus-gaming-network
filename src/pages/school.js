@@ -55,6 +55,13 @@ const School = props => {
     ? CACHED_SCHOOLS[props.id].events
     : schoolEvents;
 
+  if (schoolEvents) {
+    CACHED_SCHOOLS[props.id] = {
+      ...CACHED_SCHOOLS[props.id],
+      events: [...schoolEvents]
+    };
+  }
+
   const hasCachedSchoolUsers = !!CACHED_SCHOOLS[props.id].users;
   const shouldFetchSchoolUsers = !(hasCachedSchool && hasCachedSchoolUsers);
   const usersSchoolToFetch = shouldFetchSchoolUsers ? props.id : null;
