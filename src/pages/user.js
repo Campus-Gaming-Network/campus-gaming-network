@@ -30,8 +30,7 @@ const User = props => {
   const shouldFetchUser = !hasCachedUser && props.id !== props.user.ref.id;
   const userFetchId = shouldFetchUser ? props.id : null;
   const [fetchedUser, isLoadingFetchedUser] = useFetchUserProfile(userFetchId);
-  const [events] = useFetchUserEvents(props.id);
-  console.log({ events });
+  const [events, isLoadingFetchedEvents] = useFetchUserEvents(props.id);
 
   const user = hasCachedUser
     ? CACHED_USERS[props.id]
@@ -269,16 +268,27 @@ const User = props => {
           >
             Events Attending
           </Heading>
-          {events && events.length ? (
+          {isLoadingFetchedEvents ? (
+            <Box w="100%" textAlign="center">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="purple.500"
+                size="xl"
+                mt={4}
+              />
+            </Box>
+          ) : events && events.length ? (
             <List>
               {sortedEvents(events).map(event => (
                 <EventListItem key={event.id} event={event} />
               ))}
             </List>
           ) : (
-            <p className="text-gray-500">
+            <Text mt={4} color="gray.500">
               {constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}
-            </p>
+            </Text>
           )}
         </Stack>
       </Stack>

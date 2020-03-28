@@ -11,21 +11,26 @@ import Link from "./Link";
 import TEST_DATA from "../test_data";
 
 const EventListItem = props => {
+  console.log({ props });
   if (!props.event) {
     // TODO: Handle gracefully
     console.log("no event");
     return null;
   }
 
-  const school = TEST_DATA.schools[props.event.schoolId];
+  // const school = TEST_DATA.schools[props.event.schoolId];
 
-  if (!school) {
-    // TODO: Handle gracefully
-    console.log("no school");
-    return null;
-  }
+  // if (!school) {
+  //   // TODO: Handle gracefully
+  //   console.log("no school");
+  //   return null;
+  // }
 
-  const eventResponses = getEventResponses(props.event.index);
+  // const eventResponses = getEventResponses(props.event.index);
+
+  const formattedStartDateTime = moment(
+    props.event.startDateTime.toDate()
+  ).calendar(null, constants.MOMENT_CALENDAR_FORMAT);
 
   return (
     <Box
@@ -44,38 +49,35 @@ const EventListItem = props => {
       <Stack spacing={4}>
         <Box display="flex" alignItems="center">
           <Box pr={2}>
-            <Link
+            {/* <Link
               to={`../../school/${school.id}`}
               className={`${constants.STYLES.LINK.DEFAULT} text-xl leading-none`}
             >
               {school.name}
-            </Link>
+            </Link> */}
             <Link
               to={`../../event/${props.event.id}`}
               className={`${constants.STYLES.LINK.DEFAULT} block font-semibold text-3xl mt-1 leading-none`}
             >
-              {props.event.title}
+              {props.event.name}
             </Link>
           </Box>
-          <Image
+          {/* <Image
             src={school.logo}
             alt={`${school.name} Logo`}
             className="w-auto ml-auto h-16"
-          />
+          /> */}
         </Box>
         <Box display="block">
           <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />
-          <time className="text-lg" dateTime={props.event.startDateTime}>
-            {moment(props.event.startDateTime).calendar(
-              null,
-              constants.MOMENT_CALENDAR_FORMAT
-            )}
+          <time className="text-lg" dateTime={formattedStartDateTime}>
+            {formattedStartDateTime}
           </time>
         </Box>
         <Text fontSize="lg">
           {truncate(props.event.description, { length: 250 })}
         </Text>
-        {eventResponses.length ? (
+        {props.event.responsesCount ? (
           <Badge
             variantColor="gray"
             variant="subtle"
@@ -86,7 +88,7 @@ const EventListItem = props => {
           >
             <Box display="flex" alignItems="center">
               <FontAwesomeIcon icon={faUserFriends} className="mr-2" />
-              <Text>{eventResponses.length} Going</Text>
+              <Text>{props.event.responsesCount} Going</Text>
             </Box>
           </Badge>
         ) : null}

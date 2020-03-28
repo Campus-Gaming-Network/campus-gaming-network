@@ -17,7 +17,7 @@
     "aws-amplify": "^2.2.1",
     "axios": "^0.19.2",
     "emotion-theming": "^10.0.27",
-    "firebase": "^7.9.1",
+    "firebase": "^7.13.1",
     "husky": "^3.0.5",
     "lint-staged": "^9.2.5",
     "lodash.capitalize": "^4.2.1",

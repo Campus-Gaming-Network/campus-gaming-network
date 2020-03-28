@@ -18,36 +18,32 @@ const useFetchUserEvents = (id, limit = 25) => {
         .get()
         .then(snapshot => {
           if (!snapshot.empty) {
-            let userEventResponses = [];
-            let userEventResponsesIds = [];
+            let eventIds = [];
             snapshot.forEach(doc => {
               const data = doc.data();
-              console.log({ data });
-              userEventResponses.push(doc);
-              userEventResponsesIds.push(doc.id);
+              eventIds.push(data.event.id);
             });
-            console.log({ userEventResponses });
-            console.log({ userEventResponsesIds });
-            // firebaseFirestore.getAll(...userEventResponses).then(docs => {
-            //   console.log({ docs })
-            // });
             firebaseFirestore
               .collection("events")
-              .where(
-                firebaseFirestore.FieldPath.documentId(),
-                "in",
-                userEventResponsesIds
-              )
+              .where("id", "in", eventIds)
               .get()
               .then(snapshot => {
-                console.log({ snapshot });
+                if (!snapshot.empty) {
+                  let userEvents = [];
+                  snapshot.forEach(doc => {
+                    const data = doc.data();
+                    userEvents.push(data);
+                  });
+                  setEvents(userEvents);
+                }
+                setIsLoading(false);
               })
               .catch(error => {
                 console.error({ error });
+                setError(error);
+                setIsLoading(false);
               });
-            // setEvents(userEvents);
           }
-          setIsLoading(false);
         })
         .catch(error => {
           console.error({ error });
