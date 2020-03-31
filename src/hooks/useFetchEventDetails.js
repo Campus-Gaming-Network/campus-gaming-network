@@ -1,24 +1,27 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
 
-const useFetchSchoolProfile = id => {
+const useFetchEventDetails = id => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [profile, setProfile] = React.useState(null);
+  const [event, setEvent] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const fetchSchoolProfile = async () => {
-      console.log("fetchSchoolProfile...");
+    const fetchEventDetails = async () => {
+      console.log("fetchEventDetails...");
       setIsLoading(true);
       firebaseFirestore
-        .collection("schools")
+        .collection("events")
         .doc(id)
         .get()
         .then(doc => {
+          console.log({ doc });
           if (doc.exists) {
-            setProfile({
+            const data = doc.data();
+
+            setEvent({
               ref: doc,
-              ...doc.data()
+              ...data
             });
             setIsLoading(false);
           } else {
@@ -33,11 +36,11 @@ const useFetchSchoolProfile = id => {
     };
 
     if (id) {
-      fetchSchoolProfile();
+      fetchEventDetails();
     }
   }, [id]);
 
-  return [profile, isLoading, error];
+  return [event, isLoading, error];
 };
 
-export default useFetchSchoolProfile;
+export default useFetchEventDetails;

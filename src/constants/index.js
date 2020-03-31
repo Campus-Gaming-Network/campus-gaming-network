@@ -107,6 +107,9 @@ export const USER_EMPTY_UPCOMING_EVENTS_TEXT =
 export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
   "This school currently has no upcoming events.";
 
+export const EVENT_EMPTY_USERS_TEXT =
+  "This event currently has no attending users.";
+
 export const ACCOUNTS = {
   website: {
     label: "Website",

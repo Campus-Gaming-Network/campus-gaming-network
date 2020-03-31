@@ -49,12 +49,12 @@ const EventListItem = props => {
       <Stack spacing={4}>
         <Box display="flex" alignItems="center">
           <Box pr={2}>
-            {/* <Link
-              to={`../../school/${school.id}`}
+            <Link
+              to={`../../school/${props.event.school.id}`}
               className={`${constants.STYLES.LINK.DEFAULT} text-xl leading-none`}
             >
-              {school.name}
-            </Link> */}
+              {props.event.school.id}
+            </Link>
             <Link
               to={`../../event/${props.event.id}`}
               className={`${constants.STYLES.LINK.DEFAULT} block font-semibold text-3xl mt-1 leading-none`}

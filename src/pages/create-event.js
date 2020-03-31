@@ -24,6 +24,7 @@ import Avatar from "../components/Avatar";
 import { firebase, firebaseFirestore } from "../firebase";
 
 const CreateEvent = props => {
+  console.log({ props });
   const [fields, handleFieldChange] = useFormFields({
     name: "",
     description: "",
@@ -34,6 +35,22 @@ const CreateEvent = props => {
   const [endDateTime, setEndDateTime] = React.useState(new Date());
   const [placeId, setPlaceId] = React.useState("");
   const [isOnlineEvent, setIsOnlineEvent] = React.useState(false);
+  const [schools, setSchools] = React.useState([]);
+
+  // TODO: Impractical, we should use Algolia or ElasticSearch to query these
+  React.useEffect(() => {
+    const loadSchools = async () => {
+      firebaseFirestore
+        .collection("schools")
+        .get()
+        .then(snapshot => {
+          setSchools(snapshot.docs);
+        });
+    };
+
+    loadSchools();
+  }, []);
+
   // TODO: Tournament feature
   // const [isTournament, setIsTournament] = React.useState("no");
 
@@ -93,10 +110,20 @@ const CreateEvent = props => {
         isOnlineEvent,
         startDateTime: firebase.firestore.Timestamp.fromDate(startDateTime),
         endDateTime: firebase.firestore.Timestamp.fromDate(endDateTime),
-        placeId
+        placeId,
+        school: schools.find(school => school.id === props.user.school.id).ref
       })
       .then(docRef => {
         console.log("Document written with ID: ", docRef.id);
+        firebaseFirestore
+          .collection("events")
+          .doc(docRef.id)
+          .update({ id: docRef.id });
+        firebaseFirestore.collection("event-responses").add({
+          user: firebaseFirestore.doc(`user/${props.user.ref.id}`),
+          event: docRef,
+          response: "YES"
+        });
       })
       .catch(error => {
         console.error("Error adding document: ", error);

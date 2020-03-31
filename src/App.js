@@ -19,7 +19,8 @@ import Home from "./pages";
 import School from "./pages/school";
 import Signup from "./pages/signup";
 import Login from "./pages/login";
-import ForgotPassword from "./pages/forgot-password";
+// TODO: Reimplement with firebase
+// import ForgotPassword from "./pages/forgot-password";
 import User from "./pages/user";
 import Event from "./pages/event";
 import EditUser from "./pages/edit-user";
@@ -35,7 +36,7 @@ import ScrollToTop from "./components/ScrollToTop";
 
 // Hooks
 import useFetchUserSchool from "./hooks/useFetchUserSchool";
-import useFetchUserProfile from "./hooks/useFetchUserProfile";
+import useFetchUserDetails from "./hooks/useFetchUserDetails";
 
 moment.locale("en");
 momentLocalizer();
@@ -49,7 +50,7 @@ const App = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const isAuthenticated = !!authenticatedUser;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [user, isLoadingUserProfile] = useFetchUserProfile(
+  const [user, isLoadingUserDetails] = useFetchUserDetails(
     authenticatedUser ? authenticatedUser.uid : null
   );
   const [school, isLoadingUserSchool] = useFetchUserSchool(user);
@@ -72,17 +73,10 @@ const App = () => {
   // a bad user experience IMO.
   const shouldNotRender =
     isAuthenticating ||
-    ((!isAuthenticating && isLoadingUserProfile) ||
+    ((!isAuthenticating && isLoadingUserDetails) ||
       (!isAuthenticating && isLoadingUserSchool) ||
       (!isAuthenticating && !school) ||
       (!isAuthenticating && !user));
-
-  console.log({
-    shouldNotRender,
-    isAuthenticating,
-    isLoadingUserProfile,
-    isLoadingUserSchool
-  });
 
   if (shouldNotRender) {
     return null;
@@ -140,7 +134,7 @@ const App = () => {
             <Event path="event/:id" {...appProps} />
             <Signup path="register" {...appProps} />
             <Login path="login" {...appProps} />
-            {/* TODO: Reimplment with firebase */}
+            {/* TODO: Reimplement  with firebase */}
             {/* <ForgotPassword path="forgot-password" {...appProps} /> */}
             <NotFound default />
           </ScrollToTop>

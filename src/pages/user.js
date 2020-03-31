@@ -16,11 +16,15 @@ import {
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
+
+// Components
 import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 import Flex from "../components/Flex";
-import useFetchUserProfile from "../hooks/useFetchUserProfile";
+
+// Hooks
+import useFetchUserDetails from "../hooks/useFetchUserDetails";
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
 const CACHED_USERS = {};
@@ -29,7 +33,7 @@ const User = props => {
   const hasCachedUser = !!CACHED_USERS[props.id];
   const shouldFetchUser = !hasCachedUser && props.id !== props.user.ref.id;
   const userFetchId = shouldFetchUser ? props.id : null;
-  const [fetchedUser, isLoadingFetchedUser] = useFetchUserProfile(userFetchId);
+  const [fetchedUser, isLoadingFetchedUser] = useFetchUserDetails(userFetchId);
   const [events, isLoadingFetchedEvents] = useFetchUserEvents(props.id);
 
   const user = hasCachedUser
@@ -200,9 +204,7 @@ const User = props => {
               })}
             </Box>
           ) : (
-            <Text className="text-gray-500">
-              {constants.USER_EMPTY_ACCOUNTS_TEXT}
-            </Text>
+            <Text color="gray.400">{constants.USER_EMPTY_ACCOUNTS_TEXT}</Text>
           )}
         </Stack>
         <Stack as="section" spacing={4}>
@@ -227,9 +229,9 @@ const User = props => {
               ))}
             </List>
           ) : (
-            <p className="text-gray-500">
+            <Text color="gray.400">
               {constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
-            </p>
+            </Text>
           )}
         </Stack>
         <Stack as="section" spacing={4}>
@@ -254,9 +256,9 @@ const User = props => {
               ))}
             </List>
           ) : (
-            <p className="text-gray-500">
+            <Text color="gray.400">
               {constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
-            </p>
+            </Text>
           )}
         </Stack>
         <Stack as="section" spacing={4}>
@@ -286,7 +288,7 @@ const User = props => {
               ))}
             </List>
           ) : (
-            <Text mt={4} color="gray.500">
+            <Text color="gray.400">
               {constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}
             </Text>
           )}

@@ -1,14 +1,14 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
 
-const useFetchUserProfile = id => {
+const useFetchUserDetails = id => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [profile, setProfile] = React.useState(null);
+  const [user, setUser] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const fetchUserProfile = async () => {
-      console.log("fetchUserProfile...");
+    const fetchUserDetails = async () => {
+      console.log("fetchUserDetails...");
       setIsLoading(true);
       firebaseFirestore
         .collection("users")
@@ -22,7 +22,7 @@ const useFetchUserProfile = id => {
             const hasCurrentlyPlaying =
               data.currentlyPlaying && data.currentlyPlaying.length;
 
-            setProfile({
+            setUser({
               ref: doc,
               ...data,
               ...{
@@ -30,8 +30,10 @@ const useFetchUserProfile = id => {
                 hasCurrentlyPlaying
               }
             });
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
           }
-          setIsLoading(false);
         })
         .catch(error => {
           console.error({ error });
@@ -41,11 +43,11 @@ const useFetchUserProfile = id => {
     };
 
     if (id) {
-      fetchUserProfile();
+      fetchUserDetails();
     }
   }, [id]);
 
-  return [profile, isLoading, error];
+  return [user, isLoading, error];
 };
 
-export default useFetchUserProfile;
+export default useFetchUserDetails;

@@ -1,40 +1,40 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
 
-const useFetchUserEvents = (id, limit = 10) => {
+const useFetchEventUsers = (id, limit = 10) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [events, setEvents] = React.useState(null);
+  const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const fetchUserEvents = async () => {
-      console.log("fetchUserEvents...");
+    const fetchEventUsers = async () => {
+      console.log("fetchEventUsers...");
       setIsLoading(true);
-      const userDocRef = firebaseFirestore.collection("users").doc(id);
+      const eventDocRef = firebaseFirestore.collection("events").doc(id);
       firebaseFirestore
         .collection("event-responses")
-        .where("user", "==", userDocRef)
+        .where("event", "==", eventDocRef)
         .limit(limit)
         .get()
         .then(snapshot => {
           if (!snapshot.empty) {
-            let eventIds = [];
+            let userIds = [];
             snapshot.forEach(doc => {
               const data = doc.data();
-              eventIds.push(data.event.id);
+              userIds.push(data.user.id);
             });
             firebaseFirestore
-              .collection("events")
-              .where("id", "in", eventIds)
+              .collection("users")
+              .where("id", "in", userIds)
               .get()
               .then(snapshot => {
                 if (!snapshot.empty) {
-                  let userEvents = [];
+                  let eventUsers = [];
                   snapshot.forEach(doc => {
                     const data = doc.data();
-                    userEvents.push(data);
+                    eventUsers.push(data);
                   });
-                  setEvents(userEvents);
+                  setUsers(eventUsers);
                   setIsLoading(false);
                 } else {
                   setIsLoading(false);
@@ -45,6 +45,7 @@ const useFetchUserEvents = (id, limit = 10) => {
                 setError(error);
                 setIsLoading(false);
               });
+            setIsLoading(false);
           } else {
             setIsLoading(false);
           }
@@ -57,11 +58,11 @@ const useFetchUserEvents = (id, limit = 10) => {
     };
 
     if (id) {
-      fetchUserEvents();
+      fetchEventUsers();
     }
   }, [id, limit]);
 
-  return [events, isLoading, error];
+  return [users, isLoading, error];
 };
 
-export default useFetchUserEvents;
+export default useFetchEventUsers;

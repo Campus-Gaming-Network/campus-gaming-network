@@ -43,9 +43,7 @@ const School = props => {
   }
 
   const hasCachedSchoolEvents = !!CACHED_SCHOOLS[props.id].events;
-  const shouldFetchSchoolEvents = !(
-    hasCachedSchoolEvents && hasCachedSchoolEvents
-  );
+  const shouldFetchSchoolEvents = !hasCachedSchoolEvents;
   const eventsSchoolToFetch = shouldFetchSchoolEvents ? props.id : null;
   const [schoolEvents, isLoadingSchoolEvents] = useFetchSchoolEvents(
     eventsSchoolToFetch

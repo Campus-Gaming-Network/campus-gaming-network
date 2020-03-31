@@ -18,8 +18,10 @@ const useFetchUserSchool = user => {
               ref: doc,
               ...data
             });
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
           }
-          setIsLoading(false);
         })
         .catch(error => {
           console.error({ error });
