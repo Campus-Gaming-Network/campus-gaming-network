@@ -1,7 +1,7 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
 
-const useFetchSchoolUsers = (id, limit = 10) => {
+const useFetchSchoolUsers = (id, limit = 25) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);

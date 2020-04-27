@@ -4,9 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import Gravatar from "react-gravatar";
-import maxBy from "lodash.maxby";
 // TODO: Replace moment with something smaller
-import moment from "moment";
 import {
   Stack,
   Box,
@@ -25,7 +23,6 @@ import {
   ListItem,
   Spinner
 } from "@chakra-ui/core";
-import TEST_DATA from "../test_data";
 import * as constants from "../constants";
 
 // Components
@@ -38,43 +35,47 @@ import Flex from "../components/Flex";
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
 import useFetchEventUsers from "../hooks/useFetchEventUsers";
 
-const CACHED_EVENTS = {};
+// const CACHED_EVENTS = {};
 
 const Event = props => {
-  const hasCachedEvent = !!CACHED_EVENTS[props.id];
-  const shouldFetchEvent = !hasCachedEvent;
-  const eventFetchId = shouldFetchEvent ? props.id : null;
-  const [fetchedEvent, isLoadingFetchedEvent] = useFetchEventDetails(
-    eventFetchId
-  );
+  // const hasCachedEvent = !!CACHED_EVENTS[props.id];
+  // const shouldFetchEvent = !hasCachedEvent;
+  // const eventFetchId = shouldFetchEvent ? props.id : null;
+  const [event, isLoadingFetchedEvent] = useFetchEventDetails(props.id);
 
-  const event = hasCachedEvent
-    ? CACHED_EVENTS[props.id]
-    : eventFetchId
-    ? fetchedEvent
-    : null;
+  // const event = hasCachedEvent
+  //   ? CACHED_EVENTS[props.id]
+  //   : eventFetchId
+  //   ? fetchedEvent
+  //   : null;
 
-  if (!hasCachedEvent) {
-    CACHED_EVENTS[props.id] = { ...event };
-  }
+  // if (!hasCachedEvent) {
+  //   CACHED_EVENTS[props.id] = {
+  //     event: null,
+  //     users: null,
+  //   };
+  //   if (event) {
+  //     CACHED_EVENTS[props.id] = {...event};
+  //   }
+  // }
 
-  const hasCachedEventUsers = !!CACHED_EVENTS[props.id].users;
-  const shouldFetchEventUsers = !hasCachedEventUsers;
-  const usersEventToFetch = shouldFetchEventUsers ? props.id : null;
-  const [eventUsers, isLoadingEventUsers] = useFetchEventUsers(
-    usersEventToFetch
-  );
+  // console.log(CACHED_EVENTS)
 
-  const users = hasCachedEventUsers
-    ? CACHED_EVENTS[props.id].users
-    : eventUsers;
+  // const hasCachedEventUsers = !!CACHED_EVENTS[props.id].users;
+  // const shouldFetchEventUsers = !hasCachedEventUsers;
+  // const usersEventToFetch = shouldFetchEventUsers ? props.id : null;
+  const [users, isLoadingEventUsers] = useFetchEventUsers(props.id);
 
-  if (eventUsers) {
-    CACHED_EVENTS[props.id] = {
-      ...CACHED_EVENTS[props.id],
-      users: [...eventUsers]
-    };
-  }
+  // const users = hasCachedEventUsers
+  //   ? CACHED_EVENTS[props.id].users
+  //   : eventUsers;
+
+  // if (eventUsers) {
+  //   CACHED_EVENTS[props.id] = {
+  //     ...CACHED_EVENTS[props.id],
+  //     users: [...eventUsers]
+  //   };
+  // }
 
   // const [isCancellationAlertOpen, setCancellationAlertIsOpen] = React.useState(
   //   false
@@ -85,7 +86,9 @@ const Event = props => {
   // const cancelRef = React.useRef();
   // const attendRef = React.useRef();
 
-  if (isLoadingFetchedEvent || !event) {
+  // console.log((isLoadingFetchedEvent || (shouldFetchEvent && !event)), event && event.id)
+
+  if (isLoadingFetchedEvent) {
     return (
       <Box w="100%" textAlign="center">
         <Spinner
@@ -100,54 +103,22 @@ const Event = props => {
     );
   }
 
-  // if (!event) {
-  //   console.error(`No event found ${props.uri}`);
-  //   return <Redirect to="not-found" noThrow />;
-  // }
-
-  // const school = TEST_DATA.schools[event.schoolId];
+  if (!event) {
+    console.error(`No event found ${props.uri}`);
+    return <Redirect to="not-found" noThrow />;
+  }
 
   // if (!school) {
   //   console.error(`No school found ${props.uri}`);
   //   return <Redirect to="not-found" noThrow />;
   // }
 
-  // const eventResponses = getEventResponses(event.index);
-
-  // const eventGoers = getEventGoers(eventResponses);
-
-  // const hasResponded = TEST_DATA.event_responses.some(
-  //   eventResponse =>
-  //     eventResponse.userId === constants.TEST_USER.index &&
-  //     eventResponse.id === event.id
-  // );
   const hasResponded = false;
-  const eventResponses = [];
-  const eventGoers = [];
 
   // function handleAttendSubmit(e) {
   //   e.preventDefault();
 
   //   setAttendingAlertOpen(true);
-
-  //   if (!hasResponded) {
-  //     const maxIndex = maxBy(TEST_DATA.event_responses, "index").index;
-
-  //     TEST_DATA.event_responses = [
-  //       ...TEST_DATA.event_responses,
-  //       [
-  //         {
-  //           id: Math.random(),
-  //           index: maxIndex + 1,
-  //           createdAt: Date.now(),
-  //           updatedAt: Date.now(),
-  //           eventId: event.index,
-  //           userId: constants.TEST_USER.index,
-  //           response: "YES"
-  //         }
-  //       ]
-  //     ];
-  //   }
   // }
 
   // function handleCancelSubmit(e) {
@@ -162,15 +133,6 @@ const Event = props => {
   //   console.log("Cancelled");
   // }
   // }
-
-  // const formattedStartDateTime = moment(
-  //   event.startDateTime.toDate()
-  // ).calendar(null, constants.MOMENT_CALENDAR_FORMAT);
-  // const formattedEndDateTime = moment(
-  //   event.endDateTime.toDate()
-  // ).calendar(null, constants.MOMENT_CALENDAR_FORMAT);
-
-  // console.log(TEST_DATA);
 
   return (
     <React.Fragment>
@@ -200,13 +162,13 @@ const Event = props => {
                 icon={faClock}
                 className="text-gray-700 mr-2 text-lg"
               />
-              {/* <time dateTime={formattedEndDateTime}>
-                {formattedStartDateTime}
+              <time dateTime={event.formattedStartDateTime}>
+                {event.formattedStartDateTime}
               </time>{" "}
               to{" "}
-              <time dateTime={formattedEndDateTime}>
-                {formattedEndDateTime}
-              </time> */}
+              <time dateTime={event.formattedEndDateTime}>
+                {event.formattedEndDateTime}
+              </time>
             </Box>
             <Box>
               {event.isOnlineEvent ? (
@@ -220,11 +182,7 @@ const Event = props => {
                     icon={faMapMarkerAlt}
                     className="text-gray-700 mr-2 text-lg"
                   />
-                  <OutsideLink
-                    href={`${
-                      constants.GOOGLE_MAPS_QUERY_URL
-                    }${encodeURIComponent(event.location)}`}
-                  >
+                  <OutsideLink href={event.googleMapsAddressLink}>
                     {event.location}
                   </OutsideLink>
                 </React.Fragment>
@@ -234,7 +192,7 @@ const Event = props => {
                     icon={faMapMarkerAlt}
                     className="text-gray-700 mr-2 text-lg"
                   />
-                  <Text>To be determined</Text>
+                  <Text>{constants.EVENT_EMPTY_LOCATION_TEXT}</Text>
                 </React.Fragment>
               )}
             </Box>
@@ -336,8 +294,7 @@ const Event = props => {
                         fontWeight="bold"
                         mt={4}
                       >
-                        {user.firstName}
-                        {user.lastName ? ` ${user.lastName}` : ""}
+                        {user.fullName}
                       </Link>
                     </Box>
                   </ListItem>

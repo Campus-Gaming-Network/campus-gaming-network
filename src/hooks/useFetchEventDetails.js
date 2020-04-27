@@ -1,37 +1,38 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
+import { mapEvent } from "../utilities";
+
+const initialState = {
+  loading: true,
+  error: null,
+  data: null
+};
 
 const useFetchEventDetails = id => {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [event, setEvent] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [state, setState] = React.useState({ ...initialState });
 
   React.useEffect(() => {
     const fetchEventDetails = async () => {
       console.log("fetchEventDetails...");
-      setIsLoading(true);
+      setState({ ...initialState });
       firebaseFirestore
         .collection("events")
         .doc(id)
         .get()
         .then(doc => {
-          console.log({ doc });
           if (doc.exists) {
-            const data = doc.data();
-
-            setEvent({
-              ref: doc,
-              ...data
+            setState({
+              ...initialState,
+              loading: false,
+              data: mapEvent(doc.data(), doc)
             });
-            setIsLoading(false);
           } else {
-            setIsLoading(false);
+            setState({ ...initialState, loading: false });
           }
         })
         .catch(error => {
           console.error({ error });
-          setError(error);
-          setIsLoading(false);
+          setState({ ...initialState, loading: false, error });
         });
     };
 
@@ -40,7 +41,7 @@ const useFetchEventDetails = id => {
     }
   }, [id]);
 
-  return [event, isLoading, error];
+  return [state.data, state.loading, state.error];
 };
 
 export default useFetchEventDetails;

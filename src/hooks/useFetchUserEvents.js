@@ -1,7 +1,8 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
+import { mapEvent } from "../utilities";
 
-const useFetchUserEvents = (id, limit = 10) => {
+const useFetchUserEvents = (id, limit = 25) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -18,33 +19,18 @@ const useFetchUserEvents = (id, limit = 10) => {
         .get()
         .then(snapshot => {
           if (!snapshot.empty) {
-            let eventIds = [];
+            let userEvents = [];
             snapshot.forEach(doc => {
               const data = doc.data();
-              eventIds.push(data.event.id);
+              userEvents.push(
+                mapEvent({
+                  id: data.event.id,
+                  ...data.eventDetails
+                })
+              );
             });
-            firebaseFirestore
-              .collection("events")
-              .where("id", "in", eventIds)
-              .get()
-              .then(snapshot => {
-                if (!snapshot.empty) {
-                  let userEvents = [];
-                  snapshot.forEach(doc => {
-                    const data = doc.data();
-                    userEvents.push(data);
-                  });
-                  setEvents(userEvents);
-                  setIsLoading(false);
-                } else {
-                  setIsLoading(false);
-                }
-              })
-              .catch(error => {
-                console.error({ error });
-                setError(error);
-                setIsLoading(false);
-              });
+            setEvents(userEvents);
+            setIsLoading(false);
           } else {
             setIsLoading(false);
           }

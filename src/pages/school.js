@@ -18,7 +18,7 @@ import OutsideLink from "../components/OutsideLink";
 import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
-import useFetchSchoolProfile from "../hooks/useFetchSchoolProfile";
+import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 
@@ -29,7 +29,7 @@ const School = props => {
   const shouldFetchSchool =
     !hasCachedSchool && props.id !== props.school.ref.id;
   const schoolFetchId = shouldFetchSchool ? props.id : null;
-  const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolProfile(
+  const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
     schoolFetchId
   );
   const school = hasCachedSchool
@@ -160,11 +160,7 @@ const School = props => {
             <dt className="w-1/2 font-bold">Address</dt>
             {school.address ? (
               <dd className="w-1/2">
-                <OutsideLink
-                  href={`${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(
-                    school.address
-                  )}`}
-                >
+                <OutsideLink href={school.googleMapsAddressLink}>
                   {startCase(school.address.toLowerCase())}
                 </OutsideLink>
               </dd>
@@ -256,8 +252,7 @@ const School = props => {
                       fontWeight="bold"
                       mt={4}
                     >
-                      {user.firstName}
-                      {user.lastName ? ` ${user.lastName}` : ""}
+                      {user.fullName}
                     </Link>
                   </Box>
                 </ListItem>

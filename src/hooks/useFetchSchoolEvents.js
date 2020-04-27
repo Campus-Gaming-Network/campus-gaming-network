@@ -1,7 +1,8 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
+import { mapEvent } from "../utilities";
 
-const useFetchSchoolEvents = (id, limit = 10) => {
+const useFetchSchoolEvents = (id, limit = 25) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -21,10 +22,15 @@ const useFetchSchoolEvents = (id, limit = 10) => {
             let schoolEvents = [];
             snapshot.forEach(doc => {
               const data = doc.data();
-              schoolEvents.push({
-                id: doc.id,
-                ...data
-              });
+              schoolEvents.push(
+                mapEvent(
+                  {
+                    id: doc.id,
+                    ...data
+                  },
+                  doc
+                )
+              );
             });
             setEvents(schoolEvents);
             setIsLoading(false);

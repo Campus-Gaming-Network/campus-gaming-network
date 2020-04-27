@@ -10,7 +10,6 @@ import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 import momentLocalizer from "react-widgets-moment";
 import "react-widgets/dist/css/react-widgets.css";
 import "./App.css";
-import * as constants from "./constants";
 import { firebase, firebaseAuth } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -73,10 +72,10 @@ const App = () => {
   // a bad user experience IMO.
   const shouldNotRender =
     isAuthenticating ||
-    ((!isAuthenticating && isLoadingUserDetails) ||
+    (!isAuthenticating && isLoadingUserDetails) ||
       (!isAuthenticating && isLoadingUserSchool) ||
       (!isAuthenticating && !school) ||
-      (!isAuthenticating && !user));
+      (!isAuthenticating && !user);
 
   if (shouldNotRender) {
     return null;
@@ -89,8 +88,7 @@ const App = () => {
     school,
     handleLogout,
     isMenuOpen,
-    setIsMenuOpen,
-    CURRENT_USER: constants.CURRENT_USER
+    setIsMenuOpen
   };
 
   return (

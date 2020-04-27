@@ -35,8 +35,6 @@ const EditSchool = props => {
   //   return <Redirect to="/" noThrow />;
   // }
 
-  // const user = TEST_DATA.users.find(user => user.id === props.id);
-
   // if (!user) {
   //   // TODO: Handle gracefully
   //   console.log("no user");

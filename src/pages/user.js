@@ -2,7 +2,6 @@ import React from "react";
 import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import capitalize from "lodash.capitalize";
 import startCase from "lodash.startcase";
 import Gravatar from "react-gravatar";
 import {
@@ -85,8 +84,7 @@ const User = props => {
             display="flex"
             alignItems="center"
           >
-            {user.firstName}
-            {user.lastName ? ` ${user.lastName}` : ""}
+            {user.fullName}
           </Heading>
           <Heading
             as="h2"
@@ -102,13 +100,7 @@ const User = props => {
                 <FontAwesomeIcon className="mr-1 text-blue-600" icon={faStar} />
               </Text>
             )}
-            {`${
-              user.status === "ALUMNI"
-                ? "Alumni of "
-                : user.status === "GRAD"
-                ? "Graduate Student at "
-                : `${capitalize(user.status)} at `
-            }`}
+            {user.displayStatus}
             {props.school ? (
               <Link
                 to={`/school/${props.school.ref.id}`}
@@ -164,7 +156,7 @@ const User = props => {
           >
             Accounts
           </Heading>
-          {Object.keys(constants.ACCOUNTS).length ? (
+          {user.hasAccounts ? (
             <Box display="flex" as="ul" flexWrap="wrap" width="100%">
               {Object.keys(constants.ACCOUNTS).map(key => {
                 const account = constants.ACCOUNTS[key];

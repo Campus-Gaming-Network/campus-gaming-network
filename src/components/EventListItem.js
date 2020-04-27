@@ -3,12 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { Stack, Box, Text, Image, Badge } from "@chakra-ui/core";
-import moment from "moment";
 import truncate from "lodash.truncate";
 import * as constants from "../constants";
-import { getEventResponses } from "../utilities";
 import Link from "./Link";
-import TEST_DATA from "../test_data";
 
 const EventListItem = props => {
   console.log({ props });
@@ -18,19 +15,11 @@ const EventListItem = props => {
     return null;
   }
 
-  // const school = TEST_DATA.schools[props.event.schoolId];
-
   // if (!school) {
   //   // TODO: Handle gracefully
   //   console.log("no school");
   //   return null;
   // }
-
-  // const eventResponses = getEventResponses(props.event.index);
-
-  const formattedStartDateTime = moment(
-    props.event.startDateTime.toDate()
-  ).calendar(null, constants.MOMENT_CALENDAR_FORMAT);
 
   return (
     <Box
@@ -70,8 +59,11 @@ const EventListItem = props => {
         </Box>
         <Box display="block">
           <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />
-          <time className="text-lg" dateTime={formattedStartDateTime}>
-            {formattedStartDateTime}
+          <time
+            className="text-lg"
+            dateTime={props.event.formattedStartDateTime}
+          >
+            {props.event.formattedStartDateTime}
           </time>
         </Box>
         <Text fontSize="lg">

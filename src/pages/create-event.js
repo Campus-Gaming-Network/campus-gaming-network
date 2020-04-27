@@ -1,4 +1,5 @@
 import React from "react";
+import { navigate } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -13,7 +14,8 @@ import {
   Text,
   FormErrorMessage,
   Spinner,
-  Checkbox
+  Checkbox,
+  useToast
 } from "@chakra-ui/core";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
@@ -24,18 +26,19 @@ import Avatar from "../components/Avatar";
 import { firebase, firebaseFirestore } from "../firebase";
 
 const CreateEvent = props => {
-  console.log({ props });
   const [fields, handleFieldChange] = useFormFields({
     name: "",
     description: "",
     eventHost: null
   });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [locationSearch, setLocationSearch] = React.useState("");
   const [startDateTime, setStartDateTime] = React.useState(new Date());
   const [endDateTime, setEndDateTime] = React.useState(new Date());
   const [placeId, setPlaceId] = React.useState("");
   const [isOnlineEvent, setIsOnlineEvent] = React.useState(false);
   const [schools, setSchools] = React.useState([]);
+  const toast = useToast();
 
   // TODO: Impractical, we should use Algolia or ElasticSearch to query these
   React.useEffect(() => {
@@ -58,8 +61,6 @@ const CreateEvent = props => {
   //   return <Redirect to="/" noThrow />;
   // }
 
-  // const user = TEST_DATA.users.find(user => user.id === props.id);
-
   // if (!user) {
   //   // TODO: Handle gracefully
   //   console.log("no user");
@@ -78,6 +79,8 @@ const CreateEvent = props => {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    setIsSubmitting(true);
+
     // Double check the address for a geocode if they blur or something
     // Probably want to save the address and lat/long
     // If we save the placeId, it may be easier to render the map for that place
@@ -89,18 +92,16 @@ const CreateEvent = props => {
         console.error({ error });
       });
 
-    const data = {
-      ...fields,
-      ...{
-        startDateTime,
-        endDateTime,
-        locationSearch,
-        placeId,
-        isOnlineEvent
-      }
-    };
+    const firestoreStartDateTime = firebase.firestore.Timestamp.fromDate(
+      startDateTime
+    );
+    const firestoreEndDateTime = firebase.firestore.Timestamp.fromDate(
+      endDateTime
+    );
+    const schoolRef = schools.find(school => school.id === props.user.school.id)
+      .ref;
 
-    console.log(data);
+    let eventId;
 
     firebaseFirestore
       .collection("events")
@@ -108,25 +109,65 @@ const CreateEvent = props => {
         name: fields.name,
         description: fields.description,
         isOnlineEvent,
-        startDateTime: firebase.firestore.Timestamp.fromDate(startDateTime),
-        endDateTime: firebase.firestore.Timestamp.fromDate(endDateTime),
+        startDateTime: firestoreStartDateTime,
+        endDateTime: firestoreEndDateTime,
         placeId,
-        school: schools.find(school => school.id === props.user.school.id).ref
+        school: schoolRef
       })
       .then(docRef => {
-        console.log("Document written with ID: ", docRef.id);
+        eventId = docRef.id;
+
         firebaseFirestore
           .collection("events")
-          .doc(docRef.id)
-          .update({ id: docRef.id });
-        firebaseFirestore.collection("event-responses").add({
-          user: firebaseFirestore.doc(`user/${props.user.ref.id}`),
-          event: docRef,
-          response: "YES"
-        });
+          .doc(eventId)
+          .update({ id: eventId })
+          .catch(() => {
+            setIsSubmitting(false);
+          });
+
+        firebaseFirestore
+          .collection("event-responses")
+          .add({
+            user: firebaseFirestore.doc(`user/${props.user.ref.id}`),
+            event: docRef,
+            response: "YES",
+            userDetails: {
+              firstName: props.user.firstName,
+              lastName: props.user.lastName,
+              gravatar: props.user.gravatar
+            },
+            eventDetails: {
+              name: fields.name,
+              description: fields.description,
+              startDateTime: firestoreStartDateTime,
+              endDateTime: firestoreEndDateTime,
+              school: schoolRef
+            }
+          })
+          .then(() => {
+            toast({
+              title: "Event created.",
+              description:
+                "Your event has been created. You will be redirected...",
+              status: "success",
+              isClosable: true
+            });
+            setTimeout(() => {
+              navigate(`/event/${eventId}`);
+            }, 2000);
+          })
+          .catch(() => {
+            setIsSubmitting(false);
+          });
       })
       .catch(error => {
-        console.error("Error adding document: ", error);
+        setIsSubmitting(false);
+        toast({
+          title: "An error occurred.",
+          description: error,
+          status: "error",
+          isClosable: true
+        });
       });
   }
 
@@ -348,8 +389,9 @@ const CreateEvent = props => {
           size="lg"
           w="full"
           mt={-12}
+          disabled={isSubmitting}
         >
-          Create Event
+          {isSubmitting ? "Submitting..." : "Create Event"}
         </ChakraButton>
       </Stack>
     </Box>

@@ -3,32 +3,12 @@
 
 import React from "react";
 import orderBy from "lodash.orderby";
+import intersection from "lodash.intersection";
+import capitalize from "lodash.capitalize";
 import moment from "moment";
 import md5 from "md5";
 
-import TEST_DATA from "../test_data";
-
-export const getEventResponses = (id, field = "eventId") => {
-  return TEST_DATA.event_responses.filter(event_response => {
-    return event_response[field] === id;
-  });
-};
-
-export const getEventGoers = eventResponses => {
-  return TEST_DATA.users.filter(user => {
-    return eventResponses.find(eventResponse => {
-      return eventResponse.userId === user.index;
-    });
-  });
-};
-
-export const getEventsByResponses = eventResponses => {
-  return TEST_DATA.events.filter(event => {
-    return eventResponses.find(eventResponse => {
-      return eventResponse.eventId === event.index;
-    });
-  });
-};
+import * as constants from "../constants";
 
 export const sortedEvents = events => {
   return orderBy(
@@ -82,4 +62,61 @@ export const createGravatarHash = (email = "") => {
   }
 
   return md5(trimmedEmail.toLowerCase());
+};
+
+export const noop = () => {};
+
+export const mapUser = (user, ref) => ({
+  ref,
+  ...user,
+  fullName: `${user.firstName} ${user.lastName}`.trim(),
+  hasAccounts: userHasAccounts(user),
+  hasFavoriteGames: user.favoriteGames && user.favoriteGames.length,
+  hasCurrentlyPlaying: user.currentlyPlaying && user.currentlyPlaying.length,
+  displayStatus:
+    user.status === "ALUMNI"
+      ? "Alumni of "
+      : user.status === "GRAD"
+      ? "Graduate Student at "
+      : `${capitalize(user.status)} at `
+});
+
+export const mapEvent = (event, ref) => ({
+  ref,
+  ...event,
+  formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
+  formattedEndDateTime: formatCalendarDateTime(event.endDateTime),
+  googleMapsAddressLink: googleMapsLink(event.location)
+});
+
+export const mapSchool = (school, ref) => ({
+  ref,
+  ...school,
+  googleMapsAddressLink: googleMapsLink(school.address)
+});
+
+export const googleMapsLink = query => {
+  if (!query) {
+    return null;
+  }
+
+  return `${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(query)}`;
+};
+
+export const formatCalendarDateTime = dateTime => {
+  return dateTime
+    ? moment(dateTime.toDate()).calendar(null, constants.MOMENT_CALENDAR_FORMAT)
+    : null;
+};
+
+export const userHasAccounts = user => {
+  if (!user) {
+    return false;
+  }
+
+  return (
+    intersection(Object.keys(constants.ACCOUNTS), Object.keys(user)).filter(
+      key => !!user[key]
+    ).length > 0
+  );
 };

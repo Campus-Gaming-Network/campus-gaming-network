@@ -1,5 +1,6 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
+import { mapUser } from "../utilities";
 
 const useFetchUserDetails = id => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -16,20 +17,7 @@ const useFetchUserDetails = id => {
         .get()
         .then(doc => {
           if (doc.exists) {
-            const data = doc.data();
-            const hasFavoriteGames =
-              data.favoriteGames && data.favoriteGames.length;
-            const hasCurrentlyPlaying =
-              data.currentlyPlaying && data.currentlyPlaying.length;
-
-            setUser({
-              ref: doc,
-              ...data,
-              ...{
-                hasFavoriteGames,
-                hasCurrentlyPlaying
-              }
-            });
+            setUser(mapUser(doc.data(), doc));
             setIsLoading(false);
           } else {
             setIsLoading(false);

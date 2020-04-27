@@ -1,10 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
 
-import shuffle from "lodash.shuffle";
-import slice from "lodash.slice";
 import TEST_DATA from "../test_data";
-import { getEventResponses, getEventsByResponses } from "../utilities";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import {
   faTwitter,
@@ -20,22 +17,6 @@ import {
 
 export const TEST_VIDEO_GAME_COVER =
   "https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg";
-
-export const RANDOM_SAMPLE_OF_EVENTS = slice(
-  shuffle(TEST_DATA.events),
-  0,
-  Math.floor(Math.random() * TEST_DATA.events.length)
-);
-export const TEST_USER =
-  TEST_DATA.users[Math.floor(Math.random() * TEST_DATA.users.length)];
-export const CURRENT_USER = {
-  ...TEST_USER,
-  school: {
-    ...TEST_DATA.schools[TEST_USER.schoolId]
-  },
-  eventResponses: [...getEventResponses(TEST_USER.index, "userId")],
-  events: [getEventsByResponses(getEventResponses(TEST_USER.index, "userId"))]
-};
 
 export const MOMENT_DISPLAY_FORMAT = "ddd, MMM Do h:mm a";
 export const MOMENT_CALENDAR_FORMAT = {
@@ -109,6 +90,8 @@ export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
 
 export const EVENT_EMPTY_USERS_TEXT =
   "This event currently has no attending users.";
+
+export const EVENT_EMPTY_LOCATION_TEXT = "To be determined";
 
 export const ACCOUNTS = {
   website: {
