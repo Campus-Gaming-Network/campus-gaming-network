@@ -30,10 +30,49 @@ const CACHED_USERS = {};
 
 const User = props => {
   const hasCachedUser = !!CACHED_USERS[props.id];
-  const shouldFetchUser = !hasCachedUser && props.id !== props.user.ref.id;
+  const shouldFetchUser =
+    !props.appLoading &&
+    (!props.user ||
+      (props.user && props.id !== props.user.ref.id) ||
+      !hasCachedUser);
   const userFetchId = shouldFetchUser ? props.id : null;
   const [fetchedUser, isLoadingFetchedUser] = useFetchUserDetails(userFetchId);
-  const [events, isLoadingFetchedEvents] = useFetchUserEvents(props.id);
+  const [events, isLoadingFetchedUserEvents] = useFetchUserEvents(props.id);
+  const shouldDisplaySilhouette =
+    props.appLoading ||
+    (!props.appLoading && shouldFetchUser && !fetchedUser) ||
+    isLoadingFetchedUser;
+
+  if (shouldDisplaySilhouette) {
+    return (
+      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
+        <Box as="header" display="flex" alignItems="center">
+          <Box bg="gray.100" w="150px" h="150px" mr="2" borderRadius="full" />
+          <Box pl={12}>
+            <Box bg="gray.100" w="400px" h="60px" mb="4" borderRadius="md" />
+            <Box bg="gray.100" w="325px" h="30px" borderRadius="md" />
+          </Box>
+        </Box>
+        <Stack spacing={10}>
+          <Box as="section" pt={4}>
+            <Box bg="gray.100" w="100%" h="60px" borderRadius="md" />
+          </Box>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="100px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+        </Stack>
+      </Box>
+    );
+  }
 
   const user = hasCachedUser
     ? CACHED_USERS[props.id]
@@ -43,21 +82,6 @@ const User = props => {
 
   if (!hasCachedUser) {
     CACHED_USERS[props.id] = { ...user };
-  }
-
-  if (isLoadingFetchedUser) {
-    return (
-      <Box w="100%" textAlign="center">
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="purple.500"
-          size="xl"
-          mt={4}
-        />
-      </Box>
-    );
   }
 
   if (!user) {
@@ -262,7 +286,7 @@ const User = props => {
           >
             Events Attending
           </Heading>
-          {isLoadingFetchedEvents ? (
+          {isLoadingFetchedUserEvents ? (
             <Box w="100%" textAlign="center">
               <Spinner
                 thickness="4px"

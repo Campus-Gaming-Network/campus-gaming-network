@@ -27,7 +27,10 @@ const CACHED_SCHOOLS = {};
 const School = props => {
   const hasCachedSchool = !!CACHED_SCHOOLS[props.id];
   const shouldFetchSchool =
-    !hasCachedSchool && props.id !== props.school.ref.id;
+    !props.appLoading &&
+    (!props.school ||
+      (props.school && props.id !== props.school.ref.id) ||
+      !hasCachedSchool);
   const schoolFetchId = shouldFetchSchool ? props.id : null;
   const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
     schoolFetchId
@@ -38,11 +41,8 @@ const School = props => {
     ? fetchedSchool
     : props.school;
 
-  if (!hasCachedSchool) {
-    CACHED_SCHOOLS[props.id] = { ...school };
-  }
-
-  const hasCachedSchoolEvents = !!CACHED_SCHOOLS[props.id].events;
+  const hasCachedSchoolEvents =
+    hasCachedSchool && !!CACHED_SCHOOLS[props.id].events;
   const shouldFetchSchoolEvents = !hasCachedSchoolEvents;
   const eventsSchoolToFetch = shouldFetchSchoolEvents ? props.id : null;
   const [schoolEvents, isLoadingSchoolEvents] = useFetchSchoolEvents(
@@ -53,31 +53,43 @@ const School = props => {
     ? CACHED_SCHOOLS[props.id].events
     : schoolEvents;
 
-  if (schoolEvents) {
-    CACHED_SCHOOLS[props.id] = {
-      ...CACHED_SCHOOLS[props.id],
-      events: [...schoolEvents]
-    };
-  }
-
-  const hasCachedSchoolUsers = !!CACHED_SCHOOLS[props.id].users;
+  const hasCachedSchoolUsers =
+    hasCachedSchool && !!CACHED_SCHOOLS[props.id].users;
   const shouldFetchSchoolUsers = !(hasCachedSchool && hasCachedSchoolUsers);
   const usersSchoolToFetch = shouldFetchSchoolUsers ? props.id : null;
   const [schoolUsers, isLoadingSchoolUsers] = useFetchSchoolUsers(
     usersSchoolToFetch
   );
+  const shouldDisplaySilhouette =
+    props.appLoading ||
+    (shouldFetchSchool && !fetchedSchool) || isLoadingFetchedSchool;
 
-  if (isLoadingFetchedSchool) {
+  if (shouldDisplaySilhouette) {
     return (
-      <Box w="100%" textAlign="center">
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="purple.500"
-          size="xl"
-          mt={4}
-        />
+      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
+        <Box as="header" display="flex" alignItems="center">
+          <Box bg="gray.100" w="150px" h="150px" mr="2" borderRadius="full" />
+          <Box pl={12}>
+            <Box bg="gray.100" w="400px" h="60px" mb="4" borderRadius="md" />
+          </Box>
+        </Box>
+        <Stack spacing={10}>
+          <Box as="section" pt={4}>
+            <Box bg="gray.100" w="100%" h="60px" borderRadius="md" />
+          </Box>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="100px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+        </Stack>
       </Box>
     );
   }
@@ -86,11 +98,22 @@ const School = props => {
     ? CACHED_SCHOOLS[props.id].users
     : schoolUsers;
 
-  if (schoolUsers) {
-    CACHED_SCHOOLS[props.id] = {
-      ...CACHED_SCHOOLS[props.id],
-      users: [...schoolUsers]
-    };
+  if (!hasCachedSchool) {
+    CACHED_SCHOOLS[props.id] = { ...school };
+
+    if (schoolEvents) {
+      CACHED_SCHOOLS[props.id] = {
+        ...CACHED_SCHOOLS[props.id],
+        events: [...schoolEvents]
+      };
+    }
+
+    if (schoolUsers) {
+      CACHED_SCHOOLS[props.id] = {
+        ...CACHED_SCHOOLS[props.id],
+        users: [...schoolUsers]
+      };
+    }
   }
 
   if (!school) {

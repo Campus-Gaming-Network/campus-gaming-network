@@ -1,5 +1,6 @@
 import React from "react";
 import { firebaseFirestore } from "../firebase";
+import { mapUser } from "../utilities";
 
 const useFetchSchoolUsers = (id, limit = 25) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -21,10 +22,12 @@ const useFetchSchoolUsers = (id, limit = 25) => {
             let schoolUsers = [];
             snapshot.forEach(doc => {
               const data = doc.data();
-              schoolUsers.push({
-                id: doc.id,
-                ...data
-              });
+              schoolUsers.push(
+                mapUser({
+                  id: doc.id,
+                  ...data
+                })
+              );
             });
             setUsers(schoolUsers);
             setIsLoading(false);

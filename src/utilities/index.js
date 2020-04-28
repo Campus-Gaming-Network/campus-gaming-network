@@ -71,8 +71,10 @@ export const mapUser = (user, ref) => ({
   ...user,
   fullName: `${user.firstName} ${user.lastName}`.trim(),
   hasAccounts: userHasAccounts(user),
-  hasFavoriteGames: user.favoriteGames && user.favoriteGames.length,
-  hasCurrentlyPlaying: user.currentlyPlaying && user.currentlyPlaying.length,
+  hasFavoriteGames: !!(user.favoriteGames && user.favoriteGames.length),
+  hasCurrentlyPlaying: !!(
+    user.currentlyPlaying && user.currentlyPlaying.length
+  ),
   displayStatus:
     user.status === "ALUMNI"
       ? "Alumni of "

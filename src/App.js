@@ -62,27 +62,16 @@ const App = () => {
     firebaseAuth.signOut().then(() => navigate("/"));
   }
 
-  // Since loading the user session is an asynchronous process,
-  // we want to ensure that our app does not change states when
-  // it first loads. To do this we’ll hold off rendering our app
-  // till isAuthenticating is false.
-  //
-  // TODO: Display non-interactive silhouette instead?
-  // Staring at a white screen while waiting for these is kind of
-  // a bad user experience IMO.
-  const shouldNotRender =
-    isAuthenticating ||
-    (!isAuthenticating && isLoadingUserDetails) ||
-      (!isAuthenticating && isLoadingUserSchool) ||
-      (!isAuthenticating && !school) ||
-      (!isAuthenticating && !user);
-
-  if (shouldNotRender) {
-    return null;
-  }
+  const isLoadingUser =
+    isLoadingUserDetails ||
+    isLoadingUserSchool ||
+    (isAuthenticated && !school && !user);
 
   const appProps = {
+    appLoading: isAuthenticating || isLoadingUser,
+    isAuthenticating,
     isAuthenticated,
+    isLoadingUser,
     authenticatedUser,
     user,
     school,
