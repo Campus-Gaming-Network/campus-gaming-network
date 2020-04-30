@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect } from "@reach/router";
 import sortBy from "lodash.sortby";
+import startCase from "lodash.startcase";
 import {
   Alert,
   AlertIcon,
@@ -18,7 +19,6 @@ import * as constants from "../constants";
 import { useFormFields, createGravatarHash } from "../utilities";
 import Link from "../components/Link";
 import { firebaseFirestore, firebaseAuth } from "../firebase";
-import useLocalStorage from "../hooks/useLocalStorage";
 
 const Signup = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -31,7 +31,6 @@ const Signup = props => {
   });
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
 
   if (props.isAuthenticated) {
@@ -54,8 +53,7 @@ const Signup = props => {
             lastName: fields.lastName,
             status: fields.status,
             gravatar: createGravatarHash(fields.email),
-            // TODO: Double check the ref exists with localstorage changes
-            school: schools.find(school => school.id === fields.school).ref
+            school: firebaseFirestore.collection("schools").doc(fields.school)
           });
         setIsSubmitting(false);
       })
@@ -159,16 +157,19 @@ const Signup = props => {
               </FormLabel>
               <ChakraSelect
                 id="school"
+                name="school"
                 onChange={handleFieldChange}
                 value={fields.school}
                 size="lg"
               >
-                <option value="">Select a school</option>
-                {schools.map(school => (
-                  <option key={school.id} value={school.id}>
-                    {school.name}
-                  </option>
-                ))}
+                <option value="">Select your school</option>
+                {props.schools && props.schools.length
+                  ? props.schools.map(school => (
+                      <option key={school.id} value={school.id}>
+                        {startCase(school.name.toLowerCase())}
+                      </option>
+                    ))
+                  : []}
               </ChakraSelect>
             </FormControl>
             <FormControl isRequired>
@@ -177,13 +178,14 @@ const Signup = props => {
               </FormLabel>
               <ChakraSelect
                 id="status"
+                name="status"
                 onChange={handleFieldChange}
                 value={fields.status}
                 size="lg"
               >
                 {constants.STUDENT_STATUS_OPTIONS.map(status => (
                   <option key={status.value} value={status.value}>
-                    {status.label}
+                    {startCase(status.label)}
                   </option>
                 ))}
               </ChakraSelect>

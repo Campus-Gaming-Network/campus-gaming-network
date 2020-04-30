@@ -9,8 +9,11 @@ import {
   Image,
   List,
   ListItem,
-  Spinner
+  Spinner,
+  Flex
 } from "@chakra-ui/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import Gravatar from "react-gravatar";
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
@@ -62,7 +65,8 @@ const School = props => {
   );
   const shouldDisplaySilhouette =
     props.appLoading ||
-    (shouldFetchSchool && !fetchedSchool) || isLoadingFetchedSchool;
+    (shouldFetchSchool && !fetchedSchool) ||
+    isLoadingFetchedSchool;
 
   if (shouldDisplaySilhouette) {
     return (
@@ -125,11 +129,32 @@ const School = props => {
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
-          <Image
-            src={school.logo}
-            alt={`${school.name} school logo`}
-            className="h-40 w-40 bg-gray-400 rounded-full border-4 border-gray-300"
-          />
+          {school.logo ? (
+            <Image
+              src={school.logo}
+              alt={`${school.name} school logo`}
+              h={40}
+              w={40}
+              bg="gray.400"
+              rounded="full"
+              border="4px"
+              borderColor="gray.300"
+            />
+          ) : (
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              color="gray.100"
+              h={40}
+              w={40}
+              bg="gray.400"
+              rounded="full"
+              border="4px"
+              borderColor="gray.300"
+            >
+              <FontAwesomeIcon icon={faSchool} size="4x" />
+            </Flex>
+          )}
           <Box pl={12}>
             <Heading
               as="h1"

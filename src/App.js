@@ -56,7 +56,7 @@ const App = () => {
   );
   const [school, isLoadingUserSchool] = useFetchUserSchool(user);
   const [shouldFetchSchools, setShouldFetchSchools] = React.useState(false);
-  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
+  const [schools, setSchools] = useLocalStorage("cgn.schools", null);
 
   React.useEffect(() => {
     const fetchSchools = async () => {
@@ -79,13 +79,13 @@ const App = () => {
     fetchSchools();
   }, [shouldFetchSchools]);
 
-  function toggleMenu() {
+  const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  }
+  };
 
-  function handleLogout() {
+  const handleLogout = () => {
     firebaseAuth.signOut().then(() => navigate("/"));
-  }
+  };
 
   const isLoadingUser =
     isLoadingUserDetails ||
@@ -102,7 +102,8 @@ const App = () => {
     school,
     handleLogout,
     isMenuOpen,
-    setIsMenuOpen
+    setIsMenuOpen,
+    schools
   };
 
   if (!schools && !shouldFetchSchools) {

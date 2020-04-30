@@ -3,8 +3,8 @@ import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
-import sortBy from "lodash.sortby";
 import isNil from "lodash.isnil";
+import startCase from "lodash.startcase";
 // TODO: Replace moment with something smaller
 import moment from "moment";
 import {
@@ -27,7 +27,7 @@ import {
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { firebase, firebaseFirestore } from "../firebase";
-import useLocalStorage from "../hooks/useLocalStorage";
+import timezones from "../data/timezones.json";
 
 const initialFormState = {
   firstName: "",
@@ -37,6 +37,7 @@ const initialFormState = {
   major: "",
   minor: "",
   bio: "",
+  timezone: "",
   hometown: "",
   birthdate: "",
   website: "",
@@ -72,7 +73,6 @@ const testCurrentlyPlaying = Array.from({ length: 5 }, () => ({
 }));
 
 const EditUser = props => {
-  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [state, dispatch] = React.useReducer(formReducer, initialFormState);
@@ -94,7 +94,8 @@ const EditUser = props => {
     dispatch({ field: "major", value: props.user.major || "" });
     dispatch({ field: "minor", value: props.user.minor || "" });
     dispatch({ field: "bio", value: props.user.bio || "" });
-    dispatch({ field: "hometown", value: props.user.hometown });
+    dispatch({ field: "timezone", value: props.user.timezone || "" });
+    dispatch({ field: "hometown", value: props.user.hometown || "" });
     dispatch({
       field: "birthdate",
       value: props.user.birthdate
@@ -144,6 +145,7 @@ const EditUser = props => {
       major: state.major,
       minor: state.minor,
       bio: state.bio,
+      timezone: state.timezone,
       website: state.website,
       twitter: state.twitter,
       twitch: state.twitch,
@@ -153,14 +155,9 @@ const EditUser = props => {
       battlenet: state.battlenet,
       steam: state.steam,
       xbox: state.xbox,
-      psn: state.psn
+      psn: state.psn,
+      school: firebaseFirestore.collection("schools").doc(state.school)
     };
-    const matchedSchool = schools.find(school => school.id === state.school);
-
-    // TODO: Double check the ref exists with localstorage changes
-    if (!!matchedSchool) {
-      data.school = matchedSchool.ref;
-    }
 
     const cleanedData = omitBy(data, isNil);
 
@@ -357,6 +354,29 @@ const EditUser = props => {
                 Describe yourself in fewer than 300 characters.
               </FormHelperText>
             </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="timezone" fontSize="lg" fontWeight="bold">
+                Timezone:
+              </FormLabel>
+              <ChakraSelect
+                id="timezone"
+                name="timezone"
+                onChange={handleFieldChange}
+                value={state.timezone}
+                size="lg"
+                aria-describedby="timezone-helper-text"
+              >
+                <option value="">Select your timezone</option>
+                {timezones.map(status => (
+                  <option key={status.value} value={status.value}>
+                    {status.name}
+                  </option>
+                ))}
+              </ChakraSelect>
+              <FormHelperText id="timezone-helper-text">
+                For displaying dates and times correctly.
+              </FormHelperText>
+            </FormControl>
           </Stack>
         </Box>
         <Box
@@ -380,16 +400,19 @@ const EditUser = props => {
               </FormLabel>
               <ChakraSelect
                 id="school"
+                name="school"
                 onChange={handleFieldChange}
                 value={state.school}
                 size="lg"
               >
-                <option value="">Select a school</option>
-                {schools.map(school => (
-                  <option key={school.id} value={school.id}>
-                    {school.name}
-                  </option>
-                ))}
+                <option value="">Select your school</option>
+                {props.schools && props.schools.length
+                  ? props.schools.map(school => (
+                      <option key={school.id} value={school.id}>
+                        {startCase(school.name.toLowerCase())}
+                      </option>
+                    ))
+                  : []}
               </ChakraSelect>
             </FormControl>
             <FormControl isRequired>
@@ -398,6 +421,7 @@ const EditUser = props => {
               </FormLabel>
               <ChakraSelect
                 id="status"
+                name="status"
                 onChange={handleFieldChange}
                 value={state.status}
                 size="lg"
