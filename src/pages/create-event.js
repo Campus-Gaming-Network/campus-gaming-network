@@ -1,5 +1,5 @@
 import React from "react";
-import { navigate } from "@reach/router";
+import { navigate, Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -24,6 +24,7 @@ import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import Flex from "../components/Flex";
 import Avatar from "../components/Avatar";
 import { firebase, firebaseFirestore } from "../firebase";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 const CreateEvent = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -37,22 +38,8 @@ const CreateEvent = props => {
   const [endDateTime, setEndDateTime] = React.useState(new Date());
   const [placeId, setPlaceId] = React.useState("");
   const [isOnlineEvent, setIsOnlineEvent] = React.useState(false);
-  const [schools, setSchools] = React.useState([]);
+  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
   const toast = useToast();
-
-  // TODO: Impractical, we should use Algolia or ElasticSearch to query these
-  React.useEffect(() => {
-    const loadSchools = async () => {
-      firebaseFirestore
-        .collection("schools")
-        .get()
-        .then(snapshot => {
-          setSchools(snapshot.docs);
-        });
-    };
-
-    loadSchools();
-  }, []);
 
   // TODO: Tournament feature
   // const [isTournament, setIsTournament] = React.useState("no");
@@ -98,6 +85,7 @@ const CreateEvent = props => {
     const firestoreEndDateTime = firebase.firestore.Timestamp.fromDate(
       endDateTime
     );
+    // TODO: Double check the ref exists with localstorage changes
     const schoolRef = schools.find(school => school.id === props.user.school.id)
       .ref;
 
@@ -169,6 +157,46 @@ const CreateEvent = props => {
           isClosable: true
         });
       });
+  }
+
+  if (props.isAuthenticating) {
+    return null;
+  }
+
+  if (!props.isAuthenticated) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  const shouldDisplaySilhouette = props.appLoading;
+
+  if (shouldDisplaySilhouette) {
+    return (
+      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
+        <Stack spacing={10}>
+          <Box bg="gray.100" w="400px" h="60px" mb={4} borderRadius="md" />
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+        </Stack>
+      </Box>
+    );
+  }
+
+  if (!props.user) {
+    console.error(`No user found ${props.uri}`);
+    return <Redirect to="not-found" noThrow />;
   }
 
   return (

@@ -18,6 +18,7 @@ import * as constants from "../constants";
 import { useFormFields, createGravatarHash } from "../utilities";
 import Link from "../components/Link";
 import { firebaseFirestore, firebaseAuth } from "../firebase";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 const Signup = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -30,32 +31,8 @@ const Signup = props => {
   });
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [schools, setSchools] = React.useState([]);
-  const [schoolOptions, setSchoolOptions] = React.useState([]);
+  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
-
-  // TODO: Impractical, we should use Algolia or ElasticSearch to query these
-  React.useEffect(() => {
-    const loadSchools = async () => {
-      firebaseFirestore
-        .collection("schools")
-        .get()
-        .then(snapshot => {
-          setSchools(snapshot.docs);
-          setSchoolOptions(
-            sortBy(
-              snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-              })),
-              ["name"]
-            )
-          );
-        });
-    };
-
-    loadSchools();
-  }, []);
 
   if (props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
@@ -77,6 +54,7 @@ const Signup = props => {
             lastName: fields.lastName,
             status: fields.status,
             gravatar: createGravatarHash(fields.email),
+            // TODO: Double check the ref exists with localstorage changes
             school: schools.find(school => school.id === fields.school).ref
           });
         setIsSubmitting(false);
@@ -186,7 +164,7 @@ const Signup = props => {
                 size="lg"
               >
                 <option value="">Select a school</option>
-                {schoolOptions.map(school => (
+                {schools.map(school => (
                   <option key={school.id} value={school.id}>
                     {school.name}
                   </option>

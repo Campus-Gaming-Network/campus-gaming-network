@@ -10,8 +10,9 @@ import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 import momentLocalizer from "react-widgets-moment";
 import "react-widgets/dist/css/react-widgets.css";
 import "./App.css";
-import { firebase, firebaseAuth } from "./firebase";
+import { firebase, firebaseAuth, firebaseFirestore } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+import sortBy from "lodash.sortby";
 
 // Pages
 import Home from "./pages";
@@ -36,6 +37,7 @@ import ScrollToTop from "./components/ScrollToTop";
 // Hooks
 import useFetchUserSchool from "./hooks/useFetchUserSchool";
 import useFetchUserDetails from "./hooks/useFetchUserDetails";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 moment.locale("en");
 momentLocalizer();
@@ -53,6 +55,29 @@ const App = () => {
     authenticatedUser ? authenticatedUser.uid : null
   );
   const [school, isLoadingUserSchool] = useFetchUserSchool(user);
+  const [shouldFetchSchools, setShouldFetchSchools] = React.useState(false);
+  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
+
+  React.useEffect(() => {
+    const fetchSchools = async () => {
+      firebaseFirestore
+        .collection("schools")
+        .get()
+        .then(snapshot => {
+          setSchools(
+            sortBy(
+              snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              })),
+              ["name"]
+            )
+          );
+        });
+    };
+
+    fetchSchools();
+  }, [shouldFetchSchools]);
 
   function toggleMenu() {
     setIsMenuOpen(!isMenuOpen);
@@ -79,6 +104,10 @@ const App = () => {
     isMenuOpen,
     setIsMenuOpen
   };
+
+  if (!schools && !shouldFetchSchools) {
+    setShouldFetchSchools(true);
+  }
 
   return (
     <ThemeProvider>

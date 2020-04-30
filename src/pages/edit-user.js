@@ -3,6 +3,7 @@ import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
+import sortBy from "lodash.sortby";
 import isNil from "lodash.isnil";
 // TODO: Replace moment with something smaller
 import moment from "moment";
@@ -25,131 +26,138 @@ import {
   useToast
 } from "@chakra-ui/core";
 import * as constants from "../constants";
-import { useFormFields } from "../utilities";
-import { firebaseFirestore } from "../firebase";
+import { firebase, firebaseFirestore } from "../firebase";
+import useLocalStorage from "../hooks/useLocalStorage";
+
+const initialFormState = {
+  firstName: "",
+  lastName: "",
+  school: "",
+  status: "",
+  major: "",
+  minor: "",
+  bio: "",
+  hometown: "",
+  birthdate: "",
+  website: "",
+  twitter: "",
+  twitch: "",
+  youtube: "",
+  skype: "",
+  discord: "",
+  battlenet: "",
+  steam: "",
+  xbox: "",
+  psn: "",
+  favoriteGameSearch: "",
+  currentGameSearch: ""
+};
+
+const formReducer = (state, { field, value }) => {
+  return {
+    ...state,
+    [field]: value
+  };
+};
+
+const testFavoriteGames = Array.from({ length: 1 }, () => ({
+  id: Math.floor(Math.random() * 100),
+  name: "League of Legends",
+  picture: constants.TEST_VIDEO_GAME_COVER
+}));
+const testCurrentlyPlaying = Array.from({ length: 5 }, () => ({
+  id: Math.floor(Math.random() * 100),
+  name: "League of Legends",
+  picture: constants.TEST_VIDEO_GAME_COVER
+}));
 
 const EditUser = props => {
-  const [schools, setSchools] = React.useState([]);
-  const [schoolOptions, setSchoolOptions] = React.useState([]);
+  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
+  const [state, dispatch] = React.useReducer(formReducer, initialFormState);
   const toast = useToast();
-  const initialFormState = props.user
-    ? {
-        firstName: props.user.firstName,
-        lastName: props.user.lastName,
-        school: props.user.school.id,
-        status: props.user.status,
-        major: props.user.major,
-        minor: props.user.minor,
-        bio: props.user.bio,
-        hometown: props.user.hometown,
-        birthdate: props.user.birthdate,
-        website: props.user.website,
-        twitter: props.user.twitter,
-        twitch: props.user.twitch,
-        youtube: props.user.youtube,
-        skype: props.user.skype,
-        discord: props.user.discord,
-        battlenet: props.user.battlenet,
-        steam: props.user.steam,
-        xbox: props.user.xbox,
-        psn: props.user.psn,
-        favoriteGameSearch: "",
-        currentGameSearch: ""
-      }
-    : {};
-  const [fields, handleFieldChange] = useFormFields({ ...initialFormState });
-  const testFavoriteGames = Array.from({ length: 1 }, () => ({
-    id: Math.floor(Math.random() * 100),
-    name: "League of Legends",
-    picture: constants.TEST_VIDEO_GAME_COVER
-  }));
-  const testCurrentlyPlaying = Array.from({ length: 5 }, () => ({
-    id: Math.floor(Math.random() * 100),
-    name: "League of Legends",
-    picture: constants.TEST_VIDEO_GAME_COVER
-  }));
 
+  const handleFieldChange = e => {
+    dispatch({ field: e.target.name, value: e.target.value });
+  };
   const [favoriteGames, setFavoriteGames] = React.useState(testFavoriteGames);
   const [currentlyPlaying, setCurrentGames] = React.useState(
     testCurrentlyPlaying
   );
 
-  // TODO: Impractical, we should use Algolia or ElasticSearch to query these
-  // React.useEffect(() => {
-  //   const loadSchools = async () => {
-  //     firebaseFirestore.collection("schools")
-  //       .get()
-  //       .then(snapshot => {
-  //         setSchools(snapshot.docs);
-  //         setSchoolOptions(
-  //           sortBy(
-  //             snapshot.docs.map(doc => ({
-  //               id: doc.id,
-  //               ...doc.data()
-  //             })),
-  //             ["name"]
-  //           )
-  //         );
-  //       });
-  //   };
+  const prefillForm = () => {
+    dispatch({ field: "firstName", value: props.user.firstName || "" });
+    dispatch({ field: "lastName", value: props.user.lastName || "" });
+    dispatch({ field: "school", value: props.user.school.id || "" });
+    dispatch({ field: "status", value: props.user.status || "" });
+    dispatch({ field: "major", value: props.user.major || "" });
+    dispatch({ field: "minor", value: props.user.minor || "" });
+    dispatch({ field: "bio", value: props.user.bio || "" });
+    dispatch({ field: "hometown", value: props.user.hometown });
+    dispatch({
+      field: "birthdate",
+      value: props.user.birthdate
+        ? moment(props.user.birthdate.toDate()).format("YYYY-MM-DD")
+        : ""
+    });
+    dispatch({ field: "website", value: props.user.website || "" });
+    dispatch({ field: "twitter", value: props.user.twitter || "" });
+    dispatch({ field: "twitch", value: props.user.twitch || "" });
+    dispatch({ field: "youtube", value: props.user.youtube || "" });
+    dispatch({ field: "skype", value: props.user.skype || "" });
+    dispatch({ field: "discord", value: props.user.discord || "" });
+    dispatch({ field: "battlenet", value: props.user.battlenet || "" });
+    dispatch({ field: "steam", value: props.user.steam || "" });
+    dispatch({ field: "xbox", value: props.user.xbox || "" });
+    dispatch({ field: "psn", value: props.user.psn || "" });
+    setHasPrefilledForm(true);
+  };
 
-  //   loadSchools();
-  // }, []);
-
-  // React.useEffect(() => {
-  //   if (user) {
-  //     for (const key in user) {
-  //       console.log(key);
-  //       handleFieldChange({
-  //         target: {
-  //           id: key,
-  //           value: user[key]
-  //         }
-  //       });
-  //     }
-  //   }
-  // }, [user]);
-
-  function toggleFavoriteGame(game) {
+  const toggleFavoriteGame = game => {
     setFavoriteGames(xorBy(favoriteGames, [game], "id"));
-  }
+  };
 
-  function toggleCurrentGame(game) {
+  const toggleCurrentGame = game => {
     setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
-  }
+  };
 
-  if (!props.isAuthenticated) {
-    return <Redirect to="/" noThrow />;
-  }
-
-  async function handleSubmit(e) {
+  const handleSubmit = async e => {
     e.preventDefault();
+
+    if (!props.isAuthenticated) {
+      return;
+    }
 
     setIsSubmitting(true);
 
-    const data = {
-      firstName: fields.firstName,
-      lastName: fields.lastName,
-      status: fields.status,
-      hometown: fields.hometown,
-      birthdate: new Date(moment(fields.birthdate)),
-      major: fields.major,
-      minor: fields.minor,
-      bio: fields.bio,
-      website: fields.website,
-      twitter: fields.twitter,
-      twitch: fields.twitch,
-      youtube: fields.youtube,
-      skype: fields.skype,
-      discord: fields.discord,
-      battlenet: fields.battlenet,
-      steam: fields.steam,
-      xbox: fields.xbox,
-      psn: fields.psn
-    };
-    const matchedSchool = schools.find(school => school.id === fields.school);
+    console.log({ state });
 
+    const data = {
+      firstName: state.firstName,
+      lastName: state.lastName,
+      status: state.status,
+      hometown: state.hometown,
+      birthdate: firebase.firestore.Timestamp.fromDate(
+        new Date(moment(state.birthdate))
+      ),
+      major: state.major,
+      minor: state.minor,
+      bio: state.bio,
+      website: state.website,
+      twitter: state.twitter,
+      twitch: state.twitch,
+      youtube: state.youtube,
+      skype: state.skype,
+      discord: state.discord,
+      battlenet: state.battlenet,
+      steam: state.steam,
+      xbox: state.xbox,
+      psn: state.psn
+    };
+    const matchedSchool = schools.find(school => school.id === state.school);
+
+    // TODO: Double check the ref exists with localstorage changes
     if (!!matchedSchool) {
       data.school = matchedSchool.ref;
     }
@@ -178,18 +186,50 @@ const EditUser = props => {
           isClosable: true
         });
       });
+  };
+
+  if (props.isAuthenticating) {
+    return null;
+  }
+
+  if (!props.isAuthenticated) {
+    return <Redirect to="/" noThrow />;
+  }
+
+  const shouldDisplaySilhouette = props.appLoading;
+
+  if (shouldDisplaySilhouette) {
+    return (
+      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
+        <Stack spacing={10}>
+          <Box bg="gray.100" w="400px" h="60px" mb={4} borderRadius="md" />
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+        </Stack>
+      </Box>
+    );
   }
 
   if (!props.user) {
-    // TODO: Handle gracefully
-    console.log("no user");
-    return null;
+    console.error(`No user found ${props.uri}`);
+    return <Redirect to="not-found" noThrow />;
   }
 
-  if (!props.authenticatedUser) {
-    // TODO: Handle gracefully
-    console.log("no authenticated user");
-    return null;
+  if (!hasPrefilledForm) {
+    prefillForm();
   }
 
   return (
@@ -233,7 +273,7 @@ const EditUser = props => {
                 type="text"
                 placeholder="Brandon"
                 onChange={handleFieldChange}
-                value={fields.firstName}
+                value={state.firstName}
                 size="lg"
               />
             </FormControl>
@@ -247,7 +287,7 @@ const EditUser = props => {
                 type="text"
                 placeholder="Sansone"
                 onChange={handleFieldChange}
-                value={fields.lastName}
+                value={state.lastName}
                 roundedLeft="0"
                 size="lg"
               />
@@ -280,7 +320,7 @@ const EditUser = props => {
                 type="text"
                 placeholder="Chicago, IL"
                 onChange={handleFieldChange}
-                value={fields.hometown}
+                value={state.hometown}
                 size="lg"
               />
             </FormControl>
@@ -293,7 +333,7 @@ const EditUser = props => {
                 name="birthdate"
                 type="date"
                 onChange={handleFieldChange}
-                value={fields.birthdate}
+                value={state.birthdate}
                 size="lg"
               />
             </FormControl>
@@ -305,7 +345,7 @@ const EditUser = props => {
                 id="bio"
                 name="bio"
                 onChange={handleFieldChange}
-                value={fields.bio}
+                value={state.bio}
                 placeholder="Add your bio"
                 size="lg"
                 resize="vertical"
@@ -341,11 +381,11 @@ const EditUser = props => {
               <ChakraSelect
                 id="school"
                 onChange={handleFieldChange}
-                value={fields.school}
+                value={state.school}
                 size="lg"
               >
                 <option value="">Select a school</option>
-                {schoolOptions.map(school => (
+                {schools.map(school => (
                   <option key={school.id} value={school.id}>
                     {school.name}
                   </option>
@@ -359,7 +399,7 @@ const EditUser = props => {
               <ChakraSelect
                 id="status"
                 onChange={handleFieldChange}
-                value={fields.status}
+                value={state.status}
                 size="lg"
               >
                 {constants.STUDENT_STATUS_OPTIONS.map(status => (
@@ -378,7 +418,7 @@ const EditUser = props => {
                 name="major"
                 type="text"
                 onChange={handleFieldChange}
-                value={fields.major}
+                value={state.major}
                 size="lg"
               />
             </FormControl>
@@ -391,7 +431,7 @@ const EditUser = props => {
                 name="minor"
                 type="text"
                 onChange={handleFieldChange}
-                value={fields.minor}
+                value={state.minor}
                 size="lg"
               />
             </FormControl>
@@ -441,7 +481,7 @@ const EditUser = props => {
                       type="text"
                       placeholder={account.placeholder}
                       onChange={handleFieldChange}
-                      value={fields[id]}
+                      value={state[id]}
                       roundedLeft="0"
                     />
                   </ChakraInputGroup>
@@ -480,7 +520,7 @@ const EditUser = props => {
                 name="favoriteGameSearch"
                 type="text"
                 onChange={handleFieldChange}
-                value={fields.favoriteGameSearch}
+                value={state.favoriteGameSearch}
                 size="lg"
                 disabled={favoriteGames.length === 5}
                 placeholder="Search"
@@ -555,7 +595,7 @@ const EditUser = props => {
                 name="currentGameSearch"
                 type="text"
                 onChange={handleFieldChange}
-                value={fields.currentGameSearch}
+                value={state.currentGameSearch}
                 size="lg"
                 disabled={currentlyPlaying.length === 5}
                 placeholder="Search"

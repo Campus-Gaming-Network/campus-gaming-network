@@ -11,7 +11,8 @@ import {
   Text,
   List,
   ListItem,
-  Spinner
+  Spinner,
+  PseudoBox
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { sortedEvents } from "../utilities";
@@ -89,8 +90,32 @@ const User = props => {
     return <Redirect to="not-found" noThrow />;
   }
 
+  const isCurrentUser = props.authenticatedUser.uid === props.id;
+
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" mt={10} mb={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+      {isCurrentUser ? (
+        <PseudoBox
+          mb={10}
+          textAlign="center"
+          display="flex"
+          justifyContent="center"
+        >
+          <Link
+            to="/user/edit"
+            className={constants.STYLES.LINK.DEFAULT}
+            fontWeight="bold"
+            width="100%"
+            borderRadius="md"
+            bg="gray.100"
+            _focus={{ bg: "gray.200", boxShadow: "outline" }}
+            _hover={{ bg: "gray.200" }}
+            p={8}
+          >
+            Edit Your Profile
+          </Link>
+        </PseudoBox>
+      ) : null}
       <Box as="header" display="flex" alignItems="center">
         <Gravatar
           default={constants.GRAVATAR.DEFAULT}
