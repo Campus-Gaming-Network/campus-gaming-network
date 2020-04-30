@@ -1,0 +1,1 @@
+The data stored in this folder is mainly used for scripts. None of this data will be packaged with the app when its deployed.

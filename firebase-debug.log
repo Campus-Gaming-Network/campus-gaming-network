@@ -1,0 +1,21 @@
+[debug] [2020-04-30T23:31:20.966Z] ----------------------------------------------------------------------
+[debug] [2020-04-30T23:31:20.970Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Brandon\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init functions
+[debug] [2020-04-30T23:31:20.971Z] CLI Version:   8.2.0
+[debug] [2020-04-30T23:31:20.971Z] Platform:      win32
+[debug] [2020-04-30T23:31:20.971Z] Node Version:  v12.16.3
+[debug] [2020-04-30T23:31:20.973Z] Time:          Thu Apr 30 2020 18:31:20 GMT-0500 (Central Daylight Time)
+[debug] [2020-04-30T23:31:20.974Z] ----------------------------------------------------------------------
+[debug] [2020-04-30T23:31:20.974Z] 
+[debug] [2020-04-30T23:31:20.991Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-04-30T23:31:20.992Z] > authorizing via signed-in user
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  H:\campus-gaming-network
+

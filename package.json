@@ -14,8 +14,6 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@reach/router": "^1.2.1",
     "@reach/skip-nav": "^0.6.2",
-    "aws-amplify": "^2.2.1",
-    "axios": "^0.19.2",
     "emotion-theming": "^10.0.27",
     "firebase": "^7.13.1",
     "husky": "^3.0.5",
