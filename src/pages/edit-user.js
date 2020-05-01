@@ -123,6 +123,19 @@ const EditUser = props => {
     setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
   };
 
+  const searchGames = () => {
+    const test = firebase.functions().httpsCallable("searchGames");
+    test({
+      text: "hello"
+    })
+      .then(function(result) {
+        console.log("result", result);
+      })
+      .catch(function(error) {
+        console.log({ error });
+      });
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -131,8 +144,6 @@ const EditUser = props => {
     }
 
     setIsSubmitting(true);
-
-    console.log({ state });
 
     const data = {
       firstName: state.firstName,
@@ -548,6 +559,7 @@ const EditUser = props => {
                 size="lg"
                 disabled={favoriteGames.length === 5}
                 placeholder="Search"
+                onBlur={searchGames}
               />
             </FormControl>
             <Stack spacing={2}>
@@ -623,6 +635,7 @@ const EditUser = props => {
                 size="lg"
                 disabled={currentlyPlaying.length === 5}
                 placeholder="Search"
+                onBlur={searchGames}
               />
             </FormControl>
             <Stack spacing={2}>
