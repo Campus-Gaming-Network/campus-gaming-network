@@ -25,6 +25,15 @@ import {
   Tooltip,
   useToast
 } from "@chakra-ui/core";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption,
+  ComboboxOptionText
+} from "@reach/combobox";
+import "@reach/combobox/styles.css";
 import * as constants from "../constants";
 import { firebase, firebaseFirestore } from "../firebase";
 import timezones from "../data/timezones.json";
@@ -53,6 +62,8 @@ const initialFormState = {
   favoriteGameSearch: "",
   currentGameSearch: ""
 };
+
+const CACHED_GAMES = {};
 
 const formReducer = (state, { field, value }) => {
   return {
@@ -85,6 +96,94 @@ const EditUser = props => {
   const [currentlyPlaying, setCurrentGames] = React.useState(
     testCurrentlyPlaying
   );
+
+  const useGameSearch = searchTerm => {
+    const [games, setGames] = React.useState([]);
+
+    React.useEffect(() => {
+      if (searchTerm.trim() !== "") {
+        let isFresh = true;
+
+        fetchCities(searchTerm).then(cities => {
+          const testResponse = {
+            data: [
+              {
+                id: 64980,
+                cover: 45789,
+                name: "J-League Supporter Soccer",
+                slug: "j-league-supporter-soccer"
+              },
+              {
+                id: 42354,
+                cover: 45925,
+                name: "Ultra League: Moero! Soccer Daikessen!!",
+                slug: "ultra-league-moero-soccer-daikessen"
+              },
+              {
+                id: 37661,
+                cover: 26050,
+                name: "Power League V",
+                slug: "power-league-v"
+              },
+              {
+                id: 38089,
+                cover: 38982,
+                name: "Power League II",
+                slug: "power-league-ii"
+              },
+              {
+                id: 42096,
+                cover: 32877,
+                name: "Power League III",
+                slug: "power-league-iii"
+              },
+              {
+                id: 23093,
+                cover: 24029,
+                name: "Planet Puzzle League",
+                slug: "planet-puzzle-league"
+              },
+              {
+                id: 5682,
+                cover: 5817,
+                name: "Major League Baseball",
+                slug: "major-league-baseball"
+              },
+              { id: 51310, cover: 81863, name: "S4 League", slug: "s4-league" },
+              { id: 103952, name: "In League", slug: "in-league" },
+              {
+                id: 14597,
+                cover: 13074,
+                name: "On the Bal: League Edition",
+                slug: "on-the-bal-league-edition"
+              }
+            ],
+            query: "League"
+          };
+          if (isFresh) {
+            // setGames(cities);
+            setGames(testResponse.data);
+          }
+        });
+        return () => (isFresh = false);
+      }
+    }, [searchTerm]);
+
+    return games;
+  };
+
+  const fetchCities = value => {
+    if (CACHED_GAMES[value]) {
+      return Promise.resolve(CACHED_GAMES[value]);
+    }
+
+    return fetch("https://city-search.now.sh/?" + value)
+      .then(res => res.json())
+      .then(result => {
+        CACHED_GAMES[value] = result;
+        return result;
+      });
+  };
 
   const prefillForm = () => {
     dispatch({ field: "firstName", value: props.user.firstName || "" });
@@ -123,18 +222,22 @@ const EditUser = props => {
     setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
   };
 
-  const searchGames = () => {
-    const test = firebase.functions().httpsCallable("searchGames");
-    test({
-      text: "hello"
-    })
-      .then(function(result) {
-        console.log("result", result);
-      })
-      .catch(function(error) {
-        console.log({ error });
-      });
-  };
+  const favoriteGamesResults = useGameSearch(state.favoriteGameSearch);
+  const currentGamesResults = useGameSearch(state.currentGameSearch);
+
+  // const searchGames = () => {
+  // const test = firebase.functions().httpsCallable("searchGames");
+  // test({
+  //   text: "hello"
+  // })
+  //   .then(function(result) {
+  //     result = {"data":[{"id":64980,"cover":45789,"name":"J-League Supporter Soccer","slug":"j-league-supporter-soccer"},{"id":42354,"cover":45925,"name":"Ultra League: Moero! Soccer Daikessen!!","slug":"ultra-league-moero-soccer-daikessen"},{"id":37661,"cover":26050,"name":"Power League V","slug":"power-league-v"},{"id":38089,"cover":38982,"name":"Power League II","slug":"power-league-ii"},{"id":42096,"cover":32877,"name":"Power League III","slug":"power-league-iii"},{"id":23093,"cover":24029,"name":"Planet Puzzle League","slug":"planet-puzzle-league"},{"id":5682,"cover":5817,"name":"Major League Baseball","slug":"major-league-baseball"},{"id":51310,"cover":81863,"name":"S4 League","slug":"s4-league"},{"id":103952,"name":"In League","slug":"in-league"},{"id":14597,"cover":13074,"name":"On the Bal: League Edition","slug":"on-the-bal-league-edition"}],"query":"League"}
+  //     console.log("result", result);
+  //   })
+  //   .catch(function(error) {
+  //     console.log({ error });
+  //   });
+  // };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -550,21 +653,36 @@ const EditUser = props => {
               >
                 Search for a game:
               </FormLabel>
-              <ChakraInput
-                id="favoriteGameSearch"
-                name="favoriteGameSearch"
-                type="text"
-                onChange={handleFieldChange}
-                value={state.favoriteGameSearch}
-                size="lg"
-                disabled={favoriteGames.length === 5}
-                placeholder="Search"
-                onBlur={searchGames}
-              />
+              <Combobox aria-label="Games">
+                <ComboboxInput
+                  id="favoriteGameSearch"
+                  name="favoriteGameSearch"
+                  placeholder="Search"
+                  onChange={handleFieldChange}
+                  disabled={favoriteGames.length === 5}
+                />
+                {favoriteGamesResults && (
+                  <ComboboxPopover>
+                    {favoriteGamesResults.length > 0 ? (
+                      <ComboboxList>
+                        {favoriteGamesResults.map(game => {
+                          return (
+                            <ComboboxOption key={game.id} value={game.name} />
+                          );
+                        })}
+                      </ComboboxList>
+                    ) : (
+                      <Text as="span" ma={8} d="block">
+                        No results found
+                      </Text>
+                    )}
+                  </ComboboxPopover>
+                )}
+              </Combobox>
             </FormControl>
             <Stack spacing={2}>
               <Text fontWeight="bold">
-                Your favorites{" "}
+                Your favorites
                 <Text
                   as="span"
                   color={`${favoriteGames.length === 5 ? "red" : undefined}`}
@@ -626,17 +744,32 @@ const EditUser = props => {
               >
                 Search for a game:
               </FormLabel>
-              <ChakraInput
-                id="currentGameSearch"
-                name="currentGameSearch"
-                type="text"
-                onChange={handleFieldChange}
-                value={state.currentGameSearch}
-                size="lg"
-                disabled={currentlyPlaying.length === 5}
-                placeholder="Search"
-                onBlur={searchGames}
-              />
+              <Combobox aria-label="Games">
+                <ComboboxInput
+                  id="currentGameSearch"
+                  name="currentGameSearch"
+                  placeholder="Search"
+                  onChange={handleFieldChange}
+                  disabled={currentGamesResults.length === 5}
+                />
+                {currentGamesResults && (
+                  <ComboboxPopover>
+                    {currentGamesResults.length > 0 ? (
+                      <ComboboxList>
+                        {currentGamesResults.map(game => {
+                          return (
+                            <ComboboxOption key={game.id} value={game.name} />
+                          );
+                        })}
+                      </ComboboxList>
+                    ) : (
+                      <Text as="span" ma={8} d="block">
+                        No results found
+                      </Text>
+                    )}
+                  </ComboboxPopover>
+                )}
+              </Combobox>
             </FormControl>
             <Stack spacing={2}>
               <Text fontWeight="bold">

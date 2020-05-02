@@ -26,3 +26,51 @@
   width: auto;
   white-space: inherit;
 }
+
+[data-reach-combobox-input] {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  outline: none;
+  font-size: 1.125rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  height: 3rem;
+  line-height: 3rem;
+  border-radius: 0.25rem;
+  border: 1px solid;
+  border-top-color: currentcolor;
+  border-right-color: currentcolor;
+  border-bottom-color: currentcolor;
+  border-left-color: currentcolor;
+  border-color: inherit;
+  background-color: #fff;
+}
+
+[data-reach-combobox-input]:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 1px #3182ce;
+}
+
+[data-reach-combobox-input]:hover {
+  border-color: #cbd5e0;
+}
+
+[data-reach-combobox-input]:disabled,
+[data-reach-combobox-input]:disabled:focus,
+[data-reach-combobox-input]:disabled:hover,
+[data-reach-combobox-input][aria-disabled="true"],
+[data-reach-combobox-input][aria-disabled="true"]:focus,
+[data-reach-combobox-input][aria-disabled="true"]:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

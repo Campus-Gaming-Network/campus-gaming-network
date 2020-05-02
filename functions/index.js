@@ -5,10 +5,7 @@ admin.initializeApp();
 
 const axios = require("axios");
 
-exports.searchGames = functions.https.onRequest(async (req, res) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "GET, POST");
-
+exports.searchGames = functions.https.onRequest((req, res) => {
   axios({
     url: "https://api-v3.igdb.com/games",
     method: "POST",

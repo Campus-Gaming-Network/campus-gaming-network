@@ -11,7 +11,7 @@ export const _firebase = firebase;
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 if (isDev()) {
-  firebaseApp.functions().useFunctionsEmulator("http://localhost:8080");
+  firebase.functions().useFunctionsEmulator("http://localhost:5001");
 }
 
 export const firebaseAuth = firebase.auth();
