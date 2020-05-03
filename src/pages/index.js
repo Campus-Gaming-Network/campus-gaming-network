@@ -1,7 +1,15 @@
 import React from "react";
 import { Box } from "@chakra-ui/core";
 
-const Home = () => {
+// Hooks
+import useFetchUserEvents from "../hooks/useFetchUserEvents";
+
+const Home = props => {
+  const userId = props.authenticatedUser ? props.authenticatedUser.uid : null;
+  const [attendingEvents] = useFetchUserEvents(userId);
+
+  console.log("attendingEvents", attendingEvents);
+
   return (
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Box>

@@ -1,17 +1,20 @@
 import React from "react";
 import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt, faGlobe } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMapMarkerAlt,
+  faGlobe,
+  faSchool
+} from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import Gravatar from "react-gravatar";
-// TODO: Replace moment with something smaller
+import startCase from "lodash.startcase";
 import {
   Stack,
   Box,
   Button as ChakraButton,
   Heading,
   Text,
-  Image,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -21,84 +24,195 @@ import {
   Alert,
   List,
   ListItem,
-  Spinner
+  Spinner,
+  Flex,
+  useToast
 } from "@chakra-ui/core";
 import * as constants from "../constants";
+import { firebaseFirestore } from "../firebase";
 
 // Components
 import OutsideLink from "../components/OutsideLink";
-import Avatar from "../components/Avatar";
 import Link from "../components/Link";
-import Flex from "../components/Flex";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
 import useFetchEventUsers from "../hooks/useFetchEventUsers";
-
-// const CACHED_EVENTS = {};
+import useFetchUserEventResponse from "../hooks/useFetchUserEventResponse";
 
 const Event = props => {
-  // const hasCachedEvent = !!CACHED_EVENTS[props.id];
-  // const shouldFetchEvent = !hasCachedEvent;
-  // const eventFetchId = shouldFetchEvent ? props.id : null;
+  const toast = useToast();
   const [event, isLoadingFetchedEvent] = useFetchEventDetails(props.id);
-
-  // const event = hasCachedEvent
-  //   ? CACHED_EVENTS[props.id]
-  //   : eventFetchId
-  //   ? fetchedEvent
-  //   : null;
-
-  // if (!hasCachedEvent) {
-  //   CACHED_EVENTS[props.id] = {
-  //     event: null,
-  //     users: null,
-  //   };
-  //   if (event) {
-  //     CACHED_EVENTS[props.id] = {...event};
-  //   }
-  // }
-
-  // console.log(CACHED_EVENTS)
-
-  // const hasCachedEventUsers = !!CACHED_EVENTS[props.id].users;
-  // const shouldFetchEventUsers = !hasCachedEventUsers;
-  // const usersEventToFetch = shouldFetchEventUsers ? props.id : null;
+  const isEventCreator =
+    props.authenticatedUser &&
+    event &&
+    event.creator.id === props.authenticatedUser.uid;
   const [users, isLoadingEventUsers] = useFetchEventUsers(props.id);
+  const [userFetchId, setUserFetchId] = React.useState(null);
+  const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
 
-  // const users = hasCachedEventUsers
-  //   ? CACHED_EVENTS[props.id].users
-  //   : eventUsers;
+  if (!isEventCreator && props.authenticatedUser && !userFetchId) {
+    setUserFetchId(props.authenticatedUser.uid);
+  }
 
-  // if (eventUsers) {
-  //   CACHED_EVENTS[props.id] = {
-  //     ...CACHED_EVENTS[props.id],
-  //     users: [...eventUsers]
-  //   };
-  // }
+  const [eventResponse, isLoadingUserEventResponse] = useFetchUserEventResponse(
+    props.id,
+    userFetchId,
+    refreshEventResponse
+  );
+  const hasResponded = !!eventResponse;
+  const canChangeEventResponse =
+    props.isAuthenticated && !isLoadingUserEventResponse && !isEventCreator;
+  const [
+    isSubmittingEventResponse,
+    setIsSubmittingEventResponse
+  ] = React.useState(false);
+  const [isCancellationAlertOpen, setCancellationAlertIsOpen] = React.useState(
+    false
+  );
+  const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
+  const [isAttendingAlertOpen, setAttendingAlertIsOpen] = React.useState(false);
+  const onAttendingAlertCancel = () => setAttendingAlertIsOpen(false);
+  const cancelRef = React.useRef();
+  const attendRef = React.useRef();
 
-  // const [isCancellationAlertOpen, setCancellationAlertIsOpen] = React.useState(
-  //   false
-  // );
-  // const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
-  // const [isAttendingAlertOpen, setAttendingAlertOpen] = React.useState(false);
-  // const onAttendingAlertClose = () => setAttendingAlertOpen(false);
-  // const cancelRef = React.useRef();
-  // const attendRef = React.useRef();
+  const getResponseFormData = response => {
+    const userDocRef = firebaseFirestore
+      .collection("users")
+      .doc(props.authenticatedUser.uid);
+    const eventDocRef = firebaseFirestore.collection("events").doc(event.id);
+    const schoolDocRef = firebaseFirestore
+      .collection("schools")
+      .doc(event.school.id);
 
-  // console.log((isLoadingFetchedEvent || (shouldFetchEvent && !event)), event && event.id)
+    const data = {
+      user: userDocRef,
+      event: eventDocRef,
+      school: schoolDocRef,
+      response,
+      userDetails: {
+        firstName: props.user.firstName,
+        lastName: props.user.lastName,
+        gravatar: props.user.gravatar
+      },
+      eventDetails: {
+        name: event.name,
+        description: event.description,
+        startDateTime: event.startDateTime,
+        endDateTime: event.endDateTime
+      },
+      schoolDetails: {
+        name: props.school.name
+      }
+    };
+    console.log({ data });
 
-  if (isLoadingFetchedEvent) {
+    return data;
+  };
+
+  const onAttendingAlertConfirm = async response => {
+    setIsSubmittingEventResponse(true);
+
+    const data = getResponseFormData(response);
+
+    if (!hasResponded) {
+      firebaseFirestore
+        .collection("event-responses")
+        .add(data)
+        .then(() => {
+          setAttendingAlertIsOpen(false);
+          setIsSubmittingEventResponse(false);
+          toast({
+            title: "RSVP created.",
+            description: "Your RSVP has been created.",
+            status: "success",
+            isClosable: true
+          });
+          setRefreshEventResponse(!refreshEventResponse);
+        })
+        .catch(error => {
+          setAttendingAlertIsOpen(false);
+          setIsSubmittingEventResponse(false);
+          toast({
+            title: "An error occurred.",
+            description: error,
+            status: "error",
+            isClosable: true
+          });
+        });
+    } else {
+      firebaseFirestore
+        .collection("event-responses")
+        .doc(eventResponse.id)
+        .update(data)
+        .then(() => {
+          if (isCancellationAlertOpen) {
+            setCancellationAlertIsOpen(false);
+          } else {
+            setAttendingAlertIsOpen(false);
+          }
+          setIsSubmittingEventResponse(false);
+          toast({
+            title: "RSVP updated.",
+            description: "Your RSVP has been updated.",
+            status: "success",
+            isClosable: true
+          });
+          setRefreshEventResponse(!refreshEventResponse);
+        })
+        .catch(error => {
+          setAttendingAlertIsOpen(false);
+          setIsSubmittingEventResponse(false);
+          toast({
+            title: "An error occurred.",
+            description: error,
+            status: "error",
+            isClosable: true
+          });
+        });
+    }
+  };
+
+  const shouldDisplaySilhouette = props.appLoading || isLoadingFetchedEvent;
+
+  if (shouldDisplaySilhouette) {
     return (
-      <Box w="100%" textAlign="center">
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="purple.500"
-          size="xl"
-          mt={4}
-        />
+      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
+        <Box as="header" display="flex" alignItems="center">
+          <Box pr={2}>
+            <Box bg="gray.100" w="325px" h="30px" mb="4" borderRadius="md" />
+            <Box bg="gray.100" w="400px" h="60px" borderRadius="md" />
+          </Box>
+          <Box
+            bg="gray.100"
+            w="96px"
+            h="96px"
+            mb={8}
+            borderRadius="full"
+            ml="auto"
+          />
+        </Box>
+        <Stack spacing={10}>
+          <Stack as="section">
+            <Box bg="gray.100" w="425px" h="30px" borderRadius="md" />
+            <Box bg="gray.100" w="425px" h="30px" borderRadius="md" />
+          </Stack>
+          <Box as="section">
+            <Box bg="gray.100" w="100%" h="60px" borderRadius="md" />
+          </Box>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="100px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
+            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
+          </Stack>
+        </Stack>
       </Box>
     );
   }
@@ -108,53 +222,36 @@ const Event = props => {
     return <Redirect to="not-found" noThrow />;
   }
 
-  // if (!school) {
-  //   console.error(`No school found ${props.uri}`);
-  //   return <Redirect to="not-found" noThrow />;
-  // }
-
-  const hasResponded = false;
-
-  // function handleAttendSubmit(e) {
-  //   e.preventDefault();
-
-  //   setAttendingAlertOpen(true);
-  // }
-
-  // function handleCancelSubmit(e) {
-  //   e.preventDefault();
-  //   setCancellationAlertIsOpen(true);
-  // const response = window.confirm(
-  //   "Are you sure you want to cancel your RSVP?"
-  // );
-  // if (response) {
-  //   console.log("Confirmed");
-  // } else {
-  //   console.log("Cancelled");
-  // }
-  // }
-
   return (
     <React.Fragment>
       <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
         <Stack spacing={10}>
-          <Flex itemsCenter>
+          <Flex alignItems="center">
             <Box pr={2}>
-              {/* <Link
-                to={`../../../school/${school.id}`}
+              <Link
+                to={`../../../school/${event.school.id}`}
                 className={`${constants.STYLES.LINK.DEFAULT} text-lg`}
               >
-                {school.name}
-              </Link> */}
-              <Heading as="h1" fontWeight="bold" fontSize="5xl" mb={2}>
+                {startCase(event.schoolDetails.name.toLowerCase())}
+              </Link>
+              <Heading as="h1" fontWeight="bold" fontSize="5xl">
                 {event.name}
               </Heading>
             </Box>
-            {/* <Image
-              src={school.logo}
-              alt={`${school.name} school logo`}
-              className="w-auto ml-auto bg-gray-400 h-24"
-            /> */}
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              color="gray.100"
+              h={24}
+              w={24}
+              bg="gray.400"
+              rounded="full"
+              border="4px"
+              borderColor="gray.300"
+              ml="auto"
+            >
+              <FontAwesomeIcon icon={faSchool} size="2x" />
+            </Flex>
           </Flex>
           <Stack as="section">
             <Box>
@@ -192,20 +289,14 @@ const Event = props => {
                     icon={faMapMarkerAlt}
                     className="text-gray-700 mr-2 text-lg"
                   />
-                  <Text>{constants.EVENT_EMPTY_LOCATION_TEXT}</Text>
+                  <Text as="span">{constants.EVENT_EMPTY_LOCATION_TEXT}</Text>
                 </React.Fragment>
               )}
             </Box>
           </Stack>
-          {/* <Stack as="section" spacing={4}>
-            {hasResponded ? (
-              <form onSubmit={handleAttendSubmit}>
-                <ChakraButton type="submit" variantColor="purple">
-                  Attend Event
-                </ChakraButton>
-              </form>
-            ) : (
-              <form onSubmit={handleCancelSubmit}>
+          {canChangeEventResponse ? (
+            <Stack as="section" spacing={4}>
+              {hasResponded && eventResponse.response === "YES" ? (
                 <Alert
                   status="success"
                   variant="subtle"
@@ -220,7 +311,9 @@ const Event = props => {
                       You’re going!
                     </Text>
                     <ChakraButton
-                      type="submit"
+                      onClick={() =>
+                        setCancellationAlertIsOpen(!isEventCreator)
+                      }
                       variant="link"
                       color="green.500"
                       display="inline"
@@ -229,9 +322,17 @@ const Event = props => {
                     </ChakraButton>
                   </Stack>
                 </Alert>
-              </form>
-            )}
-          </Stack> */}
+              ) : (
+                <ChakraButton
+                  onClick={() => setAttendingAlertIsOpen(!isEventCreator)}
+                  variantColor="purple"
+                  w="200px"
+                >
+                  Attend Event
+                </ChakraButton>
+              )}
+            </Stack>
+          ) : null}
           <Stack as="section" spacing={4}>
             <Heading
               as="h2"
@@ -241,7 +342,7 @@ const Event = props => {
             >
               Event Details
             </Heading>
-            <p>{event.description}</p>
+            <Text>{event.description}</Text>
           </Stack>
           <Stack as="section" spacing={4}>
             <Heading
@@ -309,65 +410,99 @@ const Event = props => {
         </Stack>
       </Box>
 
-      {/* <AlertDialog
-        isOpen={isAttendingAlertOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onAttendingAlertClose}
-      >
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            RSVP
-          </AlertDialogHeader>
+      {canChangeEventResponse ? (
+        <React.Fragment>
+          <AlertDialog
+            isOpen={isAttendingAlertOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onAttendingAlertCancel}
+          >
+            <AlertDialogOverlay />
+            <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                RSVP
+              </AlertDialogHeader>
 
-          <AlertDialogBody>
-            Are you sure you want to RSVP for {event.title}?
-          </AlertDialogBody>
+              <AlertDialogBody>
+                Are you sure you want to RSVP for{" "}
+                <Text as="span" fontWeight="bold">
+                  {event.name}
+                </Text>
+                ?
+              </AlertDialogBody>
 
-          <AlertDialogFooter>
-            <ChakraButton ref={attendRef} onClick={onAttendingAlertClose}>
-              No, nevermind
-            </ChakraButton>
-            <ChakraButton
-              variantColor="purple"
-              onClick={onAttendingAlertClose}
-              ml={3}
-            >
-              Yes, I want to go
-            </ChakraButton>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              <AlertDialogFooter>
+                {isSubmittingEventResponse ? (
+                  <ChakraButton variantColor="purple" disabled={true}>
+                    RSVPing...
+                  </ChakraButton>
+                ) : (
+                  <React.Fragment>
+                    <ChakraButton
+                      ref={attendRef}
+                      onClick={onAttendingAlertCancel}
+                    >
+                      No, nevermind
+                    </ChakraButton>
+                    <ChakraButton
+                      variantColor="purple"
+                      onClick={() => onAttendingAlertConfirm("YES")}
+                      ml={3}
+                    >
+                      Yes, I want to go
+                    </ChakraButton>
+                  </React.Fragment>
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
-      <AlertDialog
-        isOpen={isCancellationAlertOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onCancellationAlertClose}
-      >
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Cancel RSVP
-          </AlertDialogHeader>
+          <AlertDialog
+            isOpen={isCancellationAlertOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onCancellationAlertClose}
+          >
+            <AlertDialogOverlay />
+            <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Cancel RSVP
+              </AlertDialogHeader>
 
-          <AlertDialogBody>
-            Are you sure you want to cancel your RSVP for {event.title}?
-          </AlertDialogBody>
+              <AlertDialogBody>
+                Are you sure you want to cancel your RSVP for{" "}
+                <Text as="span" fontWeight="bold">
+                  {event.name}
+                </Text>
+                ?
+              </AlertDialogBody>
 
-          <AlertDialogFooter>
-            <ChakraButton ref={cancelRef} onClick={onCancellationAlertClose}>
-              No, nevermind
-            </ChakraButton>
-            <ChakraButton
-              variantColor="red"
-              onClick={onCancellationAlertClose}
-              ml={3}
-            >
-              Yes, cancel the RSVP
-            </ChakraButton>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog> */}
+              <AlertDialogFooter>
+                {isSubmittingEventResponse ? (
+                  <ChakraButton variantColor="red" disabled={true}>
+                    Cancelling...
+                  </ChakraButton>
+                ) : (
+                  <React.Fragment>
+                    <ChakraButton
+                      ref={cancelRef}
+                      onClick={onCancellationAlertClose}
+                    >
+                      No, nevermind
+                    </ChakraButton>
+                    <ChakraButton
+                      variantColor="red"
+                      onClick={() => onAttendingAlertConfirm("NO")}
+                      ml={3}
+                    >
+                      Yes, cancel the RSVP
+                    </ChakraButton>
+                  </React.Fragment>
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </React.Fragment>
+      ) : null}
     </React.Fragment>
   );
 };

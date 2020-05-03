@@ -1,6 +1,12 @@
 import React from "react";
 import Gravatar from "react-gravatar";
-import { Button as ChakraButton, Box, Image, Flex } from "@chakra-ui/core";
+import {
+  Button as ChakraButton,
+  Box,
+  Image,
+  Flex,
+  Text
+} from "@chakra-ui/core";
 import * as constants from "../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
@@ -54,7 +60,7 @@ const Nav = props => {
         </Link>
         <Link
           to={`school/${props.school.ref.id}`}
-          className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
+          className="items-center flex mx-5 py-1 active:outline sm:rounded-none rounded hover:text-gray-300 hover:underline focus:underline"
         >
           {props.school.logo ? (
             <Image
@@ -84,7 +90,9 @@ const Nav = props => {
               <FontAwesomeIcon icon={faSchool} />
             </Flex>
           )}
-          School
+          <Text as="span" fontWeight="bold" color="gray.200" fontSize="xl">
+            School
+          </Text>
         </Link>
         <Link
           to={`user/${props.user.ref.id}`}

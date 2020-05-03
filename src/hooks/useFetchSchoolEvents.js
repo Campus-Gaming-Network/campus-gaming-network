@@ -10,8 +10,11 @@ const useFetchSchoolEvents = (id, limit = 25) => {
   React.useEffect(() => {
     const fetchSchoolEvents = async () => {
       console.log("fetchSchoolEvents...");
-      setIsLoading(true);
+
       const schoolDocRef = firebaseFirestore.collection("schools").doc(id);
+
+      setIsLoading(true);
+
       firebaseFirestore
         .collection("events")
         .where("school", "==", schoolDocRef)

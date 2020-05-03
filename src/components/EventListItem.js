@@ -2,24 +2,17 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { Stack, Box, Text, Image, Badge } from "@chakra-ui/core";
+import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import { Stack, Box, Text, Badge, Flex } from "@chakra-ui/core";
+import startCase from "lodash.startcase";
 import truncate from "lodash.truncate";
 import * as constants from "../constants";
 import Link from "./Link";
 
 const EventListItem = props => {
-  console.log({ props });
-  if (!props.event) {
-    // TODO: Handle gracefully
-    console.log("no event");
+  if (!props.event || !props.school) {
     return null;
   }
-
-  // if (!school) {
-  //   // TODO: Handle gracefully
-  //   console.log("no school");
-  //   return null;
-  // }
 
   return (
     <Box
@@ -39,10 +32,10 @@ const EventListItem = props => {
         <Box display="flex" alignItems="center">
           <Box pr={2}>
             <Link
-              to={`../../school/${props.event.school.id}`}
+              to={`../../school/${props.school.id}`}
               className={`${constants.STYLES.LINK.DEFAULT} text-xl leading-none`}
             >
-              {props.event.school.id}
+              {startCase(props.school.name.toLowerCase())}
             </Link>
             <Link
               to={`../../event/${props.event.id}`}
@@ -51,11 +44,20 @@ const EventListItem = props => {
               {props.event.name}
             </Link>
           </Box>
-          {/* <Image
-            src={school.logo}
-            alt={`${school.name} Logo`}
-            className="w-auto ml-auto h-16"
-          /> */}
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            color="gray.100"
+            h={12}
+            w={12}
+            bg="gray.400"
+            rounded="full"
+            border="4px"
+            borderColor="gray.300"
+            ml="auto"
+          >
+            <FontAwesomeIcon icon={faSchool} />
+          </Flex>
         </Box>
         <Box display="block">
           <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />

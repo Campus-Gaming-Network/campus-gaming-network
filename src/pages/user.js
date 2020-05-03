@@ -15,7 +15,6 @@ import {
   PseudoBox
 } from "@chakra-ui/core";
 import * as constants from "../constants";
-import { sortedEvents } from "../utilities";
 
 // Components
 import VisuallyHidden from "../components/VisuallyHidden";
@@ -324,8 +323,8 @@ const User = props => {
             </Box>
           ) : events && events.length ? (
             <List>
-              {sortedEvents(events).map(event => (
-                <EventListItem key={event.id} event={event} />
+              {events.map(event => (
+                <EventListItem key={event.id} {...event} />
               ))}
             </List>
           ) : (

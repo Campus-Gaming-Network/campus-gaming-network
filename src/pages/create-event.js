@@ -24,7 +24,6 @@ import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import Flex from "../components/Flex";
 import Avatar from "../components/Avatar";
 import { firebase, firebaseFirestore } from "../firebase";
-import useLocalStorage from "../hooks/useLocalStorage";
 
 const CreateEvent = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -38,32 +37,20 @@ const CreateEvent = props => {
   const [endDateTime, setEndDateTime] = React.useState(new Date());
   const [placeId, setPlaceId] = React.useState("");
   const [isOnlineEvent, setIsOnlineEvent] = React.useState(false);
-  const [schools, setSchools] = useLocalStorage("cgn-schools", null);
   const toast = useToast();
-
   // TODO: Tournament feature
   // const [isTournament, setIsTournament] = React.useState("no");
 
-  // if (!props.isAuthenticated) {
-  //   return <Redirect to="/" noThrow />;
-  // }
-
-  // if (!user) {
-  //   // TODO: Handle gracefully
-  //   console.log("no user");
-  //   return null;
-  // }
-
-  function setLocation(address, placeId) {
+  const setLocation = (address, placeId) => {
     setLocationSearch(address);
     setPlaceId(placeId);
-  }
+  };
 
-  function toggleIsOnlineEvent() {
+  const toggleIsOnlineEvent = () => {
     setIsOnlineEvent(!isOnlineEvent);
-  }
+  };
 
-  async function handleSubmit(e) {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     setIsSubmitting(true);
@@ -85,25 +72,32 @@ const CreateEvent = props => {
     const firestoreEndDateTime = firebase.firestore.Timestamp.fromDate(
       endDateTime
     );
-    // TODO: Double check the ref exists with localstorage changes
-    const schoolRef = schools.find(school => school.id === props.user.school.id)
-      .ref;
+    const schoolDocRef = firebaseFirestore
+      .collection("schools")
+      .doc(props.user.school.id);
+    const userDocRef = firebaseFirestore
+      .collection("users")
+      .doc(props.user.ref.id);
 
     let eventId;
 
     firebaseFirestore
       .collection("events")
       .add({
+        creator: userDocRef,
         name: fields.name,
         description: fields.description,
         isOnlineEvent,
         startDateTime: firestoreStartDateTime,
         endDateTime: firestoreEndDateTime,
         placeId,
-        school: schoolRef
+        school: schoolDocRef,
+        schoolDetails: {
+          name: props.user.school.name
+        }
       })
-      .then(docRef => {
-        eventId = docRef.id;
+      .then(eventDocRef => {
+        eventId = eventDocRef.id;
 
         firebaseFirestore
           .collection("events")
@@ -116,8 +110,9 @@ const CreateEvent = props => {
         firebaseFirestore
           .collection("event-responses")
           .add({
-            user: firebaseFirestore.doc(`user/${props.user.ref.id}`),
-            event: docRef,
+            user: userDocRef,
+            event: eventDocRef,
+            school: schoolDocRef,
             response: "YES",
             userDetails: {
               firstName: props.user.firstName,
@@ -128,8 +123,10 @@ const CreateEvent = props => {
               name: fields.name,
               description: fields.description,
               startDateTime: firestoreStartDateTime,
-              endDateTime: firestoreEndDateTime,
-              school: schoolRef
+              endDateTime: firestoreEndDateTime
+            },
+            schoolDetails: {
+              name: props.school.name
             }
           })
           .then(() => {
@@ -157,7 +154,7 @@ const CreateEvent = props => {
           isClosable: true
         });
       });
-  }
+  };
 
   if (props.isAuthenticating) {
     return null;

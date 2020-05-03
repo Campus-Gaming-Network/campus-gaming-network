@@ -16,7 +16,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import Gravatar from "react-gravatar";
 import * as constants from "../constants";
-import { sortedEvents } from "../utilities";
 import OutsideLink from "../components/OutsideLink";
 import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
@@ -239,8 +238,9 @@ const School = props => {
             </Box>
           ) : events && events.length ? (
             <List>
-              {sortedEvents(events).map(event => (
-                <EventListItem key={event.id} event={event} />
+              test
+              {events.map(event => (
+                <EventListItem key={event.id} event={event} school={school} />
               ))}
             </List>
           ) : (

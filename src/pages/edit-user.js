@@ -245,6 +245,10 @@ const EditUser = props => {
 
     setIsSubmitting(true);
 
+    const schoolDocRef = firebaseFirestore
+      .collection("schools")
+      .doc(state.school);
+
     const data = {
       firstName: state.firstName,
       lastName: state.lastName,
@@ -267,7 +271,7 @@ const EditUser = props => {
       steam: state.steam,
       xbox: state.xbox,
       psn: state.psn,
-      school: firebaseFirestore.collection("schools").doc(state.school)
+      school: schoolDocRef
     };
 
     const cleanedData = omitBy(data, isNil);

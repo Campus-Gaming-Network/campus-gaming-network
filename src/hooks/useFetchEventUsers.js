@@ -10,11 +10,14 @@ const useFetchEventUsers = (id, limit = 25) => {
   React.useEffect(() => {
     const fetchEventUsers = async () => {
       console.log("fetchEventUsers...");
-      setIsLoading(true);
       const eventDocRef = firebaseFirestore.collection("events").doc(id);
+
+      setIsLoading(true);
+
       firebaseFirestore
         .collection("event-responses")
         .where("event", "==", eventDocRef)
+        .where("response", "==", "YES")
         .limit(limit)
         .get()
         .then(snapshot => {

@@ -84,6 +84,7 @@ export const mapUser = (user, ref) => ({
 });
 
 export const mapEvent = (event, ref) => ({
+  id: ref.id,
   ref,
   ...event,
   formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
@@ -91,7 +92,36 @@ export const mapEvent = (event, ref) => ({
   googleMapsAddressLink: googleMapsLink(event.location)
 });
 
+export const mapEventResponse = (eventResponse, ref) =>
+  console.log("eventResponse", eventResponse) || {
+    id: ref.id,
+    ref,
+    response: eventResponse.response,
+    event: {
+      id: eventResponse.event.id,
+      ref: eventResponse.event,
+      ...eventResponse.eventDetails,
+      formattedStartDateTime: formatCalendarDateTime(
+        eventResponse.eventDetails.startDateTime
+      ),
+      formattedEndDateTime: formatCalendarDateTime(
+        eventResponse.eventDetails.endDateTime
+      )
+    },
+    school: {
+      id: eventResponse.school.id,
+      ref: eventResponse.school,
+      ...eventResponse.schoolDetails
+    },
+    user: {
+      id: eventResponse.user.id,
+      ref: eventResponse.user,
+      ...eventResponse.userDetails
+    }
+  };
+
 export const mapSchool = (school, ref) => ({
+  id: ref.id,
   ref,
   ...school,
   googleMapsAddressLink: googleMapsLink(school.address)
