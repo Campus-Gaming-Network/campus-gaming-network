@@ -26,6 +26,7 @@ const useFetchUserEvents = (id, limit = 25) => {
             snapshot.forEach(doc => {
               userEvents.push(mapEventResponse(doc.data(), doc));
             });
+            console.log(userEvents);
             setEvents(userEvents);
             setIsLoading(false);
           } else {

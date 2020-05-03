@@ -5,6 +5,7 @@ import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
 import startCase from "lodash.startcase";
+import uniqBy from "lodash.uniqby";
 import moment from "moment";
 import {
   Input as ChakraInput,
@@ -31,7 +32,6 @@ import {
   ComboboxList,
   ComboboxOption
 } from "@reach/combobox";
-import "@reach/combobox/styles.css";
 import * as constants from "../constants";
 import { firebase, firebaseFirestore } from "../firebase";
 import timezones from "../data/timezones.json";
@@ -101,65 +101,9 @@ const EditUser = props => {
       if (searchTerm.trim() !== "") {
         let isFresh = true;
 
-        fetchCities(searchTerm).then(cities => {
-          const testResponse = {
-            data: [
-              {
-                id: 64980,
-                cover: 45789,
-                name: "J-League Supporter Soccer",
-                slug: "j-league-supporter-soccer"
-              },
-              {
-                id: 42354,
-                cover: 45925,
-                name: "Ultra League: Moero! Soccer Daikessen!!",
-                slug: "ultra-league-moero-soccer-daikessen"
-              },
-              {
-                id: 37661,
-                cover: 26050,
-                name: "Power League V",
-                slug: "power-league-v"
-              },
-              {
-                id: 38089,
-                cover: 38982,
-                name: "Power League II",
-                slug: "power-league-ii"
-              },
-              {
-                id: 42096,
-                cover: 32877,
-                name: "Power League III",
-                slug: "power-league-iii"
-              },
-              {
-                id: 23093,
-                cover: 24029,
-                name: "Planet Puzzle League",
-                slug: "planet-puzzle-league"
-              },
-              {
-                id: 5682,
-                cover: 5817,
-                name: "Major League Baseball",
-                slug: "major-league-baseball"
-              },
-              { id: 51310, cover: 81863, name: "S4 League", slug: "s4-league" },
-              { id: 103952, name: "In League", slug: "in-league" },
-              {
-                id: 14597,
-                cover: 13074,
-                name: "On the Bal: League Edition",
-                slug: "on-the-bal-league-edition"
-              }
-            ],
-            query: "League"
-          };
+        fetchGames(searchTerm).then(games => {
           if (isFresh) {
-            // setGames(cities);
-            setGames(testResponse.data);
+            setGames(games);
           }
         });
         return () => (isFresh = false);
@@ -169,17 +113,17 @@ const EditUser = props => {
     return games;
   };
 
-  const fetchCities = value => {
+  const fetchGames = value => {
     if (CACHED_GAMES[value]) {
       return Promise.resolve(CACHED_GAMES[value]);
     }
 
-    return fetch("https://city-search.now.sh/?" + value)
-      .then(res => res.json())
-      .then(result => {
-        CACHED_GAMES[value] = result;
-        return result;
-      });
+    const searchGames = firebase.functions().httpsCallable("searchGames");
+
+    return searchGames({ text: value }).then(result => {
+      CACHED_GAMES[value] = result.data.games;
+      return result.data.games;
+    });
   };
 
   const prefillForm = () => {
@@ -222,20 +166,6 @@ const EditUser = props => {
   const favoriteGamesResults = useGameSearch(state.favoriteGameSearch);
   const currentGamesResults = useGameSearch(state.currentGameSearch);
 
-  // const searchGames = () => {
-  // const test = firebase.functions().httpsCallable("searchGames");
-  // test({
-  //   text: "hello"
-  // })
-  //   .then(function(result) {
-  //     result = {"data":[{"id":64980,"cover":45789,"name":"J-League Supporter Soccer","slug":"j-league-supporter-soccer"},{"id":42354,"cover":45925,"name":"Ultra League: Moero! Soccer Daikessen!!","slug":"ultra-league-moero-soccer-daikessen"},{"id":37661,"cover":26050,"name":"Power League V","slug":"power-league-v"},{"id":38089,"cover":38982,"name":"Power League II","slug":"power-league-ii"},{"id":42096,"cover":32877,"name":"Power League III","slug":"power-league-iii"},{"id":23093,"cover":24029,"name":"Planet Puzzle League","slug":"planet-puzzle-league"},{"id":5682,"cover":5817,"name":"Major League Baseball","slug":"major-league-baseball"},{"id":51310,"cover":81863,"name":"S4 League","slug":"s4-league"},{"id":103952,"name":"In League","slug":"in-league"},{"id":14597,"cover":13074,"name":"On the Bal: League Edition","slug":"on-the-bal-league-edition"}],"query":"League"}
-  //     console.log("result", result);
-  //   })
-  //   .catch(function(error) {
-  //     console.log({ error });
-  //   });
-  // };
-
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -248,6 +178,12 @@ const EditUser = props => {
     const schoolDocRef = firebaseFirestore
       .collection("schools")
       .doc(state.school);
+
+    // TODO:
+    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
+    // const selectedGame = games.find(
+    //   game => game.name.toLowerCase().trim() === fields.gameSearch.toLowerCase().trim()
+    // );
 
     const data = {
       firstName: state.firstName,

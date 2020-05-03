@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
   faGlobe,
-  faSchool
+  faSchool,
+  faBolt
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import Gravatar from "react-gravatar";
@@ -258,6 +259,31 @@ const Event = props => {
             </Flex>
           </Flex>
           <Stack as="section">
+            {event.hasStarted ? (
+              <Flex
+                alignItems="center"
+                justifyContent="flex-start"
+                mr="auto"
+                px={4}
+                bg="green.100"
+                rounded="lg"
+              >
+                <FontAwesomeIcon
+                  size="xs"
+                  icon={faBolt}
+                  className="fa-pulse text-green-600 mr-2"
+                />
+                <Text
+                  as="span"
+                  fontSize="lg"
+                  color="green.500"
+                  fontWeight="bold"
+                  textTransform="uppercase"
+                >
+                  Happening now
+                </Text>
+              </Flex>
+            ) : null}
             <Box>
               <FontAwesomeIcon
                 icon={faClock}

@@ -2,7 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import { faSchool, faBolt } from "@fortawesome/free-solid-svg-icons";
 import { Stack, Box, Text, Badge, Flex } from "@chakra-ui/core";
 import startCase from "lodash.startcase";
 import truncate from "lodash.truncate";
@@ -28,7 +28,7 @@ const EventListItem = props => {
       display="flex"
       alignItems="center"
     >
-      <Stack spacing={4}>
+      <Stack spacing={4} w="100%">
         <Box display="flex" alignItems="center">
           <Box pr={2}>
             <Link
@@ -59,15 +59,41 @@ const EventListItem = props => {
             <FontAwesomeIcon icon={faSchool} />
           </Flex>
         </Box>
-        <Box display="block">
-          <FontAwesomeIcon icon={faClock} className="text-gray-700 mr-2" />
-          <time
-            className="text-lg"
-            dateTime={props.event.formattedStartDateTime}
+        {props.event.hasStarted ? (
+          <Flex
+            alignItems="center"
+            justifyContent="flex-start"
+            mr="auto"
+            px={4}
+            bg="green.100"
+            rounded="lg"
           >
-            {props.event.formattedStartDateTime}
-          </time>
-        </Box>
+            <FontAwesomeIcon
+              size="xs"
+              icon={faBolt}
+              className="fa-pulse text-green-600 mr-2"
+            />
+            <Text
+              as="span"
+              fontSize="lg"
+              color="green.500"
+              fontWeight="bold"
+              textTransform="uppercase"
+            >
+              Happening now
+            </Text>
+          </Flex>
+        ) : (
+          <Box display="block">
+            <FontAwesomeIcon icon={faClock} className="text-gray-500 mr-2" />
+            <time
+              className="text-lg"
+              dateTime={props.event.formattedStartDateTime}
+            >
+              {props.event.formattedStartDateTime}
+            </time>
+          </Box>
+        )}
         <Text fontSize="lg">
           {truncate(props.event.description, { length: 250 })}
         </Text>

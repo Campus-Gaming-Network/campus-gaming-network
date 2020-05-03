@@ -89,7 +89,12 @@ export const mapEvent = (event, ref) => ({
   ...event,
   formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
   formattedEndDateTime: formatCalendarDateTime(event.endDateTime),
-  googleMapsAddressLink: googleMapsLink(event.location)
+  googleMapsAddressLink: googleMapsLink(event.location),
+  hasStarted: moment().isBetween(
+    moment(event.startDateTime.toDate()),
+    moment(event.endDateTime.toDate())
+  ),
+  hasEnded: moment().isAfter(moment(event.endDateTime.toDate()))
 });
 
 export const mapEventResponse = (eventResponse, ref) => ({
@@ -105,6 +110,13 @@ export const mapEventResponse = (eventResponse, ref) => ({
     ),
     formattedEndDateTime: formatCalendarDateTime(
       eventResponse.eventDetails.endDateTime
+    ),
+    hasStarted: moment().isBetween(
+      moment(eventResponse.eventDetails.startDateTime.toDate()),
+      moment(eventResponse.eventDetails.endDateTime.toDate())
+    ),
+    hasEnded: moment().isAfter(
+      moment(eventResponse.eventDetails.endDateTime.toDate())
     )
   },
   school: {

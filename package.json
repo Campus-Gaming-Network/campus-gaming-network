@@ -30,6 +30,7 @@
     "lodash.sortby": "^4.7.0",
     "lodash.startcase": "^4.4.0",
     "lodash.truncate": "^4.4.2",
+    "lodash.uniqby": "^4.7.0",
     "lodash.xorby": "^4.7.0",
     "md5": "^2.2.1",
     "moment": "^2.24.0",

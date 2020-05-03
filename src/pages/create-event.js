@@ -2,6 +2,8 @@ import React from "react";
 import { navigate, Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import startCase from "lodash.startcase";
+import uniqBy from "lodash.uniqby";
 import {
   Input as ChakraInput,
   Stack,
@@ -15,21 +17,33 @@ import {
   FormErrorMessage,
   Spinner,
   Checkbox,
-  useToast
+  useToast,
+  Select as ChakraSelect,
+  Flex
 } from "@chakra-ui/core";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption
+} from "@reach/combobox";
+import Gravatar from "react-gravatar";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { useFormFields } from "../utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
-import Flex from "../components/Flex";
-import Avatar from "../components/Avatar";
 import { firebase, firebaseFirestore } from "../firebase";
+import * as constants from "../constants";
+
+const CACHED_GAMES = {};
 
 const CreateEvent = props => {
   const [fields, handleFieldChange] = useFormFields({
     name: "",
     description: "",
-    eventHost: null
+    host: "",
+    gameSearch: ""
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [locationSearch, setLocationSearch] = React.useState("");
@@ -49,6 +63,40 @@ const CreateEvent = props => {
   const toggleIsOnlineEvent = () => {
     setIsOnlineEvent(!isOnlineEvent);
   };
+
+  const useGameSearch = searchTerm => {
+    const [games, setGames] = React.useState([]);
+
+    React.useEffect(() => {
+      if (searchTerm.trim() !== "") {
+        let isFresh = true;
+
+        fetchGames(searchTerm).then(games => {
+          if (isFresh) {
+            setGames(games);
+          }
+        });
+        return () => (isFresh = false);
+      }
+    }, [searchTerm]);
+
+    return games;
+  };
+
+  const fetchGames = value => {
+    if (CACHED_GAMES[value]) {
+      return Promise.resolve(CACHED_GAMES[value]);
+    }
+
+    const searchGames = firebase.functions().httpsCallable("searchGames");
+
+    return searchGames({ text: value }).then(result => {
+      CACHED_GAMES[value] = result.data.games;
+      return result.data.games;
+    });
+  };
+
+  const gamesResults = useGameSearch(fields.gameSearch);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -79,23 +127,35 @@ const CreateEvent = props => {
       .collection("users")
       .doc(props.user.ref.id);
 
+    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
+    const selectedGame = games.find(
+      game =>
+        game.name.toLowerCase().trim() ===
+        fields.gameSearch.toLowerCase().trim()
+    );
+
+    const eventData = {
+      creator: userDocRef,
+      name: fields.name,
+      description: fields.description,
+      isOnlineEvent,
+      startDateTime: firestoreStartDateTime,
+      endDateTime: firestoreEndDateTime,
+      placeId,
+      school: schoolDocRef,
+      schoolDetails: {
+        name: props.school.name
+      },
+      game: selectedGame || {
+        name: fields.gameSearch.trim()
+      }
+    };
+
     let eventId;
 
     firebaseFirestore
       .collection("events")
-      .add({
-        creator: userDocRef,
-        name: fields.name,
-        description: fields.description,
-        isOnlineEvent,
-        startDateTime: firestoreStartDateTime,
-        endDateTime: firestoreEndDateTime,
-        placeId,
-        school: schoolDocRef,
-        schoolDetails: {
-          name: props.user.school.name
-        }
-      })
+      .add(eventData)
       .then(eventDocRef => {
         eventId = eventDocRef.id;
 
@@ -107,28 +167,30 @@ const CreateEvent = props => {
             setIsSubmitting(false);
           });
 
+        const eventResponseData = {
+          user: userDocRef,
+          event: eventDocRef,
+          school: schoolDocRef,
+          response: "YES",
+          userDetails: {
+            firstName: props.user.firstName,
+            lastName: props.user.lastName,
+            gravatar: props.user.gravatar
+          },
+          eventDetails: {
+            name: fields.name,
+            description: fields.description,
+            startDateTime: firestoreStartDateTime,
+            endDateTime: firestoreEndDateTime
+          },
+          schoolDetails: {
+            name: props.school.name
+          }
+        };
+
         firebaseFirestore
           .collection("event-responses")
-          .add({
-            user: userDocRef,
-            event: eventDocRef,
-            school: schoolDocRef,
-            response: "YES",
-            userDetails: {
-              firstName: props.user.firstName,
-              lastName: props.user.lastName,
-              gravatar: props.user.gravatar
-            },
-            eventDetails: {
-              name: fields.name,
-              description: fields.description,
-              startDateTime: firestoreStartDateTime,
-              endDateTime: firestoreEndDateTime
-            },
-            schoolDetails: {
-              name: props.school.name
-            }
-          })
+          .add(eventResponseData)
           .then(() => {
             toast({
               title: "Event created.",
@@ -219,20 +281,38 @@ const CreateEvent = props => {
           <Stack spacing={6} p={8}>
             <Box>
               <Text fontSize="lg" fontWeight="bold" pb={2}>
-                Event Organizer:
+                Event Creator:
               </Text>
               <Flex>
-                <Avatar
-                  name="Brandon Sansone"
-                  size="sm"
-                  src="https://api.adorable.io/avatars/285/abott249@adorable"
-                  rounded
+                <Gravatar
+                  default={constants.GRAVATAR.DEFAULT}
+                  rating={constants.GRAVATAR.RA}
+                  md5={props.user.gravatar}
+                  className="h-10 w-10 rounded-full"
                 />
                 <Text ml={4} as="span" alignSelf="center">
-                  Brandon Sansone
+                  {props.user.fullName}
                 </Text>
               </Flex>
             </Box>
+            <FormControl isRequired>
+              <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
+                Event Host:
+              </FormLabel>
+              <ChakraSelect
+                id="host"
+                name="host"
+                onChange={props.handleFieldChange}
+                value={props.host}
+                size="lg"
+              >
+                <option value="">Select the host of the event</option>
+                <option value="user">{props.user.fullName} (You)</option>
+                <option value="school">
+                  {startCase(props.school.name.toLowerCase())}
+                </option>
+              </ChakraSelect>
+            </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
                 Event Name:
@@ -345,9 +425,39 @@ const CreateEvent = props => {
                 placeholder="Tell people what your event is about."
                 size="lg"
                 resize="vertical"
-                maxLength="300"
+                maxLength="3000"
                 h="150px"
               />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
+                Game:
+              </FormLabel>
+              <Combobox aria-label="Games">
+                <ComboboxInput
+                  id="gameSearch"
+                  name="gameSearch"
+                  placeholder="The game being played"
+                  onChange={handleFieldChange}
+                />
+                {gamesResults && (
+                  <ComboboxPopover>
+                    {gamesResults.length > 0 ? (
+                      <ComboboxList>
+                        {gamesResults.map(game => {
+                          return (
+                            <ComboboxOption key={game.id} value={game.name} />
+                          );
+                        })}
+                      </ComboboxList>
+                    ) : (
+                      <Text as="span" ma={8} d="block">
+                        No results found
+                      </Text>
+                    )}
+                  </ComboboxPopover>
+                )}
+              </Combobox>
             </FormControl>
             <FormControl isRequired isInvalid={!startDateTime}>
               <FormLabel

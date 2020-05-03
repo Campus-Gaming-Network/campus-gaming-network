@@ -9,6 +9,7 @@ import moment from "moment";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 import momentLocalizer from "react-widgets-moment";
 import "react-widgets/dist/css/react-widgets.css";
+import "@reach/combobox/styles.css";
 import "./App.css";
 import { firebase, firebaseAuth, firebaseFirestore } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
