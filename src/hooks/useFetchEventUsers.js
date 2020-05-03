@@ -2,7 +2,7 @@ import React from "react";
 import { firebaseFirestore } from "../firebase";
 import { mapUser } from "../utilities";
 
-const useFetchEventUsers = (id, limit = 25) => {
+const useFetchEventUsers = (id, limit = 25, refreshToggle) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -10,6 +10,7 @@ const useFetchEventUsers = (id, limit = 25) => {
   React.useEffect(() => {
     const fetchEventUsers = async () => {
       console.log("fetchEventUsers...");
+
       const eventDocRef = firebaseFirestore.collection("events").doc(id);
 
       setIsLoading(true);
@@ -48,7 +49,7 @@ const useFetchEventUsers = (id, limit = 25) => {
     if (id) {
       fetchEventUsers();
     }
-  }, [id, limit]);
+  }, [id, limit, refreshToggle]);
 
   return [users, isLoading, error];
 };

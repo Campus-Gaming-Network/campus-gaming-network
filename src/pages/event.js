@@ -41,15 +41,19 @@ import useFetchEventUsers from "../hooks/useFetchEventUsers";
 import useFetchUserEventResponse from "../hooks/useFetchUserEventResponse";
 
 const Event = props => {
+  const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const toast = useToast();
   const [event, isLoadingFetchedEvent] = useFetchEventDetails(props.id);
   const isEventCreator =
     props.authenticatedUser &&
     event &&
     event.creator.id === props.authenticatedUser.uid;
-  const [users, isLoadingEventUsers] = useFetchEventUsers(props.id);
+  const [users, isLoadingEventUsers] = useFetchEventUsers(
+    props.id,
+    undefined,
+    refreshEventResponse
+  );
   const [userFetchId, setUserFetchId] = React.useState(null);
-  const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
 
   if (!isEventCreator && props.authenticatedUser && !userFetchId) {
     setUserFetchId(props.authenticatedUser.uid);
