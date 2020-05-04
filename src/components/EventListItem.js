@@ -59,7 +59,26 @@ const EventListItem = props => {
             <FontAwesomeIcon icon={faSchool} />
           </Flex>
         </Box>
-        {props.event.hasStarted ? (
+        {props.event.hasEnded ? (
+          <Flex
+            alignItems="center"
+            justifyContent="flex-start"
+            mr="auto"
+            px={4}
+            bg="red.100"
+            rounded="lg"
+          >
+            <Text
+              as="span"
+              fontSize="lg"
+              color="red.500"
+              fontWeight="bold"
+              textTransform="uppercase"
+            >
+              Event Ended
+            </Text>
+          </Flex>
+        ) : props.event.hasStarted ? (
           <Flex
             alignItems="center"
             justifyContent="flex-start"
@@ -71,7 +90,7 @@ const EventListItem = props => {
             <FontAwesomeIcon
               size="xs"
               icon={faBolt}
-              className="fa-pulse text-green-600 mr-2"
+              className="pulse text-green-600 mr-2"
             />
             <Text
               as="span"

@@ -1,5 +1,5 @@
 import React from "react";
-import { firebaseFirestore } from "../firebase";
+import { firebase, firebaseFirestore } from "../firebase";
 import { mapEvent } from "../utilities";
 
 const useFetchSchoolEvents = (id, limit = 25) => {
@@ -9,15 +9,17 @@ const useFetchSchoolEvents = (id, limit = 25) => {
 
   React.useEffect(() => {
     const fetchSchoolEvents = async () => {
+      setIsLoading(true);
+
       console.log("fetchSchoolEvents...");
 
       const schoolDocRef = firebaseFirestore.collection("schools").doc(id);
-
-      setIsLoading(true);
+      const now = new Date();
 
       firebaseFirestore
         .collection("events")
         .where("school", "==", schoolDocRef)
+        .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
         .limit(limit)
         .get()
         .then(snapshot => {

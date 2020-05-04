@@ -1,5 +1,5 @@
 import React from "react";
-import { firebaseFirestore } from "../firebase";
+import { firebase, firebaseFirestore } from "../firebase";
 import { mapEventResponse } from "../utilities";
 
 const useFetchUserEvents = (id, limit = 25) => {
@@ -9,16 +9,22 @@ const useFetchUserEvents = (id, limit = 25) => {
 
   React.useEffect(() => {
     const fetchUserEvents = async () => {
+      setIsLoading(true);
+
       console.log("fetchUserEvents...");
 
       const userDocRef = firebaseFirestore.collection("users").doc(id);
-
-      setIsLoading(true);
+      const now = new Date();
 
       firebaseFirestore
         .collection("event-responses")
         .where("user", "==", userDocRef)
         .where("response", "==", "YES")
+        .where(
+          "eventDetails.endDateTime",
+          ">=",
+          firebase.firestore.Timestamp.fromDate(now)
+        )
         .get()
         .then(snapshot => {
           if (!snapshot.empty) {
@@ -26,7 +32,6 @@ const useFetchUserEvents = (id, limit = 25) => {
             snapshot.forEach(doc => {
               userEvents.push(mapEventResponse(doc.data(), doc));
             });
-            console.log(userEvents);
             setEvents(userEvents);
             setIsLoading(false);
           } else {

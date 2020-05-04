@@ -2,13 +2,13 @@ import React from "react";
 import { Box } from "@chakra-ui/core";
 
 // Hooks
-import useFetchUserEvents from "../hooks/useFetchUserEvents";
+// import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
 const Home = props => {
-  const userId = props.authenticatedUser ? props.authenticatedUser.uid : null;
-  const [attendingEvents] = useFetchUserEvents(userId);
+  // const userId = props.authenticatedUser ? props.authenticatedUser.uid : null;
+  // const [attendingEvents] = useFetchUserEvents(userId);
 
-  console.log("attendingEvents", attendingEvents);
+  // console.log("attendingEvents", attendingEvents);
 
   return (
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">

@@ -30,14 +30,18 @@ const CACHED_USERS = {};
 
 const User = props => {
   const hasCachedUser = !!CACHED_USERS[props.id];
+  const hasCachedUserEvents = hasCachedUser && !!CACHED_USERS[props.id].events;
   const shouldFetchUser =
     !props.appLoading &&
     (!props.user ||
-      (props.user && props.id !== props.user.ref.id) ||
-      !hasCachedUser);
+      (props.user && props.id !== props.user.ref.id && !hasCachedUser));
+  const shouldFetchUserEvents = shouldFetchUser || !hasCachedUserEvents;
   const userFetchId = shouldFetchUser ? props.id : null;
+  const userEventsFetchId = shouldFetchUserEvents ? props.id : null;
   const [fetchedUser, isLoadingFetchedUser] = useFetchUserDetails(userFetchId);
-  const [events, isLoadingFetchedUserEvents] = useFetchUserEvents(props.id);
+  const [fetchedEvents, isLoadingFetchedUserEvents] = useFetchUserEvents(
+    userEventsFetchId
+  );
   const shouldDisplaySilhouette =
     props.appLoading ||
     (!props.appLoading && shouldFetchUser && !fetchedUser) ||
@@ -74,22 +78,33 @@ const User = props => {
     );
   }
 
+  const isCurrentUser = props.authenticatedUser.uid === props.id;
+
   const user = hasCachedUser
     ? CACHED_USERS[props.id]
     : userFetchId
     ? fetchedUser
     : props.user;
 
+  const events = hasCachedUserEvents
+    ? CACHED_USERS[props.id].events
+    : userEventsFetchId
+    ? fetchedEvents
+    : [];
+
   if (!hasCachedUser) {
     CACHED_USERS[props.id] = { ...user };
+  } else if (events) {
+    CACHED_USERS[props.id] = {
+      ...CACHED_USERS[props.id],
+      events: [...events]
+    };
   }
 
   if (!user) {
     console.error(`No user found ${props.uri}`);
     return <Redirect to="not-found" noThrow />;
   }
-
-  const isCurrentUser = props.authenticatedUser.uid === props.id;
 
   return (
     <Box as="article" mt={10} mb={16} px={8} mx="auto" fontSize="xl" maxW="4xl">

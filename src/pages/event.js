@@ -41,14 +41,21 @@ import useFetchEventDetails from "../hooks/useFetchEventDetails";
 import useFetchEventUsers from "../hooks/useFetchEventUsers";
 import useFetchUserEventResponse from "../hooks/useFetchUserEventResponse";
 
+const CACHED_EVENTS = {};
+
 const Event = props => {
+  const hasCachedEvent = !!CACHED_EVENTS[props.id];
+  const shouldFetchEvent = !props.appLoading && !hasCachedEvent;
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const toast = useToast();
-  const [event, isLoadingFetchedEvent] = useFetchEventDetails(props.id);
+  const eventFetchId = shouldFetchEvent ? props.id : null;
+  const [fetchedEvent, isLoadingFetchedEvent] = useFetchEventDetails(
+    eventFetchId
+  );
   const isEventCreator =
     props.authenticatedUser &&
-    event &&
-    event.creator.id === props.authenticatedUser.uid;
+    fetchedEvent &&
+    fetchedEvent.creator.id === props.authenticatedUser.uid;
   const [users, isLoadingEventUsers] = useFetchEventUsers(
     props.id,
     undefined,
@@ -67,7 +74,10 @@ const Event = props => {
   );
   const hasResponded = !!eventResponse;
   const canChangeEventResponse =
-    props.isAuthenticated && !isLoadingUserEventResponse && !isEventCreator;
+    props.isAuthenticated &&
+    !isLoadingUserEventResponse &&
+    !isEventCreator &&
+    fetchedEvent && !fetchedEvent.hasEnded;
   const [
     isSubmittingEventResponse,
     setIsSubmittingEventResponse
@@ -222,6 +232,12 @@ const Event = props => {
     );
   }
 
+  const event = hasCachedEvent
+    ? CACHED_EVENTS[props.id]
+    : eventFetchId
+    ? fetchedEvent
+    : null;
+
   if (!event) {
     console.error(`No event found ${props.uri}`);
     return <Redirect to="not-found" noThrow />;
@@ -259,7 +275,26 @@ const Event = props => {
             </Flex>
           </Flex>
           <Stack as="section">
-            {event.hasStarted ? (
+            {event.hasEnded ? (
+              <Flex
+                alignItems="center"
+                justifyContent="flex-start"
+                mr="auto"
+                px={4}
+                bg="red.100"
+                rounded="lg"
+              >
+                <Text
+                  as="span"
+                  fontSize="lg"
+                  color="red.500"
+                  fontWeight="bold"
+                  textTransform="uppercase"
+                >
+                  Event Ended
+                </Text>
+              </Flex>
+            ) : event.hasStarted ? (
               <Flex
                 alignItems="center"
                 justifyContent="flex-start"
@@ -271,7 +306,7 @@ const Event = props => {
                 <FontAwesomeIcon
                   size="xs"
                   icon={faBolt}
-                  className="fa-pulse text-green-600 mr-2"
+                  className="pulse text-green-600 mr-2"
                 />
                 <Text
                   as="span"
@@ -342,7 +377,9 @@ const Event = props => {
                     </Text>
                     <ChakraButton
                       onClick={() =>
-                        setCancellationAlertIsOpen(!isEventCreator)
+                        setCancellationAlertIsOpen(
+                          !isEventCreator && !event.hasEnded
+                        )
                       }
                       variant="link"
                       color="green.500"
@@ -354,7 +391,9 @@ const Event = props => {
                 </Alert>
               ) : (
                 <ChakraButton
-                  onClick={() => setAttendingAlertIsOpen(!isEventCreator)}
+                  onClick={() =>
+                    setAttendingAlertIsOpen(!isEventCreator && !event.hasEnded)
+                  }
                   variantColor="purple"
                   w="200px"
                 >

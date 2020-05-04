@@ -37,7 +37,7 @@ const Signup = props => {
     return <Redirect to="/" noThrow />;
   }
 
-  function handleSubmit(e) {
+  const handleSubmit = e => {
     e.preventDefault();
 
     setIsSubmitting(true);
@@ -60,12 +60,13 @@ const Signup = props => {
       .catch(error => {
         setError(error.message);
         setIsSubmitting(false);
+        window.scrollTo(0, 0);
       });
-  }
+  };
 
-  function togglePasswordVisibility() {
+  const togglePasswordVisibility = () => {
     setIsShowingPassword(!isShowingPassword);
-  }
+  };
 
   return (
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">

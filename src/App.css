@@ -75,8 +75,7 @@
   cursor: not-allowed;
 }
 
-/* Icon pulse */
-.fa-pulse {
+.pulse {
   display: inline-block;
   -moz-animation: pulse 2s infinite linear;
   -o-animation: pulse 2s infinite linear;

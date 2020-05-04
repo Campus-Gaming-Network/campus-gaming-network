@@ -31,33 +31,21 @@ const School = props => {
   const shouldFetchSchool =
     !props.appLoading &&
     (!props.school ||
-      (props.school && props.id !== props.school.ref.id) ||
-      !hasCachedSchool);
+      (props.school && props.id !== props.school.ref.id && !hasCachedSchool));
   const schoolFetchId = shouldFetchSchool ? props.id : null;
   const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
     schoolFetchId
   );
-  const school = hasCachedSchool
-    ? CACHED_SCHOOLS[props.id]
-    : schoolFetchId
-    ? fetchedSchool
-    : props.school;
-
   const hasCachedSchoolEvents =
     hasCachedSchool && !!CACHED_SCHOOLS[props.id].events;
-  const shouldFetchSchoolEvents = !hasCachedSchoolEvents;
+  const shouldFetchSchoolEvents = shouldFetchSchool || !hasCachedSchoolEvents;
   const eventsSchoolToFetch = shouldFetchSchoolEvents ? props.id : null;
   const [schoolEvents, isLoadingSchoolEvents] = useFetchSchoolEvents(
     eventsSchoolToFetch
   );
-
-  const events = hasCachedSchoolEvents
-    ? CACHED_SCHOOLS[props.id].events
-    : schoolEvents;
-
   const hasCachedSchoolUsers =
     hasCachedSchool && !!CACHED_SCHOOLS[props.id].users;
-  const shouldFetchSchoolUsers = !(hasCachedSchool && hasCachedSchoolUsers);
+  const shouldFetchSchoolUsers = shouldFetchSchool || !hasCachedSchoolUsers;
   const usersSchoolToFetch = shouldFetchSchoolUsers ? props.id : null;
   const [schoolUsers, isLoadingSchoolUsers] = useFetchSchoolUsers(
     usersSchoolToFetch
@@ -97,26 +85,40 @@ const School = props => {
     );
   }
 
+  const school = hasCachedSchool
+    ? CACHED_SCHOOLS[props.id]
+    : schoolFetchId
+    ? fetchedSchool
+    : props.school;
+
   const users = hasCachedSchoolUsers
     ? CACHED_SCHOOLS[props.id].users
-    : schoolUsers;
+    : usersSchoolToFetch
+    ? schoolUsers
+    : [];
+
+  const events = hasCachedSchoolEvents
+    ? CACHED_SCHOOLS[props.id].events
+    : eventsSchoolToFetch
+    ? schoolEvents
+    : [];
 
   if (!hasCachedSchool) {
     CACHED_SCHOOLS[props.id] = { ...school };
+  }
 
-    if (schoolEvents) {
-      CACHED_SCHOOLS[props.id] = {
-        ...CACHED_SCHOOLS[props.id],
-        events: [...schoolEvents]
-      };
-    }
+  if (hasCachedSchool && schoolEvents) {
+    CACHED_SCHOOLS[props.id] = {
+      ...CACHED_SCHOOLS[props.id],
+      events: [...schoolEvents]
+    };
+  }
 
-    if (schoolUsers) {
-      CACHED_SCHOOLS[props.id] = {
-        ...CACHED_SCHOOLS[props.id],
-        users: [...schoolUsers]
-      };
-    }
+  if (hasCachedSchool && schoolUsers) {
+    CACHED_SCHOOLS[props.id] = {
+      ...CACHED_SCHOOLS[props.id],
+      users: [...schoolUsers]
+    };
   }
 
   if (!school) {
