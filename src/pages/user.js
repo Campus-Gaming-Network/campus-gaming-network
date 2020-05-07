@@ -34,7 +34,7 @@ const User = props => {
   const shouldFetchUser =
     !props.appLoading &&
     (!props.user ||
-      (props.user && props.id !== props.user.ref.id && !hasCachedUser));
+      (props.user && props.id !== props.user.id && !hasCachedUser));
   const shouldFetchUserEvents = shouldFetchUser || !hasCachedUserEvents;
   const userFetchId = shouldFetchUser ? props.id : null;
   const userEventsFetchId = shouldFetchUserEvents ? props.id : null;
@@ -166,7 +166,7 @@ const User = props => {
             {user.displayStatus}
             {props.school ? (
               <Link
-                to={`/school/${props.school.ref.id}`}
+                to={`/school/${props.school.id}`}
                 className={`${constants.STYLES.LINK.DEFAULT} ml-2`}
               >
                 {startCase(props.school.name.toLowerCase())}

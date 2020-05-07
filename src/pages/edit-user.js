@@ -214,7 +214,7 @@ const EditUser = props => {
 
     firebaseFirestore
       .collection("users")
-      .doc(props.user.ref.id)
+      .doc(props.user.id)
       .update(cleanedData)
       .then(() => {
         setIsSubmitting(false);
@@ -456,11 +456,11 @@ const DetailSection = React.memo(props => {
             size="lg"
             resize="vertical"
             aria-describedby="bio-helper-text"
-            maxLength="300"
+            maxLength="1000"
             h="150px"
           />
           <FormHelperText id="bio-helper-text">
-            Describe yourself in fewer than 300 characters.
+            Describe yourself in fewer than 1000 characters.
           </FormHelperText>
         </FormControl>
         <FormControl>

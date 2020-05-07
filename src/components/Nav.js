@@ -10,16 +10,35 @@ import {
 import * as constants from "../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import { firebaseStorage } from "../firebase";
 
 import Link from "./Link";
 
 const Nav = props => {
+  // const schoolId = props.school ? props.school.id : "";
+  const [logoUrl, setLogoUrl] = React.useState(null);
   const UI = {
     Silhouette: props.appLoading,
     LoggedIn: props.isAuthenticated && !props.isLoadingUser
   };
 
   let NavContent;
+
+  React.useEffect(() => {
+    const fetchSchoolLogo = () => {
+      const storageRef = firebaseStorage.ref();
+      const pathRef = storageRef.child(
+        `schools/${props.school.id}/images/logo.jpg`
+      );
+      pathRef.getDownloadURL().then(url => {
+        setLogoUrl(url);
+      });
+    };
+
+    if (props.school && props.school.id) {
+      fetchSchoolLogo();
+    }
+  }, [props.school]);
 
   if (UI.Silhouette) {
     NavContent = (
@@ -59,12 +78,12 @@ const Nav = props => {
           Create an Event
         </Link>
         <Link
-          to={`school/${props.school.ref.id}`}
+          to={`school/${props.school.id}`}
           className="items-center flex mx-5 py-1 active:outline sm:rounded-none rounded hover:text-gray-300 hover:underline focus:underline"
         >
-          {props.school.logo ? (
+          {logoUrl ? (
             <Image
-              src={props.school.logo}
+              src={logoUrl}
               alt={`${props.school.name} school logo`}
               h={12}
               w={12}
@@ -95,7 +114,7 @@ const Nav = props => {
           </Text>
         </Link>
         <Link
-          to={`user/${props.user.ref.id}`}
+          to={`user/${props.user.id}`}
           className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
         >
           <Gravatar

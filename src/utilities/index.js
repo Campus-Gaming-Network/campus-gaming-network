@@ -67,7 +67,7 @@ export const createGravatarHash = (email = "") => {
 export const noop = () => {};
 
 export const mapUser = (user, ref) => ({
-  ref,
+  id: user.id || ref.id,
   ...user,
   fullName: `${user.firstName} ${user.lastName}`.trim(),
   hasAccounts: userHasAccounts(user),
@@ -84,8 +84,7 @@ export const mapUser = (user, ref) => ({
 });
 
 export const mapEvent = (event, ref) => ({
-  id: ref.id,
-  ref,
+  id: event.id || ref.id,
   ...event,
   formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
   formattedEndDateTime: formatCalendarDateTime(event.endDateTime),
@@ -98,12 +97,10 @@ export const mapEvent = (event, ref) => ({
 });
 
 export const mapEventResponse = (eventResponse, ref) => ({
-  id: ref.id,
-  ref,
+  id: eventResponse.id || ref.id,
   response: eventResponse.response,
   event: {
     id: eventResponse.event.id,
-    ref: eventResponse.event,
     ...eventResponse.eventDetails,
     formattedStartDateTime: formatCalendarDateTime(
       eventResponse.eventDetails.startDateTime
@@ -121,19 +118,16 @@ export const mapEventResponse = (eventResponse, ref) => ({
   },
   school: {
     id: eventResponse.school.id,
-    ref: eventResponse.school,
     ...eventResponse.schoolDetails
   },
   user: {
     id: eventResponse.user.id,
-    ref: eventResponse.user,
     ...eventResponse.userDetails
   }
 });
 
 export const mapSchool = (school, ref) => ({
-  id: ref.id,
-  ref,
+  id: school.id || ref.id,
   ...school,
   googleMapsAddressLink: googleMapsLink(school.address)
 });

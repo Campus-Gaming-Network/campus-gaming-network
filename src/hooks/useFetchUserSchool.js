@@ -1,4 +1,5 @@
 import React from "react";
+import { mapSchool } from "../utilities";
 
 const useFetchUserSchool = user => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -13,11 +14,7 @@ const useFetchUserSchool = user => {
         .get()
         .then(doc => {
           if (doc.exists) {
-            const data = doc.data();
-            setSchool({
-              ref: doc,
-              ...data
-            });
+            setSchool(mapSchool(doc.data(), doc));
             setIsLoading(false);
           } else {
             setIsLoading(false);

@@ -41,51 +41,11 @@ import useFetchEventDetails from "../hooks/useFetchEventDetails";
 import useFetchEventUsers from "../hooks/useFetchEventUsers";
 import useFetchUserEventResponse from "../hooks/useFetchUserEventResponse";
 
-// https://medium.com/crowdbotics/how-to-use-usereducer-in-react-hooks-for-performance-optimization-ecafca9e7bf5
-
-const initialState = {
-  event: {
-    users: []
-  }
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "add-event":
-      return {
-        ...state,
-        event: {
-          ...state.event,
-          [action.event.id]: {
-            ...action.event
-          }
-        }
-      };
-    case "add-event-users":
-      return {
-        ...state,
-        event: {
-          ...state.event,
-          [action.event.id]: {
-            ...state.event[action.event.id],
-            users: [...action.users]
-          }
-        }
-      };
-    default:
-      break;
-  }
-};
-
 const CACHED_EVENTS = {};
 
 const Event = props => {
-  console.log(`props.id -> ${props.id}`);
-  const [state, dispatch] = React.useReducer(reducer, initialState);
   const hasCachedEvent = !!CACHED_EVENTS[props.id];
-  console.log(`hasCachedEvent -> ${hasCachedEvent}`);
   const shouldFetchEvent = !props.appLoading && !hasCachedEvent;
-  console.log(`shouldFetchEvent -> ${shouldFetchEvent}`);
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const toast = useToast();
   const eventFetchId = shouldFetchEvent ? props.id : null;
@@ -165,7 +125,6 @@ const Event = props => {
         name: props.school.name
       }
     };
-    console.log({ data });
 
     return data;
   };
@@ -281,24 +240,17 @@ const Event = props => {
     );
   }
 
-  console.log(`eventUsers -> ${!!eventUsers}`);
-
   const event = hasCachedEvent
     ? CACHED_EVENTS[props.id]
     : eventFetchId
     ? fetchedEvent
     : null;
+
   const users = hasCachedEventUsers
     ? CACHED_EVENTS[props.id].users
     : usersEventToFetch
     ? eventUsers
     : [];
-
-  if (!state.event[props.id]) {
-    dispatch({ type: "add-event", event: { ...event, id: props.id } });
-  } else if (!state.event[props.id].users) {
-    dispatch({ type: "add-event-users", users, event: { id: props.id } });
-  }
 
   if (!hasCachedEvent) {
     CACHED_EVENTS[props.id] = { ...event };
@@ -315,9 +267,6 @@ const Event = props => {
     console.error(`No event found ${props.uri}`);
     return <Redirect to="not-found" noThrow />;
   }
-
-  console.log("CACHED_EVENTS", CACHED_EVENTS);
-  console.log("state", state);
 
   return (
     <React.Fragment>

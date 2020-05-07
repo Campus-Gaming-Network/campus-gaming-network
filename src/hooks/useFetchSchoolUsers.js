@@ -21,13 +21,7 @@ const useFetchSchoolUsers = (id, limit = 25) => {
           if (!snapshot.empty) {
             let schoolUsers = [];
             snapshot.forEach(doc => {
-              const data = doc.data();
-              schoolUsers.push(
-                mapUser({
-                  id: doc.id,
-                  ...data
-                })
-              );
+              schoolUsers.push(mapUser(doc.data(), doc));
             });
             setUsers(schoolUsers);
             setIsLoading(false);

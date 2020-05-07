@@ -23,15 +23,17 @@ import EventListItem from "../components/EventListItem";
 import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
+import { firebaseStorage } from "../firebase";
 
 const CACHED_SCHOOLS = {};
 
 const School = props => {
+  const [logoUrl, setLogoUrl] = React.useState(null);
   const hasCachedSchool = !!CACHED_SCHOOLS[props.id];
   const shouldFetchSchool =
     !props.appLoading &&
     (!props.school ||
-      (props.school && props.id !== props.school.ref.id && !hasCachedSchool));
+      (props.school && props.id !== props.school.id && !hasCachedSchool));
   const schoolFetchId = shouldFetchSchool ? props.id : null;
   const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
     schoolFetchId
@@ -54,6 +56,22 @@ const School = props => {
     props.appLoading ||
     (shouldFetchSchool && !fetchedSchool) ||
     isLoadingFetchedSchool;
+
+  React.useEffect(() => {
+    const fetchSchoolLogo = () => {
+      const storageRef = firebaseStorage.ref();
+      const pathRef = storageRef.child(
+        `schools/${props.school.id}/images/logo.jpg`
+      );
+      pathRef.getDownloadURL().then(url => {
+        setLogoUrl(url);
+      });
+    };
+
+    if (props.school && props.school.id) {
+      fetchSchoolLogo();
+    }
+  }, [props.school]);
 
   if (shouldDisplaySilhouette) {
     return (
@@ -130,9 +148,9 @@ const School = props => {
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
-          {school.logo ? (
+          {logoUrl ? (
             <Image
-              src={school.logo}
+              src={logoUrl}
               alt={`${school.name} school logo`}
               h={40}
               w={40}
@@ -310,7 +328,7 @@ const School = props => {
             </List>
           ) : (
             <Text mt={4} color="gray.500">
-              {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
+              {constants.SCHOOL_EMPTY_USERS_TEXT}
             </Text>
           )}
         </Stack>

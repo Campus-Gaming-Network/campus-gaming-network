@@ -87,6 +87,7 @@ export const USER_EMPTY_UPCOMING_EVENTS_TEXT =
 
 export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
   "This school currently has no upcoming events.";
+export const SCHOOL_EMPTY_USERS_TEXT = "This school currently has no users.";
 
 export const EVENT_EMPTY_USERS_TEXT =
   "This event currently has no attending users.";
@@ -140,6 +141,24 @@ export const ACCOUNTS = {
   }
 };
 
+export const ALLOWED_SCHOOL_ACCOUNTS = [
+  "website",
+  "twitter",
+  "twitch",
+  "youtube",
+  "skype",
+  "discord"
+];
+
+export const SCHOOL_ACCOUNTS = Object.keys(ACCOUNTS)
+  .filter(key => ALLOWED_SCHOOL_ACCOUNTS.includes(key))
+  .reduce((obj, key) => {
+    return {
+      ...obj,
+      [key]: ACCOUNTS[key]
+    };
+  }, {});
+
 // TODO: Custom error messages
 export const FIREBASE_ERRORS = {
   "auth/email-already-in-use": "",
@@ -155,4 +174,31 @@ export const GRAVATAR = {
   URL: "https://www.gravatar.com/avatar/",
   RATING: "pg",
   DEFAULT: "retro"
+};
+
+export const DROPZONE_STYLES = {
+  BASE: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "20px",
+    borderWidth: 2,
+    borderRadius: 2,
+    borderColor: "#eeeeee",
+    borderStyle: "dashed",
+    backgroundColor: "#fafafa",
+    color: "#bdbdbd",
+    outline: "none",
+    transition: "border .24s ease-in-out"
+  },
+  ACTIVE: {
+    borderColor: "#2196f3"
+  },
+  ACCEPT: {
+    borderColor: "#00e676"
+  },
+  REJECT: {
+    borderColor: "#ff1744"
+  }
 };

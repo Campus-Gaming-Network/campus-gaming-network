@@ -1,9 +1,10 @@
 import React from "react";
 import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import {
   Input as ChakraInput,
+  InputGroup as ChakraInputGroup,
+  InputLeftAddon,
   Stack,
   FormControl,
   FormLabel,
@@ -12,61 +13,142 @@ import {
   Textarea,
   Heading,
   Text,
-  Spinner
+  useToast,
+  FormHelperText,
+  Image
 } from "@chakra-ui/core";
-import PlacesAutocomplete from "react-places-autocomplete";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import { useFormFields } from "../utilities";
-import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
+import omitBy from "lodash.omitby";
+import isNil from "lodash.isnil";
+import startCase from "lodash.startcase";
+import * as constants from "../constants";
+import { firebase, firebaseFirestore, firebaseStorage } from "../firebase";
+import { useDropzone } from "react-dropzone";
 
-const db = firebase.firestore();
+const initialFormState = {
+  description: "",
+  email: "",
+  website: "",
+  phone: "",
+  logo: "",
+  file: null
+};
+
+const formReducer = (state, { field, value }) => {
+  return {
+    ...state,
+    [field]: value
+  };
+};
 
 const EditSchool = props => {
-  const [fields, handleFieldChange] = useFormFields({
-    description: "",
-    email: "",
-    website: ""
-  });
-  const [locationSearch, setLocationSearch] = React.useState("");
-  const [placeId, setPlaceId] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
+  const [state, dispatch] = React.useReducer(formReducer, initialFormState);
+  const toast = useToast();
+  const handleFieldChange = React.useCallback(e => {
+    dispatch({ field: e.target.name, value: e.target.value });
+  }, []);
 
-  // if (!props.isAuthenticated) {
-  //   return <Redirect to="/" noThrow />;
-  // }
+  const prefillForm = () => {
+    dispatch({ field: "description", value: props.school.description || "" });
+    dispatch({ field: "website", value: props.school.website || "" });
+    dispatch({ field: "email", value: props.school.email || "" });
+    dispatch({ field: "phone", value: props.school.phone || "" });
+    setHasPrefilledForm(true);
+  };
 
-  // if (!user) {
-  //   // TODO: Handle gracefully
-  //   console.log("no user");
-  //   return null;
-  // }
-
-  function setLocation(address, placeId) {
-    setLocationSearch(address);
-    setPlaceId(placeId);
-  }
-
-  async function handleSubmit(e) {
+  const handleSubmit = async e => {
     e.preventDefault();
 
-    // Double check the address for a geocode if they blur or something
-    // Probably want to save the address and lat/long
-    // If we save the placeId, it may be easier to render the map for that place
-    geocodeByAddress(locationSearch)
-      .then(results => console.log({ results }))
-      .catch(error => console.error({ error }));
+    if (!props.isAuthenticated) {
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const data = {
-      ...fields,
-      ...{
-        locationSearch,
-        placeId
-      }
+      description: state.description,
+      website: state.website,
+      email: state.email,
+      phone: state.phone
     };
 
-    console.log(data);
-  }
+    const cleanedData = omitBy(data, isNil);
+
+    if (state.file) {
+      const storageRef = firebaseStorage.ref();
+      const uploadTask = storageRef
+        .child(`schools/${props.school.id}/images/logo.jpg`)
+        .put(state.file);
+
+      uploadTask.on(
+        "state_changed",
+        snapshot => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          console.log(`Upload is ${progress}% done`);
+
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED:
+              console.log("Upload is paused");
+              break;
+            case firebase.storage.TaskState.RUNNING:
+              console.log("Upload is running");
+              break;
+            default:
+              break;
+          }
+        },
+        error => {
+          toast({
+            title: "An error occurred.",
+            description: error,
+            status: "error",
+            isClosable: true
+          });
+        },
+        () => {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+            console.log("File available at", downloadURL);
+          });
+          toast({
+            title: "Logo updated.",
+            description: "Your school logo has been updated.",
+            status: "success",
+            isClosable: true
+          });
+        }
+      );
+    }
+
+    firebaseFirestore
+      .collection("schools")
+      .doc(props.school.id)
+      .update(cleanedData)
+      .then(() => {
+        setIsSubmitting(false);
+        toast({
+          title: "School updated.",
+          description: "Your school has been updated.",
+          status: "success",
+          isClosable: true
+        });
+      })
+      .catch(error => {
+        setIsSubmitting(false);
+        toast({
+          title: "An error occurred.",
+          description: error,
+          status: "error",
+          isClosable: true
+        });
+      });
+
+    setIsSubmitting(false);
+  };
 
   if (props.isAuthenticating) {
     return null;
@@ -108,146 +190,290 @@ const EditSchool = props => {
     return <Redirect to="not-found" noThrow />;
   }
 
+  if (!hasPrefilledForm) {
+    prefillForm();
+  }
+
+  const schoolName = startCase(props.school.name.toLowerCase());
+
   return (
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           Edit School
         </Heading>
-        <Box
-          as="fieldset"
-          borderWidth="1px"
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-        >
-          <Box pos="absolute" top="-5rem">
-            <Text as="legend" fontWeight="bold" fontSize="2xl">
-              Details
-            </Text>
-            <Text color="gray.500">Information about the school.</Text>
-          </Box>
-          <Stack spacing={6} p={8}>
-            <FormControl>
-              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-                Contact email:
-              </FormLabel>
-              <ChakraInput
-                id="email"
-                name="email"
-                type="email"
-                placeholder="esports@school.edu"
-                onChange={handleFieldChange}
-                value={fields.email}
-                size="lg"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
-                Location:
-              </FormLabel>
-              <Stack>
-                <PlacesAutocomplete
-                  value={locationSearch}
-                  onChange={value => setLocationSearch(value)}
-                  onSelect={(address, placeId) => setLocation(address, placeId)}
-                  debounce={600}
-                  shouldFetchSuggestions={locationSearch.length >= 3}
-                >
-                  {({
-                    getInputProps,
-                    suggestions,
-                    getSuggestionItemProps,
-                    loading
-                  }) => (
-                    <div>
-                      <ChakraInput
-                        {...getInputProps({
-                          placeholder: "Where is the school located?",
-                          className: "location-search-input"
-                        })}
-                        size="lg"
-                      />
-                      <Box className="autocomplete-dropdown-container">
-                        {loading && (
-                          <Box w="100%" textAlign="center">
-                            <Spinner
-                              thickness="4px"
-                              speed="0.65s"
-                              emptyColor="gray.200"
-                              color="purple.500"
-                              size="xl"
-                              mt={4}
-                            />
-                          </Box>
-                        )}
-                        {suggestions.map((suggestion, index, arr) => {
-                          const isLast = arr.length - 1 === index;
-                          const style = {
-                            backgroundColor: suggestion.active
-                              ? "#edf2f7"
-                              : "#ffffff",
-                            cursor: "pointer",
-                            padding: "12px",
-                            borderLeft: "1px solid #e2e8f0",
-                            borderRight: "1px solid #e2e8f0",
-                            borderBottom: isLast
-                              ? "1px solid #e2e8f0"
-                              : undefined,
-                            borderBottomLeftRadius: "0.25rem",
-                            borderBottomRightRadius: "0.25rem"
-                          };
-                          return (
-                            <div
-                              {...getSuggestionItemProps(suggestion, {
-                                style
-                              })}
-                            >
-                              <FontAwesomeIcon
-                                icon={faMapMarkerAlt}
-                                className="mr-4"
-                              />
-                              <Text as="span">{suggestion.description}</Text>
-                            </div>
-                          );
-                        })}
-                      </Box>
-                    </div>
-                  )}
-                </PlacesAutocomplete>
-              </Stack>
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="Description" fontSize="lg" fontWeight="bold">
-                Description:
-              </FormLabel>
-              <Textarea
-                id="Description"
-                name="Description"
-                onChange={handleFieldChange}
-                value={fields.Description}
-                placeholder="Write a little something about the school"
-                size="lg"
-                resize="vertical"
-                maxLength="300"
-                h="150px"
-              />
-            </FormControl>
-          </Stack>
-        </Box>
         <ChakraButton
           variantColor="purple"
           type="submit"
           size="lg"
           w="full"
           mt={-12}
+          disabled={isSubmitting}
         >
-          Update School
+          {isSubmitting ? "Submitting..." : "Update School"}
+        </ChakraButton>
+        <DetailSection
+          dispatch={dispatch}
+          schoolName={schoolName}
+          handleFieldChange={handleFieldChange}
+          description={state.description}
+          phone={state.phone}
+          email={state.email}
+          file={state.file}
+          logo={state.logo}
+        />
+        <SocialAccountsSection
+          schoolName={schoolName}
+          handleFieldChange={handleFieldChange}
+          {...Object.keys(constants.ACCOUNTS).reduce(
+            (acc, cur) => ({
+              ...acc,
+              [cur]: state[cur]
+            }),
+            {}
+          )}
+        />
+        <ChakraButton
+          variantColor="purple"
+          type="submit"
+          size="lg"
+          w="full"
+          mt={-12}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Update School"}
         </ChakraButton>
       </Stack>
     </Box>
   );
 };
+
+const DetailSection = React.memo(props => {
+  const [thumbnail, setThumbnail] = React.useState(null);
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragAccept,
+    isDragReject
+  } = useDropzone({
+    multiple: false,
+    accept: "image/jpeg, image/png",
+    onDrop: ([file]) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        const binaryStr = reader.result;
+        console.log(binaryStr);
+      };
+      reader.readAsArrayBuffer(file);
+      console.log({ file });
+      const test = {
+        ...file,
+        preview: URL.createObjectURL(file)
+      };
+      console.log({ test });
+      props.dispatch({
+        field: "file",
+        value: file
+      });
+      setThumbnail({
+        ...file,
+        preview: URL.createObjectURL(file)
+      });
+    }
+  });
+
+  const style = React.useMemo(
+    () => ({
+      ...constants.DROPZONE_STYLES.BASE,
+      ...(isDragActive ? constants.DROPZONE_STYLES.ACTIVE : {}),
+      ...(isDragAccept ? constants.DROPZONE_STYLES.ACCEPT : {}),
+      ...(isDragReject ? constants.DROPZONE_STYLES.REJECT : {})
+    }),
+    [isDragActive, isDragReject, isDragAccept]
+  );
+
+  React.useEffect(
+    () => () => {
+      // Make sure to revoke the data uris to avoid memory leaks
+      if (props.file && props.file.preview) {
+        URL.revokeObjectURL(props.file.preview);
+      }
+    },
+    [props.file]
+  );
+
+  return (
+    <Box
+      as="fieldset"
+      borderWidth="1px"
+      boxShadow="lg"
+      rounded="lg"
+      bg="white"
+      pos="relative"
+      mb={32}
+    >
+      <Box pos="absolute" top="-5rem">
+        <Text as="legend" fontWeight="bold" fontSize="2xl">
+          Details
+        </Text>
+        <Text color="gray.500">
+          Basic information about {props.schoolName}.
+        </Text>
+      </Box>
+      <Stack spacing={6} p={8}>
+        <FormControl>
+          <FormLabel htmlFor="logo" fontSize="lg" fontWeight="bold">
+            Logo:
+          </FormLabel>
+          <Box {...getRootProps({ style })} mb={4}>
+            <input {...getInputProps()} />
+            {isDragActive ? (
+              <Text>Drop the files here ...</Text>
+            ) : (
+              <Text>
+                Drag 'n' drop some files here, or click to select files
+              </Text>
+            )}
+          </Box>
+          {thumbnail ? (
+            <Box>
+              <Image
+                src={thumbnail.preview}
+                maxW={100}
+                maxH={100}
+                borderWidth="1px"
+                borderColor="gray.300"
+              />
+              <Text fontSize="lg">{thumbnail.path}</Text>
+            </Box>
+          ) : null}
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="logoDescription" fontSize="lg" fontWeight="bold">
+            Logo Description:
+          </FormLabel>
+          <ChakraInput
+            id="logoDescription"
+            name="logoDescription"
+            type="text"
+            placeholder="A crimson hawk with a yellow beak"
+            onChange={props.handleFieldChange}
+            value={props.logoDescription}
+            size="lg"
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
+            Email:
+          </FormLabel>
+          <ChakraInput
+            id="email"
+            name="email"
+            type="email"
+            placeholder="esports@school.edu"
+            onChange={props.handleFieldChange}
+            value={props.email}
+            size="lg"
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="phone" fontSize="lg" fontWeight="bold">
+            Phone:
+          </FormLabel>
+          <ChakraInput
+            id="phone"
+            name="phone"
+            type="phone"
+            placeholder="(123) 456-7890"
+            onChange={props.handleFieldChange}
+            value={props.phone}
+            size="lg"
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
+            Description:
+          </FormLabel>
+          <Textarea
+            id="description"
+            name="description"
+            onChange={props.handleFieldChange}
+            value={props.description}
+            placeholder={`Write any information you want to tell people about ${props.schoolName}`}
+            size="lg"
+            resize="vertical"
+            maxLength="10000"
+            h="150px"
+            aria-describedby="bio-helper-text"
+          />
+          <FormHelperText id="bio-helper-text">
+            Limit 10,000 characters.
+          </FormHelperText>
+        </FormControl>
+      </Stack>
+    </Box>
+  );
+});
+
+const SocialAccountsSection = React.memo(props => {
+  return (
+    <Box
+      as="fieldset"
+      borderWidth="1px"
+      boxShadow="lg"
+      rounded="lg"
+      bg="white"
+      pos="relative"
+      mb={32}
+    >
+      <Box pos="absolute" top="-5rem">
+        <Text as="legend" fontWeight="bold" fontSize="2xl">
+          Social Accounts
+        </Text>
+        <Text color="gray.500">
+          Other places where people can connect with {props.schoolName}.
+        </Text>
+      </Box>
+      <Stack spacing={6} p={8}>
+        {Object.keys(constants.SCHOOL_ACCOUNTS).map(id => {
+          const account = constants.SCHOOL_ACCOUNTS[id];
+
+          return (
+            <FormControl key={id}>
+              <FormLabel htmlFor={id} fontSize="lg" fontWeight="bold">
+                {account.label}:
+              </FormLabel>
+              <ChakraInputGroup size="lg">
+                {account.icon || !!account.url ? (
+                  <InputLeftAddon
+                    children={
+                      <React.Fragment>
+                        <FontAwesomeIcon icon={account.icon} />
+                        {!!account.url ? (
+                          <Text ml={4}>{account.url}</Text>
+                        ) : null}
+                      </React.Fragment>
+                    }
+                  />
+                ) : null}
+                <ChakraInput
+                  id={id}
+                  name={id}
+                  type="text"
+                  placeholder={account.placeholder}
+                  onChange={props.handleFieldChange}
+                  value={props[id]}
+                  roundedLeft="0"
+                />
+              </ChakraInputGroup>
+            </FormControl>
+          );
+        })}
+      </Stack>
+    </Box>
+  );
+});
 
 export default EditSchool;

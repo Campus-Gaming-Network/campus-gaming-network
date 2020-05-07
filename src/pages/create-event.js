@@ -123,9 +123,7 @@ const CreateEvent = props => {
     const schoolDocRef = firebaseFirestore
       .collection("schools")
       .doc(props.user.school.id);
-    const userDocRef = firebaseFirestore
-      .collection("users")
-      .doc(props.user.ref.id);
+    const userDocRef = firebaseFirestore.collection("users").doc(props.user.id);
 
     const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
     const selectedGame = games.find(
