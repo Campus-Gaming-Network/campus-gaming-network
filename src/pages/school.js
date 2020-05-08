@@ -154,7 +154,7 @@ const School = props => {
               alt={`${school.name} school logo`}
               h={40}
               w={40}
-              bg="gray.400"
+              bg="white"
               rounded="full"
               border="4px"
               borderColor="gray.300"

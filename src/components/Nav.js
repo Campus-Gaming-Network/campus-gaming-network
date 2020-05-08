@@ -87,7 +87,7 @@ const Nav = props => {
               alt={`${props.school.name} school logo`}
               h={12}
               w={12}
-              bg="gray.400"
+              bg="white"
               rounded="full"
               border="4px"
               borderColor="gray.300"
