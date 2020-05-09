@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { firebaseFirestore } from "../firebase";
 import { mapUser } from "../utilities";
-import { useCountState, useCountDispatch } from "../store";
 
 const useFetchUserDetails = id => {
-  const dispatch = useCountDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
@@ -19,10 +17,6 @@ const useFetchUserDetails = id => {
         .get()
         .then(doc => {
           if (doc.exists) {
-            dispatch({
-              type: "SET_USER",
-              payload: mapUser(doc.data(), doc)
-            });
             setUser(mapUser(doc.data(), doc));
             setIsLoading(false);
           } else {
@@ -41,7 +35,7 @@ const useFetchUserDetails = id => {
     }
   }, [id]);
 
-  return [];
+  return [user, isLoading, error];
 };
 
 export default useFetchUserDetails;

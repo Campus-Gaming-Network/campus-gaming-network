@@ -1,20 +1,38 @@
-import React, { useContext, createContext, useReducer } from "react";
+import React from "react";
+import { isDev } from "../utilities";
 
-const initialState = {
-  event: null,
-  events: null,
-  school: null,
-  schools: null,
-  user: null,
-  users: null
+const INITIAL_STATE = {
+  event: {},
+  events: {},
+  school: {},
+  schools: {},
+  user: {},
+  users: {}
 };
-const AppStateContext = createContext(initialState);
-const AppDispatchContext = createContext(initialState);
+
+const ACTION_TYPES = {
+  SET_SCHOOL: "SET_SCHOOL",
+  SET_SCHOOL_USERS: "SET_SCHOOL_USERS",
+  SET_SCHOOL_EVENTS: "SET_SCHOOL_EVENTS",
+  SET_USER: "SET_USER",
+  SET_USER_EVENTS: "SET_USER_EVENTS",
+  SET_EVENT: "SET_EVENT",
+  SET_EVENT_USERS: "SET_EVENT_USERS",
+  SET_SCHOOLS: "SET_SCHOOLS",
+  SET_USERS: "SET_USERS",
+  SET_EVENTS: "SET_EVENTS"
+};
+
+const AppStateContext = React.createContext();
+const AppDispatchContext = React.createContext();
+
 const reducer = (state, action) => {
-  console.log(`[${action.type}]`, action.payload);
+  if (isDev()) {
+    console.log(`[${action.type}] ->`, action.payload);
+  }
 
   switch (action.type) {
-    case "SET_SCHOOL":
+    case ACTION_TYPES.SET_SCHOOL:
       return {
         ...state,
         school: action.payload,
@@ -23,7 +41,7 @@ const reducer = (state, action) => {
           [action.payload.id]: action.payload
         }
       };
-    case "SET_SCHOOL_USERS":
+    case ACTION_TYPES.SET_SCHOOL_USERS:
       return {
         ...state,
         school: {
@@ -38,7 +56,7 @@ const reducer = (state, action) => {
           }
         }
       };
-    case "SET_SCHOOL_EVENTS":
+    case ACTION_TYPES.SET_SCHOOL_EVENTS:
       return {
         ...state,
         school: {
@@ -53,7 +71,7 @@ const reducer = (state, action) => {
           }
         }
       };
-    case "SET_USER":
+    case ACTION_TYPES.SET_USER:
       return {
         ...state,
         user: action.payload,
@@ -62,7 +80,7 @@ const reducer = (state, action) => {
           [action.payload.id]: action.payload
         }
       };
-    case "SET_USER_EVENTS":
+    case ACTION_TYPES.SET_USER_EVENTS:
       return {
         ...state,
         user: {
@@ -77,7 +95,7 @@ const reducer = (state, action) => {
           }
         }
       };
-    case "SET_EVENT":
+    case ACTION_TYPES.SET_EVENT:
       return {
         ...state,
         event: action.payload,
@@ -86,7 +104,7 @@ const reducer = (state, action) => {
           [action.payload.id]: action.payload
         }
       };
-    case "SET_EVENT_USERS":
+    case ACTION_TYPES.SET_EVENT_USERS:
       return {
         ...state,
         event: {
@@ -101,7 +119,7 @@ const reducer = (state, action) => {
           }
         }
       };
-    case "SET_SCHOOLS":
+    case ACTION_TYPES.SET_SCHOOLS:
       return {
         ...state,
         schools: {
@@ -109,7 +127,7 @@ const reducer = (state, action) => {
           ...action.payload
         }
       };
-    case "SET_USERS":
+    case ACTION_TYPES.SET_USERS:
       return {
         ...state,
         users: {
@@ -117,7 +135,7 @@ const reducer = (state, action) => {
           ...action.payload
         }
       };
-    case "SET_EVENTS":
+    case ACTION_TYPES.SET_EVENTS:
       return {
         ...state,
         events: {
@@ -131,7 +149,7 @@ const reducer = (state, action) => {
 };
 
 const AppProvider = props => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
 
   return (
     <AppStateContext.Provider value={state}>
@@ -143,7 +161,7 @@ const AppProvider = props => {
 };
 
 const useCountState = () => {
-  const context = useContext(AppStateContext);
+  const context = React.useContext(AppStateContext);
 
   if (context === undefined) {
     throw new Error("useAppState must be used within a Appvider");
@@ -153,7 +171,7 @@ const useCountState = () => {
 };
 
 const useCountDispatch = () => {
-  const context = useContext(AppDispatchContext);
+  const context = React.useContext(AppDispatchContext);
 
   if (context === undefined) {
     throw new Error("useAppDispatch must be used within a AppProvider");
@@ -162,4 +180,4 @@ const useCountDispatch = () => {
   return context;
 };
 
-export { AppProvider, useCountState, useCountDispatch };
+export { AppProvider, useCountState, useCountDispatch, ACTION_TYPES };

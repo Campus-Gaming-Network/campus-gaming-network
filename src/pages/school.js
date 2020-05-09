@@ -24,54 +24,106 @@ import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 import { firebaseStorage } from "../firebase";
+import { useCountState, useCountDispatch, ACTION_TYPES } from "../store";
 
-const CACHED_SCHOOLS = {};
+// const CACHED_SCHOOLS = {};
 
 const School = props => {
+  const dispatch = useCountDispatch();
+  const { school, schools } = useCountState();
+  const events = school.events;
+  const users = school.users;
+  const cachedSchool = schools[props.id];
+  const hasCachedSchool = !!cachedSchool;
+  const cachedSchoolEvents = hasCachedSchool ? cachedSchool.events : null;
+  const hasCachedSchoolEvents = !!cachedSchoolEvents;
+  const cachedSchoolUsers = hasCachedSchool ? cachedSchool.users : null;
+  const hasCachedSchoolUsers = !!cachedSchoolUsers;
   const [logoUrl, setLogoUrl] = React.useState(null);
-  const hasCachedSchool = !!CACHED_SCHOOLS[props.id];
-  const shouldFetchSchool =
-    !props.appLoading &&
-    (!props.school ||
-      (props.school && props.id !== props.school.id && !hasCachedSchool));
+  const shouldFetchSchool = !!(
+    props.school &&
+    props.id !== props.school.id &&
+    !hasCachedSchool
+  );
   const schoolFetchId = shouldFetchSchool ? props.id : null;
+  const shouldFetchSchoolEvents = shouldFetchSchool || !hasCachedSchoolEvents;
+  const schoolEventsFetchId = shouldFetchSchoolEvents ? props.id : null;
+  const shouldFetchSchoolUsers = shouldFetchSchool || !hasCachedSchoolUsers;
+  const schoolUsersFetchId = shouldFetchSchoolUsers ? props.id : null;
   const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
     schoolFetchId
   );
-  const hasCachedSchoolEvents =
-    hasCachedSchool && !!CACHED_SCHOOLS[props.id].events;
-  const shouldFetchSchoolEvents = shouldFetchSchool || !hasCachedSchoolEvents;
-  const eventsSchoolToFetch = shouldFetchSchoolEvents ? props.id : null;
-  const [schoolEvents, isLoadingSchoolEvents] = useFetchSchoolEvents(
-    eventsSchoolToFetch
+  const [fetchedSchoolEvents, isLoadingSchoolEvents] = useFetchSchoolEvents(
+    schoolEventsFetchId
   );
-  const hasCachedSchoolUsers =
-    hasCachedSchool && !!CACHED_SCHOOLS[props.id].users;
-  const shouldFetchSchoolUsers = shouldFetchSchool || !hasCachedSchoolUsers;
-  const usersSchoolToFetch = shouldFetchSchoolUsers ? props.id : null;
-  const [schoolUsers, isLoadingSchoolUsers] = useFetchSchoolUsers(
-    usersSchoolToFetch
+  const [fetchedSchoolUsers, isLoadingSchoolUsers] = useFetchSchoolUsers(
+    schoolUsersFetchId
   );
   const shouldDisplaySilhouette =
     props.appLoading ||
     (shouldFetchSchool && !fetchedSchool) ||
     isLoadingFetchedSchool;
 
-  React.useEffect(() => {
-    const fetchSchoolLogo = () => {
-      const storageRef = firebaseStorage.ref();
-      const pathRef = storageRef.child(
-        `schools/${props.school.id}/images/logo.jpg`
-      );
-      pathRef.getDownloadURL().then(url => {
-        setLogoUrl(url);
-      });
-    };
+  // React.useEffect(() => {
+  //   const fetchSchoolLogo = () => {
+  //     const storageRef = firebaseStorage.ref();
+  //     const pathRef = storageRef.child(
+  //       `schools/${props.school.id}/images/logo.jpg`
+  //     );
+  //     pathRef.getDownloadURL().then(url => {
+  //       setLogoUrl(url);
+  //     });
+  //   };
 
-    if (props.school && props.school.id) {
-      fetchSchoolLogo();
+  //   if (props.school && props.school.id) {
+  //     fetchSchoolLogo();
+  //   }
+  // }, [props.school]);
+
+  React.useEffect(() => {
+    const events = hasCachedSchoolEvents
+      ? cachedSchoolEvents
+      : schoolEventsFetchId
+      ? fetchedSchoolEvents
+      : [];
+    const users = hasCachedSchoolUsers
+      ? cachedSchoolUsers
+      : schoolEventsFetchId
+      ? fetchedSchoolUsers
+      : [];
+    const school = hasCachedSchool
+      ? cachedSchool
+      : schoolFetchId
+      ? fetchedSchool
+      : props.school;
+
+    if (!!school) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL,
+        payload: school
+      });
+
+      if (!!events) {
+        dispatch({
+          type: ACTION_TYPES.SET_SCHOOL_EVENTS,
+          payload: events
+        });
+      }
+
+      if (!!users) {
+        dispatch({
+          type: ACTION_TYPES.SET_SCHOOL_EVENTS,
+          payload: users
+        });
+      }
     }
-  }, [props.school]);
+  }, [
+    props.id,
+    props.school,
+    fetchedSchoolEvents,
+    fetchedSchool,
+    fetchedSchoolUsers
+  ]);
 
   if (shouldDisplaySilhouette) {
     return (
@@ -103,41 +155,41 @@ const School = props => {
     );
   }
 
-  const school = hasCachedSchool
-    ? CACHED_SCHOOLS[props.id]
-    : schoolFetchId
-    ? fetchedSchool
-    : props.school;
+  // const school = hasCachedSchool
+  //   ? CACHED_SCHOOLS[props.id]
+  //   : schoolFetchId
+  //   ? fetchedSchool
+  //   : props.school;
 
-  const users = hasCachedSchoolUsers
-    ? CACHED_SCHOOLS[props.id].users
-    : usersSchoolToFetch
-    ? schoolUsers
-    : [];
+  // const users = hasCachedSchoolUsers
+  //   ? CACHED_SCHOOLS[props.id].users
+  //   : usersSchoolToFetch
+  //   ? schoolUsers
+  //   : [];
 
-  const events = hasCachedSchoolEvents
-    ? CACHED_SCHOOLS[props.id].events
-    : eventsSchoolToFetch
-    ? schoolEvents
-    : [];
+  // const events = hasCachedSchoolEvents
+  //   ? CACHED_SCHOOLS[props.id].events
+  //   : eventsSchoolToFetch
+  //   ? schoolEvents
+  //   : [];
 
-  if (!hasCachedSchool) {
-    CACHED_SCHOOLS[props.id] = { ...school };
-  }
+  // if (!hasCachedSchool) {
+  //   CACHED_SCHOOLS[props.id] = { ...school };
+  // }
 
-  if (hasCachedSchool && schoolEvents) {
-    CACHED_SCHOOLS[props.id] = {
-      ...CACHED_SCHOOLS[props.id],
-      events: [...schoolEvents]
-    };
-  }
+  // if (hasCachedSchool && schoolEvents) {
+  //   CACHED_SCHOOLS[props.id] = {
+  //     ...CACHED_SCHOOLS[props.id],
+  //     events: [...schoolEvents]
+  //   };
+  // }
 
-  if (hasCachedSchool && schoolUsers) {
-    CACHED_SCHOOLS[props.id] = {
-      ...CACHED_SCHOOLS[props.id],
-      users: [...schoolUsers]
-    };
-  }
+  // if (hasCachedSchool && schoolUsers) {
+  //   CACHED_SCHOOLS[props.id] = {
+  //     ...CACHED_SCHOOLS[props.id],
+  //     users: [...schoolUsers]
+  //   };
+  // }
 
   if (!school) {
     console.error(`No school found ${props.uri}`);

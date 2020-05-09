@@ -15,6 +15,7 @@ import {
   PseudoBox
 } from "@chakra-ui/core";
 import * as constants from "../constants";
+import { useCountState, useCountDispatch, ACTION_TYPES } from "../store";
 
 // Components
 import VisuallyHidden from "../components/VisuallyHidden";
@@ -26,26 +27,69 @@ import Flex from "../components/Flex";
 import useFetchUserDetails from "../hooks/useFetchUserDetails";
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
-const CACHED_USERS = {};
-
 const User = props => {
-  const hasCachedUser = !!CACHED_USERS[props.id];
-  const hasCachedUserEvents = hasCachedUser && !!CACHED_USERS[props.id].events;
-  const shouldFetchUser =
-    !props.appLoading &&
-    (!props.user ||
-      (props.user && props.id !== props.user.id && !hasCachedUser));
-  const shouldFetchUserEvents = shouldFetchUser || !hasCachedUserEvents;
+  const dispatch = useCountDispatch();
+  const { user, users } = useCountState();
+  const events = user.events;
+  const cachedUser = users[props.id];
+  const hasCachedUser = !!cachedUser;
+  const cachedUserEvents = hasCachedUser ? cachedUser.events : null;
+  const hasCachedUserEvents = !!cachedUserEvents;
+  const shouldFetchUser = !!(
+    props.user &&
+    props.id !== props.user.id &&
+    !hasCachedUser
+  );
   const userFetchId = shouldFetchUser ? props.id : null;
+  const shouldFetchUserEvents = shouldFetchUser || !hasCachedUserEvents;
   const userEventsFetchId = shouldFetchUserEvents ? props.id : null;
   const [fetchedUser, isLoadingFetchedUser] = useFetchUserDetails(userFetchId);
-  const [fetchedEvents, isLoadingFetchedUserEvents] = useFetchUserEvents(
+  const [fetchedUserEvents, isLoadingFetchedUserEvents] = useFetchUserEvents(
     userEventsFetchId
   );
+  const isCurrentUser =
+    props.authenticatedUser && props.authenticatedUser.uid === props.id;
   const shouldDisplaySilhouette =
     props.appLoading ||
     (!props.appLoading && shouldFetchUser && !fetchedUser) ||
     isLoadingFetchedUser;
+
+  React.useEffect(() => {
+    const user = hasCachedUser
+      ? cachedUser
+      : userFetchId
+      ? fetchedUser
+      : props.user;
+
+    if (!!user) {
+      dispatch({
+        type: ACTION_TYPES.SET_USER,
+        payload: user
+      });
+
+      // if (!!events) {
+      //   dispatch({
+      //     type: ACTION_TYPES.SET_USER_EVENTS,
+      //     payload: events
+      //   });
+      // }
+    }
+  }, [props.id, props.user, fetchedUser]);
+
+  React.useEffect(() => {
+    const events = hasCachedUserEvents
+      ? cachedUserEvents
+      : userEventsFetchId
+      ? fetchedUserEvents
+      : [];
+
+    if (!!events) {
+      dispatch({
+        type: ACTION_TYPES.SET_USER_EVENTS,
+        payload: events
+      });
+    }
+  }, [fetchedUserEvents]);
 
   if (shouldDisplaySilhouette) {
     return (
@@ -76,29 +120,6 @@ const User = props => {
         </Stack>
       </Box>
     );
-  }
-
-  const isCurrentUser = props.authenticatedUser.uid === props.id;
-
-  const user = hasCachedUser
-    ? CACHED_USERS[props.id]
-    : userFetchId
-    ? fetchedUser
-    : props.user;
-
-  const events = hasCachedUserEvents
-    ? CACHED_USERS[props.id].events
-    : userEventsFetchId
-    ? fetchedEvents
-    : [];
-
-  if (!hasCachedUser) {
-    CACHED_USERS[props.id] = { ...user };
-  } else if (events) {
-    CACHED_USERS[props.id] = {
-      ...CACHED_USERS[props.id],
-      events: [...events]
-    };
   }
 
   if (!user) {

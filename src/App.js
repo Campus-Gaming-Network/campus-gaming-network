@@ -14,7 +14,14 @@ import "./App.css";
 import { firebase, firebaseAuth, firebaseFirestore } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import sortBy from "lodash.sortby";
-import { AppProvider } from "./store";
+import keyBy from "lodash.keyby";
+import {
+  AppProvider,
+  useCountState,
+  useCountDispatch,
+  ACTION_TYPES
+} from "./store";
+
 // Pages
 import Home from "./pages";
 import School from "./pages/school";
@@ -49,6 +56,7 @@ firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 // App
 
 const App = () => {
+  const dispatch = useCountDispatch();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const isAuthenticated = !!authenticatedUser;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -60,20 +68,41 @@ const App = () => {
   const [schools, setSchools] = useLocalStorage("cgn.schools", null);
 
   React.useEffect(() => {
+    if (!!user) {
+      dispatch({
+        type: ACTION_TYPES.SET_USER,
+        payload: user
+      });
+    }
+  }, [user]);
+
+  React.useEffect(() => {
+    if (!!school) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL,
+        payload: school
+      });
+    }
+  }, [school]);
+
+  React.useEffect(() => {
     const fetchSchools = async () => {
       firebaseFirestore
         .collection("schools")
         .get()
         .then(snapshot => {
-          setSchools(
-            sortBy(
-              snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-              })),
-              ["name"]
-            )
+          const schools = sortBy(
+            snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            })),
+            ["name"]
           );
+          setSchools(schools);
+          dispatch({
+            type: ACTION_TYPES.SET_SCHOOLS,
+            payload: keyBy(schools, "id")
+          });
         });
     };
 
@@ -112,55 +141,54 @@ const App = () => {
   }
 
   return (
-    <AppProvider>
-      <ThemeProvider>
-        <CSSReset />
-        <SkipNavLink />
-        <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-purple-800">
-          <Flex itemsCenter justifyBetween className="px-4 py-3 sm:p-0">
-            <Link
-              to="/"
-              className="active:outline text-gray-200 hover:text-gray-300 hover:underline focus:underline flex items-center text-3xl"
+    <ThemeProvider>
+      <CSSReset />
+      <SkipNavLink />
+      <header className="sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3 bg-purple-800">
+        <Flex itemsCenter justifyBetween className="px-4 py-3 sm:p-0">
+          <Link
+            to="/"
+            className="active:outline text-gray-200 hover:text-gray-300 hover:underline focus:underline flex items-center text-3xl"
+          >
+            <FontAwesomeIcon icon={faHome} />
+            <span className="font-medium pl-4 text-logo">CGN</span>
+          </Link>
+          <div className="sm:hidden ml-auto">
+            <button
+              type="button"
+              onClick={toggleMenu}
+              className="block text-gray-500 hover:text-gray-600 focus:text-gray-600"
             >
-              <FontAwesomeIcon icon={faHome} />
-              <span className="font-medium pl-4 text-logo">CGN</span>
-            </Link>
-            <div className="sm:hidden ml-auto">
-              <button
-                type="button"
-                onClick={toggleMenu}
-                className="block text-gray-500 hover:text-gray-600 focus:text-gray-600"
-              >
-                <FontAwesomeIcon
-                  icon={isMenuOpen ? faTimes : faBars}
-                  className="text-3xl"
-                />
-              </button>
-            </div>
-          </Flex>
-          <Nav {...appProps} />
-        </header>
-        <main className="pb-12">
-          <SkipNavContent />
-          <Router>
-            <ScrollToTop default>
-              <Home path="/" {...appProps} />
-              <EditUser path="user/edit" {...appProps} />
-              <User path="user/:id" {...appProps} />
-              <EditSchool path="school/edit" {...appProps} />
-              <School path="school/:id" {...appProps} />
-              <CreateEvent path="event/create" {...appProps} />
-              <Event path="event/:id" {...appProps} />
-              <Signup path="register" {...appProps} />
-              <Login path="login" {...appProps} />
-              {/* TODO: Reimplement  with firebase */}
-              {/* <ForgotPassword path="forgot-password" {...appProps} /> */}
-              <NotFound default />
-            </ScrollToTop>
-          </Router>
-        </main>
-        {/* TODO: When we have actual content here */}
-        {/* <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
+              <FontAwesomeIcon
+                icon={isMenuOpen ? faTimes : faBars}
+                className="text-3xl"
+              />
+            </button>
+          </div>
+        </Flex>
+        <Nav {...appProps} />
+      </header>
+      <main className="pb-12">
+        <SkipNavContent />
+        <Router>
+          <ScrollToTop default>
+            <Home path="/" {...appProps} />
+            <EditUser path="user/edit" {...appProps} />
+            <User path="user/:id" {...appProps} />
+            <EditSchool path="school/edit" {...appProps} />
+            <School path="school/:id" {...appProps} />
+            <CreateEvent path="event/create" {...appProps} />
+            <Event path="event/:id" {...appProps} />
+            <Signup path="register" {...appProps} />
+            <Login path="login" {...appProps} />
+            {/* TODO: Reimplement  with firebase */}
+            {/* <ForgotPassword path="forgot-password" {...appProps} /> */}
+            <NotFound default />
+          </ScrollToTop>
+        </Router>
+      </main>
+      {/* TODO: When we have actual content here */}
+      {/* <footer className="bg-gray-200 text-lg border-t-2 border-gray-300">
         <Flex
           tag="section"
           itemsCenter
@@ -178,8 +206,7 @@ const App = () => {
           </Link>
         </Flex>
       </footer> */}
-      </ThemeProvider>
-    </AppProvider>
+    </ThemeProvider>
   );
 };
 

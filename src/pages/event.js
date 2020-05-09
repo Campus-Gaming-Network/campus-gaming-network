@@ -196,7 +196,6 @@ const Event = props => {
     props.appLoading ||
     (shouldFetchEvent && !fetchedEvent) ||
     isLoadingFetchedEvent;
-  console.log(`shouldDisplaySilhouette -> ${shouldDisplaySilhouette}`);
 
   if (shouldDisplaySilhouette) {
     return (
