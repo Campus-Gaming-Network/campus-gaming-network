@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { firebaseFirestore } from "../firebase";
 import { mapUser } from "../utilities";
 
 const useFetchUserDetails = id => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [user, setUser] = React.useState(null);
+  const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
     const fetchUserDetails = async () => {
-      console.log("fetchUserDetails...");
       setIsLoading(true);
+
+      console.log("fetchUserDetails...");
+
       firebaseFirestore
         .collection("users")
         .doc(id)
@@ -18,10 +20,8 @@ const useFetchUserDetails = id => {
         .then(doc => {
           if (doc.exists) {
             setUser(mapUser(doc.data(), doc));
-            setIsLoading(false);
-          } else {
-            setIsLoading(false);
           }
+          setIsLoading(false);
         })
         .catch(error => {
           console.error({ error });

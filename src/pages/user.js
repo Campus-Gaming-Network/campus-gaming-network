@@ -15,7 +15,7 @@ import {
   PseudoBox
 } from "@chakra-ui/core";
 import * as constants from "../constants";
-import { useCountState, useCountDispatch, ACTION_TYPES } from "../store";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // Components
 import VisuallyHidden from "../components/VisuallyHidden";
@@ -28,8 +28,8 @@ import useFetchUserDetails from "../hooks/useFetchUserDetails";
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
 const User = props => {
-  const dispatch = useCountDispatch();
-  const { user, users } = useCountState();
+  const dispatch = useAppDispatch();
+  const { user, users } = useAppState();
   const events = user.events;
   const cachedUser = users[props.id];
   const hasCachedUser = !!cachedUser;
@@ -49,78 +49,6 @@ const User = props => {
   );
   const isCurrentUser =
     props.authenticatedUser && props.authenticatedUser.uid === props.id;
-  const shouldDisplaySilhouette =
-    props.appLoading ||
-    (!props.appLoading && shouldFetchUser && !fetchedUser) ||
-    isLoadingFetchedUser;
-
-  React.useEffect(() => {
-    const user = hasCachedUser
-      ? cachedUser
-      : userFetchId
-      ? fetchedUser
-      : props.user;
-
-    if (!!user) {
-      dispatch({
-        type: ACTION_TYPES.SET_USER,
-        payload: user
-      });
-
-      // if (!!events) {
-      //   dispatch({
-      //     type: ACTION_TYPES.SET_USER_EVENTS,
-      //     payload: events
-      //   });
-      // }
-    }
-  }, [props.id, props.user, fetchedUser]);
-
-  React.useEffect(() => {
-    const events = hasCachedUserEvents
-      ? cachedUserEvents
-      : userEventsFetchId
-      ? fetchedUserEvents
-      : [];
-
-    if (!!events) {
-      dispatch({
-        type: ACTION_TYPES.SET_USER_EVENTS,
-        payload: events
-      });
-    }
-  }, [fetchedUserEvents]);
-
-  if (shouldDisplaySilhouette) {
-    return (
-      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
-        <Box as="header" display="flex" alignItems="center">
-          <Box bg="gray.100" w="150px" h="150px" mr="2" borderRadius="full" />
-          <Box pl={12}>
-            <Box bg="gray.100" w="400px" h="60px" mb="4" borderRadius="md" />
-            <Box bg="gray.100" w="325px" h="30px" borderRadius="md" />
-          </Box>
-        </Box>
-        <Stack spacing={10}>
-          <Box as="section" pt={4}>
-            <Box bg="gray.100" w="100%" h="60px" borderRadius="md" />
-          </Box>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="100px" borderRadius="md" />
-          </Stack>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
-          </Stack>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
-          </Stack>
-        </Stack>
-      </Box>
-    );
-  }
 
   if (!user) {
     console.error(`No user found ${props.uri}`);

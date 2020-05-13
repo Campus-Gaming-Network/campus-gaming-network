@@ -9,8 +9,10 @@ const useFetchSchoolDetails = id => {
 
   React.useEffect(() => {
     const fetchSchoolDetails = async () => {
-      console.log("fetchSchoolDetails...");
       setIsLoading(true);
+
+      console.log("fetchSchoolDetails...");
+
       firebaseFirestore
         .collection("schools")
         .doc(id)

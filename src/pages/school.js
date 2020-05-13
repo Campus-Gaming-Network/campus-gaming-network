@@ -24,13 +24,13 @@ import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 import { firebaseStorage } from "../firebase";
-import { useCountState, useCountDispatch, ACTION_TYPES } from "../store";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // const CACHED_SCHOOLS = {};
 
 const School = props => {
-  const dispatch = useCountDispatch();
-  const { school, schools } = useCountState();
+  const dispatch = useAppDispatch();
+  const { school, schools } = useAppState();
   const events = school.events;
   const users = school.users;
   const cachedSchool = schools[props.id];
@@ -59,10 +59,6 @@ const School = props => {
   const [fetchedSchoolUsers, isLoadingSchoolUsers] = useFetchSchoolUsers(
     schoolUsersFetchId
   );
-  const shouldDisplaySilhouette =
-    props.appLoading ||
-    (shouldFetchSchool && !fetchedSchool) ||
-    isLoadingFetchedSchool;
 
   // React.useEffect(() => {
   //   const fetchSchoolLogo = () => {
@@ -124,36 +120,6 @@ const School = props => {
     fetchedSchool,
     fetchedSchoolUsers
   ]);
-
-  if (shouldDisplaySilhouette) {
-    return (
-      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
-        <Box as="header" display="flex" alignItems="center">
-          <Box bg="gray.100" w="150px" h="150px" mr="2" borderRadius="full" />
-          <Box pl={12}>
-            <Box bg="gray.100" w="400px" h="60px" mb="4" borderRadius="md" />
-          </Box>
-        </Box>
-        <Stack spacing={10}>
-          <Box as="section" pt={4}>
-            <Box bg="gray.100" w="100%" h="60px" borderRadius="md" />
-          </Box>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="100px" borderRadius="md" />
-          </Stack>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
-          </Stack>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
-          </Stack>
-        </Stack>
-      </Box>
-    );
-  }
 
   // const school = hasCachedSchool
   //   ? CACHED_SCHOOLS[props.id]

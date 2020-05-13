@@ -160,17 +160,17 @@ const AppProvider = props => {
   );
 };
 
-const useCountState = () => {
+const useAppState = () => {
   const context = React.useContext(AppStateContext);
 
   if (context === undefined) {
-    throw new Error("useAppState must be used within a Appvider");
+    throw new Error("useAppState must be used within a AppProvider");
   }
 
   return context;
 };
 
-const useCountDispatch = () => {
+const useAppDispatch = () => {
   const context = React.useContext(AppDispatchContext);
 
   if (context === undefined) {
@@ -180,4 +180,4 @@ const useCountDispatch = () => {
   return context;
 };
 
-export { AppProvider, useCountState, useCountDispatch, ACTION_TYPES };
+export { AppProvider, useAppState, useAppDispatch, ACTION_TYPES };
