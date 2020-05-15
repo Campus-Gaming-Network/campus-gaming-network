@@ -9,7 +9,7 @@ import { mapSchool } from "../utilities";
 // Hooks
 import useLocalStorage from "./useLocalStorage";
 
-const useFetchSchools = () => {
+const useFetchSchools = pathname => {
   const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
     "cgn.schools",
     null
@@ -17,6 +17,7 @@ const useFetchSchools = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [schools, setSchools] = React.useState(null);
   const [error, setError] = React.useState(null);
+  const inUseableRoute = ["/register", "/user/edit"].includes(pathname);
 
   const saveToLocalStorage = React.useCallback(() => {
     setSchoolsInLocalStorage(schools);
@@ -56,13 +57,19 @@ const useFetchSchools = () => {
         });
     };
 
-    if (!isLoading && !localStorageSchools) {
+    if (!isLoading && !localStorageSchools && inUseableRoute) {
       setIsLoading(true);
       fetchSchools();
     } else if (!schools && localStorageSchools) {
       setSchools(localStorageSchools);
     }
-  }, [saveToLocalStorage, isLoading, localStorageSchools, schools]);
+  }, [
+    saveToLocalStorage,
+    isLoading,
+    localStorageSchools,
+    schools,
+    inUseableRoute
+  ]);
 
   return [schools, isLoading, error];
 };

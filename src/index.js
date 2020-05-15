@@ -2,11 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import "./App.css";
-import App2 from "./App2";
+import App from "./App";
 import { SkipNavLink } from "@reach/skip-nav";
 import * as serviceWorker from "./serviceWorker";
 import { AppProvider } from "./store";
 import { firebase, firebaseAuth } from "./firebase";
+import { LocationProvider } from "@reach/router";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 import moment from "moment";
 import momentLocalizer from "react-widgets-moment";
@@ -20,13 +21,15 @@ momentLocalizer();
 firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 ReactDOM.render(
-  <AppProvider>
-    <ThemeProvider>
-      <CSSReset />
-      <SkipNavLink />
-      <App2 />
-    </ThemeProvider>
-  </AppProvider>,
+  <LocationProvider>
+    <AppProvider>
+      <ThemeProvider>
+        <CSSReset />
+        <SkipNavLink />
+        <App />
+      </ThemeProvider>
+    </AppProvider>
+  </LocationProvider>,
   document.getElementById("root")
 );
 
