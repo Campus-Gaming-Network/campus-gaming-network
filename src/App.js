@@ -40,7 +40,7 @@ const App2 = () => {
     setSchools();
   }, [setSchools, schools, state.schools]);
 
-  return !isAuthenticating && authenticatedUser ? (
+  return !isAuthenticating && !!authenticatedUser ? (
     <AuthenticatedApp />
   ) : (
     <UnauthenticatedApp />

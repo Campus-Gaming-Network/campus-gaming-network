@@ -6,7 +6,6 @@ import {
   Box,
   Heading,
   Text,
-  Image,
   List,
   ListItem,
   Spinner,
@@ -16,146 +15,129 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import Gravatar from "react-gravatar";
 import * as constants from "../constants";
+
 import OutsideLink from "../components/OutsideLink";
 import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
+import SchoolLogo from "../components/SchoolLogo";
+
 import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
-import { firebaseStorage } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
-
-// const CACHED_SCHOOLS = {};
 
 const School = props => {
   const dispatch = useAppDispatch();
-  const { school, schools } = useAppState();
-  const events = school.events;
-  const users = school.users;
-  const cachedSchool = schools[props.id];
-  const hasCachedSchool = !!cachedSchool;
-  const cachedSchoolEvents = hasCachedSchool ? cachedSchool.events : null;
-  const hasCachedSchoolEvents = !!cachedSchoolEvents;
-  const cachedSchoolUsers = hasCachedSchool ? cachedSchool.users : null;
-  const hasCachedSchoolUsers = !!cachedSchoolUsers;
-  const [logoUrl, setLogoUrl] = React.useState(null);
-  const shouldFetchSchool = !!(
-    props.school &&
-    props.id !== props.school.id &&
-    !hasCachedSchool
-  );
-  const schoolFetchId = shouldFetchSchool ? props.id : null;
-  const shouldFetchSchoolEvents = shouldFetchSchool || !hasCachedSchoolEvents;
-  const schoolEventsFetchId = shouldFetchSchoolEvents ? props.id : null;
-  const shouldFetchSchoolUsers = shouldFetchSchool || !hasCachedSchoolUsers;
-  const schoolUsersFetchId = shouldFetchSchoolUsers ? props.id : null;
-  const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
-    schoolFetchId
-  );
-  const [fetchedSchoolEvents, isLoadingSchoolEvents] = useFetchSchoolEvents(
-    schoolEventsFetchId
-  );
-  const [fetchedSchoolUsers, isLoadingSchoolUsers] = useFetchSchoolUsers(
+  const state = useAppState();
+  const cachedSchool = state.schools[props.id];
+  const [schoolFetchId, setSchoolFetchId] = React.useState(null);
+  const [schoolEventsFetchId, setSchoolEventsFetchId] = React.useState(null);
+  const [schoolUsersFetchId, setSchoolUsersFetchId] = React.useState(null);
+  const [school, setSchool] = React.useState(state.school);
+  const [events, setEvents] = React.useState(state.school.events);
+  const [users, setUsers] = React.useState(state.school.users);
+  const [fetchedSchool] = useFetchSchoolDetails(schoolFetchId);
+  const [
+    fetchedSchoolEvents,
+    isLoadingFetchedSchoolEvents
+  ] = useFetchSchoolEvents(schoolEventsFetchId);
+  const [fetchedSchoolUsers, isLoadingFetchedSchoolUsers] = useFetchSchoolUsers(
     schoolUsersFetchId
   );
 
-  // React.useEffect(() => {
-  //   const fetchSchoolLogo = () => {
-  //     const storageRef = firebaseStorage.ref();
-  //     const pathRef = storageRef.child(
-  //       `schools/${props.school.id}/images/logo.jpg`
-  //     );
-  //     pathRef.getDownloadURL().then(url => {
-  //       setLogoUrl(url);
-  //     });
-  //   };
-
-  //   if (props.school && props.school.id) {
-  //     fetchSchoolLogo();
-  //   }
-  // }, [props.school]);
-
-  React.useEffect(() => {
-    const events = hasCachedSchoolEvents
-      ? cachedSchoolEvents
-      : schoolEventsFetchId
-      ? fetchedSchoolEvents
-      : [];
-    const users = hasCachedSchoolUsers
-      ? cachedSchoolUsers
-      : schoolEventsFetchId
-      ? fetchedSchoolUsers
-      : [];
-    const school = hasCachedSchool
-      ? cachedSchool
-      : schoolFetchId
-      ? fetchedSchool
-      : props.school;
-
-    if (!!school) {
+  const getSchool = React.useCallback(() => {
+    if (cachedSchool) {
+      setSchool(cachedSchool);
+    } else if (!schoolFetchId) {
+      setSchoolFetchId(props.id);
+    } else if (fetchedSchool) {
+      setSchool(fetchedSchool);
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL,
-        payload: school
+        payload: fetchedSchool
       });
+    }
+  }, [props.id, cachedSchool, fetchedSchool, dispatch, schoolFetchId]);
 
-      if (!!events) {
-        dispatch({
-          type: ACTION_TYPES.SET_SCHOOL_EVENTS,
-          payload: events
-        });
-      }
-
-      if (!!users) {
-        dispatch({
-          type: ACTION_TYPES.SET_SCHOOL_EVENTS,
-          payload: users
-        });
-      }
+  const getSchoolEvents = React.useCallback(() => {
+    if (cachedSchool && cachedSchool.events) {
+      setEvents(cachedSchool.events);
+    } else if (!schoolEventsFetchId) {
+      setSchoolEventsFetchId(props.id);
+    } else if (fetchedSchoolEvents) {
+      setEvents(fetchedSchoolEvents);
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL_EVENTS,
+        payload: fetchedSchoolEvents
+      });
     }
   }, [
     props.id,
-    props.school,
+    cachedSchool,
     fetchedSchoolEvents,
-    fetchedSchool,
-    fetchedSchoolUsers
+    dispatch,
+    schoolEventsFetchId
   ]);
 
-  // const school = hasCachedSchool
-  //   ? CACHED_SCHOOLS[props.id]
-  //   : schoolFetchId
-  //   ? fetchedSchool
-  //   : props.school;
+  const getSchoolUsers = React.useCallback(() => {
+    if (cachedSchool && cachedSchool.users) {
+      setUsers(cachedSchool.users);
+    } else if (!schoolUsersFetchId) {
+      setSchoolUsersFetchId(props.id);
+    } else if (fetchedSchoolUsers) {
+      setUsers(fetchedSchoolUsers);
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL_USERS,
+        payload: fetchedSchoolUsers
+      });
+    }
+  }, [
+    props.id,
+    cachedSchool,
+    fetchedSchoolUsers,
+    dispatch,
+    schoolUsersFetchId
+  ]);
 
-  // const users = hasCachedSchoolUsers
-  //   ? CACHED_SCHOOLS[props.id].users
-  //   : usersSchoolToFetch
-  //   ? schoolUsers
-  //   : [];
+  React.useEffect(() => {
+    if (props.id !== state.school.id) {
+      getSchool();
+    }
+  }, [
+    props.id,
+    state.school.id,
+    cachedSchool,
+    fetchedSchool,
+    dispatch,
+    getSchool
+  ]);
 
-  // const events = hasCachedSchoolEvents
-  //   ? CACHED_SCHOOLS[props.id].events
-  //   : eventsSchoolToFetch
-  //   ? schoolEvents
-  //   : [];
+  React.useEffect(() => {
+    if (!school.events) {
+      getSchoolEvents();
+    }
+  }, [
+    props.id,
+    school,
+    cachedSchool,
+    fetchedSchoolEvents,
+    dispatch,
+    getSchoolEvents
+  ]);
 
-  // if (!hasCachedSchool) {
-  //   CACHED_SCHOOLS[props.id] = { ...school };
-  // }
-
-  // if (hasCachedSchool && schoolEvents) {
-  //   CACHED_SCHOOLS[props.id] = {
-  //     ...CACHED_SCHOOLS[props.id],
-  //     events: [...schoolEvents]
-  //   };
-  // }
-
-  // if (hasCachedSchool && schoolUsers) {
-  //   CACHED_SCHOOLS[props.id] = {
-  //     ...CACHED_SCHOOLS[props.id],
-  //     users: [...schoolUsers]
-  //   };
-  // }
+  React.useEffect(() => {
+    if (!school.users) {
+      getSchoolUsers();
+    }
+  }, [
+    props.id,
+    school,
+    cachedSchool,
+    fetchedSchoolUsers,
+    dispatch,
+    getSchoolUsers
+  ]);
 
   if (!school) {
     console.error(`No school found ${props.uri}`);
@@ -166,32 +148,31 @@ const School = props => {
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
-          {logoUrl ? (
-            <Image
-              src={logoUrl}
-              alt={`${school.name} school logo`}
-              h={40}
-              w={40}
-              bg="white"
-              rounded="full"
-              border="4px"
-              borderColor="gray.300"
-            />
-          ) : (
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              color="gray.100"
-              h={40}
-              w={40}
-              bg="gray.400"
-              rounded="full"
-              border="4px"
-              borderColor="gray.300"
-            >
-              <FontAwesomeIcon icon={faSchool} size="4x" />
-            </Flex>
-          )}
+          <SchoolLogo
+            schoolId={school.id}
+            alt={`${school.name} school logo`}
+            h={40}
+            w={40}
+            bg="white"
+            rounded="full"
+            border="4px"
+            borderColor="gray.300"
+            fallback={
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                color="gray.100"
+                h={40}
+                w={40}
+                bg="gray.400"
+                rounded="full"
+                border="4px"
+                borderColor="gray.300"
+              >
+                <FontAwesomeIcon icon={faSchool} size="4x" />
+              </Flex>
+            }
+          />
           <Box pl={12}>
             <Heading
               as="h1"
@@ -263,7 +244,7 @@ const School = props => {
           >
             Upcoming Events
           </Heading>
-          {isLoadingSchoolEvents ? (
+          {isLoadingFetchedSchoolEvents ? (
             <Box w="100%" textAlign="center">
               <Spinner
                 thickness="4px"
@@ -296,7 +277,7 @@ const School = props => {
           >
             Members
           </Heading>
-          {isLoadingSchoolUsers ? (
+          {isLoadingFetchedSchoolUsers ? (
             <Box w="100%" textAlign="center">
               <Spinner
                 thickness="4px"

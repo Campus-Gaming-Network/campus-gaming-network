@@ -14,6 +14,7 @@ const ACTION_TYPES = {
   SET_SCHOOL: "SET_SCHOOL",
   SET_SCHOOL_USERS: "SET_SCHOOL_USERS",
   SET_SCHOOL_EVENTS: "SET_SCHOOL_EVENTS",
+  SET_SCHOOL_LOGO: "SET_SCHOOL_LOGO",
   SET_USER: "SET_USER",
   SET_USER_EVENTS: "SET_USER_EVENTS",
   SET_EVENT: "SET_EVENT",
@@ -68,6 +69,21 @@ const reducer = (state, action) => {
           [state.school.id]: {
             ...state.school,
             events: action.payload
+          }
+        }
+      };
+    case ACTION_TYPES.SET_SCHOOL_LOGO:
+      return {
+        ...state,
+        school: {
+          ...state.school,
+          logo: action.payload
+        },
+        schools: {
+          ...state.schools,
+          [state.school.id]: {
+            ...state.school,
+            logo: action.payload
           }
         }
       };

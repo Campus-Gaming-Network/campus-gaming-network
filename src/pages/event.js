@@ -31,6 +31,7 @@ import {
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { firebaseFirestore } from "../firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // Components
 import OutsideLink from "../components/OutsideLink";
@@ -44,6 +45,67 @@ import useFetchUserEventResponse from "../hooks/useFetchUserEventResponse";
 const CACHED_EVENTS = {};
 
 const Event = props => {
+  const dispatch = useAppDispatch();
+  const state = useAppState();
+  const cachedEvent = state.events[props.id];
+  const [eventFetchId, setEventFetchId] = React.useState(null);
+  const [eventUsersFetchId, setEventUsersFetchId] = React.useState(null);
+  const [event, setEvent] = React.useState(state.event);
+  const [users, setUsers] = React.useState(state.event.users);
+  const [fetchedEvent] = useFetchEventDetails(eventFetchId);
+  const [fetchedEventUsers, isLoadingFetchedEventUsers] = useFetchEventUsers(
+    eventUsersFetchId
+  );
+
+  const getEvent = React.useCallback(() => {
+    if (cachedEvent) {
+      setEvent(cachedEvent);
+    } else if (!eventFetchId) {
+      setEventFetchId(props.id);
+    } else if (fetchedEvent) {
+      setEvent(fetchedEvent);
+      dispatch({
+        type: ACTION_TYPES.SET_EVENT,
+        payload: fetchedEvent
+      });
+    }
+  }, [props.id, cachedEvent, fetchedEvent, dispatch, eventFetchId]);
+
+  const getEventUsers = React.useCallback(() => {
+    if (cachedEvent && cachedEvent.users) {
+      setUsers(cachedEvent.users);
+    } else if (!eventUsersFetchId) {
+      setEventUsersFetchId(props.id);
+    } else if (fetchedEventUsers) {
+      setUsers(fetchedEventUsers);
+      dispatch({
+        type: ACTION_TYPES.SET_EVENT_USERS,
+        payload: fetchedEventUsers
+      });
+    }
+  }, [props.id, cachedEvent, fetchedEventUsers, dispatch, eventUsersFetchId]);
+
+  React.useEffect(() => {
+    if (props.id !== state.event.id) {
+      getEvent();
+    }
+  }, [props.id, state.event.id, cachedEvent, fetchedEvent, dispatch, getEvent]);
+
+  React.useEffect(() => {
+    if (!event.users) {
+      getEventUsers();
+    }
+  }, [
+    props.id,
+    event,
+    cachedEvent,
+    fetchedEventUsers,
+    dispatch,
+    getEventUsers
+  ]);
+
+  //////////////////////////////////////////////////////////////////////
+
   const hasCachedEvent = !!CACHED_EVENTS[props.id];
   const shouldFetchEvent = !props.appLoading && !hasCachedEvent;
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);

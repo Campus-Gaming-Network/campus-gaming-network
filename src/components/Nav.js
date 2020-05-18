@@ -13,6 +13,7 @@ import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import { firebaseStorage } from "../firebase";
 
 import Link from "./Link";
+import SchoolLogo from "./SchoolLogo";
 
 const Nav = props => {
   // const schoolId = props.school ? props.school.id : "";
@@ -81,34 +82,33 @@ const Nav = props => {
           to={`school/${props.school.id}`}
           className="items-center flex mx-5 py-1 active:outline sm:rounded-none rounded hover:text-gray-300 hover:underline focus:underline"
         >
-          {logoUrl ? (
-            <Image
-              src={logoUrl}
-              alt={`${props.school.name} school logo`}
-              h={12}
-              w={12}
-              bg="white"
-              rounded="full"
-              border="4px"
-              borderColor="gray.300"
-              mr={2}
-            />
-          ) : (
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              color="gray.100"
-              h={12}
-              w={12}
-              bg="gray.400"
-              rounded="full"
-              border="4px"
-              borderColor="gray.300"
-              mr={2}
-            >
-              <FontAwesomeIcon icon={faSchool} />
-            </Flex>
-          )}
+          <SchoolLogo
+            schoolId={props.school.id}
+            alt={`${props.school.name} school logo`}
+            h={12}
+            w={12}
+            bg="white"
+            rounded="full"
+            border="4px"
+            borderColor="gray.300"
+            mr={2}
+            fallback={
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                color="gray.100"
+                h={12}
+                w={12}
+                bg="gray.400"
+                rounded="full"
+                border="4px"
+                borderColor="gray.300"
+                mr={2}
+              >
+                <FontAwesomeIcon icon={faSchool} />
+              </Flex>
+            }
+          />
           <Text as="span" fontWeight="bold" color="gray.200" fontSize="xl">
             School
           </Text>
