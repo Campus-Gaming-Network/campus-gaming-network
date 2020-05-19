@@ -10,6 +10,7 @@ import {
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import Gravatar from "react-gravatar";
 import startCase from "lodash.startcase";
+import isEmpty from "lodash.isempty";
 import {
   Stack,
   Box,
@@ -30,35 +31,62 @@ import {
   useToast
 } from "@chakra-ui/core";
 import * as constants from "../constants";
-import { firebaseFirestore } from "../firebase";
+import { firebaseFirestore, firebaseAuth } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 // Components
 import OutsideLink from "../components/OutsideLink";
 import Link from "../components/Link";
+import EventSilhouette from "../components/EventSilhouette";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
 import useFetchEventUsers from "../hooks/useFetchEventUsers";
 import useFetchUserEventResponse from "../hooks/useFetchUserEventResponse";
 
-const CACHED_EVENTS = {};
-
 const Event = props => {
+  const toast = useToast();
+  const cancelRef = React.useRef();
+  const attendRef = React.useRef();
   const dispatch = useAppDispatch();
   const state = useAppState();
+  const [authenticatedUser] = useAuthState(firebaseAuth);
   const cachedEvent = state.events[props.id];
   const [eventFetchId, setEventFetchId] = React.useState(null);
   const [eventUsersFetchId, setEventUsersFetchId] = React.useState(null);
   const [event, setEvent] = React.useState(state.event);
   const [users, setUsers] = React.useState(state.event.users);
-  const [fetchedEvent] = useFetchEventDetails(eventFetchId);
+  const [fetchedEvent, isLoadingFetchedEvent] = useFetchEventDetails(
+    eventFetchId
+  );
   const [fetchedEventUsers, isLoadingFetchedEventUsers] = useFetchEventUsers(
     eventUsersFetchId
   );
+  const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
+  const [isEventCreator, setIsEventCreator] = React.useState(false);
+  const [userFetchId, setUserFetchId] = React.useState(null);
+  const [eventResponse, isLoadingUserEventResponse] = useFetchUserEventResponse(
+    props.id,
+    userFetchId,
+    refreshEventResponse
+  );
+  const [hasResponded, setHasResponded] = React.useState(false);
+  const [canChangeEventResponse, setCanChangeEventResponse] = React.useState(
+    false
+  );
+  const [
+    isSubmittingEventResponse,
+    setIsSubmittingEventResponse
+  ] = React.useState(false);
+  const [isCancellationAlertOpen, setCancellationAlertIsOpen] = React.useState(
+    false
+  );
+  const [isAttendingAlertOpen, setAttendingAlertIsOpen] = React.useState(false);
+  const [isLoadingEvent, setIsLoadingEvent] = React.useState(true);
 
   const getEvent = React.useCallback(() => {
-    if (cachedEvent) {
+    if (!!cachedEvent) {
       setEvent(cachedEvent);
     } else if (!eventFetchId) {
       setEventFetchId(props.id);
@@ -85,11 +113,21 @@ const Event = props => {
     }
   }, [props.id, cachedEvent, fetchedEventUsers, dispatch, eventUsersFetchId]);
 
+  const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
+
+  const onAttendingAlertCancel = () => setAttendingAlertIsOpen(false);
+
   React.useEffect(() => {
-    if (props.id !== state.event.id) {
-      getEvent();
-    }
-  }, [props.id, state.event.id, cachedEvent, fetchedEvent, dispatch, getEvent]);
+    getEvent();
+  }, [
+    props.id,
+    state.event.id,
+    cachedEvent,
+    fetchedEvent,
+    dispatch,
+    getEvent,
+    isLoadingFetchedEvent
+  ]);
 
   React.useEffect(() => {
     if (!event.users) {
@@ -104,64 +142,69 @@ const Event = props => {
     getEventUsers
   ]);
 
-  //////////////////////////////////////////////////////////////////////
+  React.useEffect(() => {
+    const _isEventCreator =
+      authenticatedUser &&
+      fetchedEvent &&
+      fetchedEvent.creator.id === authenticatedUser.uid;
 
-  const hasCachedEvent = !!CACHED_EVENTS[props.id];
-  const shouldFetchEvent = !props.appLoading && !hasCachedEvent;
-  const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
-  const toast = useToast();
-  const eventFetchId = shouldFetchEvent ? props.id : null;
-  const [fetchedEvent, isLoadingFetchedEvent] = useFetchEventDetails(
-    eventFetchId
-  );
+    if (isEventCreator !== _isEventCreator) {
+      setIsEventCreator(_isEventCreator);
+    }
+  }, [isEventCreator, authenticatedUser, fetchedEvent]);
 
-  const isEventCreator =
-    props.authenticatedUser &&
-    fetchedEvent &&
-    fetchedEvent.creator.id === props.authenticatedUser.uid;
-  const hasCachedEventUsers = hasCachedEvent && !!CACHED_EVENTS[props.id].users;
-  const shouldFetchEventUsers = shouldFetchEvent || !hasCachedEventUsers;
-  const usersEventToFetch = shouldFetchEventUsers ? props.id : null;
-  const [eventUsers, isLoadingEventUsers] = useFetchEventUsers(
-    usersEventToFetch,
-    undefined,
-    refreshEventResponse
-  );
-  const [userFetchId, setUserFetchId] = React.useState(null);
+  React.useEffect(() => {
+    const _userFetchId = authenticatedUser.uid;
 
-  if (!isEventCreator && props.authenticatedUser && !userFetchId) {
-    setUserFetchId(props.authenticatedUser.uid);
-  }
+    if (_userFetchId !== userFetchId) {
+      setUserFetchId(authenticatedUser.uid);
+    }
+  }, [isEventCreator, authenticatedUser, userFetchId]);
 
-  const [eventResponse, isLoadingUserEventResponse] = useFetchUserEventResponse(
-    props.id,
-    userFetchId,
-    refreshEventResponse
-  );
-  const hasResponded = !!eventResponse;
-  const canChangeEventResponse =
-    props.isAuthenticated &&
-    !isLoadingUserEventResponse &&
-    !isEventCreator &&
-    fetchedEvent &&
-    !fetchedEvent.hasEnded;
-  const [
-    isSubmittingEventResponse,
-    setIsSubmittingEventResponse
-  ] = React.useState(false);
-  const [isCancellationAlertOpen, setCancellationAlertIsOpen] = React.useState(
-    false
-  );
-  const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
-  const [isAttendingAlertOpen, setAttendingAlertIsOpen] = React.useState(false);
-  const onAttendingAlertCancel = () => setAttendingAlertIsOpen(false);
-  const cancelRef = React.useRef();
-  const attendRef = React.useRef();
+  React.useEffect(() => {
+    const _hasResponded = !!eventResponse;
+
+    if (_hasResponded !== hasResponded) {
+      setHasResponded(_hasResponded);
+    }
+  }, [eventResponse, hasResponded]);
+
+  React.useEffect(() => {
+    const _canChangeEventResponse =
+      props.isAuthenticated &&
+      !isLoadingUserEventResponse &&
+      !isEventCreator &&
+      fetchedEvent &&
+      !fetchedEvent.hasEnded;
+
+    if (_canChangeEventResponse !== canChangeEventResponse) {
+      setCanChangeEventResponse(_canChangeEventResponse);
+    }
+  }, [
+    props.isAuthenticated,
+    isLoadingUserEventResponse,
+    isEventCreator,
+    fetchedEvent,
+    canChangeEventResponse
+  ]);
+
+  React.useEffect(() => {
+    const isLoading =
+      isLoadingFetchedEvent ||
+      isEmpty(event) ||
+      isEmpty(state.event) ||
+      event.id !== props.id ||
+      (event.state && event.state.id !== props.id);
+
+    if (isLoading !== isLoadingEvent) {
+      setIsLoadingEvent(isLoading);
+    }
+  }, [isLoadingFetchedEvent, isLoadingEvent, event, props.id, state.event]);
 
   const getResponseFormData = response => {
     const userDocRef = firebaseFirestore
       .collection("users")
-      .doc(props.authenticatedUser.uid);
+      .doc(authenticatedUser.uid);
     const eventDocRef = firebaseFirestore.collection("events").doc(event.id);
     const schoolDocRef = firebaseFirestore
       .collection("schools")
@@ -254,27 +297,8 @@ const Event = props => {
     }
   };
 
-  const event = hasCachedEvent
-    ? CACHED_EVENTS[props.id]
-    : eventFetchId
-    ? fetchedEvent
-    : null;
-
-  const users = hasCachedEventUsers
-    ? CACHED_EVENTS[props.id].users
-    : usersEventToFetch
-    ? eventUsers
-    : [];
-
-  if (!hasCachedEvent) {
-    CACHED_EVENTS[props.id] = { ...event };
-  }
-
-  if (hasCachedEvent && eventUsers) {
-    CACHED_EVENTS[props.id] = {
-      ...CACHED_EVENTS[props.id],
-      users: [...eventUsers]
-    };
+  if (isLoadingEvent) {
+    return <EventSilhouette />;
   }
 
   if (!event) {
@@ -461,7 +485,7 @@ const Event = props => {
             >
               Attendees
             </Heading>
-            {isLoadingEventUsers ? (
+            {isLoadingFetchedEventUsers ? (
               <Box w="100%" textAlign="center">
                 <Spinner
                   thickness="4px"

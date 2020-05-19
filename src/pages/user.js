@@ -43,6 +43,7 @@ const User = props => {
   const [fetchedUserEvents, isLoadingFetchedUserEvents] = useFetchUserEvents(
     userEventsFetchId
   );
+  const school = user.school ? state.schools[user.school.id] : null;
 
   const getUser = React.useCallback(() => {
     if (cachedUser) {
@@ -156,12 +157,12 @@ const User = props => {
               </Text>
             )}
             {user.displayStatus}
-            {props.school ? (
+            {school ? (
               <Link
-                to={`/school/${props.school.id}`}
+                to={`/school/${school.id}`}
                 className={`${constants.STYLES.LINK.DEFAULT} ml-2`}
               >
-                {startCase(props.school.name.toLowerCase())}
+                {startCase(school.name.toLowerCase())}
               </Link>
             ) : null}
           </Heading>

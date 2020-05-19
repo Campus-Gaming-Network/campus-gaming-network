@@ -75,11 +75,6 @@ const AuthenticatedApp = () => {
     const hasUserState = !isEmpty(state.user);
     const hasSchoolState = !isEmpty(state.school);
     const isLoading = !hasUserState || !hasSchoolState;
-    console.log({
-      hasUserState,
-      hasSchoolState,
-      isLoading
-    });
 
     if (isLoading !== isLoadingUser) {
       setIsLoadingUser(isLoading);
