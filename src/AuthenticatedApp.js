@@ -34,10 +34,12 @@ import EventSilhouette from "./components/EventSilhouette";
 const AuthenticatedApp = () => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [user] = useFetchUserDetails(authenticatedUser.uid);
   const [school] = useFetchUserSchool(user);
   const [isLoadingUser, setIsLoadingUser] = React.useState(true);
+  const [nav, setNav] = React.useState(<NavSilhouette />);
+  const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
 
   const setUser = React.useCallback(() => {
     const hasUser = !!user;
@@ -74,21 +76,24 @@ const AuthenticatedApp = () => {
   React.useEffect(() => {
     const hasUserState = !isEmpty(state.user);
     const hasSchoolState = !isEmpty(state.school);
-    const isLoading = !hasUserState || !hasSchoolState;
+    const isLoading = !hasUserState || !hasSchoolState || isAuthenticating;
 
     if (isLoading !== isLoadingUser) {
       setIsLoadingUser(isLoading);
     }
-  }, [state.user, state.school, isLoadingUser]);
+  }, [state.user, state.school, isLoadingUser, isAuthenticating]);
+
+  React.useEffect(() => {
+    if (!isLoadingUser) {
+      setNav(<AuthenticatedNav />);
+      setRoutes(<Routes />);
+    }
+  }, [isLoadingUser]);
 
   return (
     <React.Fragment>
-      <Header>
-        {isLoadingUser ? <NavSilhouette /> : <AuthenticatedNav />}
-      </Header>
-      <main className="pb-12">
-        {isLoadingUser ? <SilhouetteRoutes /> : <Routes />}
-      </main>
+      <Header>{nav}</Header>
+      <main className="pb-12">{routes}</main>
     </React.Fragment>
   );
 };

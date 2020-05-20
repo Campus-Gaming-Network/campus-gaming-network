@@ -3,6 +3,7 @@ import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
+import isEmpty from "lodash.isempty";
 import Gravatar from "react-gravatar";
 import {
   Stack,
@@ -24,22 +25,24 @@ import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 import Flex from "../components/Flex";
+import UserSilhouette from "../components/UserSilhouette";
 
 // Hooks
 import useFetchUserDetails from "../hooks/useFetchUserDetails";
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
+// import useFetchSchools from ".//hooks/useFetchSchools";
 
 const User = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
   const cachedUser = state.users[props.id];
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [isAuthenticatedUser, setIsAuthenticatedUser] = React.useState(false);
   const [userFetchId, setUserFetchId] = React.useState(null);
   const [userEventsFetchId, setUserEventsFetchId] = React.useState(null);
   const [user, setUser] = React.useState(state.user);
   const [events, setEvents] = React.useState(state.user.events);
-  const [fetchedUser] = useFetchUserDetails(userFetchId);
+  const [fetchedUser, isLoadingFetchedUser] = useFetchUserDetails(userFetchId);
   const [fetchedUserEvents, isLoadingFetchedUserEvents] = useFetchUserEvents(
     userEventsFetchId
   );
@@ -68,7 +71,10 @@ const User = props => {
       setEvents(fetchedUserEvents);
       dispatch({
         type: ACTION_TYPES.SET_USER_EVENTS,
-        payload: fetchedUserEvents
+        payload: {
+          id: props.id,
+          events: fetchedUserEvents
+        }
       });
     }
   }, [props.id, cachedUser, fetchedUserEvents, dispatch, userEventsFetchId]);
@@ -94,9 +100,13 @@ const User = props => {
     }
   }, [props.id, user, cachedUser, fetchedUserEvents, dispatch, getUserEvents]);
 
-  if (!user) {
+  if (isAuthenticating || isLoadingFetchedUser) {
+    return <UserSilhouette />;
+  }
+
+  if (!user || isEmpty(user)) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="not-found" noThrow />;
+    return <Redirect to="../../not-found" noThrow />;
   }
 
   return (

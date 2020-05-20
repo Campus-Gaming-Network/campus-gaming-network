@@ -14,16 +14,29 @@ const SchoolLogo = ({ schoolId, fallback, src, ...rest }) => {
     } else {
       const storageRef = firebaseStorage.ref();
       const pathRef = storageRef.child(`schools/${schoolId}/images/logo.jpg`);
-      pathRef.getDownloadURL().then(url => {
-        setLogo(url);
-        dispatch({
-          type: ACTION_TYPES.SET_SCHOOL_LOGO,
-          payload: {
-            id: schoolId,
-            logo: url
+      pathRef
+        .getDownloadURL()
+        .then(url => {
+          if (url) {
+            setLogo(url);
+            dispatch({
+              type: ACTION_TYPES.SET_SCHOOL_LOGO,
+              payload: {
+                id: schoolId,
+                logo: url
+              }
+            });
+          }
+        })
+        .catch(error => {
+          if (error.code !== "storage/object-not-found") {
+            if (error.message) {
+              console.error(error.message);
+            } else {
+              console.error(error);
+            }
           }
         });
-      });
     }
   }, [schoolId, state.schools, dispatch]);
 

@@ -1,5 +1,4 @@
 import React from "react";
-import { useLocation } from "@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 
@@ -20,9 +19,10 @@ import useFetchSchools from "./hooks/useFetchSchools";
 const App2 = () => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const location = useLocation();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
-  const [schools] = useFetchSchools(location.pathname);
+  const [schools] = useFetchSchools();
+  const [app, setApp] = React.useState(<UnauthenticatedApp />);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   const setSchools = React.useCallback(() => {
     const hasSchools = !!schools;
@@ -40,11 +40,21 @@ const App2 = () => {
     setSchools();
   }, [setSchools, schools, state.schools]);
 
-  return !isAuthenticating && !!authenticatedUser ? (
-    <AuthenticatedApp />
-  ) : (
-    <UnauthenticatedApp />
-  );
+  React.useEffect(() => {
+    const _isAuthenticated = !isAuthenticating && !!authenticatedUser;
+
+    if (_isAuthenticated !== isAuthenticated) {
+      setIsAuthenticated(_isAuthenticated);
+    }
+  }, [isAuthenticating, authenticatedUser, isAuthenticated]);
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      setApp(<AuthenticatedApp />);
+    }
+  }, [isAuthenticated]);
+
+  return app;
 };
 
 export default App2;

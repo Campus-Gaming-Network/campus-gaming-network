@@ -1,6 +1,5 @@
 import React from "react";
 import { Redirect } from "@reach/router";
-import sortBy from "lodash.sortby";
 import startCase from "lodash.startcase";
 import {
   Alert,

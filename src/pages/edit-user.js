@@ -5,6 +5,7 @@ import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
 import startCase from "lodash.startcase";
+// eslint-disable-next-line no-unused-vars
 import uniqBy from "lodash.uniqby";
 import moment from "moment";
 import {
@@ -180,7 +181,7 @@ const EditUser = props => {
       .doc(state.school);
 
     // TODO:
-    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
+    // const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
     // const selectedGame = games.find(
     //   game => game.name.toLowerCase().trim() === fields.gameSearch.toLowerCase().trim()
     // );

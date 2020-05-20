@@ -2,6 +2,7 @@ import React from "react";
 import { navigate } from "@reach/router";
 import isEmpty from "lodash.isempty";
 import Gravatar from "react-gravatar";
+// eslint-disable-next-line no-unused-vars
 import { Button as ChakraButton, Flex, Text } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
 import * as constants from "../constants";
@@ -20,6 +21,7 @@ const AuthenticatedNav = () => {
   const [school, setSchool] = React.useState({});
   const [isMenuOpen] = React.useState(false);
 
+  // eslint-disable-next-line no-unused-vars
   const handleLogout = () => {
     firebaseAuth.signOut().then(() => navigate("/"));
   };
@@ -95,12 +97,14 @@ const AuthenticatedNav = () => {
         to={`user/${user.id}`}
         className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
       >
-        <Gravatar
-          default={constants.GRAVATAR.DEFAULT}
-          rating={constants.GRAVATAR.RA}
-          md5={user.gravatar}
-          className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-        />
+        {user.gravatar ? (
+          <Gravatar
+            default={constants.GRAVATAR.DEFAULT}
+            rating={constants.GRAVATAR.RA}
+            md5={user.gravatar}
+            className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
+          />
+        ) : null}
         Profile
       </Link>
     </nav>

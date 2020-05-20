@@ -108,7 +108,10 @@ const Event = props => {
       setUsers(fetchedEventUsers);
       dispatch({
         type: ACTION_TYPES.SET_EVENT_USERS,
-        payload: fetchedEventUsers
+        payload: {
+          id: props.id,
+          users: fetchedEventUsers
+        }
       });
     }
   }, [props.id, cachedEvent, fetchedEventUsers, dispatch, eventUsersFetchId]);
@@ -118,7 +121,9 @@ const Event = props => {
   const onAttendingAlertCancel = () => setAttendingAlertIsOpen(false);
 
   React.useEffect(() => {
-    getEvent();
+    if (props.id !== state.event.id) {
+      getEvent();
+    }
   }, [
     props.id,
     state.event.id,
@@ -154,7 +159,7 @@ const Event = props => {
   }, [isEventCreator, authenticatedUser, fetchedEvent]);
 
   React.useEffect(() => {
-    const _userFetchId = authenticatedUser.uid;
+    const _userFetchId = authenticatedUser ? authenticatedUser.uid : null;
 
     if (_userFetchId !== userFetchId) {
       setUserFetchId(authenticatedUser.uid);
@@ -303,7 +308,7 @@ const Event = props => {
 
   if (!event) {
     console.error(`No event found ${props.uri}`);
-    return <Redirect to="not-found" noThrow />;
+    return <Redirect to="../../not-found" noThrow />;
   }
 
   return (

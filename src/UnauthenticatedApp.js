@@ -23,23 +23,29 @@ import EventSilhouette from "./components/EventSilhouette";
 
 const UnauthenticatedApp = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [nav, setNav] = React.useState(<NavSilhouette />);
+  const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
+
+  React.useEffect(() => {
+    const _isLoading = isAuthenticating;
+
+    if (isLoading !== _isLoading) {
+      setIsLoading(_isLoading);
+    }
+  }, [authenticatedUser, isAuthenticating, isLoading]);
+
+  React.useEffect(() => {
+    if (!isLoading) {
+      setNav(<UnauthenticatedNav />);
+      setRoutes(<Routes />);
+    }
+  }, [isLoading]);
 
   return (
     <React.Fragment>
-      <Header>
-        {!authenticatedUser && isAuthenticating ? (
-          <NavSilhouette />
-        ) : (
-          <UnauthenticatedNav />
-        )}
-      </Header>
-      <main className="pb-12">
-        {!authenticatedUser && isAuthenticating ? (
-          <SilhouetteRoutes />
-        ) : (
-          <Routes />
-        )}
-      </main>
+      <Header>{nav}</Header>
+      <main className="pb-12">{routes}</main>
     </React.Fragment>
   );
 };

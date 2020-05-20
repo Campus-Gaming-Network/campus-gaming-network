@@ -21,23 +21,29 @@ import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 import SchoolLogo from "../components/SchoolLogo";
+import SchoolSilhouette from "../components/SchoolSilhouette";
 
 import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { firebaseAuth } from "../firebase";
 
 const School = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
   const cachedSchool = state.schools[props.id];
+  const [, isAuthenticating] = useAuthState(firebaseAuth);
   const [schoolFetchId, setSchoolFetchId] = React.useState(null);
   const [schoolEventsFetchId, setSchoolEventsFetchId] = React.useState(null);
   const [schoolUsersFetchId, setSchoolUsersFetchId] = React.useState(null);
   const [school, setSchool] = React.useState(state.school);
   const [events, setEvents] = React.useState(state.school.events);
   const [users, setUsers] = React.useState(state.school.users);
-  const [fetchedSchool] = useFetchSchoolDetails(schoolFetchId);
+  const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
+    schoolFetchId
+  );
   const [
     fetchedSchoolEvents,
     isLoadingFetchedSchoolEvents
@@ -69,7 +75,10 @@ const School = props => {
       setEvents(fetchedSchoolEvents);
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL_EVENTS,
-        payload: fetchedSchoolEvents
+        payload: {
+          id: props.id,
+          events: fetchedSchoolEvents
+        }
       });
     }
   }, [
@@ -89,7 +98,10 @@ const School = props => {
       setUsers(fetchedSchoolUsers);
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL_USERS,
-        payload: fetchedSchoolUsers
+        payload: {
+          id: props.id,
+          users: fetchedSchoolUsers
+        }
       });
     }
   }, [
@@ -139,9 +151,13 @@ const School = props => {
     getSchoolUsers
   ]);
 
+  if (isAuthenticating || isLoadingFetchedSchool) {
+    return <SchoolSilhouette />;
+  }
+
   if (!school) {
     console.error(`No school found ${props.uri}`);
-    return <Redirect to="not-found" noThrow />;
+    return <Redirect to="../../not-found" noThrow />;
   }
 
   return (

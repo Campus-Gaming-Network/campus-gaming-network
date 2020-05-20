@@ -47,13 +47,13 @@ const reducer = (state, action) => {
         ...state,
         school: {
           ...state.school,
-          users: action.payload
+          users: action.payload.users
         },
         schools: {
           ...state.schools,
-          [state.school.id]: {
-            ...state.school,
-            users: action.payload
+          [action.payload.id]: {
+            ...state.schools[action.payload.id],
+            users: action.payload.users
           }
         }
       };
@@ -62,13 +62,13 @@ const reducer = (state, action) => {
         ...state,
         school: {
           ...state.school,
-          events: action.payload
+          events: action.payload.events
         },
         schools: {
           ...state.schools,
-          [state.school.id]: {
-            ...state.school,
-            events: action.payload
+          [action.payload.id]: {
+            ...state.schools[action.payload.id],
+            events: action.payload.events
           }
         }
       };
@@ -77,13 +77,13 @@ const reducer = (state, action) => {
         ...state,
         school: {
           ...state.school,
-          logo: action.payload
+          logo: action.payload.logo
         },
         schools: {
           ...state.schools,
-          [state.school.id]: {
-            ...state.school,
-            logo: action.payload
+          [action.payload.id]: {
+            ...state.schools[action.payload.id],
+            logo: action.payload.logo
           }
         }
       };
@@ -101,13 +101,13 @@ const reducer = (state, action) => {
         ...state,
         user: {
           ...state.user,
-          events: action.payload
+          events: action.payload.events
         },
         users: {
           ...state.users,
-          [state.user.id]: {
-            ...state.user,
-            events: action.payload
+          [action.payload.id]: {
+            ...state.users[action.payload.id],
+            events: action.payload.events
           }
         }
       };
@@ -125,13 +125,13 @@ const reducer = (state, action) => {
         ...state,
         event: {
           ...state.event,
-          users: action.payload
+          users: action.payload.users
         },
         events: {
           ...state.events,
-          [state.event.id]: {
-            ...state.event,
-            users: action.payload
+          [action.payload.id]: {
+            ...state.events[action.payload.id],
+            users: action.payload.users
           }
         }
       };
