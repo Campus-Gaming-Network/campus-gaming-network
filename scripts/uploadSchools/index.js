@@ -38,7 +38,7 @@ const mapSchool = () => ({
   TELEPHONE,
   LATITUDE,
   LONGITUDE
-}) {
+}) => {
   const school = {
     name: NAME,
     address: ADDRESS,
