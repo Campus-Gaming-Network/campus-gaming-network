@@ -14,9 +14,9 @@ import UnauthenticatedApp from "./UnauthenticatedApp";
 import useFetchSchools from "./hooks/useFetchSchools";
 
 ////////////////////////////////////////////////////////////////////////////////
-// App2
+// App
 
-const App2 = () => {
+const App = () => {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
@@ -57,4 +57,4 @@ const App2 = () => {
   return app;
 };
 
-export default App2;
+export default App;

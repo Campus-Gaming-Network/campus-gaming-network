@@ -10,8 +10,12 @@ import {
   FormControl,
   FormLabel,
   Text,
-  Button as ChakraButton
+  Button,
+  Heading,
+  Divider
 } from "@chakra-ui/core";
+import { useAuthState } from "react-firebase-hooks/auth";
+
 import * as constants from "../constants";
 
 import { useFormFields } from "../utilities";
@@ -21,7 +25,8 @@ import { firebaseAuth } from "../firebase";
 import Flex from "../components/Flex";
 import Link from "../components/Link";
 
-const Login = props => {
+const Login = () => {
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
     password: ""
@@ -29,11 +34,11 @@ const Login = props => {
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  if (props.isAuthenticated) {
+  if (authenticatedUser && !isAuthenticating) {
     return <Redirect to="/" noThrow />;
   }
 
-  function handleSubmit(e) {
+  const handleSubmit = e => {
     e.preventDefault();
 
     setError(null);
@@ -48,91 +53,88 @@ const Login = props => {
         setError(error.message);
         setIsLoading(false);
       });
-  }
-
-  function validateForm() {
-    return fields.email.length > 0 && fields.password.length > 0;
-  }
+  };
 
   return (
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Box
-        as="fieldset"
+        as="form"
         borderWidth="1px"
         boxShadow="lg"
         rounded="lg"
         bg="white"
         pos="relative"
         p={12}
+        onSubmit={handleSubmit}
       >
-        <form onSubmit={handleSubmit}>
-          <h1 className="text-5xl font-bold leading-none mb-4">
-            Welcome back!
-          </h1>
-          <p className="text-gray-600">Log in to your account</p>
-          <hr className="mt-12 mb-10" />
-          {error ? (
-            <Alert status="error" mb={12}>
-              <AlertIcon />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          ) : null}
-          <Stack spacing={6}>
-            <FormControl isRequired>
-              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-                Email:
-              </FormLabel>
-              <ChakraInput
-                id="email"
-                name="email"
-                type="email"
-                placeholder="jdoe123@gmail.com"
-                onChange={handleFieldChange}
-                value={fields.email}
-                size="lg"
-              />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
-                Password:
-              </FormLabel>
-              <ChakraInput
-                id="password"
-                name="password"
-                type="password"
-                placeholder="******************"
-                onChange={handleFieldChange}
-                value={fields.password}
-                size="lg"
-              />
-            </FormControl>
-          </Stack>
-          <ChakraButton
-            variantColor="purple"
-            type="submit"
-            size="lg"
-            w="full"
-            disabled={isLoading || !validateForm()}
-            my={12}
-          >
-            {isLoading ? "Logging in..." : "Log In"}
-          </ChakraButton>
-          <Flex itemsCenter justifyBetween>
-            <Text>
-              Don’t have an account?{" "}
-              <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
-                Create one
-              </Link>
-            </Text>
-            {/* TODO: Reimplment with firebase */}
-            {/* <Link
+        <Heading as="h1" size="2xl">
+          Welcome back!
+        </Heading>
+        <Text color="gray.500">Log in to your account</Text>
+        <Divider mt={12} mb={10} />
+        {error ? (
+          <Alert status="error" mb={12}>
+            <AlertIcon />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : null}
+        <Stack spacing={6}>
+          <FormControl isRequired>
+            <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
+              Email:
+            </FormLabel>
+            <ChakraInput
+              id="email"
+              name="email"
+              type="email"
+              placeholder="jdoe123@gmail.com"
+              onChange={handleFieldChange}
+              value={fields.email}
+              size="lg"
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
+              Password:
+            </FormLabel>
+            <ChakraInput
+              id="password"
+              name="password"
+              type="password"
+              placeholder="******************"
+              onChange={handleFieldChange}
+              value={fields.password}
+              size="lg"
+            />
+          </FormControl>
+        </Stack>
+        <Button
+          variantColor="purple"
+          type="submit"
+          size="lg"
+          w="full"
+          isDisabled={isLoading}
+          isLoading={isLoading}
+          loadingText="Logging in..."
+          my={12}
+        >
+          Log In
+        </Button>
+        <Flex itemsCenter justifyBetween>
+          <Text>
+            Don’t have an account?{" "}
+            <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
+              Create one
+            </Link>
+          </Text>
+          {/* TODO: Reimplment with firebase */}
+          {/* <Link
               to="/forgot-password"
               className={`${constants.STYLES.LINK.DEFAULT}`}
             >
               Forgot your password?
             </Link> */}
-          </Flex>
-        </form>
+        </Flex>
       </Box>
     </Box>
   );

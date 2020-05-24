@@ -1,5 +1,5 @@
 import React from "react";
-import { isDev } from "../utilities";
+import { isDev, mapUser } from "../utilities";
 
 const INITIAL_STATE = {
   event: {},
@@ -90,10 +90,10 @@ const reducer = (state, action) => {
     case ACTION_TYPES.SET_USER:
       return {
         ...state,
-        user: action.payload,
+        user: mapUser(action.payload),
         users: {
           ...state.users,
-          [action.payload.id]: action.payload
+          [action.payload.id]: mapUser(action.payload)
         }
       };
     case ACTION_TYPES.SET_USER_EVENTS:

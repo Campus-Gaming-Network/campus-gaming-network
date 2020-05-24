@@ -33,12 +33,19 @@ import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { useFormFields } from "../utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
-import { firebase, firebaseFirestore } from "../firebase";
+import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import * as constants from "../constants";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useAppState } from "../store";
 
 const CACHED_GAMES = {};
 
 const CreateEvent = props => {
+  const state = useAppState();
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
+  const school =
+    authenticatedUser && user ? state.schools[user.school.id] : null;
   const [fields, handleFieldChange] = useFormFields({
     name: "",
     description: "",
@@ -122,8 +129,8 @@ const CreateEvent = props => {
     );
     const schoolDocRef = firebaseFirestore
       .collection("schools")
-      .doc(props.user.school.id);
-    const userDocRef = firebaseFirestore.collection("users").doc(props.user.id);
+      .doc(user.school.id);
+    const userDocRef = firebaseFirestore.collection("users").doc(user.id);
 
     const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
     const selectedGame = games.find(
@@ -142,7 +149,7 @@ const CreateEvent = props => {
       placeId,
       school: schoolDocRef,
       schoolDetails: {
-        name: props.school.name
+        name: school.name
       },
       game: selectedGame || {
         name: fields.gameSearch.trim()
@@ -171,9 +178,9 @@ const CreateEvent = props => {
           school: schoolDocRef,
           response: "YES",
           userDetails: {
-            firstName: props.user.firstName,
-            lastName: props.user.lastName,
-            gravatar: props.user.gravatar
+            firstName: user.firstName,
+            lastName: user.lastName,
+            gravatar: user.gravatar
           },
           eventDetails: {
             name: fields.name,
@@ -182,7 +189,7 @@ const CreateEvent = props => {
             endDateTime: firestoreEndDateTime
           },
           schoolDetails: {
-            name: props.school.name
+            name: school.name
           }
         };
 
@@ -216,17 +223,17 @@ const CreateEvent = props => {
       });
   };
 
-  if (props.isAuthenticating) {
+  if (isAuthenticating) {
     return null;
   }
 
-  if (!props.isAuthenticated) {
+  if (!authenticatedUser) {
     return <Redirect to="/" noThrow />;
   }
 
-  if (!props.user) {
+  if (!user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="not-found" noThrow />;
+    return <Redirect to="../../not-found" noThrow />;
   }
 
   return (
@@ -258,11 +265,11 @@ const CreateEvent = props => {
                 <Gravatar
                   default={constants.GRAVATAR.DEFAULT}
                   rating={constants.GRAVATAR.RA}
-                  md5={props.user.gravatar}
+                  md5={user.gravatar}
                   className="h-10 w-10 rounded-full"
                 />
                 <Text ml={4} as="span" alignSelf="center">
-                  {props.user.fullName}
+                  {user.fullName}
                 </Text>
               </Flex>
             </Box>
@@ -278,9 +285,9 @@ const CreateEvent = props => {
                 size="lg"
               >
                 <option value="">Select the host of the event</option>
-                <option value="user">{props.user.fullName} (You)</option>
+                <option value="user">{user.fullName} (You)</option>
                 <option value="school">
-                  {startCase(props.school.name.toLowerCase())}
+                  {startCase(school.name.toLowerCase())}
                 </option>
               </ChakraSelect>
             </FormControl>

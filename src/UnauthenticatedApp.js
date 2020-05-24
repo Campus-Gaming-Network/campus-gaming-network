@@ -20,6 +20,7 @@ import NavSilhouette from "./components/NavSilhouette";
 import UserSilhouette from "./components/UserSilhouette";
 import SchoolSilhouette from "./components/SchoolSilhouette";
 import EventSilhouette from "./components/EventSilhouette";
+import FormSilhouette from "./components/FormSilhouette";
 
 const UnauthenticatedApp = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
@@ -57,6 +58,7 @@ const SilhouetteRoutes = () => {
         <Home path="/" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
+        <FormSilhouette path="event/create" />
         <EventSilhouette path="event/:id" />
         <Signup path="register" />
         <Login path="login" />

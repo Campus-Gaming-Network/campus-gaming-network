@@ -34,8 +34,10 @@ import {
   ComboboxOption
 } from "@reach/combobox";
 import * as constants from "../constants";
-import { firebase, firebaseFirestore } from "../firebase";
+import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import timezones from "../data/timezones.json";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 const initialFormState = {
   firstName: "",
@@ -83,12 +85,21 @@ const testCurrentlyPlaying = Array.from({ length: 5 }, () => ({
 }));
 
 const EditUser = props => {
+  const state = useAppState();
+  const dispatch = useAppDispatch();
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
+  const school =
+    authenticatedUser && user ? state.schools[user.school.id] : null;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
-  const [state, dispatch] = React.useReducer(formReducer, initialFormState);
+  const [formState, formDispatch] = React.useReducer(
+    formReducer,
+    initialFormState
+  );
   const toast = useToast();
   const handleFieldChange = React.useCallback(e => {
-    dispatch({ field: e.target.name, value: e.target.value });
+    formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
   const [favoriteGames, setFavoriteGames] = React.useState(testFavoriteGames);
   const [currentlyPlaying, setCurrentGames] = React.useState(
@@ -128,31 +139,31 @@ const EditUser = props => {
   };
 
   const prefillForm = () => {
-    dispatch({ field: "firstName", value: props.user.firstName || "" });
-    dispatch({ field: "lastName", value: props.user.lastName || "" });
-    dispatch({ field: "school", value: props.user.school.id || "" });
-    dispatch({ field: "status", value: props.user.status || "" });
-    dispatch({ field: "major", value: props.user.major || "" });
-    dispatch({ field: "minor", value: props.user.minor || "" });
-    dispatch({ field: "bio", value: props.user.bio || "" });
-    dispatch({ field: "timezone", value: props.user.timezone || "" });
-    dispatch({ field: "hometown", value: props.user.hometown || "" });
-    dispatch({
+    formDispatch({ field: "firstName", value: user.firstName || "" });
+    formDispatch({ field: "lastName", value: user.lastName || "" });
+    formDispatch({ field: "school", value: user.school.id || "" });
+    formDispatch({ field: "status", value: user.status || "" });
+    formDispatch({ field: "major", value: user.major || "" });
+    formDispatch({ field: "minor", value: user.minor || "" });
+    formDispatch({ field: "bio", value: user.bio || "" });
+    formDispatch({ field: "timezone", value: user.timezone || "" });
+    formDispatch({ field: "hometown", value: user.hometown || "" });
+    formDispatch({
       field: "birthdate",
-      value: props.user.birthdate
-        ? moment(props.user.birthdate.toDate()).format("YYYY-MM-DD")
+      value: user.birthdate
+        ? moment(user.birthdate.toDate()).format("YYYY-MM-DD")
         : ""
     });
-    dispatch({ field: "website", value: props.user.website || "" });
-    dispatch({ field: "twitter", value: props.user.twitter || "" });
-    dispatch({ field: "twitch", value: props.user.twitch || "" });
-    dispatch({ field: "youtube", value: props.user.youtube || "" });
-    dispatch({ field: "skype", value: props.user.skype || "" });
-    dispatch({ field: "discord", value: props.user.discord || "" });
-    dispatch({ field: "battlenet", value: props.user.battlenet || "" });
-    dispatch({ field: "steam", value: props.user.steam || "" });
-    dispatch({ field: "xbox", value: props.user.xbox || "" });
-    dispatch({ field: "psn", value: props.user.psn || "" });
+    formDispatch({ field: "website", value: user.website || "" });
+    formDispatch({ field: "twitter", value: user.twitter || "" });
+    formDispatch({ field: "twitch", value: user.twitch || "" });
+    formDispatch({ field: "youtube", value: user.youtube || "" });
+    formDispatch({ field: "skype", value: user.skype || "" });
+    formDispatch({ field: "discord", value: user.discord || "" });
+    formDispatch({ field: "battlenet", value: user.battlenet || "" });
+    formDispatch({ field: "steam", value: user.steam || "" });
+    formDispatch({ field: "xbox", value: user.xbox || "" });
+    formDispatch({ field: "psn", value: user.psn || "" });
     setHasPrefilledForm(true);
   };
 
@@ -164,13 +175,13 @@ const EditUser = props => {
     setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
   };
 
-  const favoriteGamesResults = useGameSearch(state.favoriteGameSearch);
-  const currentGamesResults = useGameSearch(state.currentGameSearch);
+  const favoriteGamesResults = useGameSearch(formState.favoriteGameSearch);
+  const currentGamesResults = useGameSearch(formState.currentGameSearch);
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!props.isAuthenticated) {
+    if (!authenticatedUser) {
       return;
     }
 
@@ -178,7 +189,7 @@ const EditUser = props => {
 
     const schoolDocRef = firebaseFirestore
       .collection("schools")
-      .doc(state.school);
+      .doc(formState.school);
 
     // TODO:
     // const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
@@ -187,27 +198,29 @@ const EditUser = props => {
     // );
 
     const data = {
-      firstName: state.firstName,
-      lastName: state.lastName,
-      status: state.status,
-      hometown: state.hometown,
-      birthdate: firebase.firestore.Timestamp.fromDate(
-        new Date(moment(state.birthdate))
-      ),
-      major: state.major,
-      minor: state.minor,
-      bio: state.bio,
-      timezone: state.timezone,
-      website: state.website,
-      twitter: state.twitter,
-      twitch: state.twitch,
-      youtube: state.youtube,
-      skype: state.skype,
-      discord: state.discord,
-      battlenet: state.battlenet,
-      steam: state.steam,
-      xbox: state.xbox,
-      psn: state.psn,
+      firstName: formState.firstName,
+      lastName: formState.lastName,
+      status: formState.status,
+      hometown: formState.hometown,
+      birthdate: formState.birthdate
+        ? firebase.firestore.Timestamp.fromDate(
+            new Date(moment(formState.birthdate))
+          )
+        : null,
+      major: formState.major,
+      minor: formState.minor,
+      bio: formState.bio,
+      timezone: formState.timezone,
+      website: formState.website,
+      twitter: formState.twitter,
+      twitch: formState.twitch,
+      youtube: formState.youtube,
+      skype: formState.skype,
+      discord: formState.discord,
+      battlenet: formState.battlenet,
+      steam: formState.steam,
+      xbox: formState.xbox,
+      psn: formState.psn,
       school: schoolDocRef
     };
 
@@ -215,9 +228,16 @@ const EditUser = props => {
 
     firebaseFirestore
       .collection("users")
-      .doc(props.user.id)
+      .doc(user.id)
       .update(cleanedData)
       .then(() => {
+        dispatch({
+          type: ACTION_TYPES.SET_USER,
+          payload: {
+            ...user,
+            ...cleanedData
+          }
+        });
         setIsSubmitting(false);
         toast({
           title: "Profile updated.",
@@ -237,17 +257,17 @@ const EditUser = props => {
       });
   };
 
-  if (props.isAuthenticating) {
+  if (isAuthenticating) {
     return null;
   }
 
-  if (!props.isAuthenticated) {
+  if (!authenticatedUser) {
     return <Redirect to="/" noThrow />;
   }
 
-  if (!props.user) {
+  if (!user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="not-found" noThrow />;
+    return <Redirect to="../../not-found" noThrow />;
   }
 
   if (!hasPrefilledForm) {
@@ -272,21 +292,21 @@ const EditUser = props => {
         </ChakraButton>
         <DetailSection
           handleFieldChange={handleFieldChange}
-          firstName={state.firstName}
-          lastName={state.lastName}
-          email={props.authenticatedUser.email}
-          hometown={state.hometown}
-          birthdate={state.birthdate}
-          bio={state.bio}
-          timezone={state.timezone}
+          firstName={formState.firstName}
+          lastName={formState.lastName}
+          email={authenticatedUser.email}
+          hometown={formState.hometown}
+          birthdate={formState.birthdate}
+          bio={formState.bio}
+          timezone={formState.timezone}
         />
         <SchoolSection
           handleFieldChange={handleFieldChange}
-          school={state.school}
-          schools={props.schools}
-          status={state.status}
-          major={state.major}
-          minor={state.minor}
+          school={formState.school}
+          schools={state.schools}
+          status={formState.status}
+          major={formState.major}
+          minor={formState.minor}
         />
         <SocialAccountsSection
           handleFieldChange={handleFieldChange}
@@ -495,8 +515,8 @@ const SchoolSection = React.memo(props => {
             size="lg"
           >
             <option value="">Select your school</option>
-            {props.schools && props.schools.length
-              ? props.schools.map(school => (
+            {Object.values(props.schools).length
+              ? Object.values(props.schools).map(school => (
                   <option key={school.id} value={school.id}>
                     {startCase(school.name.toLowerCase())}
                   </option>
