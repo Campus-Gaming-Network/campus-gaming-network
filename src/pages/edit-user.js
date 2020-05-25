@@ -89,8 +89,6 @@ const EditUser = props => {
   const dispatch = useAppDispatch();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
-  const school =
-    authenticatedUser && user ? state.schools[user.school.id] : null;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [formState, formDispatch] = React.useReducer(
