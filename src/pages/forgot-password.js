@@ -1,8 +1,6 @@
 import React from "react";
 import { Redirect } from "@reach/router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
-import { Box, Alert } from "@chakra-ui/core";
+import { Box, Alert, AlertIcon } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { useFormFields } from "../utilities";
 import Flex from "../components/Flex";
@@ -10,6 +8,7 @@ import Input from "../components/Input";
 import Label from "../components/Label";
 import Button from "../components/Button";
 import Link from "../components/Link";
+import { firebaseAuth } from "../firebase";
 
 const ForgotPassword = props => {
   const [fields, handleFieldChange] = useFormFields({
@@ -27,22 +26,24 @@ const ForgotPassword = props => {
     return <Redirect to="/" noThrow />;
   }
 
-  async function handleSubmit(e) {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     setIsSendingCode(true);
 
     try {
       // TODO:
-      // await Auth.forgotPassword(fields.email);
+      const response = firebaseAuth.sendPasswordResetEmail(fields.email);
+      console.log("response", response);
       setCodeSent(true);
     } catch (e) {
+      // TODO:
       alert(e.message);
       setIsSendingCode(false);
     }
-  }
+  };
 
-  async function handleConfirmationSubmit(e) {
+  const handleConfirmationSubmit = async e => {
     e.preventDefault();
 
     setIsConfirming(true);
@@ -59,19 +60,19 @@ const ForgotPassword = props => {
       alert(e.message);
       setIsConfirming(false);
     }
-  }
+  };
 
-  function validateCodeForm() {
+  const validateCodeForm = () => {
     return fields.email.length > 0;
-  }
+  };
 
-  function validateResetForm() {
+  const validateResetForm = () => {
     return (
       fields.confirmationCode.length > 0 &&
       fields.password.length > 0 &&
       fields.password === fields.confirmPassword
     );
-  }
+  };
 
   if (codeSent) {
     if (confirmed) {
@@ -104,66 +105,10 @@ const ForgotPassword = props => {
         >
           <form onSubmit={handleConfirmationSubmit}>
             <Alert status="warning" variant="sbutle">
-              <p className="font-medium">
-                <FontAwesomeIcon
-                  icon={faExclamationTriangle}
-                  className="mr-4"
-                />
-                Please check your email ({fields.email}) for a confirmation
-                code.
-              </p>
+              <AlertIcon />
+              Please check your email ({fields.email}) for instructions on
+              resetting your password.
             </Alert>
-            <hr className="my-12" />
-            <div className="md:flex md:items-center mb-6">
-              <label
-                className="block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-                htmlFor="confirmationCode"
-              >
-                Confirmation Code
-              </label>
-              <Input
-                id="confirmationCode"
-                name="confirmationCode"
-                placeholder="12345"
-                required
-                autoFocus
-                type="tel"
-                onChange={handleFieldChange}
-                value={fields.confirmationCode}
-              />
-            </div>
-            <div className="md:flex md:items-center mb-6">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="******************"
-                required
-                onChange={handleFieldChange}
-                value={fields.password}
-              />
-            </div>
-            <div className="md:flex md:items-center mb-6">
-              <Label htmlFor="password">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="******************"
-                required
-                onChange={handleFieldChange}
-                value={fields.confirmPassword}
-              />
-            </div>
-            <Button
-              disabled={isConfirming || !validateResetForm()}
-              variant="purple"
-              type="submit"
-              className="my-12 w-full"
-            >
-              {isConfirming ? "Confirming..." : "Confirm"}
-            </Button>
           </form>
         </Box>
       </Box>
