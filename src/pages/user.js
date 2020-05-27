@@ -100,7 +100,11 @@ const User = props => {
     }
   }, [props.id, user, cachedUser, fetchedUserEvents, dispatch, getUserEvents]);
 
-  if (isAuthenticating || isLoadingFetchedUser) {
+  if (
+    isAuthenticating ||
+    isLoadingFetchedUser ||
+    (!!authenticatedUser && isEmpty(user))
+  ) {
     return <UserSilhouette />;
   }
 

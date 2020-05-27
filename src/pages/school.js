@@ -14,6 +14,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import Gravatar from "react-gravatar";
+import isEmpty from "lodash.isempty";
 import * as constants from "../constants";
 
 import OutsideLink from "../components/OutsideLink";
@@ -34,7 +35,7 @@ const School = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
   const cachedSchool = state.schools[props.id];
-  const [, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [schoolFetchId, setSchoolFetchId] = React.useState(null);
   const [schoolEventsFetchId, setSchoolEventsFetchId] = React.useState(null);
   const [schoolUsersFetchId, setSchoolUsersFetchId] = React.useState(null);
@@ -151,11 +152,15 @@ const School = props => {
     getSchoolUsers
   ]);
 
-  if (isAuthenticating || isLoadingFetchedSchool) {
+  if (
+    isAuthenticating ||
+    isLoadingFetchedSchool ||
+    (!!authenticatedUser && isEmpty(school))
+  ) {
     return <SchoolSilhouette />;
   }
 
-  if (!school) {
+  if (!school || isEmpty(school)) {
     console.error(`No school found ${props.uri}`);
     return <Redirect to="../../not-found" noThrow />;
   }

@@ -11,7 +11,6 @@ const NavSilhouette = () => {
         isMenuOpen ? "block" : "hidden"
       } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
     >
-      <Box bg="purple.500" w="135px" h="28px" mx="5" borderRadius="md" />
       <Box
         bg="gray.200"
         w="48px"

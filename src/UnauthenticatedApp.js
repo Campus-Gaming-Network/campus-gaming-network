@@ -1,7 +1,10 @@
+// Libraries
 import React from "react";
 import { Router } from "@reach/router";
-import { firebaseAuth } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+
+// Other
+import { firebaseAuth } from "./firebase";
 
 // Pages
 import Home from "./pages";
