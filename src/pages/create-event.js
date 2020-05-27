@@ -259,7 +259,7 @@ const CreateEvent = props => {
           <Stack spacing={6} p={8}>
             <Box>
               <Text fontSize="lg" fontWeight="bold" pb={2}>
-                Event Creator:
+                Event Creator
               </Text>
               <Flex>
                 <Gravatar
@@ -275,7 +275,7 @@ const CreateEvent = props => {
             </Box>
             <FormControl isRequired>
               <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
-                Event Host:
+                Event Host
               </FormLabel>
               <ChakraSelect
                 id="host"
@@ -293,7 +293,7 @@ const CreateEvent = props => {
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
-                Event Name:
+                Event Name
               </FormLabel>
               <ChakraInput
                 id="name"
@@ -308,7 +308,7 @@ const CreateEvent = props => {
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
-                Location:
+                Location
               </FormLabel>
               <Stack>
                 <PlacesAutocomplete
@@ -393,7 +393,7 @@ const CreateEvent = props => {
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
-                Description:
+                Description
               </FormLabel>
               <Textarea
                 id="description"
@@ -409,7 +409,7 @@ const CreateEvent = props => {
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
-                Game:
+                Game
               </FormLabel>
               <Combobox aria-label="Games">
                 <ComboboxInput
@@ -443,7 +443,7 @@ const CreateEvent = props => {
                 fontSize="lg"
                 fontWeight="bold"
               >
-                Starts:
+                Starts
               </FormLabel>
               <DateTimePicker
                 id="startDateTime"
@@ -459,7 +459,7 @@ const CreateEvent = props => {
             </FormControl>
             <FormControl isRequired isInvalid={!endDateTime}>
               <FormLabel htmlFor="endDateTime" fontSize="lg" fontWeight="bold">
-                Ends:
+                Ends
               </FormLabel>
               <DateTimePicker
                 id="endDateTime"

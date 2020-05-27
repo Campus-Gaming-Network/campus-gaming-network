@@ -298,7 +298,7 @@ const DetailSection = React.memo(props => {
       <Stack spacing={6} p={8}>
         <FormControl>
           <FormLabel htmlFor="logo" fontSize="lg" fontWeight="bold">
-            Logo:
+            Logo
           </FormLabel>
           <Box {...getRootProps({ style })} mb={4}>
             <input {...getInputProps()} />
@@ -325,7 +325,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="logoDescription" fontSize="lg" fontWeight="bold">
-            Logo Description:
+            Logo Description
           </FormLabel>
           <ChakraInput
             id="logoDescription"
@@ -339,7 +339,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-            Email:
+            Email
           </FormLabel>
           <ChakraInput
             id="email"
@@ -353,7 +353,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="phone" fontSize="lg" fontWeight="bold">
-            Phone:
+            Phone
           </FormLabel>
           <ChakraInput
             id="phone"
@@ -367,7 +367,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
-            Description:
+            Description
           </FormLabel>
           <Textarea
             id="description"
@@ -416,7 +416,7 @@ const SocialAccountsSection = React.memo(props => {
           return (
             <FormControl key={id}>
               <FormLabel htmlFor={id} fontSize="lg" fontWeight="bold">
-                {account.label}:
+                {account.label}
               </FormLabel>
               <ChakraInputGroup size="lg">
                 {account.icon || !!account.url ? (

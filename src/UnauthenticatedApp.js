@@ -12,6 +12,7 @@ import NotFound from "./pages/not-found";
 import Signup from "./pages/signup";
 import Login from "./pages/login";
 import ForgotPassword from "./pages/forgot-password";
+import PasswordReset from "./pages/password-reset";
 
 // Components
 import UnauthenticatedNav from "./components/UnauthenticatedNav";
@@ -64,6 +65,7 @@ const SilhouetteRoutes = () => {
         <Signup path="register" />
         <Login path="login" />
         <ForgotPassword path="forgot-password" />
+        <PasswordReset path="password-reset" />
         <NotFound default />
       </ScrollToTop>
     </Router>
@@ -81,6 +83,7 @@ const Routes = () => {
         <Signup path="register" />
         <Login path="login" />
         <ForgotPassword path="forgot-password" />
+        <PasswordReset path="password-reset" />
         <NotFound default />
       </ScrollToTop>
     </Router>

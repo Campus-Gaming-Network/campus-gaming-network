@@ -68,6 +68,7 @@ const Signup = () => {
         setIsSubmitting(false);
       })
       .catch(error => {
+        console.error(error);
         setError(error.message);
         setIsSubmitting(false);
         window.scrollTo(0, 0);
@@ -79,7 +80,7 @@ const Signup = () => {
   };
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
       <Box
         as="form"
         borderWidth="1px"
@@ -95,7 +96,7 @@ const Signup = () => {
         </Heading>
         <Divider borderColor="gray.300" mt={12} mb={10} />
         {error ? (
-          <Alert status="error" mb={12}>
+          <Alert status="error" mb={12} rounded="lg">
             <AlertIcon />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
@@ -103,7 +104,7 @@ const Signup = () => {
         <Stack spacing={6}>
           <FormControl isRequired>
             <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
-              First Name:
+              First Name
             </FormLabel>
             <ChakraInput
               id="firstName"
@@ -119,7 +120,7 @@ const Signup = () => {
           </FormControl>
           <FormControl isRequired>
             <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
-              Last Name:
+              Last Name
             </FormLabel>
             <ChakraInput
               id="lastName"
@@ -135,7 +136,7 @@ const Signup = () => {
           </FormControl>
           <FormControl isRequired>
             <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-              Email:
+              Email
             </FormLabel>
             <ChakraInput
               id="email"
@@ -155,7 +156,7 @@ const Signup = () => {
           </FormControl>
           <FormControl isRequired>
             <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
-              Password:
+              Password
             </FormLabel>
             <ChakraInput
               id="password"
@@ -180,7 +181,7 @@ const Signup = () => {
           </FormControl>
           <FormControl isRequired>
             <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
-              School:
+              School
             </FormLabel>
             <Select
               id="school"
@@ -203,7 +204,7 @@ const Signup = () => {
           </FormControl>
           <FormControl isRequired>
             <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
-              Status:
+              Status
             </FormLabel>
             <Select
               id="status"

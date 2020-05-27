@@ -50,13 +50,15 @@ const Login = () => {
         navigate("/");
       })
       .catch(error => {
+        console.error(error);
         setError(error.message);
         setIsLoading(false);
+        window.scrollTo(0, 0);
       });
   };
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
       <Box
         as="form"
         borderWidth="1px"
@@ -73,7 +75,7 @@ const Login = () => {
         <Text color="gray.500">Log in to your account</Text>
         <Divider borderColor="gray.300" mt={12} mb={10} />
         {error ? (
-          <Alert status="error" mb={12}>
+          <Alert status="error" mb={12} rounded="lg">
             <AlertIcon />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
@@ -81,7 +83,7 @@ const Login = () => {
         <Stack spacing={6}>
           <FormControl isRequired>
             <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-              Email:
+              Email
             </FormLabel>
             <ChakraInput
               id="email"
@@ -97,7 +99,7 @@ const Login = () => {
           </FormControl>
           <FormControl isRequired>
             <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
-              Password:
+              Password
             </FormLabel>
             <ChakraInput
               id="password"

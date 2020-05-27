@@ -363,7 +363,7 @@ const DetailSection = React.memo(props => {
       <Stack spacing={6} p={8}>
         <FormControl isRequired>
           <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
-            First Name:
+            First Name
           </FormLabel>
           <ChakraInput
             id="firstName"
@@ -377,7 +377,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl isRequired>
           <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
-            Last Name:
+            Last Name
           </FormLabel>
           <ChakraInput
             id="lastName"
@@ -392,7 +392,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-            Email:
+            Email
           </FormLabel>
           <ChakraInput
             id="email"
@@ -410,7 +410,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="hometown" fontSize="lg" fontWeight="bold">
-            Hometown:
+            Hometown
           </FormLabel>
           <ChakraInput
             id="hometown"
@@ -424,7 +424,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="birthdate" fontSize="lg" fontWeight="bold">
-            Birthday:
+            Birthday
           </FormLabel>
           <ChakraInput
             id="birthdate"
@@ -437,7 +437,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="bio" fontSize="lg" fontWeight="bold">
-            Bio:
+            Bio
           </FormLabel>
           <Textarea
             id="bio"
@@ -457,7 +457,7 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="timezone" fontSize="lg" fontWeight="bold">
-            Timezone:
+            Timezone
           </FormLabel>
           <ChakraSelect
             id="timezone"
@@ -503,7 +503,7 @@ const SchoolSection = React.memo(props => {
       <Stack spacing={6} p={8}>
         <FormControl>
           <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
-            School:
+            School
           </FormLabel>
           <ChakraSelect
             id="school"
@@ -524,7 +524,7 @@ const SchoolSection = React.memo(props => {
         </FormControl>
         <FormControl isRequired>
           <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
-            Status:
+            Status
           </FormLabel>
           <ChakraSelect
             id="status"
@@ -542,7 +542,7 @@ const SchoolSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
-            Major:
+            Major
           </FormLabel>
           <ChakraInput
             id="major"
@@ -555,7 +555,7 @@ const SchoolSection = React.memo(props => {
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
-            Minor:
+            Minor
           </FormLabel>
           <ChakraInput
             id="minor"
@@ -595,7 +595,7 @@ const SocialAccountsSection = React.memo(props => {
           return (
             <FormControl key={id}>
               <FormLabel htmlFor={id} fontSize="lg" fontWeight="bold">
-                {account.label}:
+                {account.label}
               </FormLabel>
               <ChakraInputGroup size="lg">
                 {account.icon || !!account.url ? (
@@ -654,7 +654,7 @@ const FavoriteGamesSection = React.memo(props => {
             fontSize="lg"
             fontWeight="bold"
           >
-            Search for a game:
+            Search for a game
           </FormLabel>
           <Combobox aria-label="Games">
             <ComboboxInput
@@ -749,7 +749,7 @@ const CurrentlyPlayingSection = React.memo(props => {
             fontSize="lg"
             fontWeight="bold"
           >
-            Search for a game:
+            Search for a game
           </FormLabel>
           <Combobox aria-label="Games">
             <ComboboxInput

@@ -29,16 +29,11 @@ import { firebaseAuth } from "../firebase";
 const ForgotPassword = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [fields, handleFieldChange] = useFormFields({
-    confirmationCode: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
+    email: ""
   });
   const [isSendingEmail, setIsSendingEmail] = React.useState(false);
-  const [codeSent, setCodeSent] = React.useState(false);
   const [emailSent, setEmailSent] = React.useState(false);
-  const [isConfirming, setIsConfirming] = React.useState(false);
-  const [confirmed, setConfirmed] = React.useState(false);
+  const [error, setError] = React.useState(null);
 
   if (isAuthenticating) {
     return null;
@@ -51,38 +46,31 @@ const ForgotPassword = () => {
   const handleSubmit = async e => {
     e.preventDefault();
 
+    setError(null);
+
+    if (!!authenticatedUser) {
+      return;
+    }
+
     setIsSendingEmail(true);
 
     try {
       await firebaseAuth.sendPasswordResetEmail(fields.email);
       setEmailSent(true);
-    } catch (e) {
-      alert(e.message);
-      setIsSendingEmail(false);
+    } catch (error) {
+      handleError(error);
     }
   };
 
-  const handleConfirmationSubmit = async e => {
-    e.preventDefault();
-
-    setIsConfirming(true);
-
-    try {
-      // TODO:
-      // await Auth.forgotPasswordSubmit(
-      //   fields.email,
-      //   fields.confirmationCode,
-      //   fields.password
-      // );
-      setConfirmed(true);
-    } catch (e) {
-      alert(e.message);
-      setIsConfirming(false);
-    }
+  const handleError = error => {
+    console.error(error);
+    setError(error.message);
+    setIsSendingEmail(false);
+    window.scrollTo(0, 0);
   };
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
       <Box
         as="form"
         borderWidth="1px"
@@ -101,15 +89,25 @@ const ForgotPassword = () => {
           we’ll send you instructions on how to reset your password.
         </Text>
         <Divider borderColor="gray.300" mt={12} mb={10} />
+        {error ? (
+          <Alert status="error" mb={12} rounded="lg">
+            <AlertIcon />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : null}
         {emailSent ? (
-          <Alert status="info" mb={12}>
+          <Alert status="info" mb={12} rounded="lg">
             <Stack>
               <Flex align="center">
                 <AlertIcon />
-                <AlertTitle>Instructions sent.</AlertTitle>
+                <AlertTitle>Instructions Sent</AlertTitle>
               </Flex>
               <AlertDescription>
-                Please check the inbox of sansonebrandon@gmail.com.
+                Please check both your inbox and spam folder for{" "}
+                <Text fontWeight="bold" as="span">
+                  sansonebrandon@gmail.com
+                </Text>
+                .
               </AlertDescription>
             </Stack>
           </Alert>
@@ -118,7 +116,7 @@ const ForgotPassword = () => {
             <Stack spacing={6}>
               <FormControl isRequired>
                 <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-                  Email:
+                  Email
                 </FormLabel>
                 <Input
                   id="email"
