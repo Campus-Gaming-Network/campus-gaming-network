@@ -11,6 +11,7 @@ import Event from "./pages/event";
 import NotFound from "./pages/not-found";
 import Signup from "./pages/signup";
 import Login from "./pages/login";
+import ForgotPassword from "./pages/forgot-password";
 
 // Components
 import UnauthenticatedNav from "./components/UnauthenticatedNav";
@@ -62,6 +63,7 @@ const SilhouetteRoutes = () => {
         <EventSilhouette path="event/:id" />
         <Signup path="register" />
         <Login path="login" />
+        <ForgotPassword path="forgot-password" />
         <NotFound default />
       </ScrollToTop>
     </Router>
@@ -78,6 +80,7 @@ const Routes = () => {
         <Event path="event/:id" />
         <Signup path="register" />
         <Login path="login" />
+        <ForgotPassword path="forgot-password" />
         <NotFound default />
       </ScrollToTop>
     </Router>

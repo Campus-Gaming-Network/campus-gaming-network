@@ -93,7 +93,7 @@ const Signup = () => {
         <Heading as="h1" size="2xl">
           Create an account
         </Heading>
-        <Divider mt={12} mb={10} />
+        <Divider borderColor="gray.300" mt={12} mb={10} />
         {error ? (
           <Alert status="error" mb={12}>
             <AlertIcon />
@@ -113,6 +113,8 @@ const Signup = () => {
               onChange={handleFieldChange}
               value={fields.firstName}
               size="lg"
+              borderWidth={2}
+              borderColor="gray.300"
             />
           </FormControl>
           <FormControl isRequired>
@@ -127,6 +129,8 @@ const Signup = () => {
               onChange={handleFieldChange}
               value={fields.lastName}
               size="lg"
+              borderWidth={2}
+              borderColor="gray.300"
             />
           </FormControl>
           <FormControl isRequired>
@@ -142,6 +146,8 @@ const Signup = () => {
               value={fields.email}
               size="lg"
               aria-describedby="email-helper-text"
+              borderWidth={2}
+              borderColor="gray.300"
             />
             <FormHelperText id="email-helper-text">
               This is how you will login.
@@ -159,12 +165,15 @@ const Signup = () => {
               onChange={handleFieldChange}
               value={fields.password}
               size="lg"
+              borderWidth={2}
+              borderColor="gray.300"
             />
             <Button
               onClick={togglePasswordVisibility}
               fontSize="sm"
               fontStyle="italic"
               variant="link"
+              fontWeight="normal"
             >
               {isShowingPassword ? "Hide" : "Show"} password
             </Button>
@@ -179,6 +188,8 @@ const Signup = () => {
               onChange={handleFieldChange}
               value={fields.school}
               size="lg"
+              borderWidth={2}
+              borderColor="gray.300"
             >
               <option value="">Select your school</option>
               {Object.values(state.schools).length
@@ -200,6 +211,8 @@ const Signup = () => {
               onChange={handleFieldChange}
               value={fields.status}
               size="lg"
+              borderWidth={2}
+              borderColor="gray.300"
             >
               {constants.STUDENT_STATUS_OPTIONS.map(status => (
                 <option key={status.value} value={status.value}>

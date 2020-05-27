@@ -51,7 +51,7 @@ const AuthenticatedNav = () => {
       } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
     >
       {/* TODO: Remove when better spot is found */}
-      {/* <ChakraButton onClick={props.handleLogout}>Log out</ChakraButton> */}
+      <ChakraButton onClick={handleLogout}>Log out</ChakraButton>
       <Link
         to="/event/create"
         className="leading-none text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-2 px-3 hover:underline focus:underline"

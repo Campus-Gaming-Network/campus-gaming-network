@@ -1,45 +1,64 @@
 import React from "react";
 import { Redirect } from "@reach/router";
-import { Box, Alert, AlertIcon } from "@chakra-ui/core";
+import {
+  Box,
+  Alert,
+  AlertIcon,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  Divider,
+  Input,
+  Stack,
+  FormLabel,
+  FormControl,
+  AlertTitle,
+  AlertDescription
+} from "@chakra-ui/core";
+import { useAuthState } from "react-firebase-hooks/auth";
+
 import * as constants from "../constants";
+
 import { useFormFields } from "../utilities";
-import Flex from "../components/Flex";
-import Input from "../components/Input";
-import Label from "../components/Label";
-import Button from "../components/Button";
+
 import Link from "../components/Link";
+
 import { firebaseAuth } from "../firebase";
 
-const ForgotPassword = props => {
+const ForgotPassword = () => {
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [fields, handleFieldChange] = useFormFields({
     confirmationCode: "",
     email: "",
     password: "",
     confirmPassword: ""
   });
-  const [isSendingCode, setIsSendingCode] = React.useState(false);
+  const [isSendingEmail, setIsSendingEmail] = React.useState(false);
   const [codeSent, setCodeSent] = React.useState(false);
+  const [emailSent, setEmailSent] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [confirmed, setConfirmed] = React.useState(false);
 
-  if (props.isAuthenticated) {
+  if (isAuthenticating) {
+    return null;
+  }
+
+  if (!!authenticatedUser) {
     return <Redirect to="/" noThrow />;
   }
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    setIsSendingCode(true);
+    setIsSendingEmail(true);
 
     try {
-      // TODO:
-      const response = firebaseAuth.sendPasswordResetEmail(fields.email);
-      console.log("response", response);
-      setCodeSent(true);
+      await firebaseAuth.sendPasswordResetEmail(fields.email);
+      setEmailSent(true);
     } catch (e) {
-      // TODO:
       alert(e.message);
-      setIsSendingCode(false);
+      setIsSendingEmail(false);
     }
   };
 
@@ -62,109 +81,81 @@ const ForgotPassword = props => {
     }
   };
 
-  const validateCodeForm = () => {
-    return fields.email.length > 0;
-  };
-
-  const validateResetForm = () => {
-    return (
-      fields.confirmationCode.length > 0 &&
-      fields.password.length > 0 &&
-      fields.password === fields.confirmPassword
-    );
-  };
-
-  if (codeSent) {
-    if (confirmed) {
-      return (
-        <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
-          <Alert status="success" variant="subtle">
-            <span className="font-bold block text-2xl">
-              Your password has been reset.
-            </span>
-            <p>
-              <Link to="/login" className="hover:underline focus:underline">
-                Click here to login with your new credentials.
-              </Link>
-            </p>
-          </Alert>
-        </Box>
-      );
-    }
-
-    return (
-      <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
-        <Box
-          as="fieldset"
-          borderWidth="1px"
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-          p={12}
-        >
-          <form onSubmit={handleConfirmationSubmit}>
-            <Alert status="warning" variant="sbutle">
-              <AlertIcon />
-              Please check your email ({fields.email}) for instructions on
-              resetting your password.
-            </Alert>
-          </form>
-        </Box>
-      </Box>
-    );
-  }
-
   return (
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
       <Box
-        as="fieldset"
+        as="form"
         borderWidth="1px"
         boxShadow="lg"
         rounded="lg"
         bg="white"
         pos="relative"
         p={12}
+        onSubmit={handleSubmit}
       >
-        <form onSubmit={handleSubmit}>
-          <h1 className="text-5xl font-bold leading-none mb-4">
-            Reset your password
-          </h1>
-          <p className="text-gray-600">
-            Enter the email you use for Campus Gaming Network, and we’ll help
-            you create a new password.
-          </p>
-          <hr className="my-12" />
-          <div className="md:flex md:items-center mb-6">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="jdoe123@gmail.com"
-              required
-              onChange={handleFieldChange}
-              value={fields.email}
-            />
-          </div>
-          <Button
-            disabled={isSendingCode || !validateCodeForm()}
-            variant="purple"
-            type="submit"
-            className="my-12 w-full"
-          >
-            {isSendingCode ? "Sending..." : "Send Confirmation"}
-          </Button>
-          <Flex itemsCenter justifyBetween>
-            <p>
-              Go back to{" "}
-              <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
-                Login page
-              </Link>
-              .
-            </p>
-          </Flex>
-        </form>
+        <Heading as="h1" size="2xl" mb={4}>
+          Reset your password
+        </Heading>
+        <Text color="gray.500">
+          Please enter the email you use for Campus Gaming Network below, and
+          we’ll send you instructions on how to reset your password.
+        </Text>
+        <Divider borderColor="gray.300" mt={12} mb={10} />
+        {emailSent ? (
+          <Alert status="info" mb={12}>
+            <Stack>
+              <Flex align="center">
+                <AlertIcon />
+                <AlertTitle>Instructions sent.</AlertTitle>
+              </Flex>
+              <AlertDescription>
+                Please check the inbox of sansonebrandon@gmail.com.
+              </AlertDescription>
+            </Stack>
+          </Alert>
+        ) : (
+          <React.Fragment>
+            <Stack spacing={6}>
+              <FormControl isRequired>
+                <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
+                  Email:
+                </FormLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="jdoe123@gmail.com"
+                  onChange={handleFieldChange}
+                  value={fields.email}
+                  size="lg"
+                  borderWidth={2}
+                  borderColor="gray.300"
+                />
+              </FormControl>
+            </Stack>
+            <Button
+              variantColor="purple"
+              type="submit"
+              size="lg"
+              w="full"
+              isDisabled={isSendingEmail}
+              isLoading={isSendingEmail}
+              loadingText="Sending..."
+              my={12}
+            >
+              Send Instructions
+            </Button>
+          </React.Fragment>
+        )}
+        <Flex align="center" justify="between">
+          <Text>
+            Go back to{" "}
+            <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
+              Login page
+            </Link>
+            .
+          </Text>
+        </Flex>
       </Box>
     </Box>
   );

@@ -71,7 +71,7 @@ const Login = () => {
           Welcome back!
         </Heading>
         <Text color="gray.500">Log in to your account</Text>
-        <Divider mt={12} mb={10} />
+        <Divider borderColor="gray.300" mt={12} mb={10} />
         {error ? (
           <Alert status="error" mb={12}>
             <AlertIcon />
@@ -91,6 +91,8 @@ const Login = () => {
               onChange={handleFieldChange}
               value={fields.email}
               size="lg"
+              borderWidth={2}
+              borderColor="gray.300"
             />
           </FormControl>
           <FormControl isRequired>
@@ -105,6 +107,8 @@ const Login = () => {
               onChange={handleFieldChange}
               value={fields.password}
               size="lg"
+              borderWidth={2}
+              borderColor="gray.300"
             />
           </FormControl>
         </Stack>
@@ -127,13 +131,12 @@ const Login = () => {
               Create one
             </Link>
           </Text>
-          {/* TODO: Reimplment with firebase */}
-          {/* <Link
-              to="/forgot-password"
-              className={`${constants.STYLES.LINK.DEFAULT}`}
-            >
-              Forgot your password?
-            </Link> */}
+          <Link
+            to="/forgot-password"
+            className={`${constants.STYLES.LINK.DEFAULT}`}
+          >
+            Forgot your password?
+          </Link>
         </Flex>
       </Box>
     </Box>
