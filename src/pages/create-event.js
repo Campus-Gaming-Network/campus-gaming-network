@@ -132,12 +132,12 @@ const CreateEvent = props => {
       .doc(user.school.id);
     const userDocRef = firebaseFirestore.collection("users").doc(user.id);
 
-    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
-    const selectedGame = games.find(
-      game =>
-        game.name.toLowerCase().trim() ===
-        fields.gameSearch.toLowerCase().trim()
-    );
+    // const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
+    // const selectedGame = games.find(
+    //   game =>
+    //     game.name.toLowerCase().trim() ===
+    //     fields.gameSearch.toLowerCase().trim()
+    // );
 
     const eventData = {
       creator: userDocRef,
@@ -150,11 +150,13 @@ const CreateEvent = props => {
       school: schoolDocRef,
       schoolDetails: {
         name: school.name
-      },
-      game: selectedGame || {
-        name: fields.gameSearch.trim()
       }
+      // game: selectedGame || {
+      //   name: fields.gameSearch.trim()
+      // }
     };
+
+    console.log({ eventData });
 
     let eventId;
 
@@ -407,7 +409,7 @@ const CreateEvent = props => {
                 h="150px"
               />
             </FormControl>
-            <FormControl isRequired>
+            {/* <FormControl isRequired>
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
@@ -436,7 +438,7 @@ const CreateEvent = props => {
                   </ComboboxPopover>
                 )}
               </Combobox>
-            </FormControl>
+            </FormControl> */}
             <FormControl isRequired isInvalid={!startDateTime}>
               <FormLabel
                 htmlFor="startDateTime"

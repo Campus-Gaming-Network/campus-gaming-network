@@ -20,6 +20,7 @@ import Event from "./pages/event";
 import EditUser from "./pages/edit-user";
 import EditSchool from "./pages/edit-school";
 import CreateEvent from "./pages/create-event";
+import EditEvent from "./pages/edit-event";
 import NotFound from "./pages/not-found";
 
 // Components
@@ -106,12 +107,13 @@ const SilhouetteRoutes = () => {
     <Router>
       <ScrollToTop default>
         <Home path="/" />
-        <FormSilhouette path="user/edit" />
         <UserSilhouette path="user/:id" />
-        <FormSilhouette path="school/edit" />
+        <FormSilhouette path="user/:id/edit" />
         <SchoolSilhouette path="school/:id" />
+        <FormSilhouette path="school/:id/edit" />
         <FormSilhouette path="event/create" />
         <EventSilhouette path="event/:id" />
+        <FormSilhouette path="event/:id/edit" />
         <NotFound default />
       </ScrollToTop>
     </Router>

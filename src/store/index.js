@@ -7,7 +7,8 @@ const INITIAL_STATE = {
   school: {},
   schools: {},
   user: {},
-  users: {}
+  users: {},
+  games: {}
 };
 
 const ACTION_TYPES = {
@@ -21,7 +22,8 @@ const ACTION_TYPES = {
   SET_EVENT_USERS: "SET_EVENT_USERS",
   SET_SCHOOLS: "SET_SCHOOLS",
   SET_USERS: "SET_USERS",
-  SET_EVENTS: "SET_EVENTS"
+  SET_EVENTS: "SET_EVENTS",
+  SET_GAMES: "SET_GAMES"
 };
 
 const AppStateContext = React.createContext();
@@ -156,6 +158,14 @@ const reducer = (state, action) => {
         ...state,
         events: {
           ...state.events,
+          ...action.payload
+        }
+      };
+    case ACTION_TYPES.SET_GAMES:
+      return {
+        ...state,
+        games: {
+          ...state.games,
           ...action.payload
         }
       };

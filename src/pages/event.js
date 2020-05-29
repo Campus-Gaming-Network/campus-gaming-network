@@ -28,6 +28,7 @@ import {
   ListItem,
   Spinner,
   Flex,
+  PseudoBox,
   useToast
 } from "@chakra-ui/core";
 import * as constants from "../constants";
@@ -313,8 +314,38 @@ const Event = props => {
 
   return (
     <React.Fragment>
-      <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+      <Box
+        as="article"
+        mt={10}
+        mb={16}
+        px={8}
+        mx="auto"
+        fontSize="xl"
+        maxW="4xl"
+      >
         <Stack spacing={10}>
+          {isEventCreator ? (
+            <PseudoBox
+              mb={10}
+              textAlign="center"
+              display="flex"
+              justifyContent="center"
+            >
+              <Link
+                to={`/event/${props.id}/edit`}
+                className={constants.STYLES.LINK.DEFAULT}
+                fontWeight="bold"
+                width="100%"
+                borderRadius="md"
+                bg="gray.100"
+                _focus={{ bg: "gray.200", boxShadow: "outline" }}
+                _hover={{ bg: "gray.200" }}
+                p={8}
+              >
+                Edit Event
+              </Link>
+            </PseudoBox>
+          ) : null}
           <Flex alignItems="center">
             <Box pr={2}>
               <Link
