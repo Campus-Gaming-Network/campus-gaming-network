@@ -51,6 +51,8 @@ const App = () => {
   React.useEffect(() => {
     if (isAuthenticated) {
       setApp(<AuthenticatedApp />);
+    } else {
+      setApp(<UnauthenticatedApp />);
     }
   }, [isAuthenticated]);
 

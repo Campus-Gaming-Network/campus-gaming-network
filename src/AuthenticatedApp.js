@@ -36,7 +36,9 @@ const AuthenticatedApp = () => {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
-  const [user] = useFetchUserDetails(authenticatedUser.uid);
+  const [user] = useFetchUserDetails(
+    authenticatedUser ? authenticatedUser.uid : null
+  );
   const [school] = useFetchUserSchool(user);
   const [isLoadingUser, setIsLoadingUser] = React.useState(true);
   const [nav, setNav] = React.useState(<NavSilhouette />);

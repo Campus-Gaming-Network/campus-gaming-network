@@ -1,6 +1,7 @@
 import React from "react";
 import { navigate } from "@reach/router";
 import isEmpty from "lodash.isempty";
+import isEqual from "lodash.isequal";
 import Gravatar from "react-gravatar";
 // eslint-disable-next-line no-unused-vars
 import { Button as ChakraButton, Flex, Text } from "@chakra-ui/core";
@@ -27,8 +28,8 @@ const AuthenticatedNav = () => {
   };
 
   React.useEffect(() => {
-    const _user = state.users[authenticatedUser.uid];
-    if (isEmpty(user) && _user) {
+    const _user = authenticatedUser ? state.users[authenticatedUser.uid] : {};
+    if (!isEqual(user, _user)) {
       setUser(_user);
     }
   }, [authenticatedUser, state.users, user]);
