@@ -7,10 +7,15 @@ import {
   Heading,
   useToast
 } from "@chakra-ui/core";
-import { firebaseFirestore } from "../firebase";
+import { firebaseFirestore, firebaseAuth } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useAppState } from "../store";
 
 const EditEvent = props => {
   console.log({ props });
+  const state = useAppState();
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [event, setEvent] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const toast = useToast();
@@ -56,52 +61,35 @@ const EditEvent = props => {
     setIsSubmitting(false);
   };
 
-  if (props.isAuthenticating) {
+  const getEvent = React.useCallback(() => {
+    // if (!!cachedEvent) {
+    //   setEvent(cachedEvent);
+    // } else if (!eventFetchId) {
+    //   setEventFetchId(props.id);
+    // } else if (fetchedEvent) {
+    //   setEvent(fetchedEvent);
+    //   dispatch({
+    //     type: ACTION_TYPES.SET_EVENT,
+    //     payload: fetchedEvent
+    //   });
+    // }
+  }, []);
+
+  if (isAuthenticating) {
     return null;
   }
 
-  if (!props.isAuthenticated) {
+  if (!authenticatedUser) {
     return <Redirect to="/" noThrow />;
   }
 
-  const shouldDisplaySilhouette = props.appLoading;
-
-  if (shouldDisplaySilhouette) {
-    return (
-      <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
-        <Stack spacing={10}>
-          <Box bg="gray.100" w="400px" h="60px" mb={4} borderRadius="md" />
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
-          </Stack>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
-          </Stack>
-          <Stack as="section" spacing={4}>
-            <Box bg="gray.100" w="75px" h="25px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100px" h="15px" mb={8} borderRadius="md" />
-            <Box bg="gray.100" w="100%" h="200px" borderRadius="md" />
-          </Stack>
-        </Stack>
-      </Box>
-    );
-  }
-
-  if (!props.user) {
-    console.error(`No user found ${props.uri}`);
-    return <Redirect to="not-found" noThrow />;
-  }
-
-  if (!hasPrefilledForm) {
-    prefillForm();
-  }
+  // if (!event) {
+  //   console.error(`No event found ${props.uri}`);
+  //   return <Redirect to="../../not-found" noThrow />;
+  // }
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           Edit Event

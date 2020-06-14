@@ -114,7 +114,7 @@ const User = props => {
   }
 
   return (
-    <Box as="article" mt={10} mb={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" mt={10} mb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       {isAuthenticatedUser ? (
         <PseudoBox
           mb={10}

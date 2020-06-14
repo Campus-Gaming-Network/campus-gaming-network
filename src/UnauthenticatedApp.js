@@ -39,14 +39,14 @@ const UnauthenticatedApp = () => {
     if (isLoading !== _isLoading) {
       setIsLoading(_isLoading);
     }
-  }, [authenticatedUser, isAuthenticating, isLoading]);
+  }, [isAuthenticating, isLoading]);
 
   React.useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && !authenticatedUser) {
       setNav(<UnauthenticatedNav />);
       setRoutes(<Routes />);
     }
-  }, [isLoading]);
+  }, [isLoading, authenticatedUser]);
 
   return (
     <React.Fragment>
@@ -63,7 +63,6 @@ const SilhouetteRoutes = () => {
         <Home path="/" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
-        <FormSilhouette path="event/create" />
         <EventSilhouette path="event/:id" />
         <Signup path="register" />
         <Login path="login" />

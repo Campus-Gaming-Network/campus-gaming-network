@@ -3,7 +3,7 @@ import { Stack, Box } from "@chakra-ui/core";
 
 const EventSilhouette = () => {
   return (
-    <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" maxW="5xl">
       <Box as="header" display="flex" alignItems="center">
         <Box pr={2}>
           <Box bg="gray.100" w="325px" h="30px" mb="4" borderRadius="md" />

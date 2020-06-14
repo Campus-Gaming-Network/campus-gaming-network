@@ -321,7 +321,7 @@ const Event = props => {
         px={8}
         mx="auto"
         fontSize="xl"
-        maxW="4xl"
+        maxW="5xl"
       >
         <Stack spacing={10}>
           {isEventCreator ? (

@@ -5,7 +5,7 @@ import { faHeartBroken } from "@fortawesome/free-solid-svg-icons";
 
 const NotFound = () => {
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <p className="text-center text-3xl">
         Sorry, nothing here{" "}
         <FontAwesomeIcon icon={faHeartBroken} className="text-red-500" />

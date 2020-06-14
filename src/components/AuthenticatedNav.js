@@ -52,16 +52,16 @@ const AuthenticatedNav = () => {
       } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
     >
       {/* TODO: Remove when better spot is found */}
-      <ChakraButton onClick={handleLogout}>Log out</ChakraButton>
+      {/* <ChakraButton onClick={handleLogout}>Log out</ChakraButton> */}
       <Link
         to="/event/create"
-        className="leading-none text-xl mx-5 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-2 px-3 hover:underline focus:underline"
+        className="leading-none text-xl mx-5 rounded font-bold text-white hover:text-gray-100 bg-purple-700 py-2 px-3 hover:underline focus:underline"
       >
         Create an Event
       </Link>
       <Link
         to={`school/${school.id}`}
-        className="items-center flex mx-5 py-1 active:outline sm:rounded-none rounded hover:text-gray-300 hover:underline focus:underline"
+        className="items-center flex mx-5 py-1 active:outline sm:rounded-none rounded hover:underline focus:underline"
       >
         <SchoolLogo
           schoolId={school.id}
@@ -83,20 +83,20 @@ const AuthenticatedNav = () => {
               bg="gray.400"
               rounded="full"
               border="4px"
-              borderColor="gray.300"
+              borderColor="gray.200"
               mr={2}
             >
               <FontAwesomeIcon icon={faSchool} />
             </Flex>
           }
         />
-        <Text as="span" fontWeight="bold" color="gray.200" fontSize="xl">
+        <Text as="span" fontWeight="bold" fontSize="xl">
           School
         </Text>
       </Link>
       <Link
         to={`user/${user.id}`}
-        className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
+        className="items-center text-xl flex mx-5 py-1 active:outline font-bold sm:rounded-none rounded hover:underline focus:underline"
       >
         {user.gravatar ? (
           <Gravatar

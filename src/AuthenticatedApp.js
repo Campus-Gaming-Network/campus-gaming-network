@@ -107,8 +107,8 @@ const SilhouetteRoutes = () => {
     <Router>
       <ScrollToTop default>
         <Home path="/" />
+        <FormSilhouette path="user/edit" />
         <UserSilhouette path="user/:id" />
-        <FormSilhouette path="user/:id/edit" />
         <SchoolSilhouette path="school/:id" />
         <FormSilhouette path="school/:id/edit" />
         <FormSilhouette path="event/create" />
@@ -127,10 +127,11 @@ const Routes = () => {
         <Home path="/" />
         <EditUser path="user/edit" />
         <User path="user/:id" />
-        <EditSchool path="school/edit" />
         <School path="school/:id" />
+        <EditSchool path="school/:id/edit" />
         <CreateEvent path="event/create" />
         <Event path="event/:id" />
+        <CreateEvent path="event/:id/edit" />
         <NotFound default />
       </ScrollToTop>
     </Router>

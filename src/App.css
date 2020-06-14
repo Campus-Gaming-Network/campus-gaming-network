@@ -1,11 +1,8 @@
+body,
 html {
   font-family: "Inter var", system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
-}
-
-.text-logo {
-  /* font-family: "Righteous", cursive; */
 }
 
 .visually-hidden {
@@ -143,4 +140,14 @@ html {
   100% {
     opacity: 1;
   }
+}
+
+.rw-widget-container {
+  border-width: 2px;
+  border-color: #cbd5e0;
+}
+
+.rw-select-bordered {
+  border-left-width: 2px;
+  border-left-color: #cbd5e0;
 }

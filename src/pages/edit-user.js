@@ -276,7 +276,7 @@ const EditUser = props => {
   }
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           Your Profile

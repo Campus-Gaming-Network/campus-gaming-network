@@ -3,7 +3,7 @@ import { Stack, Box } from "@chakra-ui/core";
 
 const FormSilhouette = () => {
   return (
-    <Box as="article" my={16} px={8} mx="auto" maxW="4xl">
+    <Box as="article" my={16} px={8} mx="auto" maxW="5xl">
       <Stack spacing={10}>
         <Box bg="gray.100" w="400px" h="60px" mb={4} borderRadius="md" />
         <Stack as="section" spacing={4}>

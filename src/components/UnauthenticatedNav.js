@@ -15,13 +15,13 @@ const UnauthenticatedNav = () => {
     >
       <Link
         to="/login"
-        className="text-xl block mx-3 py-1 active:outline sm:rounded text-gray-200 hover:text-gray-300 hover:underline focus:underline"
+        className="text-xl block mx-3 py-1 active:outline sm:rounded hover:underline focus:underline"
       >
         Log In
       </Link>
       <Link
         to="/register"
-        className="text-xl mt-1 block mx-3 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
+        className="text-xl mt-1 block ml-3 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
       >
         Sign Up Free
       </Link>
