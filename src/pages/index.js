@@ -1,0 +1,28 @@
+import React from "react";
+import { Box } from "@chakra-ui/core";
+
+// Hooks
+// import useFetchUserEvents from "../hooks/useFetchUserEvents";
+
+const Home = props => {
+  // const userId = props.authenticatedUser ? props.authenticatedUser.uid : null;
+  // const [attendingEvents] = useFetchUserEvents(userId);
+
+  // console.log("attendingEvents", attendingEvents);
+
+  return (
+    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+      <Box>
+        <h1 className="text-6xl font-bold mb-8 leading-none">
+          Campus Gaming Network
+        </h1>
+        <h2 className="text-3xl leading-tight font-semibold text-gray-600">
+          Connect with other collegiate gamers for casual or competitive gaming
+          at your school or nearby.
+        </h2>
+      </Box>
+    </Box>
+  );
+};
+
+export default Home;

@@ -1,95 +1,62 @@
-import React, { Component } from "react";
-import { Router, navigate, Redirect } from "@reach/router";
-import { Auth } from "aws-amplify";
+import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import isEmpty from "lodash.isempty";
+
+// Other
+import { firebaseAuth } from "./firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "./store";
 
 // Components
-import Main from "Main";
-import Header from "Header";
-import Home from "Home";
-import Login from "Login";
-import Signup from "Signup";
-import ForgotPassword from "ForgotPassword";
-import Profile from "Profile";
-import NotFound from "NotFound";
-import Account from "Account";
-import EditAccount from "EditAccount";
-import EditProfile from "EditProfile";
-import Feed from "Feed";
+import AuthenticatedApp from "./AuthenticatedApp";
+import UnauthenticatedApp from "./UnauthenticatedApp";
 
-class App extends Component {
-  state = {
-    isAuthenticated: false,
-    isAuthenticating: true,
-    email: ""
-  };
+// Hooks
+import useFetchSchools from "./hooks/useFetchSchools";
 
-  async componentDidMount() {
-    try {
-      await Auth.currentSession();
-      const response = await Auth.currentAuthenticatedUser();
-      this.setUserEmail(response.attributes.email);
-      this.userHasAuthenticated(true);
-    } catch (e) {
-      if (e !== "No current user") {
-        alert(e);
-      }
+////////////////////////////////////////////////////////////////////////////////
+// App
+
+const App = () => {
+  const state = useAppState();
+  const dispatch = useAppDispatch();
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [schools] = useFetchSchools();
+  const [app, setApp] = React.useState(<UnauthenticatedApp />);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  const setSchools = React.useCallback(() => {
+    const hasSchools = !!schools;
+    const hasSchoolsState = !isEmpty(state.schools);
+
+    if (hasSchools && !hasSchoolsState) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOLS,
+        payload: schools
+      });
     }
+  }, [dispatch, schools, state.schools]);
 
-    this.setState({ isAuthenticating: false });
-  }
+  React.useEffect(() => {
+    setSchools();
+  }, [setSchools, schools, state.schools]);
 
-  setUserEmail = email => {
-    this.setState({ email });
-  };
+  React.useEffect(() => {
+    const _isAuthenticated = !isAuthenticating && !!authenticatedUser;
 
-  userHasAuthenticated = authenticated => {
-    this.setState({ isAuthenticated: authenticated });
-  };
+    if (_isAuthenticated !== isAuthenticated) {
+      setIsAuthenticated(_isAuthenticated);
+    }
+  }, [isAuthenticating, authenticatedUser, isAuthenticated]);
 
-  handleLogout = async () => {
-    await Auth.signOut();
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      setApp(<AuthenticatedApp />);
+    } else {
+      setApp(<UnauthenticatedApp />);
+    }
+  }, [isAuthenticated]);
 
-    this.userHasAuthenticated(false);
-
-    navigate("/login");
-  };
-
-  render() {
-    const childProps = {
-      isAuthenticated: this.state.isAuthenticated,
-      userHasAuthenticated: this.userHasAuthenticated,
-      handleLogout: this.handleLogout,
-      email: this.state.email
-    };
-
-    return (
-      <Main>
-        <Header {...childProps} />
-        {this.state.isAuthenticated ? (
-          <Router>
-            <Feed path="/" />
-            <Profile path="user/:username" {...childProps} />
-            <Account path="account" {...childProps}>
-              <EditAccount path="/" {...childProps} />
-              <EditProfile path="profile" {...childProps} />
-            </Account>
-            <Redirect from="login" to="/" noThrow />
-            <Redirect from="sign-up" to="/" noThrow />
-            <Redirect from="forgot-password" to="/" noThrow />
-            <NotFound default />
-          </Router>
-        ) : (
-          <Router>
-            <Home path="/" />
-            <Login path="login" {...childProps} />
-            <Signup path="sign-up" {...childProps} />
-            <ForgotPassword path="forgot-password" {...childProps} />
-            <NotFound default />
-          </Router>
-        )}
-      </Main>
-    );
-  }
-}
+  return app;
+};
 
 export default App;

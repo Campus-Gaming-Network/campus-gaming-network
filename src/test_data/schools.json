@@ -1,0 +1,102 @@
+[
+  {
+    "id": "5dec3352415b46af22958fe3",
+    "index": 0,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Multiflex",
+    "contactEmail": "cgn@multiflex.edu",
+    "website": "https://www.multiflex.edu",
+    "address": "352 Narrows Avenue, Rehrersburg, Iowa, 4386",
+    "description": "In in pariatur nostrud enim consectetur incididunt qui nulla officia sit minim elit et. Aliqua velit incididunt nostrud deserunt quis veniam. Cillum ipsum dolore deserunt id. Ullamco mollit labore nisi enim laboris officia nulla veniam eu consequat. Amet magna ullamco dolore laborum cupidatat proident excepteur consectetur."
+  },
+  {
+    "id": "5dec33528ec8c6db36efac4c",
+    "index": 1,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Geekwagon",
+    "contactEmail": "cgn@geekwagon.edu",
+    "website": "https://www.geekwagon.edu",
+    "address": "983 Sunnyside Avenue, Eagleville, Mississippi, 4118",
+    "description": "Ullamco aliquip ut dolore laborum anim consequat Lorem est ullamco exercitation. Reprehenderit consequat magna cillum tempor mollit ad quis excepteur voluptate adipisicing adipisicing duis commodo. Commodo cupidatat non ad magna aliquip aute officia enim. In fugiat ea quis ad exercitation excepteur consectetur in officia dolor aliqua exercitation anim labore."
+  },
+  {
+    "id": "5dec3352d3bba84d812373ca",
+    "index": 2,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Zaphire",
+    "contactEmail": "cgn@zaphire.edu",
+    "website": "https://www.zaphire.edu",
+    "address": "404 Leonard Street, Allendale, Montana, 5679",
+    "description": "Id magna ut sit labore consectetur nisi ullamco cupidatat cupidatat qui duis. Aute nisi voluptate ad voluptate ea et sit anim labore in id amet. Cillum duis enim ad velit cupidatat est magna consequat aute laboris est duis irure."
+  },
+  {
+    "id": "5dec335227b292c73e4f8e86",
+    "index": 3,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Bullzone",
+    "contactEmail": "cgn@bullzone.edu",
+    "website": "https://www.bullzone.edu",
+    "address": "418 Bennet Court, Shelby, District Of Columbia, 9845",
+    "description": "Quis voluptate et exercitation aliquip consequat voluptate id nulla sunt duis do velit duis duis. Officia Lorem ad ex ex tempor deserunt nisi quis dolore deserunt qui magna ad fugiat. Magna ea dolor excepteur est et eiusmod dolor dolore voluptate Lorem eiusmod ullamco Lorem."
+  },
+  {
+    "id": "5dec3352ad936f8f0db9b99f",
+    "index": 4,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Sensate",
+    "contactEmail": "cgn@sensate.edu",
+    "website": "https://www.sensate.edu",
+    "address": "676 Columbus Place, Roy, New Hampshire, 8073",
+    "description": "Eu eu consectetur sit est Lorem quis enim excepteur officia anim irure labore. Tempor dolor nulla aliqua minim consectetur incididunt. Non laborum Lorem dolor voluptate nisi irure pariatur Lorem dolor est velit."
+  },
+  {
+    "id": "5dec3352b4f1013cb7889ea1",
+    "index": 5,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Miracula",
+    "contactEmail": "cgn@miracula.edu",
+    "website": "https://www.miracula.edu",
+    "address": "622 Farragut Place, Nanafalia, Puerto Rico, 3920",
+    "description": "Do nulla anim mollit culpa. Ea ea sunt duis ut tempor dolore sint quis. Ea ut esse ut laboris."
+  },
+  {
+    "id": "5dec3352cca7571d2da1fe9b",
+    "index": 6,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Magnina",
+    "contactEmail": "cgn@magnina.edu",
+    "website": "https://www.magnina.edu",
+    "address": "781 Grafton Street, Chelsea, American Samoa, 4146",
+    "description": "Cupidatat consectetur aute esse ut sunt culpa do ipsum. Nisi nulla in magna commodo voluptate Lorem eu magna magna pariatur ullamco irure. Proident adipisicing nulla magna amet cupidatat. Culpa reprehenderit tempor non aliqua. Nostrud nulla aliquip anim consectetur."
+  },
+  {
+    "id": "5dec335295b5d2ddf97cbedf",
+    "index": 7,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Codax",
+    "contactEmail": "cgn@codax.edu",
+    "website": "https://www.codax.edu",
+    "address": "735 Danforth Street, Weeksville, California, 6435",
+    "description": "Minim veniam fugiat velit qui. Consectetur nulla labore nostrud incididunt ad sint laboris laboris ad qui aliqua anim nisi ullamco. Sit veniam do excepteur ullamco velit aliquip esse. Eiusmod consectetur adipisicing cupidatat laborum officia. In voluptate consectetur cupidatat sit sunt aliquip elit fugiat."
+  },
+  {
+    "id": "5dec3352da384d9f3c2afc9b",
+    "index": 8,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Magmina",
+    "contactEmail": "cgn@magmina.edu",
+    "website": "https://www.magmina.edu",
+    "address": "371 Hunts Lane, Roderfield, Minnesota, 8954",
+    "description": "Culpa officia ullamco cupidatat esse aliquip."
+  },
+  {
+    "id": "5dec3352363a4af6ba07b5b9",
+    "index": 9,
+    "logo": "http://placehold.it/128x128",
+    "name": "University of Chorizon",
+    "contactEmail": "cgn@chorizon.edu",
+    "website": "https://www.chorizon.edu",
+    "address": "495 Hanover Place, Deseret, Louisiana, 2262",
+    "description": "Ullamco irure dolore eu aute aute ex labore tempor anim laborum. Cillum aute laboris eiusmod magna. Velit nisi sint dolor dolor incididunt cupidatat ad nostrud amet veniam nostrud ad esse mollit. Velit occaecat amet pariatur deserunt ea cillum irure ex. Eu adipisicing consequat ex consectetur consectetur anim culpa aliqua eu aliqua non amet minim consequat."
+  }
+]
