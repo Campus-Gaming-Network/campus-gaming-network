@@ -21,7 +21,7 @@ const UnauthenticatedNav = () => {
       </Link>
       <Link
         to="/register"
-        className="text-xl mt-1 block ml-3 rounded font-bold text-gray-200 hover:text-gray-300 bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
+        className="text-xl mt-1 block ml-3 rounded font-bold text-white bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
       >
         Sign Up Free
       </Link>

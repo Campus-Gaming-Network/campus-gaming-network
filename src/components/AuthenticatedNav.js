@@ -55,7 +55,7 @@ const AuthenticatedNav = () => {
       {/* <ChakraButton onClick={handleLogout}>Log out</ChakraButton> */}
       <Link
         to="/event/create"
-        className="leading-none text-xl mx-5 rounded font-bold text-white hover:text-gray-100 bg-purple-700 py-2 px-3 hover:underline focus:underline"
+        className="leading-none text-xl mx-5 rounded font-semibold text-white hover:text-gray-100 bg-purple-700 py-2 px-3 hover:underline focus:underline"
       >
         Create an Event
       </Link>

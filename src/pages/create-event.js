@@ -99,7 +99,8 @@ const CreateEvent = props => {
     const [games, setGames] = React.useState([]);
 
     React.useEffect(() => {
-      if (searchTerm.trim() !== "") {
+      const _searchTerm = searchTerm.trim();
+      if (_searchTerm !== "" && _searchTerm.length > 3) {
         let isFresh = true;
 
         fetchGames(searchTerm).then(games => {
@@ -122,8 +123,10 @@ const CreateEvent = props => {
     const searchGames = firebase.functions().httpsCallable("searchGames");
 
     return searchGames({ text: value }).then(result => {
-      CACHED_GAMES[value] = result.data.games;
-      return result.data.games;
+      console.log(result);
+      return [];
+      // CACHED_GAMES[value] = result.data.games;
+      // return result.data.games;
     });
   };
 
@@ -516,7 +519,7 @@ const CreateEvent = props => {
                 borderColor="gray.300"
               />
             </FormControl>
-            {/* <FormControl isRequired>
+            <FormControl isRequired>
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
@@ -526,6 +529,7 @@ const CreateEvent = props => {
                   name="gameSearch"
                   placeholder="The game being played"
                   onChange={handleFieldChange}
+                  value={formState.gameSearch}
                 />
                 {gamesResults && (
                   <ComboboxPopover>
@@ -545,7 +549,7 @@ const CreateEvent = props => {
                   </ComboboxPopover>
                 )}
               </Combobox>
-            </FormControl> */}
+            </FormControl>
             <FormControl isRequired isInvalid={!formState.startDateTime}>
               <FormLabel
                 htmlFor="startDateTime"
