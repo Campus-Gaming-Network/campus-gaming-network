@@ -24,6 +24,7 @@ import {
   Text,
   Image,
   Tooltip,
+  Flex,
   useToast
 } from "@chakra-ui/core";
 import {
@@ -31,7 +32,8 @@ import {
   ComboboxInput,
   ComboboxPopover,
   ComboboxList,
-  ComboboxOption
+  ComboboxOption,
+  ComboboxOptionText
 } from "@reach/combobox";
 import * as constants from "../constants";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
@@ -132,10 +134,8 @@ const EditUser = props => {
     const searchGames = firebase.functions().httpsCallable("searchGames");
 
     return searchGames({ text: value }).then(result => {
-      console.log(result);
-      return [];
-      // CACHED_GAMES[value] = result.data.games;
-      // return result.data.games;
+      CACHED_GAMES[value] = result.data.games;
+      return result.data.games;
     });
   };
 
@@ -632,6 +632,7 @@ const SocialAccountsSection = React.memo(props => {
 });
 
 const FavoriteGamesSection = React.memo(props => {
+  console.log("props.favoriteGamesResults", props.favoriteGamesResults);
   return (
     <Box
       as="fieldset"
@@ -672,7 +673,22 @@ const FavoriteGamesSection = React.memo(props => {
                 {props.favoriteGamesResults.length > 0 ? (
                   <ComboboxList>
                     {props.favoriteGamesResults.map(game => {
-                      return <ComboboxOption key={game.id} value={game.name} />;
+                      return (
+                        <ComboboxOption key={game.id} value={game.name}>
+                          <Flex alignItems="center" width="100%">
+                            {game.cover ? (
+                              <Image
+                                src={`https:${game.cover.url}`}
+                                size="40px"
+                                mr={6}
+                                objectFit="cover"
+                                alt={`The cover art for ${game.name}`}
+                              />
+                            ) : null}
+                            <ComboboxOptionText />
+                          </Flex>
+                        </ComboboxOption>
+                      );
                     })}
                   </ComboboxList>
                 ) : (
@@ -767,7 +783,22 @@ const CurrentlyPlayingSection = React.memo(props => {
                 {props.currentGamesResults.length > 0 ? (
                   <ComboboxList>
                     {props.currentGamesResults.map(game => {
-                      return <ComboboxOption key={game.id} value={game.name} />;
+                      return (
+                        <ComboboxOption key={game.id} value={game.name}>
+                          <Flex alignItems="center" width="100%">
+                            {game.cover ? (
+                              <Image
+                                src={`https:${game.cover.url}`}
+                                size="40px"
+                                mr={6}
+                                objectFit="cover"
+                                alt={`The cover art for ${game.name}`}
+                              />
+                            ) : null}
+                            <ComboboxOptionText />
+                          </Flex>
+                        </ComboboxOption>
+                      );
                     })}
                   </ComboboxList>
                 ) : (

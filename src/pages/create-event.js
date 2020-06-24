@@ -22,14 +22,16 @@ import {
   Checkbox,
   useToast,
   Select as ChakraSelect,
-  Flex
+  Flex,
+  Image
 } from "@chakra-ui/core";
 import {
   Combobox,
   ComboboxInput,
   ComboboxPopover,
   ComboboxList,
-  ComboboxOption
+  ComboboxOption,
+  ComboboxOptionText
 } from "@reach/combobox";
 import Gravatar from "react-gravatar";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
@@ -123,10 +125,8 @@ const CreateEvent = props => {
     const searchGames = firebase.functions().httpsCallable("searchGames");
 
     return searchGames({ text: value }).then(result => {
-      console.log(result);
-      return [];
-      // CACHED_GAMES[value] = result.data.games;
-      // return result.data.games;
+      CACHED_GAMES[value] = result.data.games;
+      return result.data.games;
     });
   };
 
@@ -537,7 +537,20 @@ const CreateEvent = props => {
                       <ComboboxList>
                         {gamesResults.map(game => {
                           return (
-                            <ComboboxOption key={game.id} value={game.name} />
+                            <ComboboxOption key={game.id} value={game.name}>
+                              <Flex alignItems="center" width="100%">
+                                {game.cover ? (
+                                  <Image
+                                    src={`https:${game.cover.url}`}
+                                    size="40px"
+                                    mr={6}
+                                    objectFit="cover"
+                                    alt={`The cover art for ${game.name}`}
+                                  />
+                                ) : null}
+                                <ComboboxOptionText />
+                              </Flex>
+                            </ComboboxOption>
                           );
                         })}
                       </ComboboxList>

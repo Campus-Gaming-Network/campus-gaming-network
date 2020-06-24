@@ -16,7 +16,7 @@ exports.searchGames = functions.https.onCall((data) => {
         Accept: "application/json",
         "user-key": functions.config().igdb.key,
       },
-      data: `search "${data.text}"; fields name,cover,slug; limit 10;`,
+      data: `search "${data.text}"; fields name,cover.url,slug; limit 10;`,
     })
       .then((response) => {
         resolve({
