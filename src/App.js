@@ -25,7 +25,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   const setSchools = React.useCallback(() => {
-    const hasSchools = !!schools;
+    const hasSchools = !!schools && schools.length > 0;
     const hasSchoolsState = !isEmpty(state.schools);
 
     if (hasSchools && !hasSchoolsState) {
