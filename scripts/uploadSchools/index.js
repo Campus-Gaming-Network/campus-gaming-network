@@ -1,10 +1,10 @@
-const path = require('path');
-require("dotenv").config({ path: path.resolve(__dirname, '../../.env.local') });
+require("dotenv").config({ path: '../../.env.local' });
 const firebase = require("firebase/app");
 require("firebase/firestore");
 const chunk = require("lodash.chunk");
 const kebabCase = require("lodash.kebabcase");
 const geohash = require("ngeohash");
+const { performance } = require('perf_hooks');
 
 // Source:
 // https://hifld-geoplatform.opendata.arcgis.com/datasets/colleges-and-universities
@@ -63,13 +63,15 @@ const mapSchool = ({
   }
 
   return school;
-}
+};
 
 // Wear the magic happens
 const main = async () => {
   console.log("====================");
   console.log("Starting...");
   console.log("====================");
+
+  const t0 = performance.now()
 
   console.log(`${DATA.length} colleges`);
 
@@ -83,29 +85,29 @@ const main = async () => {
     let db = firebase.firestore();
     let batch = db.batch();
 
-    const batches = _chunk
-      .map(mapSchool)
-      .map(school => batch.set(db.collection("schools").doc(), school));
+    const mappedSchools = _chunk.map(mapSchool);
 
-    for (const _batch of batches) {
-      _batch
-        .commit()
-        .then(() => {
-          console.count("Wrote batch");
-        })
-        .catch(err => {
-          console.log(`Error on batch commit: ${err}`);
-        });
+    mappedSchools.forEach(school => {
+      const ref = db.collection("schools").doc();
+      batch.set(ref, school);
+    });
+
+    try {
+      await batch.commit();
+    } catch (error) {
+      console.log(`Error on batch commit: ${error}`);
     }
 
     console.count("Finished chunk");
   }
 
+  const t1 = performance.now();
+
   console.log("====================");
-  console.log("Done.");
+  console.log(`Done. Took ${Math.floor(t1 - t0)} milliseconds.`);
   console.log("====================");
 
   process.exit(1);
-}
+};
 
 main();
