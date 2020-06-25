@@ -1,4 +1,5 @@
-require("dotenv").config({ path: "./.env.local" });
+const path = require('path');
+require("dotenv").config({ path: path.resolve(__dirname, '../../.env.local') });
 const firebase = require("firebase/app");
 require("firebase/firestore");
 const chunk = require("lodash.chunk");
@@ -26,7 +27,7 @@ firebase.initializeApp({
 });
 
 // Map the school data fields for use in the db
-const mapSchool = () => ({
+const mapSchool = ({
   NAME,
   ADDRESS,
   CITY,
@@ -38,7 +39,7 @@ const mapSchool = () => ({
   TELEPHONE,
   LATITUDE,
   LONGITUDE
-}) {
+}) => {
   const school = {
     name: NAME,
     address: ADDRESS,
