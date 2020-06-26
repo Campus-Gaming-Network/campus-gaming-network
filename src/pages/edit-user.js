@@ -8,6 +8,8 @@ import startCase from "lodash.startcase";
 // eslint-disable-next-line no-unused-vars
 import uniqBy from "lodash.uniqby";
 import moment from "moment";
+import createFilterOptions from "react-select-fast-filter-options";
+import VirtualizedSelect from "react-virtualized-select";
 import {
   Input as ChakraInput,
   InputGroup as ChakraInputGroup,
@@ -487,6 +489,15 @@ const DetailSection = React.memo(props => {
 });
 
 const SchoolSection = React.memo(props => {
+  const schoolOptions = [
+    { value: "", label: "Select your school" },
+    ...Object.values(props.schools).map(school => ({
+      value: school.id,
+      label: startCase(school.name.toLowerCase())
+    }))
+  ];
+  const schoolFilterOptions = createFilterOptions({ options: schoolOptions });
+
   return (
     <Box
       as="fieldset"
@@ -508,22 +519,24 @@ const SchoolSection = React.memo(props => {
           <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
             School
           </FormLabel>
-          <ChakraSelect
+          <VirtualizedSelect
             id="school"
             name="school"
-            onChange={props.handleFieldChange}
+            onChange={value =>
+              props.handleFieldChange({
+                target: {
+                  name: "school",
+                  value
+                }
+              })
+            }
             value={props.school}
             size="lg"
-          >
-            <option value="">Select your school</option>
-            {Object.values(props.schools).length
-              ? Object.values(props.schools).map(school => (
-                  <option key={school.id} value={school.id}>
-                    {startCase(school.name.toLowerCase())}
-                  </option>
-                ))
-              : []}
-          </ChakraSelect>
+            borderWidth={2}
+            borderColor="gray.300"
+            filterOptions={schoolFilterOptions}
+            options={schoolOptions}
+          />
         </FormControl>
         <FormControl isRequired>
           <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">

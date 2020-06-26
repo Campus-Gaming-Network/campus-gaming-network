@@ -14,6 +14,9 @@ import momentLocalizer from "react-widgets-moment";
 import "@reach/skip-nav/styles.css";
 import "react-widgets/dist/css/react-widgets.css";
 import "@reach/combobox/styles.css";
+import "react-select/dist/react-select.css";
+import "react-virtualized/styles.css";
+import "react-virtualized-select/styles.css";
 
 moment.locale("en");
 momentLocalizer();

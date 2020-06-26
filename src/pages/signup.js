@@ -18,6 +18,8 @@ import {
   FormHelperText
 } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
+import createFilterOptions from "react-select-fast-filter-options";
+import VirtualizedSelect from "react-virtualized-select";
 
 import * as constants from "../constants";
 
@@ -42,6 +44,14 @@ const Signup = () => {
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
+  const schoolOptions = [
+    { value: "", label: "Select your school" },
+    ...Object.values(state.schools).map(school => ({
+      value: school.id,
+      label: startCase(school.name.toLowerCase())
+    }))
+  ];
+  const schoolFilterOptions = createFilterOptions({ options: schoolOptions });
 
   if (authenticatedUser && !isAuthenticating) {
     return <Redirect to="/" noThrow />;
@@ -183,24 +193,24 @@ const Signup = () => {
             <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
               School
             </FormLabel>
-            <Select
+            <VirtualizedSelect
               id="school"
               name="school"
-              onChange={handleFieldChange}
+              onChange={value =>
+                handleFieldChange({
+                  target: {
+                    id: "school",
+                    value
+                  }
+                })
+              }
               value={fields.school}
               size="lg"
               borderWidth={2}
               borderColor="gray.300"
-            >
-              <option value="">Select your school</option>
-              {Object.values(state.schools).length
-                ? Object.values(state.schools).map(school => (
-                    <option key={school.id} value={school.id}>
-                      {startCase(school.name.toLowerCase())}
-                    </option>
-                  ))
-                : []}
-            </Select>
+              filterOptions={schoolFilterOptions}
+              options={schoolOptions}
+            />
           </FormControl>
           <FormControl isRequired>
             <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
