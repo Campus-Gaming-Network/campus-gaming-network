@@ -151,3 +151,75 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
       return null;
     }
   });
+
+exports.userOnCreated = functions.firestore
+  .document("users/{userId}")
+  .onCreate((snapshot) => {
+    return snapshot.ref
+      .set(
+        {
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      )
+      .catch((err) => console.log(err));
+  });
+
+exports.eventOnCreated = functions.firestore
+  .document("events/{eventId}")
+  .onCreate((snapshot) => {
+    return snapshot.ref
+      .set(
+        {
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      )
+      .catch((err) => console.log(err));
+  });
+
+exports.eventResponsesOnCreated = functions.firestore
+  .document("event-responses/{eventResponseId}")
+  .onCreate((snapshot) => {
+    return snapshot.ref
+      .set(
+        {
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      )
+      .catch((err) => console.log(err));
+  });
+
+exports.userOnUpdated = functions.firestore
+  .document("users/{userId}")
+  .onUpdate((snapshot) => {
+    return snapshot.ref
+      .update({
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      })
+      .catch((err) => console.log(err));
+  });
+
+exports.eventOnUpdated = functions.firestore
+  .document("events/{eventId}")
+  .onUpdate((snapshot) => {
+    return snapshot.ref
+      .update({
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      })
+      .catch((err) => console.log(err));
+  });
+
+exports.eventResponsesOnUpdated = functions.firestore
+  .document("event-responses/{eventResponseId}")
+  .onUpdate((snapshot) => {
+    return snapshot.ref
+      .update({
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      })
+      .catch((err) => console.log(err));
+  });
