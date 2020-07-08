@@ -103,7 +103,7 @@ const AuthenticatedNav = () => {
                 />
               ) : (
                 <Flex alignItems="center" color="gray.600" mr={2}>
-                  <FontAwesomeIcon size="md" icon={faUserCircle} />
+                  <FontAwesomeIcon icon={faUserCircle} />
                 </Flex>
               )}
               <Text lineHeight="1">Profile</Text>
@@ -120,7 +120,7 @@ const AuthenticatedNav = () => {
               mr={2}
               fallback={
                 <Flex alignItems="center" color="gray.600" mr={2}>
-                  <FontAwesomeIcon size="md" icon={faSchool} />
+                  <FontAwesomeIcon icon={faSchool} />
                 </Flex>
               }
             />
@@ -130,7 +130,7 @@ const AuthenticatedNav = () => {
           <MenuItem onClick={handleLogout}>
             <Flex alignItems="center">
               <Flex alignItems="center" color="gray.600" mr={2}>
-                <FontAwesomeIcon size="md" icon={faSignOutAlt} />
+                <FontAwesomeIcon icon={faSignOutAlt} />
               </Flex>
               <Text lineHeight="1">Log out</Text>
             </Flex>

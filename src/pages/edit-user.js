@@ -8,8 +8,6 @@ import startCase from "lodash.startcase";
 // eslint-disable-next-line no-unused-vars
 import uniqBy from "lodash.uniqby";
 import moment from "moment";
-import createFilterOptions from "react-select-fast-filter-options";
-import VirtualizedSelect from "react-virtualized-select";
 import {
   Input as ChakraInput,
   InputGroup as ChakraInputGroup,
@@ -42,6 +40,7 @@ import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import timezones from "../data/timezones.json";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import SchoolSelect from "../components/SchoolSelect";
 
 const initialFormState = {
   firstName: "",
@@ -306,7 +305,6 @@ const EditUser = props => {
         <SchoolSection
           handleFieldChange={handleFieldChange}
           school={formState.school}
-          schools={state.schools}
           status={formState.status}
           major={formState.major}
           minor={formState.minor}
@@ -489,15 +487,6 @@ const DetailSection = React.memo(props => {
 });
 
 const SchoolSection = React.memo(props => {
-  const schoolOptions = [
-    { value: "", label: "Select your school" },
-    ...Object.values(props.schools).map(school => ({
-      value: school.id,
-      label: startCase(school.name.toLowerCase())
-    }))
-  ];
-  const schoolFilterOptions = createFilterOptions({ options: schoolOptions });
-
   return (
     <Box
       as="fieldset"
@@ -519,23 +508,9 @@ const SchoolSection = React.memo(props => {
           <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
             School
           </FormLabel>
-          <VirtualizedSelect
-            id="school"
-            name="school"
-            onChange={value =>
-              props.handleFieldChange({
-                target: {
-                  name: "school",
-                  value
-                }
-              })
-            }
+          <SchoolSelect
+            onChange={props.handleFieldChange}
             value={props.school}
-            size="lg"
-            borderWidth={2}
-            borderColor="gray.300"
-            filterOptions={schoolFilterOptions}
-            options={schoolOptions}
           />
         </FormControl>
         <FormControl isRequired>

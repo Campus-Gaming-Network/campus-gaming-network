@@ -176,6 +176,25 @@ const reducer = (state, action) => {
 
 const AppProvider = props => {
   const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
+  // const { event, events, school, schools, user, users, games } = state;
+
+  // const value = React.useMemo(() => ({
+  //   event,
+  //   events,
+  //   school,
+  //   schools,
+  //   user,
+  //   users,
+  //   games,
+  // }), [
+  //   event,
+  //   Object.keys(events).length,
+  //   school,
+  //   Object.keys(schools).length,
+  //   user,
+  //   Object.keys(users).length,
+  //   Object.keys(games).length,
+  // ]);
 
   return (
     <AppStateContext.Provider value={state}>
