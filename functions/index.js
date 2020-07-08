@@ -30,37 +30,124 @@ exports.searchGames = functions.https.onCall((data) => {
   });
 });
 
-exports.updateEventResponses = functions.firestore
-  .document("events/{id}")
+exports.updateEventResponsesOnEventUpdate = functions.firestore
+  .document("events/{eventId}")
   .onUpdate((change, context) => {
-    const eventId = context.params.id
-    console.log(`eventId ${eventId}`)
-    const newValue = change.after.data();
-    console.log(`name ${newValue.name}`)
-    const previousValue = change.before.data();
-    console.log("newValue",newValue)
-    console.log("previousValue",previousValue)
-    const eventDocRef = db.collection("events").doc(eventId);
+    const previousEventData = change.before.data();
+    const newEventData = change.after.data();
 
-    return db
-      .collection("event-responses")
-      .where("event", "==", eventDocRef)
-      .get()
-      .then((snapshot) => {
-        let batch = db.batch();
-        console.log("snapshot", snapshot);
-        snapshot.forEach(doc => {
-          const docRef = db.collection("event-responses").doc(doc.id);
-          batch.update(docRef, {
-            eventDetails: {
-              name: newValue.name
-            }
-          });
-          batch.commit().then(() => {
-            console.log('updated all documents')
-          });
-        });
-      })
-      .catch((err) => console.log(err));
+    if (previousEventData.name !== newEventData.name) {
+      const updatedValues = {
+        eventDetails: {
+          name: newEventData.name,
+        },
+      };
+      const eventDocRef = db.collection("events").doc(context.params.eventId);
+      const eventResponsesQuery = db
+        .collection("event-responses")
+        .where("event", "==", eventDocRef);
+
+      return eventResponsesQuery
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            return null;
+          } else {
+            let batch = db.batch();
+
+            snapshot.forEach((doc) => {
+              batch.update(doc.ref, updatedValues);
+            });
+
+            return batch.commit();
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      return null;
+    }
   });
-  
+
+exports.updateEventResponsesOnSchoolUpdate = functions.firestore
+  .document("schools/{schoolId}")
+  .onUpdate((change, context) => {
+    const previousSchoolData = change.before.data();
+    const newSchoolData = change.after.data();
+
+    if (previousSchoolData.name !== newSchoolData.name) {
+      const updatedValues = {
+        schoolDetails: {
+          name: newSchoolData.name,
+        },
+      };
+      const schoolDocRef = db
+        .collection("schools")
+        .doc(context.params.schoolId);
+      const eventResponsesQuery = db
+        .collection("event-responses")
+        .where("school", "==", schoolDocRef);
+
+      return eventResponsesQuery
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            return null;
+          } else {
+            let batch = db.batch();
+
+            snapshot.forEach((doc) => {
+              batch.update(doc.ref, updatedValues);
+            });
+
+            return batch.commit();
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      return null;
+    }
+  });
+
+exports.updateEventResponsesOnUserUpdate = functions.firestore
+  .document("users/{userId}")
+  .onUpdate((change, context) => {
+    const previousUserData = change.before.data();
+    const newUserData = change.after.data();
+
+    if (
+      previousUserData.firstName !== newUserData.firstName ||
+      previousUserData.lastName !== newUserData.lastName ||
+      previousUserData.gravatar !== newUserData.gravatar
+    ) {
+      const updatedValues = {
+        userDetails: {
+          firstName: newUserData.firstName,
+          lastName: newUserData.lastName,
+          gravatar: newUserData.gravatar,
+        },
+      };
+      const userDocRef = db.collection("users").doc(context.params.userId);
+      const eventResponsesQuery = db
+        .collection("event-responses")
+        .where("user", "==", userDocRef);
+
+      return eventResponsesQuery
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            return null;
+          } else {
+            let batch = db.batch();
+
+            snapshot.forEach((doc) => {
+              batch.update(doc.ref, updatedValues);
+            });
+
+            return batch.commit();
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      return null;
+    }
+  });

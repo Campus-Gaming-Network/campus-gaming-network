@@ -330,8 +330,6 @@ const CreateEvent = props => {
     prefillForm();
   }
 
-  console.log({ formState });
-
   return (
     <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>

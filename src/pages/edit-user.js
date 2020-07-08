@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
-import startCase from "lodash.startcase";
 // eslint-disable-next-line no-unused-vars
 import uniqBy from "lodash.uniqby";
 import moment from "moment";

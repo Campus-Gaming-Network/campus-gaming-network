@@ -6,14 +6,9 @@ import "firebase/functions";
 import "firebase/storage";
 
 import { firebaseConfig } from "./config";
-import { isDev } from "../utilities";
 
 export const _firebase = firebase;
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
-
-// if (isDev()) {
-//   firebase.functions().useFunctionsEmulator("http://localhost:5001");
-// }
 
 export const firebaseAuth = firebase.auth();
 export const firebaseFirestore = firebase.firestore();

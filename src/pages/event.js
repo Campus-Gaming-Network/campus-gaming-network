@@ -177,17 +177,17 @@ const Event = props => {
 
   React.useEffect(() => {
     const _canChangeEventResponse =
-      props.isAuthenticated &&
+      !!authenticatedUser &&
       !isLoadingUserEventResponse &&
       !isEventCreator &&
-      fetchedEvent &&
+      !!fetchedEvent &&
       !fetchedEvent.hasEnded;
 
     if (_canChangeEventResponse !== canChangeEventResponse) {
       setCanChangeEventResponse(_canChangeEventResponse);
     }
   }, [
-    props.isAuthenticated,
+    authenticatedUser,
     isLoadingUserEventResponse,
     isEventCreator,
     fetchedEvent,
@@ -215,6 +215,8 @@ const Event = props => {
     const schoolDocRef = firebaseFirestore
       .collection("schools")
       .doc(event.school.id);
+    const user = state.users[authenticatedUser.uid];
+    const school = state.schools[user.school.id];
 
     const data = {
       user: userDocRef,
@@ -222,9 +224,9 @@ const Event = props => {
       school: schoolDocRef,
       response,
       userDetails: {
-        firstName: props.user.firstName,
-        lastName: props.user.lastName,
-        gravatar: props.user.gravatar
+        firstName: user.firstName,
+        lastName: user.lastName,
+        gravatar: user.gravatar
       },
       eventDetails: {
         name: event.name,
@@ -233,7 +235,7 @@ const Event = props => {
         endDateTime: event.endDateTime
       },
       schoolDetails: {
-        name: props.school.name
+        name: school.name
       }
     };
 
