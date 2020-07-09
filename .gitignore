@@ -48,3 +48,7 @@ yarn-debug.log*
 yarn-error.log*
 functions/.runtimeconfig.json
 ui-debug.log
+
+#firebase
+.firebaserc
+firebase.json
