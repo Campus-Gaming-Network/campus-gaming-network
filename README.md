@@ -4,13 +4,9 @@ Connect with other collegiate gamers for casual or competitive gaming at your sc
 
 ## Getting Started
 
----
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing pirposes.
 
 ## Prerequisites
-
----
 
 The project uses nodejs which can be downloaded here:
 
@@ -18,15 +14,11 @@ The project uses nodejs which can be downloaded here:
 
 ## Clone
 
----
-
 - Clone this repo to you local machine using:
 
   https://github.com/bsansone/campus-gaming-network.git
 
 ## Setup
-
----
 
 Once you have the project on your local machine, open up a terminal in the project folder and run,
 
@@ -37,8 +29,6 @@ $ npm install
 to download and install the dependencies.
 
 ### Firebase
-
----
 
 A Firebase project must be created to fully test and run the app. You can sign up using your google account here:
 
@@ -56,13 +46,13 @@ To register the app to your firebase account you must:
 
 ```javascript
 const firebaseConfig = {
-  apiKey: 'AIzaSyDOCAbC123dEf456GhI789jKl01-MnO',
-  authDomain: 'myapp-project-123.firebaseapp.com',
-  databaseURL: 'https://myapp-project-123.firebaseio.com',
-  projectId: 'myapp-project-123',
-  storageBucket: 'myapp-project-123.appspot.com',
-  messagingSenderId: '65211879809',
-  appId: '1:65211879909:web:3ae38ef1cdcb2e01fe5f0c',
+  apiKey: 'some-text',
+  authDomain: 'some-text',
+  databaseURL: 'some-url',
+  projectId: 'some-text',
+  storageBucket: 'some-text',
+  messagingSenderId: 'some-text',
+  appId: 'some-text',
 };
 ```
 
@@ -88,7 +78,13 @@ $ firebase deploy
 $ npm install
 ```
 
-- this will create a `node_modules` folder and install the dependencies to upload the schools into the database.
+- this will create a `node_modules` folder and install the dependencies needed.
+
+- once you have the dependencies you can run the script to upload the schools by typing into the terminal,
+
+```shell
+$ node .
+```
 
 - you should now see a `schools` collection was created and populated with several school documents in your firebase project.
 
