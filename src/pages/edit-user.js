@@ -435,6 +435,7 @@ const DetailSection = React.memo(props => {
             id="birthdate"
             name="birthdate"
             type="date"
+            max={moment().format("YYYY[-]MM[-]DD")}
             onChange={props.handleFieldChange}
             value={props.birthdate}
             size="lg"
