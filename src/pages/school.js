@@ -30,6 +30,7 @@ import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth } from "../firebase";
+import { isUrl } from "../utilities";
 
 const School = props => {
   const dispatch = useAppDispatch();
@@ -235,11 +236,16 @@ const School = props => {
               <dd className="w-1/2 text-gray-500">Nothing set</dd>
             )}
             <dt className="w-1/2 font-bold">Website</dt>
-            {school.website ? (
+            {school.website &&
+            school.website !== constants.EMPTY_SCHOOL_WEBSITE ? (
               <dd className="w-1/2">
-                <OutsideLink href={`//${school.website}`}>
-                  {school.website}
-                </OutsideLink>
+                {isUrl(school.website) ? (
+                  <OutsideLink href={`//${school.website}`}>
+                    {school.website}
+                  </OutsideLink>
+                ) : (
+                  <Text>{school.website}</Text>
+                )}
               </dd>
             ) : (
               <dd className="w-1/2 text-gray-500">Nothing set</dd>

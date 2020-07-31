@@ -202,3 +202,5 @@ export const DROPZONE_STYLES = {
     borderColor: "#ff1744"
   }
 };
+
+export const EMPTY_SCHOOL_WEBSITE = "NOT AVAILABLE";

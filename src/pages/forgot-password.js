@@ -126,8 +126,6 @@ const ForgotPassword = () => {
                   onChange={handleFieldChange}
                   value={fields.email}
                   size="lg"
-                  borderWidth={2}
-                  borderColor="gray.300"
                 />
               </FormControl>
             </Stack>

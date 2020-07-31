@@ -166,8 +166,6 @@ const DetailSection = React.memo(props => {
           onChange={props.handleFieldChange}
           value={props.firstName}
           size="lg"
-          borderWidth={2}
-          borderColor="gray.300"
         />
       </FormControl>
       <FormControl isRequired>
@@ -182,8 +180,6 @@ const DetailSection = React.memo(props => {
           onChange={props.handleFieldChange}
           value={props.lastName}
           size="lg"
-          borderWidth={2}
-          borderColor="gray.300"
         />
       </FormControl>
       <FormControl isRequired>
@@ -199,8 +195,6 @@ const DetailSection = React.memo(props => {
           value={props.email}
           size="lg"
           aria-describedby="email-helper-text"
-          borderWidth={2}
-          borderColor="gray.300"
         />
         <FormHelperText id="email-helper-text">
           This is how you will login.
@@ -218,8 +212,6 @@ const DetailSection = React.memo(props => {
           onChange={props.handleFieldChange}
           value={props.password}
           size="lg"
-          borderWidth={2}
-          borderColor="gray.300"
         />
         <Button
           onClick={togglePasswordVisibility}
@@ -254,8 +246,6 @@ const SchoolSection = React.memo(props => {
           onChange={props.handleFieldChange}
           value={props.status}
           size="lg"
-          borderWidth={2}
-          borderColor="gray.300"
         >
           {constants.STUDENT_STATUS_OPTIONS.map(status => (
             <option key={status.value} value={status.value}>

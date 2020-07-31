@@ -157,3 +157,5 @@ export const userHasAccounts = user => {
     ).length > 0
   );
 };
+
+export const isUrl = url => url.startsWith("http") || url.startsWith("https");

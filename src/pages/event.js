@@ -5,7 +5,8 @@ import {
   faMapMarkerAlt,
   faGlobe,
   faSchool,
-  faBolt
+  faBolt,
+  faGamepad
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import Gravatar from "react-gravatar";
@@ -29,6 +30,7 @@ import {
   Spinner,
   Flex,
   PseudoBox,
+  Image,
   useToast
 } from "@chakra-ui/core";
 import * as constants from "../constants";
@@ -359,6 +361,21 @@ const Event = props => {
               <Heading as="h1" fontWeight="bold" fontSize="5xl">
                 {event.name}
               </Heading>
+              <Flex align="center" pt={2}>
+                {event.game.cover && event.game.cover.url ? (
+                  <Image
+                    src={event.game.cover.url}
+                    rounded="lg"
+                    shadow="md"
+                    h={10}
+                    w={10}
+                    mr={2}
+                  />
+                ) : (
+                  <FontAwesomeIcon icon={faGamepad} className="mr-2" />
+                )}
+                <Text as="span">{event.game.name}</Text>
+              </Flex>
             </Box>
             <Flex
               alignItems="center"

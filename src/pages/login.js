@@ -93,8 +93,6 @@ const Login = () => {
               onChange={handleFieldChange}
               value={fields.email}
               size="lg"
-              borderWidth={2}
-              borderColor="gray.300"
             />
           </FormControl>
           <FormControl isRequired>
@@ -109,8 +107,6 @@ const Login = () => {
               onChange={handleFieldChange}
               value={fields.password}
               size="lg"
-              borderWidth={2}
-              borderColor="gray.300"
             />
           </FormControl>
         </Stack>

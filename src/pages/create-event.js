@@ -45,6 +45,7 @@ import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
+import useDebounce from "../hooks/useDebounce";
 
 const initialFormState = {
   name: "",
@@ -97,22 +98,29 @@ const CreateEvent = props => {
     formDispatch({ field: "placeId", value: placeId });
   };
 
-  const useGameSearch = searchTerm => {
-    const [games, setGames] = React.useState([]);
+  const setGameSearchTerm = value => {
+    formDispatch({ field: "gameSearch", value });
+  };
+
+  const debouncedGameSearch = useDebounce(formState.gameSearch, 500);
+
+  const useGameSearch = debouncedGameSearch => {
+    const [games, setGames] = React.useState(null);
 
     React.useEffect(() => {
-      const _searchTerm = searchTerm.trim();
-      if (_searchTerm !== "" && _searchTerm.length > 3) {
+      const _debouncedGameSearch = debouncedGameSearch.trim();
+
+      if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 3) {
         let isFresh = true;
 
-        fetchGames(searchTerm).then(games => {
+        fetchGames(debouncedGameSearch).then(games => {
           if (isFresh) {
             setGames(games);
           }
         });
         return () => (isFresh = false);
       }
-    }, [searchTerm]);
+    }, [debouncedGameSearch]);
 
     return games;
   };
@@ -130,7 +138,7 @@ const CreateEvent = props => {
     });
   };
 
-  const gamesResults = useGameSearch(formState.gameSearch);
+  const gamesResults = useGameSearch(debouncedGameSearch);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -159,12 +167,14 @@ const CreateEvent = props => {
       .doc(user.school.id);
     const userDocRef = firebaseFirestore.collection("users").doc(user.id);
 
-    // const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
-    // const selectedGame = games.find(
-    //   game =>
-    //     game.name.toLowerCase().trim() ===
-    //     formState.gameSearch.toLowerCase().trim()
-    // );
+    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
+    const selectedGame = games.find(
+      game =>
+        game.name.toLowerCase().trim() ===
+        formState.gameSearch.toLowerCase().trim()
+    ) || {
+      name: formState.gameSearch
+    };
 
     const eventData = {
       creator: userDocRef,
@@ -178,10 +188,8 @@ const CreateEvent = props => {
       school: schoolDocRef,
       schoolDetails: {
         name: school.name
-      }
-      // game: selectedGame || {
-      //   name: formState.gameSearch.trim()
-      // }
+      },
+      game: selectedGame
     };
 
     const cleanedData = omitBy(eventData, isNil);
@@ -250,7 +258,8 @@ const CreateEvent = props => {
               name: formState.name,
               description: formState.description,
               startDateTime: firestoreStartDateTime,
-              endDateTime: firestoreEndDateTime
+              endDateTime: firestoreEndDateTime,
+              game: selectedGame
             },
             schoolDetails: {
               name: school.name
@@ -377,8 +386,6 @@ const CreateEvent = props => {
                 onChange={handleFieldChange}
                 value={formState.host}
                 size="lg"
-                borderWidth={2}
-                borderColor="gray.300"
               >
                 <option value="">Select the host of the event</option>
                 <option value="user">{user.fullName} (You)</option>
@@ -401,8 +408,6 @@ const CreateEvent = props => {
                 onChange={handleFieldChange}
                 value={formState.name}
                 size="lg"
-                borderWidth={2}
-                borderColor="gray.300"
               />
             </FormControl>
             <FormControl>
@@ -431,8 +436,6 @@ const CreateEvent = props => {
                           disabled: formState.isOnlineEvent
                         })}
                         size="lg"
-                        borderWidth={2}
-                        borderColor="gray.300"
                       />
                       <Box className="autocomplete-dropdown-container">
                         {loading && (
@@ -513,21 +516,22 @@ const CreateEvent = props => {
                 resize="vertical"
                 maxLength="3000"
                 h="150px"
-                borderWidth={2}
-                borderColor="gray.300"
               />
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
-              <Combobox aria-label="Games">
+              <Combobox
+                aria-label="Games"
+                name="gameSearch"
+                onSelect={setGameSearchTerm}
+              >
                 <ComboboxInput
                   id="gameSearch"
                   name="gameSearch"
                   placeholder="The game being played"
-                  onChange={handleFieldChange}
-                  value={formState.gameSearch}
+                  onChange={e => setGameSearchTerm(e.target.value)}
                 />
                 {gamesResults && (
                   <ComboboxPopover>

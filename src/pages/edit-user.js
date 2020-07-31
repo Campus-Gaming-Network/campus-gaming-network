@@ -503,7 +503,7 @@ const SchoolSection = React.memo(props => {
         <Text color="gray.500">Where you study, what you study.</Text>
       </Box>
       <Stack spacing={6} p={8}>
-        <FormControl>
+        <FormControl isRequired>
           <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
             School
           </FormLabel>

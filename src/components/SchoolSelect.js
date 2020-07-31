@@ -28,8 +28,6 @@ const SchoolSelect = props => {
       onChange={props.onChange}
       value={props.value}
       size="lg"
-      borderWidth={2}
-      borderColor="gray.300"
     >
       <option value="">Select Your School</option>
       {schoolOptions.map(option => (
