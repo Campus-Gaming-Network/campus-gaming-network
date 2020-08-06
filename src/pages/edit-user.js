@@ -4,8 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
-// eslint-disable-next-line no-unused-vars
-import uniqBy from "lodash.uniqby";
 import moment from "moment";
 import {
   Input as ChakraInput,
@@ -40,6 +38,7 @@ import timezones from "../data/timezones.json";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import SchoolSelect from "../components/SchoolSelect";
+import GameSearch from "../components/GameSearch";
 
 const initialFormState = {
   firstName: "",
@@ -66,25 +65,12 @@ const initialFormState = {
   currentGameSearch: ""
 };
 
-const CACHED_GAMES = {};
-
 const formReducer = (state, { field, value }) => {
   return {
     ...state,
     [field]: value
   };
 };
-
-const testFavoriteGames = Array.from({ length: 1 }, () => ({
-  id: Math.floor(Math.random() * 100),
-  name: "League of Legends",
-  picture: constants.TEST_VIDEO_GAME_COVER
-}));
-const testCurrentlyPlaying = Array.from({ length: 5 }, () => ({
-  id: Math.floor(Math.random() * 100),
-  name: "League of Legends",
-  picture: constants.TEST_VIDEO_GAME_COVER
-}));
 
 const EditUser = props => {
   const state = useAppState();
@@ -101,43 +87,8 @@ const EditUser = props => {
   const handleFieldChange = React.useCallback(e => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
-  const [favoriteGames, setFavoriteGames] = React.useState(testFavoriteGames);
-  const [currentlyPlaying, setCurrentGames] = React.useState(
-    testCurrentlyPlaying
-  );
-
-  const useGameSearch = searchTerm => {
-    const [games, setGames] = React.useState([]);
-
-    React.useEffect(() => {
-      const _searchTerm = searchTerm.trim();
-      if (_searchTerm !== "" && _searchTerm.length > 3) {
-        let isFresh = true;
-
-        fetchGames(searchTerm).then(games => {
-          if (isFresh) {
-            setGames(games);
-          }
-        });
-        return () => (isFresh = false);
-      }
-    }, [searchTerm]);
-
-    return games;
-  };
-
-  const fetchGames = value => {
-    if (CACHED_GAMES[value]) {
-      return Promise.resolve(CACHED_GAMES[value]);
-    }
-
-    const searchGames = firebase.functions().httpsCallable("searchGames");
-
-    return searchGames({ text: value }).then(result => {
-      CACHED_GAMES[value] = result.data.games;
-      return result.data.games;
-    });
-  };
+  const [favoriteGames, setFavoriteGames] = React.useState([]);
+  const [currentlyPlaying, setCurrentGames] = React.useState([]);
 
   const prefillForm = () => {
     formDispatch({ field: "firstName", value: user.firstName || "" });
@@ -165,6 +116,8 @@ const EditUser = props => {
     formDispatch({ field: "steam", value: user.steam || "" });
     formDispatch({ field: "xbox", value: user.xbox || "" });
     formDispatch({ field: "psn", value: user.psn || "" });
+    setCurrentGames(user.currentlyPlaying || []);
+    setFavoriteGames(user.favoriteGames || []);
     setHasPrefilledForm(true);
   };
 
@@ -176,8 +129,13 @@ const EditUser = props => {
     setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
   };
 
-  const favoriteGamesResults = useGameSearch(formState.favoriteGameSearch);
-  const currentGamesResults = useGameSearch(formState.currentGameSearch);
+  const onFavoriteGameSelect = game => {
+    toggleFavoriteGame(game);
+  };
+
+  const onCurrentlyPlayingGameSelect = game => {
+    toggleCurrentGame(game);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -191,12 +149,6 @@ const EditUser = props => {
     const schoolDocRef = firebaseFirestore
       .collection("schools")
       .doc(formState.school);
-
-    // TODO:
-    // const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
-    // const selectedGame = games.find(
-    //   game => game.name.toLowerCase().trim() === fields.gameSearch.toLowerCase().trim()
-    // );
 
     const data = {
       firstName: formState.firstName,
@@ -222,7 +174,9 @@ const EditUser = props => {
       steam: formState.steam,
       xbox: formState.xbox,
       psn: formState.psn,
-      school: schoolDocRef
+      school: schoolDocRef,
+      currentlyPlaying,
+      favoriteGames
     };
 
     const cleanedData = omitBy(data, isNil);
@@ -322,13 +276,13 @@ const EditUser = props => {
           handleFieldChange={handleFieldChange}
           toggleFavoriteGame={toggleFavoriteGame}
           favoriteGames={favoriteGames}
-          favoriteGamesResults={favoriteGamesResults}
+          onGameSelect={onFavoriteGameSelect}
         />
         <CurrentlyPlayingSection
           handleFieldChange={handleFieldChange}
           toggleCurrentGame={toggleCurrentGame}
           currentlyPlaying={currentlyPlaying}
-          currentGamesResults={currentGamesResults}
+          onGameSelect={onCurrentlyPlayingGameSelect}
         />
         <ChakraButton
           variantColor="purple"
@@ -619,7 +573,6 @@ const SocialAccountsSection = React.memo(props => {
 });
 
 const FavoriteGamesSection = React.memo(props => {
-  console.log("props.favoriteGamesResults", props.favoriteGamesResults);
   return (
     <Box
       as="fieldset"
@@ -647,45 +600,12 @@ const FavoriteGamesSection = React.memo(props => {
           >
             Search for a game
           </FormLabel>
-          <Combobox aria-label="Games">
-            <ComboboxInput
-              id="favoriteGameSearch"
-              name="favoriteGameSearch"
-              placeholder="Search"
-              onChange={props.handleFieldChange}
-              disabled={props.favoriteGames.length === 5}
-            />
-            {props.favoriteGamesResults && (
-              <ComboboxPopover>
-                {props.favoriteGamesResults.length > 0 ? (
-                  <ComboboxList>
-                    {props.favoriteGamesResults.map(game => {
-                      return (
-                        <ComboboxOption key={game.id} value={game.name}>
-                          <Flex alignItems="center" width="100%">
-                            {game.cover ? (
-                              <Image
-                                src={`https:${game.cover.url}`}
-                                size="40px"
-                                mr={6}
-                                objectFit="cover"
-                                alt={`The cover art for ${game.name}`}
-                              />
-                            ) : null}
-                            <ComboboxOptionText />
-                          </Flex>
-                        </ComboboxOption>
-                      );
-                    })}
-                  </ComboboxList>
-                ) : (
-                  <Text as="span" ma={8} d="block">
-                    No results found
-                  </Text>
-                )}
-              </ComboboxPopover>
-            )}
-          </Combobox>
+          <GameSearch
+            id="favoriteGameSearch"
+            name="favoriteGameSearch"
+            onSelect={props.onGameSelect}
+            clearInputOnSelect={true}
+          />
         </FormControl>
         <Stack spacing={2}>
           <Text fontWeight="bold">
@@ -704,23 +624,29 @@ const FavoriteGamesSection = React.memo(props => {
             <Stack isInline>
               {props.favoriteGames.map(game => (
                 <Box key={game.id} w="100px" textAlign="center" mt={4}>
-                  <Image
-                    src={game.picture}
-                    alt={`The cover art for ${game.name}`}
-                  />
+                  {game.cover ? (
+                    <Image
+                      src={`https:${game.cover.url}`}
+                      alt={`The cover art for ${game.name}`}
+                    />
+                  ) : null}
                   <Tooltip label={game.name}>
                     <Text fontSize="sm" lineHeight="1.2" p={2} isTruncated>
                       {game.name}
                     </Text>
                   </Tooltip>
-                  <ChakraButton
-                    size="xs"
-                    variant="ghost"
-                    variantColor="red"
-                    onClick={() => props.toggleFavoriteGame(game)}
+                  <Tooltip
+                    label={`Remove ${game.name} from favorite games list`}
                   >
-                    Remove
-                  </ChakraButton>
+                    <ChakraButton
+                      size="xs"
+                      variant="ghost"
+                      variantColor="red"
+                      onClick={() => props.toggleFavoriteGame(game)}
+                    >
+                      Remove
+                    </ChakraButton>
+                  </Tooltip>
                 </Box>
               ))}
             </Stack>
@@ -757,45 +683,12 @@ const CurrentlyPlayingSection = React.memo(props => {
           >
             Search for a game
           </FormLabel>
-          <Combobox aria-label="Games">
-            <ComboboxInput
-              id="currentGameSearch"
-              name="currentGameSearch"
-              placeholder="Search"
-              onChange={props.handleFieldChange}
-              disabled={props.currentGamesResults.length === 5}
-            />
-            {props.currentGamesResults && (
-              <ComboboxPopover>
-                {props.currentGamesResults.length > 0 ? (
-                  <ComboboxList>
-                    {props.currentGamesResults.map(game => {
-                      return (
-                        <ComboboxOption key={game.id} value={game.name}>
-                          <Flex alignItems="center" width="100%">
-                            {game.cover ? (
-                              <Image
-                                src={`https:${game.cover.url}`}
-                                size="40px"
-                                mr={6}
-                                objectFit="cover"
-                                alt={`The cover art for ${game.name}`}
-                              />
-                            ) : null}
-                            <ComboboxOptionText />
-                          </Flex>
-                        </ComboboxOption>
-                      );
-                    })}
-                  </ComboboxList>
-                ) : (
-                  <Text as="span" ma={8} d="block">
-                    No results found
-                  </Text>
-                )}
-              </ComboboxPopover>
-            )}
-          </Combobox>
+          <GameSearch
+            id="currentGameSearch"
+            name="currentGameSearch"
+            onSelect={props.onGameSelect}
+            clearInputOnSelect={true}
+          />
         </FormControl>
         <Stack spacing={2}>
           <Text fontWeight="bold">
@@ -815,23 +708,29 @@ const CurrentlyPlayingSection = React.memo(props => {
             <Stack isInline spacing={12} wrap="wrap">
               {props.currentlyPlaying.map(game => (
                 <Box key={game.id} w="100px" textAlign="center" mt={4}>
-                  <Image
-                    src={game.picture}
-                    alt={`The cover art for ${game.name}`}
-                  />
+                  {game.cover ? (
+                    <Image
+                      src={`https:${game.cover.url}`}
+                      alt={`The cover art for ${game.name}`}
+                    />
+                  ) : null}
                   <Tooltip label={game.name}>
                     <Text fontSize="sm" lineHeight="1.2" p={2} isTruncated>
                       {game.name}
                     </Text>
                   </Tooltip>
-                  <ChakraButton
-                    size="xs"
-                    variant="ghost"
-                    variantColor="red"
-                    onClick={() => props.toggleCurrentGame(game)}
+                  <Tooltip
+                    label={`Remove ${game.name} from currently playing list`}
                   >
-                    Remove
-                  </ChakraButton>
+                    <ChakraButton
+                      size="xs"
+                      variant="ghost"
+                      variantColor="red"
+                      onClick={() => props.toggleCurrentGame(game)}
+                    >
+                      Remove
+                    </ChakraButton>
+                  </Tooltip>
                 </Box>
               ))}
             </Stack>

@@ -1,0 +1,108 @@
+import React from "react";
+import { Text } from "@chakra-ui/core";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption
+} from "@reach/combobox";
+import { firebase } from "../firebase";
+import uniqBy from "lodash.uniqby";
+
+// Hooks
+import useDebounce from "../hooks/useDebounce";
+
+const CACHED_GAMES = {};
+
+const GameSearch = props => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const debouncedGameSearch = useDebounce(searchTerm, 500);
+
+  const useGameSearch = debouncedGameSearch => {
+    const [games, setGames] = React.useState(null);
+
+    React.useEffect(() => {
+      const _debouncedGameSearch = debouncedGameSearch.trim();
+
+      if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 3) {
+        let isFresh = true;
+
+        fetchGames(debouncedGameSearch).then(games => {
+          if (isFresh) {
+            setGames(games);
+          }
+        });
+        return () => (isFresh = false);
+      }
+    }, [debouncedGameSearch]);
+
+    return games;
+  };
+
+  const fetchGames = value => {
+    if (CACHED_GAMES[value]) {
+      return Promise.resolve(CACHED_GAMES[value]);
+    }
+
+    const searchGames = firebase.functions().httpsCallable("searchGames");
+
+    return searchGames({ text: value }).then(result => {
+      CACHED_GAMES[value] = result.data.games;
+      return result.data.games;
+    });
+  };
+
+  const handleGameSelect = selectedGame => {
+    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
+    const _selectedGame = games.find(
+      game =>
+        game.name.toLowerCase().trim() === selectedGame.toLowerCase().trim()
+    ) || {
+      name: selectedGame
+    };
+
+    props.onSelect(_selectedGame);
+
+    if (props.clearInputOnSelect) {
+      setSearchTerm("");
+    } else {
+      setSearchTerm(selectedGame);
+    }
+  };
+
+  const gamesResults = useGameSearch(debouncedGameSearch);
+
+  return (
+    <Combobox
+      aria-label="Games"
+      name={props.name || "gameSearch"}
+      onSelect={handleGameSelect}
+    >
+      <ComboboxInput
+        id={props.id || "gameSearch"}
+        name={props.name || "gameSearch"}
+        placeholder={props.inputPlaceholder || "Search"}
+        onChange={e => setSearchTerm(e.target.value)}
+        value={searchTerm}
+      />
+      {gamesResults && (
+        <ComboboxPopover>
+          {gamesResults.length > 0 ? (
+            <ComboboxList>
+              {gamesResults.map(game => {
+                return <ComboboxOption key={game.id} value={game.name} />;
+              })}
+            </ComboboxList>
+          ) : (
+            <Text as="span" ma={8} d="block">
+              No results found
+            </Text>
+          )}
+        </ComboboxPopover>
+      )}
+    </Combobox>
+  );
+};
+
+export default GameSearch;

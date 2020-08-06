@@ -283,8 +283,7 @@ const User = props => {
               {user.currentlyPlaying.map(game => (
                 <ListItem key={game.name} className="w-1/5">
                   <img
-                    className="rounded h-40 shadow-lg"
-                    src={constants.TEST_VIDEO_GAME_COVER}
+                    src={`https:${game.cover.url}`}
                     alt={`The cover art for ${game.name}`}
                   />
                 </ListItem>
@@ -310,8 +309,7 @@ const User = props => {
               {user.favoriteGames.map(game => (
                 <ListItem key={game.name} className="w-1/5">
                   <img
-                    className="rounded h-40 shadow-lg"
-                    src={constants.TEST_VIDEO_GAME_COVER}
+                    src={`https:${game.cover.url}`}
                     alt={`The cover art for ${game.name}`}
                   />
                 </ListItem>

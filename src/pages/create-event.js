@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
 import uniqBy from "lodash.uniqby";
-import moment from "moment";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
 import {
@@ -22,44 +21,32 @@ import {
   Checkbox,
   useToast,
   Select as ChakraSelect,
-  Flex,
-  Image
+  Flex
 } from "@chakra-ui/core";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxPopover,
-  ComboboxList,
-  ComboboxOption,
-  ComboboxOptionText
-} from "@reach/combobox";
 import Gravatar from "react-gravatar";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
-import { useFormFields } from "../utilities";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import * as constants from "../constants";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import GameSearch from "../components/GameSearch";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
-import useDebounce from "../hooks/useDebounce";
 
 const initialFormState = {
   name: "",
   description: "",
   host: "",
-  gameSearch: "",
+  game: {},
   startDateTime: new Date(),
   endDateTime: new Date(),
   placeId: "",
   isOnlineEvent: false,
   location: ""
 };
-
-const CACHED_GAMES = {};
 
 const formReducer = (state, { field, value }) => {
   return {
@@ -98,47 +85,9 @@ const CreateEvent = props => {
     formDispatch({ field: "placeId", value: placeId });
   };
 
-  const setGameSearchTerm = value => {
-    formDispatch({ field: "gameSearch", value });
+  const setGame = value => {
+    formDispatch({ field: "game", value });
   };
-
-  const debouncedGameSearch = useDebounce(formState.gameSearch, 500);
-
-  const useGameSearch = debouncedGameSearch => {
-    const [games, setGames] = React.useState(null);
-
-    React.useEffect(() => {
-      const _debouncedGameSearch = debouncedGameSearch.trim();
-
-      if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 3) {
-        let isFresh = true;
-
-        fetchGames(debouncedGameSearch).then(games => {
-          if (isFresh) {
-            setGames(games);
-          }
-        });
-        return () => (isFresh = false);
-      }
-    }, [debouncedGameSearch]);
-
-    return games;
-  };
-
-  const fetchGames = value => {
-    if (CACHED_GAMES[value]) {
-      return Promise.resolve(CACHED_GAMES[value]);
-    }
-
-    const searchGames = firebase.functions().httpsCallable("searchGames");
-
-    return searchGames({ text: value }).then(result => {
-      CACHED_GAMES[value] = result.data.games;
-      return result.data.games;
-    });
-  };
-
-  const gamesResults = useGameSearch(debouncedGameSearch);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -167,15 +116,6 @@ const CreateEvent = props => {
       .doc(user.school.id);
     const userDocRef = firebaseFirestore.collection("users").doc(user.id);
 
-    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
-    const selectedGame = games.find(
-      game =>
-        game.name.toLowerCase().trim() ===
-        formState.gameSearch.toLowerCase().trim()
-    ) || {
-      name: formState.gameSearch
-    };
-
     const eventData = {
       creator: userDocRef,
       name: formState.name,
@@ -189,7 +129,7 @@ const CreateEvent = props => {
       schoolDetails: {
         name: school.name
       },
-      game: selectedGame
+      game: formState.game
     };
 
     const cleanedData = omitBy(eventData, isNil);
@@ -259,7 +199,7 @@ const CreateEvent = props => {
               description: formState.description,
               startDateTime: firestoreStartDateTime,
               endDateTime: firestoreEndDateTime,
-              game: selectedGame
+              game: formState.game
             },
             schoolDetails: {
               name: school.name
@@ -522,48 +462,10 @@ const CreateEvent = props => {
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
-              <Combobox
-                aria-label="Games"
-                name="gameSearch"
-                onSelect={setGameSearchTerm}
-              >
-                <ComboboxInput
-                  id="gameSearch"
-                  name="gameSearch"
-                  placeholder="The game being played"
-                  onChange={e => setGameSearchTerm(e.target.value)}
-                />
-                {gamesResults && (
-                  <ComboboxPopover>
-                    {gamesResults.length > 0 ? (
-                      <ComboboxList>
-                        {gamesResults.map(game => {
-                          return (
-                            <ComboboxOption key={game.id} value={game.name}>
-                              <Flex alignItems="center" width="100%">
-                                {game.cover ? (
-                                  <Image
-                                    src={`https:${game.cover.url}`}
-                                    size="40px"
-                                    mr={6}
-                                    objectFit="cover"
-                                    alt={`The cover art for ${game.name}`}
-                                  />
-                                ) : null}
-                                <ComboboxOptionText />
-                              </Flex>
-                            </ComboboxOption>
-                          );
-                        })}
-                      </ComboboxList>
-                    ) : (
-                      <Text as="span" ma={8} d="block">
-                        No results found
-                      </Text>
-                    )}
-                  </ComboboxPopover>
-                )}
-              </Combobox>
+              <GameSearch
+                inputPlaceholder="The game being played"
+                onSelect={setGame}
+              />
             </FormControl>
             <FormControl isRequired isInvalid={!formState.startDateTime}>
               <FormLabel
