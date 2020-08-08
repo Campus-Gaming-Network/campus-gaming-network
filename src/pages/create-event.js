@@ -3,7 +3,6 @@ import { navigate, Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
-import uniqBy from "lodash.uniqby";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
 import {
@@ -21,14 +20,13 @@ import {
   Checkbox,
   useToast,
   Select as ChakraSelect,
-  Flex
+  Flex,
+  Avatar
 } from "@chakra-ui/core";
-import Gravatar from "react-gravatar";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
-import * as constants from "../constants";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import GameSearch from "../components/GameSearch";
@@ -280,7 +278,7 @@ const CreateEvent = props => {
   }
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           {isEditing ? "Edit Event" : "Create an Event"}
@@ -305,12 +303,15 @@ const CreateEvent = props => {
                 Event Creator
               </Text>
               <Flex>
-                <Gravatar
-                  default={constants.GRAVATAR.DEFAULT}
-                  rating={constants.GRAVATAR.RA}
-                  md5={user.gravatar}
-                  className="h-10 w-10 rounded-full"
-                />
+                {user.gravatar ? (
+                  <Avatar
+                    name={user.fullname}
+                    src={user.gravatarUrl}
+                    h={10}
+                    w={10}
+                    rounded="full"
+                  />
+                ) : null}
                 <Text ml={4} as="span" alignSelf="center">
                   {user.fullName}
                 </Text>
@@ -413,10 +414,9 @@ const CreateEvent = props => {
                                 style
                               })}
                             >
-                              <FontAwesomeIcon
-                                icon={faMapMarkerAlt}
-                                className="mr-4"
-                              />
+                              <Box mr={4}>
+                                <FontAwesomeIcon icon={faMapMarkerAlt} />
+                              </Box>
                               <Text as="span">{suggestion.description}</Text>
                             </div>
                           );

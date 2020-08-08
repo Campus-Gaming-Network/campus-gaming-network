@@ -167,7 +167,7 @@ const School = props => {
   }
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
           <SchoolLogo

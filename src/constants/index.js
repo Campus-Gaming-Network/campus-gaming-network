@@ -172,7 +172,7 @@ export const FIREBASE_ERRORS = {
 
 export const GRAVATAR = {
   URL: "https://www.gravatar.com/avatar/",
-  RATING: "pg",
+  RA: "pg",
   DEFAULT: "retro"
 };
 

@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
-import Gravatar from "react-gravatar";
 import {
   Stack,
   Box,
@@ -13,7 +12,9 @@ import {
   List,
   ListItem,
   Spinner,
-  PseudoBox
+  PseudoBox,
+  Avatar,
+  Flex
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
@@ -24,7 +25,6 @@ import { firebaseAuth } from "../firebase";
 import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
-import Flex from "../components/Flex";
 import UserSilhouette from "../components/UserSilhouette";
 
 // Hooks
@@ -124,7 +124,6 @@ const User = props => {
         >
           <Link
             to="/user/edit"
-            className={constants.STYLES.LINK.DEFAULT}
             fontWeight="bold"
             width="100%"
             borderRadius="md"
@@ -138,13 +137,19 @@ const User = props => {
         </PseudoBox>
       ) : null}
       <Box as="header" display="flex" alignItems="center">
-        <Gravatar
-          default={constants.GRAVATAR.DEFAULT}
-          rating={constants.GRAVATAR.RA}
-          md5={user ? user.gravatar : null}
-          className="rounded-full border-4 bg-white border-gray-300 mr-2"
-          size={150}
-        />
+        {user.gravatar ? (
+          <Avatar
+            name={user.fullname}
+            src={user.gravatarUrl}
+            h={150}
+            w={150}
+            rounded="full"
+            mr={2}
+            bg="white"
+            borderWidth={4}
+            borderColor="gray.300"
+          />
+        ) : null}
         <Box pl={12}>
           <Heading
             as="h1"
@@ -165,17 +170,14 @@ const User = props => {
             alignItems="center"
           >
             {user.isVerifiedStudent && (
-              <Text className="text-base">
+              <Text>
                 <VisuallyHidden>User is a verified student</VisuallyHidden>
-                <FontAwesomeIcon className="mr-1 text-blue-600" icon={faStar} />
+                <Text mr={1} color="blue.500"></Text>
               </Text>
             )}
             {user.displayStatus}
             {school ? (
-              <Link
-                to={`/school/${school.id}`}
-                className={`${constants.STYLES.LINK.DEFAULT} ml-2`}
-              >
+              <Link to={`/school/${school.id}`} ml={2}>
                 {startCase(school.name.toLowerCase())}
               </Link>
             ) : null}
@@ -196,24 +198,42 @@ const User = props => {
           >
             Information
           </Heading>
-          <Flex tag="dl" wrap className="w-full">
-            <dt className="w-1/2 font-bold">Hometown</dt>
+          <Flex as="dl" flexWrap="wrap" w="100%">
+            <Text as="dt" w="50%" fontWeight="bold">
+              Hometown
+            </Text>
             {user.hometown ? (
-              <dd className="w-1/2">{user.hometown}</dd>
+              <Text as="dd" w="50%">
+                {user.hometown}
+              </Text>
             ) : (
-              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+              <Text as="dd" w="50%" color="gray.400">
+                Nothing set
+              </Text>
             )}
-            <dt className="w-1/2 font-bold">Major</dt>
+            <Text as="dt" w="50%" fontWeight="bold">
+              Major
+            </Text>
             {user.major ? (
-              <dd className="w-1/2">{user.major}</dd>
+              <Text as="dd" w="50%">
+                {user.major}
+              </Text>
             ) : (
-              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+              <Text as="dd" w="50%" color="gray.400">
+                Nothing set
+              </Text>
             )}
-            <dt className="w-1/2 font-bold">Minor</dt>
+            <Text as="dt" w="50%" fontWeight="bold">
+              Minor
+            </Text>
             {user.minor ? (
-              <dd className="w-1/2">{user.minor}</dd>
+              <Text as="dd" w="50%">
+                {user.minor}
+              </Text>
             ) : (
-              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+              <Text as="dd" w="50%" color="gray.400">
+                Nothing set
+              </Text>
             )}
           </Flex>
         </Stack>
@@ -281,7 +301,7 @@ const User = props => {
           {user.hasCurrentlyPlaying ? (
             <List display="flex" flexWrap="wrap">
               {user.currentlyPlaying.map(game => (
-                <ListItem key={game.name} className="w-1/5">
+                <ListItem key={game.name} w="20%">
                   <img
                     src={`https:${game.cover.url}`}
                     alt={`The cover art for ${game.name}`}
@@ -307,7 +327,7 @@ const User = props => {
           {user.hasCurrentlyPlaying ? (
             <List display="flex" flexWrap="wrap">
               {user.favoriteGames.map(game => (
-                <ListItem key={game.name} className="w-1/5">
+                <ListItem key={game.name} w="20%">
                   <img
                     src={`https:${game.cover.url}`}
                     alt={`The cover art for ${game.name}`}

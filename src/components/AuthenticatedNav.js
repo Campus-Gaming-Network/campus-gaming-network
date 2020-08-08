@@ -2,33 +2,31 @@ import React from "react";
 import { navigate } from "@reach/router";
 import isEmpty from "lodash.isempty";
 import isEqual from "lodash.isequal";
-import Gravatar from "react-gravatar";
-// eslint-disable-next-line no-unused-vars
 import { Link as ReachLink } from "@reach/router";
 import {
-  Button as ChakraButton,
+  Button,
   Flex,
   Text,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  MenuGroup,
   MenuDivider,
-  MenuOptionGroup,
-  MenuItemOption
+  Box,
+  Avatar,
+  Heading
 } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
-import * as constants from "../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSchool,
   faUserCircle,
-  faSignOutAlt
+  faSignOutAlt,
+  faBars,
+  faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import { firebaseAuth } from "../firebase";
 import { useAppState } from "../store";
-
 import Link from "./Link";
 import SchoolLogo from "./SchoolLogo";
 
@@ -37,7 +35,11 @@ const AuthenticatedNav = () => {
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const [user, setUser] = React.useState({});
   const [school, setSchool] = React.useState({});
-  const [isMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   // eslint-disable-next-line no-unused-vars
   const handleLogout = () => {
@@ -62,82 +64,118 @@ const AuthenticatedNav = () => {
   }, [user, state.schools, school]);
 
   return (
-    <nav
-      role="navigation"
-      className={`${
-        isMenuOpen ? "block" : "hidden"
-      } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
+    <Flex
+      as="nav"
+      align="center"
+      justify="space-between"
+      wrap="wrap"
+      padding="1.5rem"
+      borderBottomWidth={2}
+      bg="white"
     >
-      {/* TODO: Remove when better spot is found */}
-      {/* <ChakraButton onClick={handleLogout}>Log out</ChakraButton> */}
-      <Link
-        to="/event/create"
-        className="leading-none text-xl mx-5 rounded font-semibold text-white hover:text-gray-100 bg-purple-700 py-2 px-3 hover:underline focus:underline"
-      >
-        Create an Event
-      </Link>
-      <Menu>
-        <MenuButton as={ChakraButton} variantColor="transparent" size="lg">
-          {user.gravatar ? (
-            <Gravatar
-              default={constants.GRAVATAR.DEFAULT}
-              rating={constants.GRAVATAR.RA}
-              md5={user.gravatar}
-              className="h-12 w-12 rounded-full border-4 bg-white border-gray-300 mr-2"
-            />
-          ) : null}
-          <Text fontWeight="bold" fontSize="xl" color="gray.900">
-            {user.firstName}
-          </Text>
-        </MenuButton>
+      <Flex align="center" mr={5}>
+        <Link to="/">
+          <Heading as="h1" size="lg">
+            CGN
+          </Heading>
+        </Link>
+      </Flex>
 
-        <MenuList>
-          <MenuItem as={ReachLink} to={`user/${user.id}`}>
-            <Flex alignItems="center">
-              {user.gravatar ? (
-                <Gravatar
-                  default={constants.GRAVATAR.DEFAULT}
-                  rating={constants.GRAVATAR.RA}
-                  md5={user.gravatar}
-                  className="h-6 w-6 rounded-full mr-2"
-                />
-              ) : (
-                <Flex alignItems="center" color="gray.600" mr={2}>
-                  <FontAwesomeIcon icon={faUserCircle} />
-                </Flex>
-              )}
-              <Text lineHeight="1">Profile</Text>
-            </Flex>
-          </MenuItem>
-          <MenuItem as={ReachLink} to={`school/${school.id}`}>
-            <SchoolLogo
-              schoolId={school.id}
-              alt={`${school.name} school logo`}
-              h={6}
-              w={6}
-              bg="white"
-              rounded="full"
-              mr={2}
-              fallback={
-                <Flex alignItems="center" color="gray.600" mr={2}>
-                  <FontAwesomeIcon icon={faSchool} />
-                </Flex>
-              }
-            />
-            <Text lineHeight="1">School</Text>
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem onClick={handleLogout}>
-            <Flex alignItems="center">
-              <Flex alignItems="center" color="gray.600" mr={2}>
-                <FontAwesomeIcon icon={faSignOutAlt} />
+      <Box display={{ sm: "block", md: "none" }} onClick={toggleMenu}>
+        <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />
+      </Box>
+
+      <Box
+        display={{ sm: isMenuOpen ? "block" : "none", md: "flex" }}
+        width={{ sm: "full", md: "auto" }}
+        alignItems="center"
+        flexGrow={1}
+        justifyContent={{ sm: "flex-start", md: "flex-end" }}
+      >
+        <Button
+          as={ReachLink}
+          to="/event/create"
+          variantColor="purple"
+          shadow="md"
+        >
+          Create an Event
+        </Button>
+      </Box>
+
+      <Box
+        display={{ sm: isMenuOpen ? "block" : "none", md: "block" }}
+        mt={{ base: 4, md: 0 }}
+      >
+        <Menu>
+          <MenuButton as={Button} variantColor="transparent" size="lg">
+            {user.gravatar ? (
+              <Avatar
+                name={user.fullname}
+                src={user.gravatarUrl}
+                h={12}
+                w={12}
+                rounded="full"
+                mr={2}
+                bg="white"
+                borderWidth={2}
+                borderColor="gray.300"
+              />
+            ) : null}
+            <Text fontWeight="bold" fontSize="xl" color="gray.900">
+              {user.firstName}
+            </Text>
+          </MenuButton>
+
+          <MenuList>
+            <MenuItem as={ReachLink} to={`user/${user.id}`}>
+              <Flex alignItems="center">
+                {user.gravatar ? (
+                  <Avatar
+                    name={user.fullname}
+                    src={user.gravatarUrl}
+                    h={6}
+                    w={6}
+                    rounded="full"
+                    mr={2}
+                  />
+                ) : (
+                  <Flex alignItems="center" color="gray.600" mr={2}>
+                    <FontAwesomeIcon icon={faUserCircle} />
+                  </Flex>
+                )}
+                <Text lineHeight="1">Profile</Text>
               </Flex>
-              <Text lineHeight="1">Log out</Text>
-            </Flex>
-          </MenuItem>
-        </MenuList>
-      </Menu>
-    </nav>
+            </MenuItem>
+            <MenuItem as={ReachLink} to={`school/${school.id}`}>
+              <SchoolLogo
+                schoolId={school.id}
+                alt={`${school.name} school logo`}
+                h={6}
+                w={6}
+                bg="white"
+                rounded="full"
+                mr={2}
+                fallback={
+                  <Flex alignItems="center" color="gray.600" mr={2}>
+                    <FontAwesomeIcon icon={faSchool} />
+                  </Flex>
+                }
+              />
+              <Text lineHeight="1">School</Text>
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem onClick={handleLogout}>
+              <Flex alignItems="center">
+                <Flex alignItems="center" color="gray.600" mr={2}>
+                  <FontAwesomeIcon icon={faSignOutAlt} />
+                </Flex>
+                <Text lineHeight="1">Log out</Text>
+              </Flex>
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </Box>
+    </Flex>
   );
 };
 
