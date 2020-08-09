@@ -116,8 +116,8 @@ const CreateEvent = props => {
 
     const eventData = {
       creator: userDocRef,
-      name: formState.name,
-      description: formState.description,
+      name: formState.name.trim(),
+      description: formState.description.trim(),
       isOnlineEvent: formState.isOnlineEvent,
       startDateTime: firestoreStartDateTime,
       endDateTime: firestoreEndDateTime,
@@ -193,8 +193,8 @@ const CreateEvent = props => {
               gravatar: user.gravatar
             },
             eventDetails: {
-              name: formState.name,
-              description: formState.description,
+              name: formState.name.trim(),
+              description: formState.description.trim(),
               startDateTime: firestoreStartDateTime,
               endDateTime: firestoreEndDateTime,
               game: formState.game

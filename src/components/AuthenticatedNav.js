@@ -66,11 +66,12 @@ const AuthenticatedNav = () => {
   return (
     <Flex
       as="nav"
+      role="navigation"
       align="center"
       justify="space-between"
       wrap="wrap"
-      padding="1.5rem"
-      borderBottomWidth={2}
+      padding="1rem"
+      shadow="sm"
       bg="white"
     >
       <Flex align="center" mr={5}>
@@ -98,7 +99,7 @@ const AuthenticatedNav = () => {
           variantColor="purple"
           shadow="md"
         >
-          Create an Event
+          Create an event
         </Button>
       </Box>
 

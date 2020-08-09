@@ -146,7 +146,7 @@ const ForgotPassword = () => {
         <Flex align="center" justify="between">
           <Text>
             Go back to{" "}
-            <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
+            <Link to="/login" color="purple.500" fontWeight={600}>
               Login page
             </Link>
             .

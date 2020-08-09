@@ -151,29 +151,29 @@ const EditUser = props => {
       .doc(formState.school);
 
     const data = {
-      firstName: formState.firstName,
-      lastName: formState.lastName,
+      firstName: formState.firstName.trim(),
+      lastName: formState.lastName.trim(),
       status: formState.status,
-      hometown: formState.hometown,
+      hometown: formState.hometown.trim(),
       birthdate: formState.birthdate
         ? firebase.firestore.Timestamp.fromDate(
             new Date(moment(formState.birthdate))
           )
         : null,
-      major: formState.major,
-      minor: formState.minor,
-      bio: formState.bio,
+      major: formState.major.trim(),
+      minor: formState.minor.trim(),
+      bio: formState.bio.trim(),
       timezone: formState.timezone,
-      website: formState.website,
-      twitter: formState.twitter,
-      twitch: formState.twitch,
-      youtube: formState.youtube,
-      skype: formState.skype,
-      discord: formState.discord,
-      battlenet: formState.battlenet,
-      steam: formState.steam,
-      xbox: formState.xbox,
-      psn: formState.psn,
+      website: formState.website.trim(),
+      twitter: formState.twitter.trim(),
+      twitch: formState.twitch.trim(),
+      youtube: formState.youtube.trim(),
+      skype: formState.skype.trim(),
+      discord: formState.discord.trim(),
+      battlenet: formState.battlenet.trim(),
+      steam: formState.steam.trim(),
+      xbox: formState.xbox.trim(),
+      psn: formState.psn.trim(),
       school: schoolDocRef,
       currentlyPlaying,
       favoriteGames
@@ -264,13 +264,16 @@ const EditUser = props => {
         />
         <SocialAccountsSection
           handleFieldChange={handleFieldChange}
-          {...Object.keys(constants.ACCOUNTS).reduce(
-            (acc, cur) => ({
-              ...acc,
-              [cur]: state[cur]
-            }),
-            {}
-          )}
+          battlenet={formState.battlenet}
+          discord={formState.discord}
+          psn={formState.psn}
+          skype={formState.skype}
+          steam={formState.steam}
+          twitch={formState.twitch}
+          twitter={formState.twitter}
+          website={formState.website}
+          xbox={formState.xbox}
+          youtube={formState.youtube}
         />
         <FavoriteGamesSection
           handleFieldChange={handleFieldChange}
@@ -300,6 +303,9 @@ const EditUser = props => {
 };
 
 const DetailSection = React.memo(props => {
+  // TODO: Make a constant for 1000
+  const bioCharactersRemaining = props.bio ? 1000 - props.bio.length : 1000;
+
   return (
     <Box
       as="fieldset"
@@ -408,7 +414,13 @@ const DetailSection = React.memo(props => {
             h="150px"
           />
           <FormHelperText id="bio-helper-text">
-            Describe yourself in fewer than 1000 characters.
+            Describe yourself in fewer than 1000 characters.{" "}
+            <Text
+              as="span"
+              color={bioCharactersRemaining <= 0 ? "red.500" : undefined}
+            >
+              {bioCharactersRemaining} characters remaining.
+            </Text>
           </FormHelperText>
         </FormControl>
         <FormControl>
@@ -516,6 +528,7 @@ const SchoolSection = React.memo(props => {
 });
 
 const SocialAccountsSection = React.memo(props => {
+  console.log({ props });
   return (
     <Box
       as="fieldset"
@@ -573,6 +586,11 @@ const SocialAccountsSection = React.memo(props => {
 });
 
 const FavoriteGamesSection = React.memo(props => {
+  // TODO: Turn into constant
+  const favoriteGameLimit = 5;
+
+  console.log({ props });
+
   return (
     <Box
       as="fieldset"
@@ -605,14 +623,19 @@ const FavoriteGamesSection = React.memo(props => {
             name="favoriteGameSearch"
             onSelect={props.onGameSelect}
             clearInputOnSelect={true}
+            disabled={props.favoriteGames.length === favoriteGameLimit}
           />
         </FormControl>
         <Stack spacing={2}>
           <Text fontWeight="bold">
-            Your favorites
+            Your favorites{" "}
             <Text
               as="span"
-              color={`${props.favoriteGames.length === 5 ? "red" : undefined}`}
+              color={`${
+                props.favoriteGames.length === favoriteGameLimit
+                  ? "red.500"
+                  : undefined
+              }`}
             >
               ({props.favoriteGames.length}/5)
             </Text>
@@ -658,6 +681,9 @@ const FavoriteGamesSection = React.memo(props => {
 });
 
 const CurrentlyPlayingSection = React.memo(props => {
+  // TODO: Turn into constant
+  const currentlyPlayingLimit = 5;
+
   return (
     <Box
       as="fieldset"
@@ -688,6 +714,7 @@ const CurrentlyPlayingSection = React.memo(props => {
             name="currentGameSearch"
             onSelect={props.onGameSelect}
             clearInputOnSelect={true}
+            disabled={props.currentlyPlaying.length === currentlyPlayingLimit}
           />
         </FormControl>
         <Stack spacing={2}>
@@ -696,7 +723,9 @@ const CurrentlyPlayingSection = React.memo(props => {
             <Text
               as="span"
               color={`${
-                props.currentlyPlaying.length === 5 ? "red.500" : undefined
+                props.currentlyPlaying.length === currentlyPlayingLimit
+                  ? "red.500"
+                  : undefined
               }`}
             >
               ({props.currentlyPlaying.length}/5)

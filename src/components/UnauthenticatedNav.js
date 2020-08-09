@@ -17,6 +17,7 @@ const Header = () => {
   return (
     <Flex
       as="nav"
+      role="navigation"
       align="center"
       justify="space-between"
       wrap="wrap"

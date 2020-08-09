@@ -9,10 +9,11 @@ import {
   List,
   ListItem,
   Spinner,
-  Flex
+  Flex,
+  Avatar
 } from "@chakra-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import { faSchool, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import Gravatar from "react-gravatar";
 import isEmpty from "lodash.isempty";
 import * as constants from "../constants";
@@ -31,6 +32,9 @@ import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth } from "../firebase";
 import { isUrl } from "../utilities";
+
+////////////////////////////////////////////////////////////////////////////////
+// School
 
 const School = props => {
   const dispatch = useAppDispatch();
@@ -188,8 +192,6 @@ const School = props => {
                 w={40}
                 bg="gray.400"
                 rounded="full"
-                border="4px"
-                borderColor="gray.300"
               >
                 <FontAwesomeIcon icon={faSchool} size="4x" />
               </Flex>
@@ -221,46 +223,64 @@ const School = props => {
           >
             Information
           </Heading>
-          <dl className="flex flex-wrap w-full">
-            <dt className="w-1/2 font-bold">Contact Email</dt>
+          <Flex as="dl" flexWrap="wrap" w="100%">
+            <Text as="dt" w="50%" fontWeight="bold">
+              Contact Email
+            </Text>
             {school.contactEmail ? (
-              <dd className="w-1/2">
-                <a
-                  className={constants.STYLES.LINK.DEFAULT}
-                  href={`mailto:${school.contactEmail}`}
-                >
+              <Text as="dd" w="50%">
+                <OutsideLink href={`mailto:${school.contactEmail}`}>
                   {school.contactEmail}
-                </a>
-              </dd>
+                </OutsideLink>
+              </Text>
             ) : (
-              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+              <Text as="dd" w="50%" color="gray.400">
+                Nothing set
+              </Text>
             )}
-            <dt className="w-1/2 font-bold">Website</dt>
+            <Text as="dt" w="50%" fontWeight="bold">
+              Website
+            </Text>
             {school.website &&
             school.website !== constants.EMPTY_SCHOOL_WEBSITE ? (
-              <dd className="w-1/2">
+              <Text as="dd" w="50%">
                 {isUrl(school.website) ? (
-                  <OutsideLink href={`//${school.website}`}>
+                  <OutsideLink d="inline-block" href={`//${school.website}`}>
                     {school.website}
+                    <Text as="span" ml={2}>
+                      <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
+                    </Text>
                   </OutsideLink>
                 ) : (
                   <Text>{school.website}</Text>
                 )}
-              </dd>
+              </Text>
             ) : (
-              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+              <Text as="dd" w="50%" color="gray.400">
+                Nothing set
+              </Text>
             )}
-            <dt className="w-1/2 font-bold">Address</dt>
+            <Text as="dt" w="50%" fontWeight="bold">
+              Address
+            </Text>
             {school.address ? (
-              <dd className="w-1/2">
-                <OutsideLink href={school.googleMapsAddressLink}>
+              <Text as="dd" w="50%">
+                <OutsideLink
+                  d="inline-block"
+                  href={school.googleMapsAddressLink}
+                >
                   {startCase(school.address.toLowerCase())}
+                  <Text as="span" ml={2}>
+                    <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
+                  </Text>
                 </OutsideLink>
-              </dd>
+              </Text>
             ) : (
-              <dd className="w-1/2 text-gray-500">Nothing set</dd>
+              <Text as="dd" w="50%" color="gray.400">
+                Nothing set
+              </Text>
             )}
-          </dl>
+          </Flex>
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -284,13 +304,12 @@ const School = props => {
             </Box>
           ) : events && events.length ? (
             <List>
-              test
               {events.map(event => (
                 <EventListItem key={event.id} event={event} school={school} />
               ))}
             </List>
           ) : (
-            <Text mt={4} className="text-gray-500">
+            <Text mt={4} color="gray.400">
               {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
             </Text>
           )}
@@ -333,16 +352,17 @@ const School = props => {
                     p={4}
                     height="calc(100% - 1rem)"
                   >
-                    <Gravatar
-                      default={constants.GRAVATAR.DEFAULT}
-                      rating={constants.GRAVATAR.RA}
-                      md5={user.gravatar}
-                      className="rounded-full"
-                      size={60}
+                    <Avatar
+                      name={user.fullname}
+                      src={user.gravatarUrl}
+                      h={60}
+                      w={60}
+                      rounded="full"
+                      bg="white"
                     />
                     <Link
                       to={`../../../user/${user.id}`}
-                      className={`${constants.STYLES.LINK.DEFAULT} text-base leading-tight`}
+                      color="purple.500"
                       fontWeight="bold"
                       mt={4}
                     >

@@ -26,11 +26,16 @@ import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 import UserSilhouette from "../components/UserSilhouette";
+import GameCover from "../components/GameCover";
+import GameLink from "../components/GameLink";
 
 // Hooks
 import useFetchUserDetails from "../hooks/useFetchUserDetails";
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
 // import useFetchSchools from ".//hooks/useFetchSchools";
+
+////////////////////////////////////////////////////////////////////////////////
+// User
 
 const User = props => {
   const dispatch = useAppDispatch();
@@ -137,19 +142,17 @@ const User = props => {
         </PseudoBox>
       ) : null}
       <Box as="header" display="flex" alignItems="center">
-        {user.gravatar ? (
-          <Avatar
-            name={user.fullname}
-            src={user.gravatarUrl}
-            h={150}
-            w={150}
-            rounded="full"
-            mr={2}
-            bg="white"
-            borderWidth={4}
-            borderColor="gray.300"
-          />
-        ) : null}
+        <Avatar
+          name={user.fullname}
+          src={user.gravatarUrl}
+          h={150}
+          w={150}
+          rounded="full"
+          mr={2}
+          bg="white"
+          borderWidth={4}
+          borderColor="gray.300"
+        />
         <Box pl={12}>
           <Heading
             as="h1"
@@ -172,12 +175,19 @@ const User = props => {
             {user.isVerifiedStudent && (
               <Text>
                 <VisuallyHidden>User is a verified student</VisuallyHidden>
-                <Text mr={1} color="blue.500"></Text>
+                <Text mr={1} color="blue.500">
+                  <FontAwesomeIcon icon={faStar} />
+                </Text>
               </Text>
             )}
             {user.displayStatus}
             {school ? (
-              <Link to={`/school/${school.id}`} ml={2}>
+              <Link
+                to={`/school/${school.id}`}
+                color="purple.500"
+                fontWeight={600}
+                ml={2}
+              >
                 {startCase(school.name.toLowerCase())}
               </Link>
             ) : null}
@@ -247,7 +257,7 @@ const User = props => {
             Accounts
           </Heading>
           {user.hasAccounts ? (
-            <Box display="flex" as="ul" flexWrap="wrap" width="100%">
+            <List display="flex" flexWrap="wrap" width="100%" styleType="none">
               {Object.keys(constants.ACCOUNTS).map(key => {
                 const account = constants.ACCOUNTS[key];
                 const value = user[key];
@@ -257,7 +267,7 @@ const User = props => {
                 }
 
                 return (
-                  <Box as="li" key={key}>
+                  <ListItem key={key}>
                     <Box
                       borderWidth="1px"
                       boxShadow="lg"
@@ -281,10 +291,10 @@ const User = props => {
                         </Text>
                       </Box>
                     </Box>
-                  </Box>
+                  </ListItem>
                 );
               })}
-            </Box>
+            </List>
           ) : (
             <Text color="gray.400">{constants.USER_EMPTY_ACCOUNTS_TEXT}</Text>
           )}
@@ -298,22 +308,10 @@ const User = props => {
           >
             Currently Playing
           </Heading>
-          {user.hasCurrentlyPlaying ? (
-            <List display="flex" flexWrap="wrap">
-              {user.currentlyPlaying.map(game => (
-                <ListItem key={game.name} w="20%">
-                  <img
-                    src={`https:${game.cover.url}`}
-                    alt={`The cover art for ${game.name}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Text color="gray.400">
-              {constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
-            </Text>
-          )}
+          <GameList
+            games={user.currentlyPlaying}
+            emptyText={constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
+          />
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -324,22 +322,10 @@ const User = props => {
           >
             Favorite Games
           </Heading>
-          {user.hasCurrentlyPlaying ? (
-            <List display="flex" flexWrap="wrap">
-              {user.favoriteGames.map(game => (
-                <ListItem key={game.name} w="20%">
-                  <img
-                    src={`https:${game.cover.url}`}
-                    alt={`The cover art for ${game.name}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Text color="gray.400">
-              {constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
-            </Text>
-          )}
+          <GameList
+            games={user.favoriteGames}
+            emptyText={constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
+          />
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -377,5 +363,39 @@ const User = props => {
     </Box>
   );
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// GameList
+
+const GameList = props => {
+  if (!props.games || props.games.length === 0) {
+    return <Text color="gray.400">{props.emptyText || "No games"}</Text>;
+  }
+
+  return (
+    <List display="flex" flexWrap="wrap">
+      {props.games.map(game => (
+        <GameListItem
+          key={props.name}
+          name={game.name}
+          slug={game.slug}
+          url={game.cover ? game.cover.url : null}
+        />
+      ))}
+    </List>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// GameListItem
+
+const GameListItem = React.memo(props => {
+  return (
+    <ListItem w="100px" mt={4} mr={4}>
+      <GameCover name={props.name} url={props.url} />
+      <GameLink name={props.name} slug={props.slug} />
+    </ListItem>
+  );
+});
 
 export default User;
