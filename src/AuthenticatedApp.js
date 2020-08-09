@@ -3,6 +3,7 @@ import React from "react";
 import { Router } from "@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
+import { Box } from "@chakra-ui/core";
 
 // Other
 import { firebaseAuth } from "./firebase";
@@ -96,8 +97,10 @@ const AuthenticatedApp = () => {
 
   return (
     <React.Fragment>
-      <Header>{nav}</Header>
-      <main className="pb-12">{routes}</main>
+      {nav}
+      <Box as="main" pb={12}>
+        {routes}
+      </Box>
     </React.Fragment>
   );
 };

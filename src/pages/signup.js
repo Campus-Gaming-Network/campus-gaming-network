@@ -90,7 +90,7 @@ const Signup = () => {
   };
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
       <Box
         as="form"
         borderWidth="1px"
@@ -137,7 +137,7 @@ const Signup = () => {
         </Button>
         <Text>
           Already a member?{" "}
-          <Link to="/login" className={constants.STYLES.LINK.DEFAULT}>
+          <Link to="/login" color="purple.500" fontWeight={600}>
             Log in
           </Link>
         </Text>

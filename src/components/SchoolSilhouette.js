@@ -3,7 +3,7 @@ import { Stack, Box } from "@chakra-ui/core";
 
 const SchoolSilhouette = () => {
   return (
-    <Box as="article" my={16} px={8} mx="auto" maxW="5xl">
+    <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
       <Box as="header" display="flex" alignItems="center">
         <Box bg="gray.100" w="150px" h="150px" mr="2" borderRadius="full" />
         <Box pl={12}>

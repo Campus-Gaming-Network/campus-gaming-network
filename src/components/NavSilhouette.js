@@ -1,19 +1,28 @@
 import React from "react";
-import { Box } from "@chakra-ui/core";
+import { Box, Flex, Heading } from "@chakra-ui/core";
 
 const NavSilhouette = () => {
-  const [isMenuOpen] = React.useState(false);
-
   return (
-    <nav
+    <Flex
+      as="nav"
       role="navigation"
-      className={`${
-        isMenuOpen ? "block" : "hidden"
-      } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
+      align="center"
+      justify="space-between"
+      wrap="wrap"
+      padding="1.5rem"
+      borderBottomWidth={2}
     >
-      <Box bg="gray.200" w="65px" h="38px" mr="2" borderRadius="md" />
-      <Box bg="purple.500" w="125px" h="38px" borderRadius="md" />
-    </nav>
+      <Flex align="center" mr={5}>
+        <Heading as="h1" size="lg">
+          CGN
+        </Heading>
+      </Flex>
+
+      <Flex>
+        <Box bg="gray.200" w="65px" h="38px" mr="2" borderRadius="md" />
+        <Box bg="purple.500" w="125px" h="38px" borderRadius="md" />
+      </Flex>
+    </Flex>
   );
 };
 

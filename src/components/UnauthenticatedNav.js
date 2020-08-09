@@ -1,32 +1,70 @@
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { Box, Button, Flex, Heading } from "@chakra-ui/core";
+import { Link as ReachLink } from "@reach/router";
 
 // Components
 import Link from "./Link";
 
-const UnauthenticatedNav = () => {
-  const [isMenuOpen] = React.useState(false);
+const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
-    <nav
+    <Flex
+      as="nav"
       role="navigation"
-      className={`${
-        isMenuOpen ? "block" : "hidden"
-      } px-2 pt-2 pb-4 sm:flex items-center sm:p-0`}
+      align="center"
+      justify="space-between"
+      wrap="wrap"
+      padding="1.5rem"
+      borderBottomWidth={2}
+      bg="white"
     >
-      <Link
-        to="/login"
-        className="text-xl block mx-3 py-1 active:outline sm:rounded hover:underline focus:underline"
+      <Flex align="center" mr={5}>
+        <Link to="/">
+          <Heading as="h1" size="lg">
+            CGN
+          </Heading>
+        </Link>
+      </Flex>
+
+      <Box display={{ sm: "block", md: "none" }} onClick={toggleMenu}>
+        <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />
+      </Box>
+
+      <Box
+        display={{ sm: isMenuOpen ? "block" : "none", md: "flex" }}
+        width={{ sm: "full", md: "auto" }}
+        alignItems="center"
+        flexGrow={1}
+        justifyContent={{ sm: "flex-start", md: "flex-end" }}
       >
-        Log In
-      </Link>
-      <Link
-        to="/register"
-        className="text-xl mt-1 block ml-3 rounded font-bold text-white bg-purple-700 py-1 px-3 hover:underline focus:underline sm:mt-0 sm:ml-2"
+        <Link
+          to="/login"
+          mt={{ base: 4, md: 0 }}
+          mr={6}
+          display="block"
+          fontWeight={600}
+        >
+          Log In
+        </Link>
+      </Box>
+
+      <Box
+        display={{ sm: isMenuOpen ? "block" : "none", md: "block" }}
+        mt={{ base: 4, md: 0 }}
       >
-        Sign Up Free
-      </Link>
-    </nav>
+        <Button as={ReachLink} to="/register" variantColor="purple" shadow="md">
+          Sign Up Free
+        </Button>
+      </Box>
+    </Flex>
   );
 };
 
-export default UnauthenticatedNav;
+export default Header;

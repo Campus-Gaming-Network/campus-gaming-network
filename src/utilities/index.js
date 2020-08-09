@@ -64,6 +64,10 @@ export const createGravatarHash = (email = "") => {
   return md5(trimmedEmail.toLowerCase());
 };
 
+export const createGravatarRequestUrl = hash => {
+  return `https://www.gravatar.com/avatar/${hash}?s=100&d=${constants.GRAVATAR.DEFAULT}&r=${constants.GRAVATAR.RA}`;
+};
+
 export const noop = () => {};
 
 export const mapUser = (user, ref) => ({
@@ -80,7 +84,8 @@ export const mapUser = (user, ref) => ({
       ? "Alumni of "
       : user.status === "GRAD"
       ? "Graduate Student at "
-      : `${capitalize(user.status)} at `
+      : `${capitalize(user.status)} at `,
+  gravatarUrl: createGravatarRequestUrl(user.gravatar)
 });
 
 export const mapEvent = (event, ref) => ({

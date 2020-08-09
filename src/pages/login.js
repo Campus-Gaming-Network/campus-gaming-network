@@ -12,17 +12,15 @@ import {
   Text,
   Button,
   Heading,
-  Divider
+  Divider,
+  Flex
 } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
-
-import * as constants from "../constants";
 
 import { useFormFields } from "../utilities";
 
 import { firebaseAuth } from "../firebase";
 
-import Flex from "../components/Flex";
 import Link from "../components/Link";
 
 const Login = () => {
@@ -58,7 +56,7 @@ const Login = () => {
   };
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
       <Box
         as="form"
         borderWidth="1px"
@@ -122,17 +120,14 @@ const Login = () => {
         >
           Log In
         </Button>
-        <Flex itemsCenter justifyBetween>
+        <Flex alignItems="center" justifyContent="space-between">
           <Text>
             Don’t have an account?{" "}
-            <Link to="/register" className={constants.STYLES.LINK.DEFAULT}>
+            <Link to="/register" color="purple.500" fontWeight={600}>
               Create one
             </Link>
           </Text>
-          <Link
-            to="/forgot-password"
-            className={`${constants.STYLES.LINK.DEFAULT}`}
-          >
+          <Link to="/forgot-password" color="purple.500" fontWeight={600}>
             Forgot your password?
           </Link>
         </Flex>

@@ -86,7 +86,7 @@ const PasswordReset = props => {
   };
 
   return (
-    <Box as="article" my={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
       <Box
         as="form"
         borderWidth="1px"

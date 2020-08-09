@@ -31,7 +31,8 @@ import {
   Flex,
   PseudoBox,
   Image,
-  useToast
+  useToast,
+  Avatar
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { firebaseFirestore, firebaseAuth } from "../firebase";
@@ -337,7 +338,6 @@ const Event = props => {
             >
               <Link
                 to={`/event/${props.id}/edit`}
-                className={constants.STYLES.LINK.DEFAULT}
                 fontWeight="bold"
                 width="100%"
                 borderRadius="md"
@@ -354,7 +354,9 @@ const Event = props => {
             <Box pr={2}>
               <Link
                 to={`../../../school/${event.school.id}`}
-                className={`${constants.STYLES.LINK.DEFAULT} text-lg`}
+                color="purple.500"
+                fontWeight={600}
+                fontSize="lg"
               >
                 {startCase(event.schoolDetails.name.toLowerCase())}
               </Link>
@@ -372,7 +374,9 @@ const Event = props => {
                     mr={2}
                   />
                 ) : (
-                  <FontAwesomeIcon icon={faGamepad} className="mr-2" />
+                  <Box mr={2}>
+                    <FontAwesomeIcon icon={faGamepad} />
+                  </Box>
                 )}
                 <Text as="span">{event.game.name}</Text>
               </Flex>
@@ -385,8 +389,6 @@ const Event = props => {
               w={24}
               bg="gray.400"
               rounded="full"
-              border="4px"
-              borderColor="gray.300"
               ml="auto"
             >
               <FontAwesomeIcon icon={faSchool} size="2x" />
@@ -421,11 +423,9 @@ const Event = props => {
                 bg="green.100"
                 rounded="lg"
               >
-                <FontAwesomeIcon
-                  size="xs"
-                  icon={faBolt}
-                  className="pulse text-green-600 mr-2"
-                />
+                <Text mr={2} color="green.600">
+                  <FontAwesomeIcon size="xs" icon={faBolt} className="pulse" />
+                </Text>
                 <Text
                   as="span"
                   fontSize="lg"
@@ -438,10 +438,9 @@ const Event = props => {
               </Flex>
             ) : null}
             <Box>
-              <FontAwesomeIcon
-                icon={faClock}
-                className="text-gray-700 mr-2 text-lg"
-              />
+              <Text as="span" color="gray.600" mr={2} fontSize="lg">
+                <FontAwesomeIcon icon={faClock} />
+              </Text>
               <time dateTime={event.formattedStartDateTime}>
                 {event.formattedStartDateTime}
               </time>{" "}
@@ -453,25 +452,25 @@ const Event = props => {
             <Box>
               {event.isOnlineEvent ? (
                 <React.Fragment>
-                  <FontAwesomeIcon icon={faGlobe} className="mr-2" />
+                  <Text as="span" mr={2}>
+                    <FontAwesomeIcon icon={faGlobe} />
+                  </Text>
                   <Text as="span">Online event</Text>
                 </React.Fragment>
               ) : event.location ? (
                 <React.Fragment>
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2 text-lg"
-                  />
+                  <Text as="span" color="gray.600" mr={2} fontSize="lg">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} />
+                  </Text>
                   <OutsideLink href={event.googleMapsAddressLink}>
                     {event.location}
                   </OutsideLink>
                 </React.Fragment>
               ) : (
                 <React.Fragment>
-                  <FontAwesomeIcon
-                    icon={faMapMarkerAlt}
-                    className="text-gray-700 mr-2 text-lg"
-                  />
+                  <Text as="span" color="gray.600" mr={2} fontSize="lg">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} />
+                  </Text>
                   <Text as="span">{constants.EVENT_EMPTY_LOCATION_TEXT}</Text>
                 </React.Fragment>
               )}
@@ -569,16 +568,19 @@ const Event = props => {
                       p={4}
                       height="calc(100% - 1rem)"
                     >
-                      <Gravatar
-                        default={constants.GRAVATAR.DEFAULT}
-                        rating={constants.GRAVATAR.RA}
-                        md5={user.gravatar}
-                        className="rounded-full"
-                        size={60}
+                      <Avatar
+                        name={user.fullname}
+                        src={user.gravatarUrl}
+                        h={60}
+                        w={60}
+                        rounded="full"
+                        bg="white"
+                        borderWidth={4}
+                        borderColor="gray.300"
                       />
                       <Link
                         to={`../../../user/${user.id}`}
-                        className={`${constants.STYLES.LINK.DEFAULT} text-base leading-tight`}
+                        color="purple.500"
                         fontWeight="bold"
                         mt={4}
                       >
