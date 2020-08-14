@@ -21,6 +21,7 @@ import {
   useToast,
   Select as ChakraSelect,
   Flex,
+  Image,
   Avatar
 } from "@chakra-ui/core";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
@@ -257,6 +258,7 @@ const CreateEvent = props => {
     formDispatch({ field: "endDateTime", value: event.endDateTime.toDate() });
     formDispatch({ field: "placeId", value: event.location });
     formDispatch({ field: "location", value: event.placeId });
+    formDispatch({ field: "game", value: event.game });
     setHasPrefilledForm(true);
   };
 
@@ -276,6 +278,8 @@ const CreateEvent = props => {
   if (!hasPrefilledForm && !!event) {
     prefillForm();
   }
+
+  console.log({ formState });
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
@@ -462,10 +466,26 @@ const CreateEvent = props => {
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
-              <GameSearch
-                inputPlaceholder="The game being played"
-                onSelect={setGame}
-              />
+              {hasPrefilledForm ? (
+                <Flex alignItems="center">
+                  <Box flexGrow={1}>
+                    <GameSearch
+                      inputPlaceholder="The game being played"
+                      onSelect={setGame}
+                      gameName={formState.game.name}
+                    />
+                  </Box>
+                  <Box pl={8}>
+                    <Image
+                      src={formState.game.cover.url}
+                      rounded="lg"
+                      shadow="md"
+                      h={20}
+                      w={20}
+                    />
+                  </Box>
+                </Flex>
+              ) : null}
             </FormControl>
             <FormControl isRequired isInvalid={!formState.startDateTime}>
               <FormLabel

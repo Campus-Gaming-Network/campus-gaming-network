@@ -376,7 +376,7 @@ const GameList = props => {
     <List display="flex" flexWrap="wrap">
       {props.games.map(game => (
         <GameListItem
-          key={props.name}
+          key={game.slug}
           name={game.name}
           slug={game.slug}
           url={game.cover ? game.cover.url : null}

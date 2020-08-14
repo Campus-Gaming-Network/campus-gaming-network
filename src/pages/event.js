@@ -9,7 +9,6 @@ import {
   faGamepad
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import Gravatar from "react-gravatar";
 import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
 import {
@@ -363,23 +362,6 @@ const Event = props => {
               <Heading as="h1" fontWeight="bold" fontSize="5xl">
                 {event.name}
               </Heading>
-              <Flex align="center" pt={2}>
-                {event.game.cover && event.game.cover.url ? (
-                  <Image
-                    src={event.game.cover.url}
-                    rounded="lg"
-                    shadow="md"
-                    h={10}
-                    w={10}
-                    mr={2}
-                  />
-                ) : (
-                  <Box mr={2}>
-                    <FontAwesomeIcon icon={faGamepad} />
-                  </Box>
-                )}
-                <Text as="span">{event.game.name}</Text>
-              </Flex>
             </Box>
             <Flex
               alignItems="center"
@@ -395,6 +377,23 @@ const Event = props => {
             </Flex>
           </Flex>
           <Stack as="section">
+            <Flex align="center" pt={2}>
+              {event.game.cover && event.game.cover.url ? (
+                <Image
+                  src={event.game.cover.url}
+                  rounded="lg"
+                  shadow="md"
+                  h={10}
+                  w={10}
+                  mr={2}
+                />
+              ) : (
+                <Box mr={2}>
+                  <FontAwesomeIcon icon={faGamepad} />
+                </Box>
+              )}
+              <Text as="span">{event.game.name}</Text>
+            </Flex>
             {event.hasEnded ? (
               <Flex
                 alignItems="center"

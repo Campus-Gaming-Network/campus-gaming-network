@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
+import startCase from "lodash.startcase";
 import moment from "moment";
 import {
   Input as ChakraInput,
@@ -24,20 +25,12 @@ import {
   Flex,
   useToast
 } from "@chakra-ui/core";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxPopover,
-  ComboboxList,
-  ComboboxOption,
-  ComboboxOptionText
-} from "@reach/combobox";
 import * as constants from "../constants";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import timezones from "../data/timezones.json";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
-import SchoolSelect from "../components/SchoolSelect";
+import SchoolSearch from "../components/SchoolSearch";
 import GameSearch from "../components/GameSearch";
 
 const initialFormState = {
@@ -89,6 +82,10 @@ const EditUser = props => {
   }, []);
   const [favoriteGames, setFavoriteGames] = React.useState([]);
   const [currentlyPlaying, setCurrentGames] = React.useState([]);
+  const schoolName = React.useMemo(
+    () => startCase(state.schools[user.school.id].name.toLowerCase()),
+    [user.school.id]
+  );
 
   const prefillForm = () => {
     formDispatch({ field: "firstName", value: user.firstName || "" });
@@ -119,6 +116,10 @@ const EditUser = props => {
     setCurrentGames(user.currentlyPlaying || []);
     setFavoriteGames(user.favoriteGames || []);
     setHasPrefilledForm(true);
+  };
+
+  const onSchoolSelect = school => {
+    formDispatch({ field: "school", value: school.id || "" });
   };
 
   const toggleFavoriteGame = game => {
@@ -257,7 +258,8 @@ const EditUser = props => {
         />
         <SchoolSection
           handleFieldChange={handleFieldChange}
-          school={formState.school}
+          onSchoolSelect={onSchoolSelect}
+          schoolName={schoolName}
           status={formState.status}
           major={formState.major}
           minor={formState.minor}
@@ -473,9 +475,9 @@ const SchoolSection = React.memo(props => {
           <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
             School
           </FormLabel>
-          <SchoolSelect
-            onChange={props.handleFieldChange}
-            value={props.school}
+          <SchoolSearch
+            onSelect={props.onSchoolSelect}
+            schoolName={props.schoolName}
           />
         </FormControl>
         <FormControl isRequired>
@@ -528,7 +530,6 @@ const SchoolSection = React.memo(props => {
 });
 
 const SocialAccountsSection = React.memo(props => {
-  console.log({ props });
   return (
     <Box
       as="fieldset"
@@ -588,8 +589,6 @@ const SocialAccountsSection = React.memo(props => {
 const FavoriteGamesSection = React.memo(props => {
   // TODO: Turn into constant
   const favoriteGameLimit = 5;
-
-  console.log({ props });
 
   return (
     <Box

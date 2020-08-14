@@ -16,7 +16,10 @@ import useDebounce from "../hooks/useDebounce";
 const CACHED_GAMES = {};
 
 const GameSearch = props => {
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState(props.gameName || "");
+
+  const handleChange = event => setSearchTerm(event.target.value);
+
   const debouncedGameSearch = useDebounce(searchTerm, 500);
 
   const useGameSearch = debouncedGameSearch => {
@@ -83,7 +86,7 @@ const GameSearch = props => {
         id={props.id || "gameSearch"}
         name={props.name || "gameSearch"}
         placeholder={props.inputPlaceholder || "Search"}
-        onChange={e => setSearchTerm(e.target.value)}
+        onChange={handleChange}
         value={searchTerm}
       />
       {gamesResults && (

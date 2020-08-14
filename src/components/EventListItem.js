@@ -104,8 +104,8 @@ const EventListItem = props => {
             </Text>
           </Flex>
         ) : (
-          <Box display="block">
-            <Text mr={2} color="gray.500">
+          <Box d="block">
+            <Text d="inline" mr={2} color="gray.500">
               <FontAwesomeIcon icon={faClock} />
             </Text>
             <Text

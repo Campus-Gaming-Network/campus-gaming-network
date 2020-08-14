@@ -23,7 +23,7 @@ import * as constants from "../constants";
 import { createGravatarHash } from "../utilities";
 
 import Link from "../components/Link";
-import SchoolSelect from "../components/SchoolSelect";
+import SchoolSearch from "../components/SchoolSearch";
 
 import { firebaseFirestore, firebaseAuth } from "../firebase";
 
@@ -52,6 +52,9 @@ const Signup = () => {
   const handleFieldChange = React.useCallback(e => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
+  const onSchoolSelect = school => {
+    formDispatch({ field: "school", value: school.id || "" });
+  };
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -120,8 +123,8 @@ const Signup = () => {
         />
         <SchoolSection
           handleFieldChange={handleFieldChange}
-          school={formState.school}
           status={formState.status}
+          onSchoolSelect={onSchoolSelect}
         />
         <Button
           variantColor="purple"
@@ -234,7 +237,7 @@ const SchoolSection = React.memo(props => {
         <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
           School
         </FormLabel>
-        <SchoolSelect onChange={props.handleFieldChange} value={props.school} />
+        <SchoolSearch onSelect={props.onSchoolSelect} />
       </FormControl>
       <FormControl isRequired>
         <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">

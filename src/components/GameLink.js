@@ -22,7 +22,7 @@ const GameLink = React.memo(props => {
       fontWeight="bold"
       color="purple.500"
       fontSize="sm"
-      pt={2}
+      mt={2}
     >
       {props.name}
       <Text as="span" ml={1}>

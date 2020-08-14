@@ -65,7 +65,7 @@ const mapSchool = ({
   return school;
 };
 
-// Wear the magic happens
+// Where the magic happens
 const main = async () => {
   console.log("====================");
   console.log("Starting...");
