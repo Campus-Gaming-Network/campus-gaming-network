@@ -32,7 +32,7 @@ const useFetchSchools = () => {
 
   React.useEffect(() => {
     const fetchSchools = async () => {
-      console.log("fetchSchools...");
+      console.log("[API] fetchSchools...");
 
       firebaseFirestore
         .collection("schools")

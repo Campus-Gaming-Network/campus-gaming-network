@@ -49,13 +49,19 @@ const reducer = (state, action) => {
         ...state,
         school: {
           ...state.school,
-          users: action.payload.users
+          users: {
+            ...state.school.users,
+            [action.payload.page]: action.payload.users
+          }
         },
         schools: {
           ...state.schools,
           [action.payload.id]: {
             ...state.schools[action.payload.id],
-            users: action.payload.users
+            users: {
+              ...state.schools[action.payload.id].users,
+              [action.payload.page]: action.payload.users
+            }
           }
         }
       };
@@ -64,13 +70,19 @@ const reducer = (state, action) => {
         ...state,
         school: {
           ...state.school,
-          events: action.payload.events
+          events: {
+            ...state.school.events,
+            [action.payload.page]: action.payload.events
+          }
         },
         schools: {
           ...state.schools,
           [action.payload.id]: {
             ...state.schools[action.payload.id],
-            events: action.payload.events
+            events: {
+              ...state.schools[action.payload.id].events,
+              [action.payload.page]: action.payload.events
+            }
           }
         }
       };
@@ -127,13 +139,19 @@ const reducer = (state, action) => {
         ...state,
         event: {
           ...state.event,
-          users: action.payload.users
+          users: {
+            ...state.school.users,
+            [action.payload.page]: action.payload.users
+          }
         },
         events: {
           ...state.events,
           [action.payload.id]: {
             ...state.events[action.payload.id],
-            users: action.payload.users
+            users: {
+              ...state.events[action.payload.id].users,
+              [action.payload.page]: action.payload.users
+            }
           }
         }
       };

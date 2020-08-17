@@ -28,6 +28,7 @@ import {
 import { firebaseAuth } from "../firebase";
 import { useAppState } from "../store";
 import Link from "./Link";
+/* eslint-disable no-unused-vars */
 import SchoolLogo from "./SchoolLogo";
 
 const AuthenticatedNav = () => {
@@ -41,7 +42,6 @@ const AuthenticatedNav = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // eslint-disable-next-line no-unused-vars
   const handleLogout = () => {
     firebaseAuth.signOut().then(() => navigate("/"));
   };
@@ -56,8 +56,10 @@ const AuthenticatedNav = () => {
   React.useEffect(() => {
     if (!isEmpty(user)) {
       const _school = state.schools[user.school.id];
+      const noSchoolSet = isEmpty(school) && _school;
+      const userHasChangedSchool = user.school.id !== school.id;
 
-      if (isEmpty(school) && _school) {
+      if (noSchoolSet || userHasChangedSchool) {
         setSchool(_school);
       }
     }
@@ -95,9 +97,9 @@ const AuthenticatedNav = () => {
       >
         <Button
           as={ReachLink}
-          to="/event/create"
+          to="/create-event"
           variantColor="purple"
-          shadow="md"
+          variant="ghost"
         >
           Create an event
         </Button>
@@ -106,23 +108,38 @@ const AuthenticatedNav = () => {
       <Box
         display={{ sm: isMenuOpen ? "block" : "none", md: "block" }}
         mt={{ base: 4, md: 0 }}
+        ml={2}
       >
         <Menu>
-          <MenuButton as={Button} variantColor="transparent" size="lg">
+          <MenuButton
+            d="flex"
+            alignItems="center"
+            justifyContent="center"
+            _focus={{
+              bg: "gray.100",
+              boxShadow: "outline"
+            }}
+            _hover={{
+              bg: "gray.100"
+            }}
+            px={4}
+            rounded="md"
+          >
             {user.gravatar ? (
               <Avatar
                 name={user.fullname}
                 src={user.gravatarUrl}
-                h={12}
-                w={12}
+                h={10}
+                w={10}
                 rounded="full"
-                mr={2}
+                mr={4}
                 bg="white"
                 borderWidth={2}
                 borderColor="gray.300"
+                height="2.5rem"
               />
             ) : null}
-            <Text fontWeight="bold" fontSize="xl" color="gray.900">
+            <Text fontWeight="bold" color="gray.900">
               {user.firstName}
             </Text>
           </MenuButton>
@@ -148,7 +165,7 @@ const AuthenticatedNav = () => {
               </Flex>
             </MenuItem>
             <MenuItem as={ReachLink} to={`school/${school.id}`}>
-              <SchoolLogo
+              {/* <SchoolLogo
                 schoolId={school.id}
                 alt={`${school.name} school logo`}
                 h={6}
@@ -161,7 +178,10 @@ const AuthenticatedNav = () => {
                     <FontAwesomeIcon icon={faSchool} />
                   </Flex>
                 }
-              />
+              /> */}
+              <Flex alignItems="center" color="gray.600" mr={2}>
+                <FontAwesomeIcon icon={faSchool} />
+              </Flex>
               <Text lineHeight="1">School</Text>
             </MenuItem>
             <MenuDivider />

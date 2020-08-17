@@ -20,13 +20,12 @@ import PasswordReset from "./pages/password-reset";
 
 // Components
 import UnauthenticatedNav from "./components/UnauthenticatedNav";
-import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import NavSilhouette from "./components/NavSilhouette";
 import UserSilhouette from "./components/UserSilhouette";
 import SchoolSilhouette from "./components/SchoolSilhouette";
 import EventSilhouette from "./components/EventSilhouette";
-import FormSilhouette from "./components/FormSilhouette";
+import Empty from "./components/Empty";
 
 const UnauthenticatedApp = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
@@ -64,13 +63,17 @@ const SilhouetteRoutes = () => {
     <Router>
       <ScrollToTop default>
         <Home path="/" />
+        <Empty path="edit-user" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
+        <Empty path="school/:id/edit" />
+        <Empty path="create-event" />
         <EventSilhouette path="event/:id" />
-        <Signup path="register" />
-        <Login path="login" />
-        <ForgotPassword path="forgot-password" />
-        <PasswordReset path="password-reset" />
+        <Empty path="event/:id/edit" />
+        <Empty path="register" />
+        <Empty path="login" />
+        <Empty path="forgot-password" />
+        <Empty path="password-reset" />
         <NotFound default />
       </ScrollToTop>
     </Router>

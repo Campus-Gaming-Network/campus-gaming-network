@@ -11,10 +11,11 @@ import {
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
+import times from "lodash.times";
 import {
   Stack,
   Box,
-  Button as ChakraButton,
+  Button,
   Heading,
   Text,
   AlertDialog,
@@ -26,12 +27,12 @@ import {
   Alert,
   List,
   ListItem,
-  Spinner,
   Flex,
   PseudoBox,
   Image,
   useToast,
-  Avatar
+  Avatar,
+  Skeleton
 } from "@chakra-ui/core";
 import * as constants from "../constants";
 import { firebaseFirestore, firebaseAuth } from "../firebase";
@@ -57,14 +58,9 @@ const Event = props => {
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const cachedEvent = state.events[props.id];
   const [eventFetchId, setEventFetchId] = React.useState(null);
-  const [eventUsersFetchId, setEventUsersFetchId] = React.useState(null);
   const [event, setEvent] = React.useState(state.event);
-  const [users, setUsers] = React.useState(state.event.users);
   const [fetchedEvent, isLoadingFetchedEvent] = useFetchEventDetails(
     eventFetchId
-  );
-  const [fetchedEventUsers, isLoadingFetchedEventUsers] = useFetchEventUsers(
-    eventUsersFetchId
   );
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const [isEventCreator, setIsEventCreator] = React.useState(false);
@@ -102,23 +98,6 @@ const Event = props => {
     }
   }, [props.id, cachedEvent, fetchedEvent, dispatch, eventFetchId]);
 
-  const getEventUsers = React.useCallback(() => {
-    if (cachedEvent && cachedEvent.users) {
-      setUsers(cachedEvent.users);
-    } else if (!eventUsersFetchId) {
-      setEventUsersFetchId(props.id);
-    } else if (fetchedEventUsers) {
-      setUsers(fetchedEventUsers);
-      dispatch({
-        type: ACTION_TYPES.SET_EVENT_USERS,
-        payload: {
-          id: props.id,
-          users: fetchedEventUsers
-        }
-      });
-    }
-  }, [props.id, cachedEvent, fetchedEventUsers, dispatch, eventUsersFetchId]);
-
   const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
 
   const onAttendingAlertCancel = () => setAttendingAlertIsOpen(false);
@@ -135,19 +114,6 @@ const Event = props => {
     dispatch,
     getEvent,
     isLoadingFetchedEvent
-  ]);
-
-  React.useEffect(() => {
-    if (!event.users) {
-      getEventUsers();
-    }
-  }, [
-    props.id,
-    event,
-    cachedEvent,
-    fetchedEventUsers,
-    dispatch,
-    getEventUsers
   ]);
 
   React.useEffect(() => {
@@ -311,9 +277,9 @@ const Event = props => {
     return <EventSilhouette />;
   }
 
-  if (!event) {
+  if (!event || isEmpty(event)) {
     console.error(`No event found ${props.uri}`);
-    return <Redirect to="../../not-found" noThrow />;
+    return <Redirect to="/not-found" noThrow />;
   }
 
   return (
@@ -352,7 +318,7 @@ const Event = props => {
           <Flex alignItems="center">
             <Box pr={2}>
               <Link
-                to={`../../../school/${event.school.id}`}
+                to={`/school/${event.school.id}`}
                 color="purple.500"
                 fontWeight={600}
                 fontSize="lg"
@@ -491,7 +457,7 @@ const Event = props => {
                     <Text fontWeight="bold" fontSize="2xl" color="green.500">
                       You’re going!
                     </Text>
-                    <ChakraButton
+                    <Button
                       onClick={() =>
                         setCancellationAlertIsOpen(
                           !isEventCreator && !event.hasEnded
@@ -502,11 +468,11 @@ const Event = props => {
                       display="inline"
                     >
                       Cancel your RSVP
-                    </ChakraButton>
+                    </Button>
                   </Stack>
                 </Alert>
               ) : (
-                <ChakraButton
+                <Button
                   onClick={() =>
                     setAttendingAlertIsOpen(!isEventCreator && !event.hasEnded)
                   }
@@ -514,7 +480,7 @@ const Event = props => {
                   w="200px"
                 >
                   Attend Event
-                </ChakraButton>
+                </Button>
               )}
             </Stack>
           ) : null}
@@ -538,62 +504,7 @@ const Event = props => {
             >
               Attendees
             </Heading>
-            {isLoadingFetchedEventUsers ? (
-              <Box w="100%" textAlign="center">
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="purple.500"
-                  size="xl"
-                  mt={4}
-                />
-              </Box>
-            ) : users && users.length ? (
-              <List display="flex" flexWrap="wrap">
-                {users.map(user => (
-                  <ListItem key={user.id} width="25%">
-                    <Box
-                      borderWidth="1px"
-                      boxShadow="lg"
-                      rounded="lg"
-                      bg="white"
-                      pos="relative"
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                      justifyContent="center"
-                      m={2}
-                      p={4}
-                      height="calc(100% - 1rem)"
-                    >
-                      <Avatar
-                        name={user.fullname}
-                        src={user.gravatarUrl}
-                        h={60}
-                        w={60}
-                        rounded="full"
-                        bg="white"
-                        borderWidth={4}
-                        borderColor="gray.300"
-                      />
-                      <Link
-                        to={`../../../user/${user.id}`}
-                        color="purple.500"
-                        fontWeight="bold"
-                        mt={4}
-                      >
-                        {user.fullName}
-                      </Link>
-                    </Box>
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Text mt={4} color="gray.500">
-                {constants.EVENT_EMPTY_USERS_TEXT}
-              </Text>
-            )}
+            <UsersList eventId={props.id} />
           </Stack>
         </Stack>
       </Box>
@@ -621,24 +532,21 @@ const Event = props => {
 
               <AlertDialogFooter>
                 {isSubmittingEventResponse ? (
-                  <ChakraButton variantColor="purple" disabled={true}>
+                  <Button variantColor="purple" disabled={true}>
                     RSVPing...
-                  </ChakraButton>
+                  </Button>
                 ) : (
                   <React.Fragment>
-                    <ChakraButton
-                      ref={attendRef}
-                      onClick={onAttendingAlertCancel}
-                    >
+                    <Button ref={attendRef} onClick={onAttendingAlertCancel}>
                       No, nevermind
-                    </ChakraButton>
-                    <ChakraButton
+                    </Button>
+                    <Button
                       variantColor="purple"
                       onClick={() => onAttendingAlertConfirm("YES")}
                       ml={3}
                     >
                       Yes, I want to go
-                    </ChakraButton>
+                    </Button>
                   </React.Fragment>
                 )}
               </AlertDialogFooter>
@@ -666,24 +574,21 @@ const Event = props => {
 
               <AlertDialogFooter>
                 {isSubmittingEventResponse ? (
-                  <ChakraButton variantColor="red" disabled={true}>
+                  <Button variantColor="red" disabled={true}>
                     Cancelling...
-                  </ChakraButton>
+                  </Button>
                 ) : (
                   <React.Fragment>
-                    <ChakraButton
-                      ref={cancelRef}
-                      onClick={onCancellationAlertClose}
-                    >
+                    <Button ref={cancelRef} onClick={onCancellationAlertClose}>
                       No, nevermind
-                    </ChakraButton>
-                    <ChakraButton
+                    </Button>
+                    <Button
                       variantColor="red"
                       onClick={() => onAttendingAlertConfirm("NO")}
                       ml={3}
                     >
                       Yes, cancel the RSVP
-                    </ChakraButton>
+                    </Button>
                   </React.Fragment>
                 )}
               </AlertDialogFooter>
@@ -692,6 +597,163 @@ const Event = props => {
         </React.Fragment>
       ) : null}
     </React.Fragment>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// UsersList
+
+const UsersList = props => {
+  const dispatch = useAppDispatch();
+  const state = useAppState();
+  const event = React.useMemo(() => state.events[props.eventId], [
+    state.events,
+    props.eventId
+  ]);
+  const [page, setPage] = React.useState(0);
+  const [users, isLoadingUsers] = useFetchEventUsers(
+    props.eventId,
+    undefined,
+    page
+  );
+
+  const nextPage = () => {
+    if (users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
+      setPage(page + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (page > 0) {
+      setPage(page - 1);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isLoadingUsers && users && page >= 0) {
+      dispatch({
+        type: ACTION_TYPES.SET_EVENT_USERS,
+        payload: {
+          id: event.id,
+          users,
+          page
+        }
+      });
+    }
+  }, [isLoadingUsers, users, dispatch, event.id, page]);
+
+  if (isLoadingUsers) {
+    return (
+      <Flex flexWrap="wrap" mx={-2}>
+        {times(constants.DEFAULT_USERS_LIST_PAGE_SIZE, index => (
+          <Box key={index} w={{ md: "20%", sm: "33%", xs: "50%" }}>
+            <Skeleton
+              pos="relative"
+              d="flex"
+              m={2}
+              p={4}
+              h={130}
+              rounded="lg"
+            />
+          </Box>
+        ))}
+      </Flex>
+    );
+  }
+
+  if (users && users.length) {
+    return (
+      <React.Fragment>
+        <List display="flex" flexWrap="wrap" mx={-2}>
+          {users.map(user => (
+            <UsersListItem
+              key={user.id}
+              id={user.id}
+              gravatarUrl={user.gravatarUrl}
+              fullName={user.fullName}
+            />
+          ))}
+        </List>
+        <Flex justifyContent="space-between" m={2}>
+          {page > 0 ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon="arrow-back"
+              variantColor="purple"
+              disabled={page === 0}
+              onClick={prevPage}
+            >
+              Prev Page
+            </Button>
+          ) : null}
+          {users &&
+          users.length &&
+          users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              rightIcon="arrow-forward"
+              variantColor="purple"
+              disabled={users.length !== constants.DEFAULT_USERS_LIST_PAGE_SIZE}
+              onClick={nextPage}
+              ml="auto"
+            >
+              Next Page
+            </Button>
+          ) : null}
+        </Flex>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <Text mt={4} color="gray.400">
+      {constants.EVENT_EMPTY_USERS_TEXT}
+    </Text>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// UsersListItem
+
+const UsersListItem = props => {
+  return (
+    <ListItem w={{ md: "20%", sm: "33%", xs: "50%" }}>
+      <Box
+        borderWidth="1px"
+        rounded="lg"
+        bg="white"
+        pos="relative"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        m={2}
+        p={4}
+        height="calc(100% - 1rem)"
+      >
+        <Avatar
+          name={props.fullname}
+          src={props.gravatarUrl}
+          h={60}
+          w={60}
+          rounded="full"
+          bg="white"
+        />
+        <Link
+          to={`/user/${props.id}`}
+          color="purple.500"
+          fontWeight="bold"
+          mt={4}
+          fontSize="sm"
+          lineHeight="1.2"
+          textAlign="center"
+        >
+          {props.fullName}
+        </Link>
+      </Box>
+    </ListItem>
   );
 };
 

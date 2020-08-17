@@ -8,8 +8,12 @@ const useFetchUserSchool = user => {
 
   React.useEffect(() => {
     const fetchUserSchool = async () => {
-      console.log("fetchUserSchool...");
       setIsLoading(true);
+      setSchool(null);
+      setError(null);
+
+      console.log("[API] fetchUserSchool...");
+
       user.school
         .get()
         .then(doc => {

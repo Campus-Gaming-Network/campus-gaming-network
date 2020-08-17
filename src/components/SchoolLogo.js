@@ -3,7 +3,7 @@ import { Image } from "@chakra-ui/core";
 import { firebaseStorage } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
-const SchoolLogo = ({ schoolId, fallback, src, ...rest }) => {
+const SchoolLogo = React.memo(({ schoolId, fallback, src, ...rest }) => {
   const dispatch = useAppDispatch();
   const state = useAppState();
   const [logo, setLogo] = React.useState(null);
@@ -47,6 +47,6 @@ const SchoolLogo = ({ schoolId, fallback, src, ...rest }) => {
   }, [schoolId, logo, dispatch, setLogo, getSchoolLogo]);
 
   return logo ? <Image src={logo} {...rest} /> : fallback ? fallback : null;
-};
+});
 
 export default SchoolLogo;

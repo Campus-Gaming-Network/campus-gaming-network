@@ -9,7 +9,7 @@ import {
   FormControl,
   FormLabel,
   Box,
-  Button as ChakraButton,
+  Button,
   Textarea,
   Heading,
   Text,
@@ -150,17 +150,13 @@ const EditSchool = props => {
     setIsSubmitting(false);
   };
 
-  if (props.isAuthenticating) {
-    return null;
-  }
-
   if (!props.isAuthenticated) {
     return <Redirect to="/" noThrow />;
   }
 
   if (!props.user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="not-found" noThrow />;
+    return <Redirect to="/not-found" noThrow />;
   }
 
   if (!hasPrefilledForm) {
@@ -175,7 +171,7 @@ const EditSchool = props => {
         <Heading as="h1" size="2xl">
           Edit School
         </Heading>
-        <ChakraButton
+        <Button
           variantColor="purple"
           type="submit"
           size="lg"
@@ -184,7 +180,7 @@ const EditSchool = props => {
           disabled={isSubmitting}
         >
           {isSubmitting ? "Submitting..." : "Update School"}
-        </ChakraButton>
+        </Button>
         <DetailSection
           dispatch={dispatch}
           schoolName={schoolName}
@@ -206,7 +202,7 @@ const EditSchool = props => {
             {}
           )}
         />
-        <ChakraButton
+        <Button
           variantColor="purple"
           type="submit"
           size="lg"
@@ -215,7 +211,7 @@ const EditSchool = props => {
           disabled={isSubmitting}
         >
           {isSubmitting ? "Submitting..." : "Update School"}
-        </ChakraButton>
+        </Button>
       </Stack>
     </Box>
   );

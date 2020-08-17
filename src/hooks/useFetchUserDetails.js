@@ -10,8 +10,10 @@ const useFetchUserDetails = id => {
   React.useEffect(() => {
     const fetchUserDetails = async () => {
       setIsLoading(true);
+      setUser(null);
+      setError(null);
 
-      console.log("fetchUserDetails...");
+      console.log("[API] fetchUserDetails...");
 
       firebaseFirestore
         .collection("users")

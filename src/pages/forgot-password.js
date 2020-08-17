@@ -18,8 +18,6 @@ import {
 } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import * as constants from "../constants";
-
 import { useFormFields } from "../utilities";
 
 import Link from "../components/Link";

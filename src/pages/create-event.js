@@ -11,7 +11,7 @@ import {
   FormControl,
   FormLabel,
   Box,
-  Button as ChakraButton,
+  Button,
   Textarea,
   Heading,
   Text,
@@ -21,7 +21,6 @@ import {
   useToast,
   Select as ChakraSelect,
   Flex,
-  Image,
   Avatar
 } from "@chakra-ui/core";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
@@ -31,6 +30,7 @@ import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import GameSearch from "../components/GameSearch";
+import GameCover from "../components/GameCover";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
@@ -58,7 +58,7 @@ const CreateEvent = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(firebaseAuth);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -69,8 +69,6 @@ const CreateEvent = props => {
   const [event, setEvent] = React.useState(null);
   const [fetchedEvent] = useFetchEventDetails(props.id);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const isEditing =
-    props.id && props.location.pathname === `/event/${props.id}/edit`;
   const handleFieldChange = React.useCallback(e => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
@@ -133,7 +131,7 @@ const CreateEvent = props => {
 
     const cleanedData = omitBy(eventData, isNil);
 
-    if (isEditing) {
+    if (props.edit) {
       firebaseFirestore
         .collection("events")
         .doc(props.id)
@@ -241,10 +239,10 @@ const CreateEvent = props => {
   }, [fetchedEvent]);
 
   React.useEffect(() => {
-    if (isEditing && !event) {
+    if (props.edit && !event) {
       getEvent();
     }
-  }, [isEditing, event, getEvent, fetchedEvent]);
+  }, [props.edit, event, getEvent, fetchedEvent]);
 
   const prefillForm = () => {
     formDispatch({ field: "name", value: event.name });
@@ -262,30 +260,24 @@ const CreateEvent = props => {
     setHasPrefilledForm(true);
   };
 
-  if (isAuthenticating) {
-    return null;
-  }
-
   if (!authenticatedUser) {
     return <Redirect to="/" noThrow />;
   }
 
   if (!user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="../../not-found" noThrow />;
+    return <Redirect to="/not-found" noThrow />;
   }
 
   if (!hasPrefilledForm && !!event) {
     prefillForm();
   }
 
-  console.log({ formState });
-
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
-          {isEditing ? "Edit Event" : "Create an Event"}
+          {props.edit ? "Edit Event" : "Create an Event"}
         </Heading>
         <Box
           as="fieldset"
@@ -466,23 +458,24 @@ const CreateEvent = props => {
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
-              {hasPrefilledForm ? (
+              {(props.edit && hasPrefilledForm) || !props.edit ? (
                 <Flex alignItems="center">
                   <Box flexGrow={1}>
                     <GameSearch
                       inputPlaceholder="The game being played"
                       onSelect={setGame}
-                      gameName={formState.game.name}
+                      gameName={formState.game ? formState.game.name : ""}
                     />
                   </Box>
                   <Box pl={8}>
-                    <Image
-                      src={formState.game.cover.url}
-                      rounded="lg"
-                      shadow="md"
-                      h={20}
-                      w={20}
-                    />
+                    {formState.game && formState.game.cover ? (
+                      <GameCover
+                        url={formState.game.cover.url}
+                        name={formState.game.name}
+                        h={20}
+                        w={20}
+                      />
+                    ) : null}
                   </Box>
                 </Flex>
               ) : null}
@@ -550,7 +543,7 @@ const CreateEvent = props => {
             ) : null} */}
           </Stack>
         </Box>
-        <ChakraButton
+        <Button
           variantColor="purple"
           type="submit"
           size="lg"
@@ -560,10 +553,10 @@ const CreateEvent = props => {
         >
           {isSubmitting
             ? "Submitting..."
-            : isEditing
+            : props.edit
             ? "Edit Event"
             : "Create Event"}
-        </ChakraButton>
+        </Button>
       </Stack>
     </Box>
   );

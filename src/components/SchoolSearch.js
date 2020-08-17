@@ -25,7 +25,7 @@ const SchoolSearch = props => {
         city: startCase(school.city.toLowerCase()),
         state: school.state
       })),
-    []
+    [state.schools]
   );
 
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
@@ -54,9 +54,9 @@ const SchoolSearch = props => {
     const throttledTerm = useThrottle(searchTerm, 100);
     const results = React.useMemo(
       () =>
-        searchTerm.trim() === "" || searchTerm.trim().length < 3
+        throttledTerm.trim() === "" || throttledTerm.trim().length < 3
           ? null
-          : matchSchool(searchTerm),
+          : matchSchool(throttledTerm),
       [throttledTerm]
     );
     return results;

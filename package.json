@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/core": "^0.5.2",
-    "@emotion/core": "^10.0.27",
+    "@chakra-ui/core": "^0.8.0",
+    "@emotion/core": "^10.0.34",
     "@emotion/styled": "^10.0.27",
     "@fortawesome/fontawesome-svg-core": "^1.2.24",
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
@@ -32,6 +32,7 @@
     "lodash.slice": "^4.2.0",
     "lodash.sortby": "^4.7.0",
     "lodash.startcase": "^4.4.0",
+    "lodash.times": "^4.3.2",
     "lodash.truncate": "^4.4.2",
     "lodash.uniqby": "^4.7.0",
     "lodash.xorby": "^4.7.0",

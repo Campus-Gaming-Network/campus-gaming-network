@@ -17,7 +17,6 @@ const EventListItem = props => {
     <Box
       as="li"
       borderWidth="1px"
-      boxShadow="lg"
       rounded="lg"
       bg="white"
       pos="relative"
@@ -31,7 +30,7 @@ const EventListItem = props => {
         <Box display="flex" alignItems="center">
           <Box pr={2}>
             <Link
-              to={`../../school/${props.school.id}`}
+              to={`/school/${props.school.id}`}
               color="purple.500"
               fontSize="xl"
               fontWeight={600}
@@ -39,7 +38,7 @@ const EventListItem = props => {
               {startCase(props.school.name.toLowerCase())}
             </Link>
             <Link
-              to={`../../event/${props.event.id}`}
+              to={`/event/${props.event.id}`}
               color="purple.500"
               fontWeight="bold"
               d="block"

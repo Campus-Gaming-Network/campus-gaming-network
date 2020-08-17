@@ -115,7 +115,7 @@ const User = props => {
 
   if (!user || isEmpty(user)) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="../../not-found" noThrow />;
+    return <Redirect to="/not-found" noThrow />;
   }
 
   return (
@@ -128,7 +128,7 @@ const User = props => {
           justifyContent="center"
         >
           <Link
-            to="/user/edit"
+            to="/edit-user"
             fontWeight="bold"
             width="100%"
             borderRadius="md"

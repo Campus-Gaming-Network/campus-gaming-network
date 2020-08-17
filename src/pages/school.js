@@ -10,20 +10,22 @@ import {
   ListItem,
   Spinner,
   Flex,
-  Avatar
+  Avatar,
+  Button,
+  Skeleton
 } from "@chakra-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
-import Gravatar from "react-gravatar";
 import isEmpty from "lodash.isempty";
+import times from "lodash.times";
 import * as constants from "../constants";
 
 import OutsideLink from "../components/OutsideLink";
 import VisuallyHidden from "../components/VisuallyHidden";
 import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
+/* eslint-disable no-unused-vars */
 import SchoolLogo from "../components/SchoolLogo";
-import SchoolSilhouette from "../components/SchoolSilhouette";
 
 import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
@@ -37,144 +39,23 @@ import { isUrl } from "../utilities";
 // School
 
 const School = props => {
-  const dispatch = useAppDispatch();
   const state = useAppState();
-  const cachedSchool = state.schools[props.id];
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
-  const [schoolFetchId, setSchoolFetchId] = React.useState(null);
-  const [schoolEventsFetchId, setSchoolEventsFetchId] = React.useState(null);
-  const [schoolUsersFetchId, setSchoolUsersFetchId] = React.useState(null);
-  const [school, setSchool] = React.useState(state.school);
-  const [events, setEvents] = React.useState(state.school.events);
-  const [users, setUsers] = React.useState(state.school.users);
-  const [fetchedSchool, isLoadingFetchedSchool] = useFetchSchoolDetails(
-    schoolFetchId
-  );
-  const [
-    fetchedSchoolEvents,
-    isLoadingFetchedSchoolEvents
-  ] = useFetchSchoolEvents(schoolEventsFetchId);
-  const [fetchedSchoolUsers, isLoadingFetchedSchoolUsers] = useFetchSchoolUsers(
-    schoolUsersFetchId
-  );
-
-  const getSchool = React.useCallback(() => {
-    if (cachedSchool) {
-      setSchool(cachedSchool);
-    } else if (!schoolFetchId) {
-      setSchoolFetchId(props.id);
-    } else if (fetchedSchool) {
-      setSchool(fetchedSchool);
-      dispatch({
-        type: ACTION_TYPES.SET_SCHOOL,
-        payload: fetchedSchool
-      });
-    }
-  }, [props.id, cachedSchool, fetchedSchool, dispatch, schoolFetchId]);
-
-  const getSchoolEvents = React.useCallback(() => {
-    if (cachedSchool && cachedSchool.events) {
-      setEvents(cachedSchool.events);
-    } else if (!schoolEventsFetchId) {
-      setSchoolEventsFetchId(props.id);
-    } else if (fetchedSchoolEvents) {
-      setEvents(fetchedSchoolEvents);
-      dispatch({
-        type: ACTION_TYPES.SET_SCHOOL_EVENTS,
-        payload: {
-          id: props.id,
-          events: fetchedSchoolEvents
-        }
-      });
-    }
-  }, [
-    props.id,
-    cachedSchool,
-    fetchedSchoolEvents,
-    dispatch,
-    schoolEventsFetchId
+  const school = React.useMemo(() => state.schools[props.id], [
+    state.schools,
+    props.id
   ]);
-
-  const getSchoolUsers = React.useCallback(() => {
-    if (cachedSchool && cachedSchool.users) {
-      setUsers(cachedSchool.users);
-    } else if (!schoolUsersFetchId) {
-      setSchoolUsersFetchId(props.id);
-    } else if (fetchedSchoolUsers) {
-      setUsers(fetchedSchoolUsers);
-      dispatch({
-        type: ACTION_TYPES.SET_SCHOOL_USERS,
-        payload: {
-          id: props.id,
-          users: fetchedSchoolUsers
-        }
-      });
-    }
-  }, [
-    props.id,
-    cachedSchool,
-    fetchedSchoolUsers,
-    dispatch,
-    schoolUsersFetchId
-  ]);
-
-  React.useEffect(() => {
-    if (props.id !== state.school.id) {
-      getSchool();
-    }
-  }, [
-    props.id,
-    state.school.id,
-    cachedSchool,
-    fetchedSchool,
-    dispatch,
-    getSchool
-  ]);
-
-  React.useEffect(() => {
-    if (!school.events) {
-      getSchoolEvents();
-    }
-  }, [
-    props.id,
-    school,
-    cachedSchool,
-    fetchedSchoolEvents,
-    dispatch,
-    getSchoolEvents
-  ]);
-
-  React.useEffect(() => {
-    if (!school.users) {
-      getSchoolUsers();
-    }
-  }, [
-    props.id,
-    school,
-    cachedSchool,
-    fetchedSchoolUsers,
-    dispatch,
-    getSchoolUsers
-  ]);
-
-  if (
-    isAuthenticating ||
-    isLoadingFetchedSchool ||
-    (!!authenticatedUser && isEmpty(school))
-  ) {
-    return <SchoolSilhouette />;
-  }
 
   if (!school || isEmpty(school)) {
     console.error(`No school found ${props.uri}`);
-    return <Redirect to="../../not-found" noThrow />;
+    return <Redirect to="/not-found" noThrow />;
   }
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
-          <SchoolLogo
+          {/* <SchoolLogo
             schoolId={school.id}
             alt={`${school.name} school logo`}
             h={40}
@@ -196,7 +77,18 @@ const School = props => {
                 <FontAwesomeIcon icon={faSchool} size="4x" />
               </Flex>
             }
-          />
+          /> */}
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            color="gray.100"
+            h={40}
+            w={40}
+            bg="gray.400"
+            rounded="full"
+          >
+            <FontAwesomeIcon icon={faSchool} size="4x" />
+          </Flex>
           <Box pl={12}>
             <Heading
               as="h1"
@@ -291,28 +183,7 @@ const School = props => {
           >
             Upcoming Events
           </Heading>
-          {isLoadingFetchedSchoolEvents ? (
-            <Box w="100%" textAlign="center">
-              <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="purple.500"
-                size="xl"
-                mt={4}
-              />
-            </Box>
-          ) : events && events.length ? (
-            <List>
-              {events.map(event => (
-                <EventListItem key={event.id} event={event} school={school} />
-              ))}
-            </List>
-          ) : (
-            <Text mt={4} color="gray.400">
-              {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
-            </Text>
-          )}
+          <EventsList schoolId={school.id} schoolName={school.name} />
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -323,63 +194,233 @@ const School = props => {
           >
             Members
           </Heading>
-          {isLoadingFetchedSchoolUsers ? (
-            <Box w="100%" textAlign="center">
-              <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="purple.500"
-                size="xl"
-                mt={4}
-              />
-            </Box>
-          ) : users && users.length ? (
-            <List display="flex" flexWrap="wrap">
-              {users.map(user => (
-                <ListItem key={user.id} width="25%">
-                  <Box
-                    borderWidth="1px"
-                    boxShadow="lg"
-                    rounded="lg"
-                    bg="white"
-                    pos="relative"
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    m={2}
-                    p={4}
-                    height="calc(100% - 1rem)"
-                  >
-                    <Avatar
-                      name={user.fullname}
-                      src={user.gravatarUrl}
-                      h={60}
-                      w={60}
-                      rounded="full"
-                      bg="white"
-                    />
-                    <Link
-                      to={`../../../user/${user.id}`}
-                      color="purple.500"
-                      fontWeight="bold"
-                      mt={4}
-                    >
-                      {user.fullName}
-                    </Link>
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Text mt={4} color="gray.500">
-              {constants.SCHOOL_EMPTY_USERS_TEXT}
-            </Text>
-          )}
+          <UsersList schoolId={props.id} />
         </Stack>
       </Stack>
     </Box>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// EventsList
+
+const EventsList = props => {
+  const dispatch = useAppDispatch();
+  const state = useAppState();
+  const [page] = React.useState(0);
+  const [events, isLoadingEvents] = useFetchSchoolEvents(
+    props.schoolId,
+    undefined,
+    page
+  );
+  const school = React.useMemo(() => state.schools[props.schoolId], [
+    state.schools,
+    props.schoolId
+  ]);
+
+  React.useEffect(() => {
+    if (isLoadingEvents && events && page >= 0) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL_EVENTS,
+        payload: {
+          id: school.id,
+          events,
+          page
+        }
+      });
+    }
+  }, [isLoadingEvents, events, dispatch, school.id, page]);
+
+  if (isLoadingEvents) {
+    return (
+      <Box w="100%" textAlign="center">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="purple.500"
+          size="xl"
+          mt={4}
+        />
+      </Box>
+    );
+  }
+
+  if (events && events.length) {
+    return (
+      <List>
+        {events.map(event => (
+          <EventListItem
+            key={event.id}
+            event={event}
+            school={event.schoolDetails}
+          />
+        ))}
+      </List>
+    );
+  }
+
+  return (
+    <Text mt={4} color="gray.400">
+      {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
+    </Text>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// UsersList
+
+const UsersList = props => {
+  const dispatch = useAppDispatch();
+  const state = useAppState();
+  const school = React.useMemo(() => state.schools[props.schoolId], [
+    state.schools,
+    props.schoolId
+  ]);
+  const [page, setPage] = React.useState(0);
+  const [users, isLoadingUsers] = useFetchSchoolUsers(
+    props.schoolId,
+    undefined,
+    page
+  );
+
+  const nextPage = () => {
+    if (users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
+      setPage(page + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (page > 0) {
+      setPage(page - 1);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isLoadingUsers && users && page >= 0) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL_USERS,
+        payload: {
+          id: school.id,
+          users,
+          page
+        }
+      });
+    }
+  }, [isLoadingUsers, users, dispatch, school.id, page]);
+
+  if (isLoadingUsers) {
+    return (
+      <Flex flexWrap="wrap" mx={-2}>
+        {times(constants.DEFAULT_USERS_LIST_PAGE_SIZE, index => (
+          <Box key={index} w={{ md: "20%", sm: "33%", xs: "50%" }}>
+            <Skeleton
+              pos="relative"
+              d="flex"
+              m={2}
+              p={4}
+              h={130}
+              rounded="lg"
+            />
+          </Box>
+        ))}
+      </Flex>
+    );
+  }
+
+  if (users && users.length) {
+    return (
+      <React.Fragment>
+        <List display="flex" flexWrap="wrap" mx={-2}>
+          {users.map(user => (
+            <UsersListItem
+              key={user.id}
+              id={user.id}
+              gravatarUrl={user.gravatarUrl}
+              fullName={user.fullName}
+            />
+          ))}
+        </List>
+        <Flex justifyContent="space-between" m={2}>
+          {page > 0 ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon="arrow-back"
+              variantColor="purple"
+              disabled={page === 0}
+              onClick={prevPage}
+            >
+              Prev Page
+            </Button>
+          ) : null}
+          {users &&
+          users.length &&
+          users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              rightIcon="arrow-forward"
+              variantColor="purple"
+              disabled={users.length !== constants.DEFAULT_USERS_LIST_PAGE_SIZE}
+              onClick={nextPage}
+              ml="auto"
+            >
+              Next Page
+            </Button>
+          ) : null}
+        </Flex>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <Text mt={4} color="gray.400">
+      {constants.SCHOOL_EMPTY_USERS_TEXT}
+    </Text>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// UsersListItem
+
+const UsersListItem = props => {
+  return (
+    <ListItem w={{ md: "20%", sm: "33%", xs: "50%" }}>
+      <Box
+        borderWidth="1px"
+        rounded="lg"
+        bg="white"
+        pos="relative"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        m={2}
+        p={4}
+        height="calc(100% - 1rem)"
+      >
+        <Avatar
+          name={props.fullname}
+          src={props.gravatarUrl}
+          h={60}
+          w={60}
+          rounded="full"
+          bg="white"
+        />
+        <Link
+          to={`/user/${props.id}`}
+          color="purple.500"
+          fontWeight="bold"
+          mt={4}
+          fontSize="sm"
+          lineHeight="1.2"
+          textAlign="center"
+        >
+          {props.fullName}
+        </Link>
+      </Box>
+    </ListItem>
   );
 };
 

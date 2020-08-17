@@ -8,12 +8,14 @@ const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
 
   React.useEffect(() => {
     const fetchUserEventResponse = async () => {
-      console.log("fetchUserEventResponse...");
+      setIsLoading(true);
+      setEventResponse(null);
+      setError(null);
+
+      console.log("[API] fetchUserEventResponse...");
 
       const eventDocRef = firebaseFirestore.collection("events").doc(eventId);
       const userDocRef = firebaseFirestore.collection("users").doc(userId);
-
-      setIsLoading(true);
 
       firebaseFirestore
         .collection("event-responses")

@@ -71,8 +71,8 @@ export const createGravatarRequestUrl = hash => {
 export const noop = () => {};
 
 export const mapUser = (user, ref) => ({
-  id: user.id || ref.id,
   ...user,
+  id: user.id || ref.id,
   fullName: `${user.firstName} ${user.lastName}`.trim(),
   hasAccounts: userHasAccounts(user),
   hasFavoriteGames: !!(user.favoriteGames && user.favoriteGames.length),
@@ -85,12 +85,13 @@ export const mapUser = (user, ref) => ({
       : user.status === "GRAD"
       ? "Graduate Student at "
       : `${capitalize(user.status)} at `,
-  gravatarUrl: createGravatarRequestUrl(user.gravatar)
+  gravatarUrl: createGravatarRequestUrl(user.gravatar),
+  doc: ref
 });
 
 export const mapEvent = (event, ref) => ({
-  id: event.id || ref.id,
   ...event,
+  id: event.id || ref.id,
   formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
   formattedEndDateTime: formatCalendarDateTime(event.endDateTime),
   googleMapsAddressLink: googleMapsLink(event.location),
@@ -98,15 +99,20 @@ export const mapEvent = (event, ref) => ({
     moment(event.startDateTime.toDate()),
     moment(event.endDateTime.toDate())
   ),
-  hasEnded: moment().isAfter(moment(event.endDateTime.toDate()))
+  hasEnded: moment().isAfter(moment(event.endDateTime.toDate())),
+  schoolDetails: {
+    ...event.schoolDetails,
+    id: event.school.id
+  }
 });
 
 export const mapEventResponse = (eventResponse, ref) => ({
+  ...eventResponse,
   id: eventResponse.id || ref.id,
   response: eventResponse.response,
   event: {
-    id: eventResponse.event.id,
     ...eventResponse.eventDetails,
+    id: eventResponse.event.id,
     formattedStartDateTime: formatCalendarDateTime(
       eventResponse.eventDetails.startDateTime
     ),
@@ -122,12 +128,12 @@ export const mapEventResponse = (eventResponse, ref) => ({
     )
   },
   school: {
-    id: eventResponse.school.id,
-    ...eventResponse.schoolDetails
+    ...eventResponse.schoolDetails,
+    id: eventResponse.school.id
   },
   user: {
-    id: eventResponse.user.id,
-    ...eventResponse.userDetails
+    ...eventResponse.userDetails,
+    id: eventResponse.user.id
   }
 });
 

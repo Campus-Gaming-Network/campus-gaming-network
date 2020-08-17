@@ -9,9 +9,11 @@ const useFetchEventDetails = id => {
 
   React.useEffect(() => {
     const fetchEventDetails = async () => {
-      setIsLoading(true);
+      console.log("[API] fetchEventDetails...");
 
-      console.log("fetchEventDetails...");
+      setIsLoading(true);
+      setEvent(null);
+      setError(null);
 
       firebaseFirestore
         .collection("events")

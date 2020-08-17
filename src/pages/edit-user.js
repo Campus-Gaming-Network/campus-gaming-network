@@ -16,13 +16,12 @@ import {
   FormHelperText,
   Box,
   Select as ChakraSelect,
-  Button as ChakraButton,
+  Button,
   Textarea,
   Heading,
   Text,
   Image,
   Tooltip,
-  Flex,
   useToast
 } from "@chakra-ui/core";
 import * as constants from "../constants";
@@ -68,7 +67,7 @@ const formReducer = (state, { field, value }) => {
 const EditUser = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(firebaseAuth);
   const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
@@ -84,7 +83,7 @@ const EditUser = props => {
   const [currentlyPlaying, setCurrentGames] = React.useState([]);
   const schoolName = React.useMemo(
     () => startCase(state.schools[user.school.id].name.toLowerCase()),
-    [user.school.id]
+    [user.school.id, state.schools]
   );
 
   const prefillForm = () => {
@@ -213,17 +212,13 @@ const EditUser = props => {
       });
   };
 
-  if (isAuthenticating) {
-    return null;
-  }
-
   if (!authenticatedUser) {
     return <Redirect to="/" noThrow />;
   }
 
   if (!user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="../../not-found" noThrow />;
+    return <Redirect to="/not-found" noThrow />;
   }
 
   if (!hasPrefilledForm) {
@@ -236,7 +231,7 @@ const EditUser = props => {
         <Heading as="h1" size="2xl">
           Your Profile
         </Heading>
-        <ChakraButton
+        <Button
           variantColor="purple"
           type="submit"
           size="lg"
@@ -245,7 +240,7 @@ const EditUser = props => {
           disabled={isSubmitting}
         >
           {isSubmitting ? "Submitting..." : "Update Profile"}
-        </ChakraButton>
+        </Button>
         <DetailSection
           handleFieldChange={handleFieldChange}
           firstName={formState.firstName}
@@ -289,7 +284,7 @@ const EditUser = props => {
           currentlyPlaying={currentlyPlaying}
           onGameSelect={onCurrentlyPlayingGameSelect}
         />
-        <ChakraButton
+        <Button
           variantColor="purple"
           type="submit"
           size="lg"
@@ -298,7 +293,7 @@ const EditUser = props => {
           disabled={isSubmitting}
         >
           {isSubmitting ? "Submitting..." : "Update Profile"}
-        </ChakraButton>
+        </Button>
       </Stack>
     </Box>
   );
@@ -660,14 +655,14 @@ const FavoriteGamesSection = React.memo(props => {
                   <Tooltip
                     label={`Remove ${game.name} from favorite games list`}
                   >
-                    <ChakraButton
+                    <Button
                       size="xs"
                       variant="ghost"
                       variantColor="red"
                       onClick={() => props.toggleFavoriteGame(game)}
                     >
                       Remove
-                    </ChakraButton>
+                    </Button>
                   </Tooltip>
                 </Box>
               ))}
@@ -750,14 +745,14 @@ const CurrentlyPlayingSection = React.memo(props => {
                   <Tooltip
                     label={`Remove ${game.name} from currently playing list`}
                   >
-                    <ChakraButton
+                    <Button
                       size="xs"
                       variant="ghost"
                       variantColor="red"
                       onClick={() => props.toggleCurrentGame(game)}
                     >
                       Remove
-                    </ChakraButton>
+                    </Button>
                   </Tooltip>
                 </Box>
               ))}

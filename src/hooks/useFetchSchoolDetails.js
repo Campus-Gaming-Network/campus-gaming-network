@@ -9,9 +9,11 @@ const useFetchSchoolDetails = id => {
 
   React.useEffect(() => {
     const fetchSchoolDetails = async () => {
-      setIsLoading(true);
+      console.log("[API] fetchSchoolDetails...");
 
-      console.log("fetchSchoolDetails...");
+      setIsLoading(true);
+      setSchool(null);
+      setError(null);
 
       firebaseFirestore
         .collection("schools")

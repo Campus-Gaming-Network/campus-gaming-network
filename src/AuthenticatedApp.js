@@ -10,7 +10,6 @@ import { firebaseAuth } from "./firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "./store";
 
 // Hooks
-import useFetchUserSchool from "./hooks/useFetchUserSchool";
 import useFetchUserDetails from "./hooks/useFetchUserDetails";
 
 // Pages
@@ -21,12 +20,10 @@ import Event from "./pages/event";
 import EditUser from "./pages/edit-user";
 import EditSchool from "./pages/edit-school";
 import CreateEvent from "./pages/create-event";
-import EditEvent from "./pages/edit-event";
 import NotFound from "./pages/not-found";
 
 // Components
 import AuthenticatedNav from "./components/AuthenticatedNav";
-import Header from "./components/Header";
 import ScrollToTop from "./components/ScrollToTop";
 import NavSilhouette from "./components/NavSilhouette";
 import FormSilhouette from "./components/FormSilhouette";
@@ -41,7 +38,6 @@ const AuthenticatedApp = () => {
   const [user] = useFetchUserDetails(
     authenticatedUser ? authenticatedUser.uid : null
   );
-  const [school] = useFetchUserSchool(user);
   const [isLoadingUser, setIsLoadingUser] = React.useState(true);
   const [nav, setNav] = React.useState(<NavSilhouette />);
   const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
@@ -58,35 +54,18 @@ const AuthenticatedApp = () => {
     }
   }, [dispatch, user, state.user]);
 
-  const setSchool = React.useCallback(() => {
-    const hasSchool = !!school;
-    const hasSchoolState = !isEmpty(state.school);
-
-    if (hasSchool && !hasSchoolState) {
-      dispatch({
-        type: ACTION_TYPES.SET_SCHOOL,
-        payload: school
-      });
-    }
-  }, [dispatch, school, state.school]);
-
   React.useEffect(() => {
     setUser();
   }, [setUser, user, state.user]);
 
   React.useEffect(() => {
-    setSchool();
-  }, [setSchool, school, state.school]);
-
-  React.useEffect(() => {
     const hasUserState = !isEmpty(state.user);
-    const hasSchoolState = !isEmpty(state.school);
-    const isLoading = !hasUserState || !hasSchoolState || isAuthenticating;
+    const isLoading = !hasUserState || isAuthenticating;
 
     if (isLoading !== isLoadingUser) {
       setIsLoadingUser(isLoading);
     }
-  }, [state.user, state.school, isLoadingUser, isAuthenticating]);
+  }, [state.user, isLoadingUser, isAuthenticating]);
 
   React.useEffect(() => {
     if (!isLoadingUser) {
@@ -110,11 +89,11 @@ const SilhouetteRoutes = () => {
     <Router>
       <ScrollToTop default>
         <Home path="/" />
-        <FormSilhouette path="user/edit" />
+        <FormSilhouette path="edit-user" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
         <FormSilhouette path="school/:id/edit" />
-        <FormSilhouette path="event/create" />
+        <FormSilhouette path="create-event" />
         <EventSilhouette path="event/:id" />
         <FormSilhouette path="event/:id/edit" />
         <NotFound default />
@@ -128,13 +107,13 @@ const Routes = () => {
     <Router>
       <ScrollToTop default>
         <Home path="/" />
-        <EditUser path="user/edit" />
+        <EditUser path="edit-user" />
         <User path="user/:id" />
         <School path="school/:id" />
         <EditSchool path="school/:id/edit" />
-        <CreateEvent path="event/create" />
+        <CreateEvent path="create-event" />
         <Event path="event/:id" />
-        <CreateEvent path="event/:id/edit" />
+        <CreateEvent path="event/:id/edit" edit={true} />
         <NotFound default />
       </ScrollToTop>
     </Router>
