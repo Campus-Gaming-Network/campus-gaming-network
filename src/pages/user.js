@@ -270,7 +270,6 @@ const User = props => {
                   <ListItem key={key}>
                     <Box
                       borderWidth="1px"
-                      boxShadow="lg"
                       rounded="lg"
                       bg="white"
                       pos="relative"
@@ -348,7 +347,7 @@ const User = props => {
               />
             </Box>
           ) : events && events.length ? (
-            <List>
+            <List mx={-2}>
               {events.map(event => (
                 <EventListItem key={event.id} {...event} />
               ))}

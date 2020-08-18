@@ -125,7 +125,8 @@ export const mapEventResponse = (eventResponse, ref) => ({
     ),
     hasEnded: moment().isAfter(
       moment(eventResponse.eventDetails.endDateTime.toDate())
-    )
+    ),
+    responses: eventResponse.responses
   },
   school: {
     ...eventResponse.schoolDetails,

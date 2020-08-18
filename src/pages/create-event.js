@@ -196,7 +196,8 @@ const CreateEvent = props => {
               description: formState.description.trim(),
               startDateTime: firestoreStartDateTime,
               endDateTime: firestoreEndDateTime,
-              game: formState.game
+              game: formState.game,
+              isOnlineEvent: formState.isOnlineEvent
             },
             schoolDetails: {
               name: school.name

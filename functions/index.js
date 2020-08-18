@@ -36,12 +36,29 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
     const previousEventData = change.before.data();
     const newEventData = change.after.data();
 
+    let updatedValues = {};
+
     if (previousEventData.name !== newEventData.name) {
-      const updatedValues = {
+      updatedValues = {
+        ...updatedValues,
         eventDetails: {
+          ...updatedValues.eventDetails,
           name: newEventData.name,
         },
       };
+    }
+
+    if (previousEventData.isOnlineEvent !== newEventData.isOnlineEvent) {
+      updatedValues = {
+        ...updatedValues,
+        eventDetails: {
+          ...updatedValues.eventDetails,
+          isOnlineEvent: newEventData.isOnlineEvent,
+        },
+      };
+    }
+
+    if (Object.keys(updatedValues).length > 0) {
       const eventDocRef = db.collection("events").doc(context.params.eventId);
       const eventResponsesQuery = db
         .collection("event-responses")
@@ -63,9 +80,9 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
           }
         })
         .catch((err) => console.log(err));
-    } else {
-      return null;
     }
+
+    return null;
   });
 
 exports.updateEventResponsesOnSchoolUpdate = functions.firestore
@@ -154,7 +171,7 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
 
 exports.userOnCreated = functions.firestore
   .document("users/{userId}")
-  .onCreate((snapshot) => {
+  .onCreate((snapshot, context) => {
     return snapshot.ref
       .set(
         {
@@ -168,7 +185,7 @@ exports.userOnCreated = functions.firestore
 
 exports.eventOnCreated = functions.firestore
   .document("events/{eventId}")
-  .onCreate((snapshot) => {
+  .onCreate((snapshot, context) => {
     return snapshot.ref
       .set(
         {
@@ -182,10 +199,41 @@ exports.eventOnCreated = functions.firestore
 
 exports.eventResponsesOnCreated = functions.firestore
   .document("event-responses/{eventResponseId}")
-  .onCreate((snapshot) => {
+  .onCreate(async (snapshot, context) => {
+    const newEventResponseData = snapshot.data();
+    const eventResponsesQuery = db.collection("event-responses").where("event", "==", newEventResponseData.event);
+    const responsesCount = { yes: 0, no: 0 };
+  
+    try {
+      const eventResponsesSnapshot = await eventResponsesQuery.get();
+
+      if (!eventResponsesSnapshot.empty) {
+        let batch = db.batch();
+
+        eventResponsesSnapshot.forEach((doc) => {
+          if (doc.data().response === "YES") {
+            responsesCount.yes += 1;
+          } else if (doc.data().response === "NO") {
+            responsesCount.no += 1;
+          }
+        });
+
+        eventResponsesSnapshot.forEach((doc) => {
+          batch.update(doc.ref, { responses: responsesCount });
+        });
+
+        batch.commit();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    db.collection("events").doc(newEventResponseData.event.id).update({ responses: responsesCount });
+
     return snapshot.ref
       .set(
         {
+          responses: responsesCount,
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         },
@@ -196,8 +244,8 @@ exports.eventResponsesOnCreated = functions.firestore
 
 exports.userOnUpdated = functions.firestore
   .document("users/{userId}")
-  .onUpdate((snapshot) => {
-    return snapshot.ref
+  .onUpdate((change, context) => {
+    return change.ref
       .update({
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       })
@@ -206,8 +254,8 @@ exports.userOnUpdated = functions.firestore
 
 exports.eventOnUpdated = functions.firestore
   .document("events/{eventId}")
-  .onUpdate((snapshot) => {
-    return snapshot.ref
+  .onUpdate((change, context) => {
+    return change.ref
       .update({
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       })
@@ -216,10 +264,52 @@ exports.eventOnUpdated = functions.firestore
 
 exports.eventResponsesOnUpdated = functions.firestore
   .document("event-responses/{eventResponseId}")
-  .onUpdate((snapshot) => {
-    return snapshot.ref
-      .update({
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      })
-      .catch((err) => console.log(err));
+  .onUpdate(async (change, context) => {
+    // 
+    // FIX: infinite loop 
+    // 
+    const previousEventResponseData = change.after.data();
+    const newEventResponseData = change.after.data();
+    const eventResponsesDocRef = db.collection("event-responses").doc(context.params.eventResponseId);
+    const eventResponsesQuery = db.collection("event-responses").where("event", "==", newEventResponseData.event);
+    const responsesCount = { yes: 0, no: 0 };
+
+    if (previousEventResponseData.response !== newEventResponseData.response) {
+      try {
+        const eventResponsesSnapshot = await eventResponsesQuery.get();
+
+        if (!eventResponsesSnapshot.empty) {
+          let batch = db.batch();
+  
+          eventResponsesSnapshot.forEach((doc) => {
+            if (doc.data().response === "YES") {
+              responsesCount.yes += 1;
+            } else if (doc.data().response === "NO") {
+              responsesCount.no += 1;
+            }
+          });
+  
+          eventResponsesSnapshot.forEach((doc) => {
+            batch.update(doc.ref, {
+              responses: responsesCount,
+              updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+          });
+  
+          batch.commit();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+
+      try {
+        const eventDoc = await newEventResponseData.event.get();
+
+        if (eventDoc.exists) {
+          eventDoc.update({ responses: responsesCount })
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
   });

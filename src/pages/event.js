@@ -200,7 +200,8 @@ const Event = props => {
         name: event.name,
         description: event.description,
         startDateTime: event.startDateTime,
-        endDateTime: event.endDateTime
+        endDateTime: event.endDateTime,
+        isOnlineEvent: event.isOnlineEvent
       },
       schoolDetails: {
         name: school.name
