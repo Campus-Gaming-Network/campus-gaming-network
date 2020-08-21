@@ -169,7 +169,13 @@ const CreateEvent = props => {
 
       firebaseFirestore
         .collection("events")
-        .add(cleanedData)
+        .add({
+          ...cleanedData,
+          responses: {
+            yes: 0,
+            no: 0
+          }
+        })
         .then(eventDocRef => {
           eventId = eventDocRef.id;
 

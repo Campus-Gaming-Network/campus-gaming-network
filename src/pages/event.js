@@ -201,7 +201,11 @@ const Event = props => {
         description: event.description,
         startDateTime: event.startDateTime,
         endDateTime: event.endDateTime,
-        isOnlineEvent: event.isOnlineEvent
+        isOnlineEvent: event.isOnlineEvent,
+        responses: {
+          yes: 1,
+          no: 0
+        }
       },
       schoolDetails: {
         name: school.name
@@ -236,7 +240,7 @@ const Event = props => {
           setIsSubmittingEventResponse(false);
           toast({
             title: "An error occurred.",
-            description: error,
+            description: JSON.stringify(error),
             status: "error",
             isClosable: true
           });
@@ -245,7 +249,7 @@ const Event = props => {
       firebaseFirestore
         .collection("event-responses")
         .doc(eventResponse.id)
-        .update(data)
+        .update({ response })
         .then(() => {
           if (isCancellationAlertOpen) {
             setCancellationAlertIsOpen(false);
@@ -262,11 +266,15 @@ const Event = props => {
           setRefreshEventResponse(!refreshEventResponse);
         })
         .catch(error => {
-          setAttendingAlertIsOpen(false);
+          if (isCancellationAlertOpen) {
+            setCancellationAlertIsOpen(false);
+          } else {
+            setAttendingAlertIsOpen(false);
+          }
           setIsSubmittingEventResponse(false);
           toast({
             title: "An error occurred.",
-            description: error,
+            description: JSON.stringify(error),
             status: "error",
             isClosable: true
           });

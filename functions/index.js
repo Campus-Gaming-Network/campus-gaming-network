@@ -7,6 +7,9 @@ const db = admin.firestore();
 
 const axios = require("axios");
 
+////////////////////////////////////////////////////////////////////////////////
+// onCall
+
 exports.searchGames = functions.https.onCall((data) => {
   return new Promise(function (resolve, reject) {
     axios({
@@ -29,6 +32,74 @@ exports.searchGames = functions.https.onCall((data) => {
       });
   });
 });
+
+////////////////////////////////////////////////////////////////////////////////
+// onWrite
+
+// Source: https://stackoverflow.com/a/60963531
+exports.trackCreatedUpdated = functions.firestore
+  .document("{colId}/{docId}")
+  .onWrite(async (change, context) => {
+    const setCols = ["events", "event-responses", "users", "schools"];
+
+    if (setCols.indexOf(context.params.colId) === -1) {
+      return null;
+    }
+
+    const createDoc = change.after.exists && !change.before.exists;
+    const updateDoc = change.before.exists && change.after.exists;
+    const deleteDoc = change.before.exists && !change.after.exists;
+
+    if (deleteDoc) {
+      return null;
+    }
+
+    const after = change.after.exists ? change.after.data() : null;
+    const before = change.before.exists ? change.before.data() : null;
+
+    const canUpdate = () => {
+      if (before.updatedAt && after.updatedAt) {
+        if (after.updatedAt._seconds !== before.updatedAt._seconds) {
+          return false;
+        }
+      }
+
+      if (!before.createdAt && after.createdAt) {
+        return false;
+      }
+
+      return true;
+    };
+
+    if (createDoc) {
+      return change.after.ref
+        .set(
+          { createdAt: admin.firestore.FieldValue.serverTimestamp() },
+          { merge: true }
+        )
+        .catch((e) => {
+          console.log(e);
+          return false;
+        });
+    }
+
+    if (updateDoc && canUpdate()) {
+      return change.after.ref
+        .set(
+          { updatedAt: admin.firestore.FieldValue.serverTimestamp() },
+          { merge: true }
+        )
+        .catch((e) => {
+          console.log(e);
+          return false;
+        });
+    }
+
+    return null;
+  });
+
+////////////////////////////////////////////////////////////////////////////////
+// onUpdate
 
 exports.updateEventResponsesOnEventUpdate = functions.firestore
   .document("events/{eventId}")
@@ -58,25 +129,33 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
       };
     }
 
+    if (!shallowEqual(previousEventData.responses, newEventData.responses)) {
+      updatedValues = {
+        ...updatedValues,
+        eventDetails: {
+          ...updatedValues.eventDetails,
+          responses: newEventData.responses,
+        },
+      };
+    }
+
     if (Object.keys(updatedValues).length > 0) {
       const eventDocRef = db.collection("events").doc(context.params.eventId);
       const eventResponsesQuery = db
         .collection("event-responses")
         .where("event", "==", eventDocRef);
 
-      return eventResponsesQuery
+      eventResponsesQuery
         .get()
         .then((snapshot) => {
-          if (snapshot.empty) {
-            return null;
-          } else {
+          if (!snapshot.empty) {
             let batch = db.batch();
 
             snapshot.forEach((doc) => {
               batch.update(doc.ref, updatedValues);
             });
 
-            return batch.commit();
+            batch.commit();
           }
         })
         .catch((err) => console.log(err));
@@ -120,9 +199,9 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
           }
         })
         .catch((err) => console.log(err));
-    } else {
-      return null;
     }
+
+    return null;
   });
 
 exports.updateEventResponsesOnUserUpdate = functions.firestore
@@ -148,168 +227,131 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
         .collection("event-responses")
         .where("user", "==", userDocRef);
 
-      return eventResponsesQuery
+      eventResponsesQuery
         .get()
         .then((snapshot) => {
-          if (snapshot.empty) {
-            return null;
-          } else {
+          if (!snapshot.empty) {
             let batch = db.batch();
 
             snapshot.forEach((doc) => {
               batch.update(doc.ref, updatedValues);
             });
 
-            return batch.commit();
+            batch.commit();
           }
         })
         .catch((err) => console.log(err));
-    } else {
-      return null;
     }
+
+    return null;
   });
 
-exports.userOnCreated = functions.firestore
-  .document("users/{userId}")
-  .onCreate((snapshot, context) => {
-    return snapshot.ref
-      .set(
-        {
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      )
-      .catch((err) => console.log(err));
-  });
-
-exports.eventOnCreated = functions.firestore
-  .document("events/{eventId}")
-  .onCreate((snapshot, context) => {
-    return snapshot.ref
-      .set(
-        {
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      )
-      .catch((err) => console.log(err));
-  });
+////////////////////////////////////////////////////////////////////////////////
+// onCreate
 
 exports.eventResponsesOnCreated = functions.firestore
   .document("event-responses/{eventResponseId}")
-  .onCreate(async (snapshot, context) => {
-    const newEventResponseData = snapshot.data();
-    const eventResponsesQuery = db.collection("event-responses").where("event", "==", newEventResponseData.event);
-    const responsesCount = { yes: 0, no: 0 };
-  
-    try {
-      const eventResponsesSnapshot = await eventResponsesQuery.get();
+  .onCreate((snapshot) => {
+    const eventResponseData = snapshot.data();
+    const eventRef = db.collection("events").doc(eventResponseData.event.id);
 
-      if (!eventResponsesSnapshot.empty) {
-        let batch = db.batch();
-
-        eventResponsesSnapshot.forEach((doc) => {
-          if (doc.data().response === "YES") {
-            responsesCount.yes += 1;
-          } else if (doc.data().response === "NO") {
-            responsesCount.no += 1;
-          }
-        });
-
-        eventResponsesSnapshot.forEach((doc) => {
-          batch.update(doc.ref, { responses: responsesCount });
-        });
-
-        batch.commit();
-      }
-    } catch (err) {
-      console.log(err);
+    if (eventResponseData.response === "YES") {
+      eventRef.set(
+        { responses: { yes: admin.firestore.FieldValue.increment(1) } },
+        { merge: true }
+      );
+    } else if (eventResponseData.response === "NO") {
+      eventRef.set(
+        { responses: { no: admin.firestore.FieldValue.increment(1) } },
+        { merge: true }
+      );
     }
 
-    db.collection("events").doc(newEventResponseData.event.id).update({ responses: responsesCount });
-
-    return snapshot.ref
-      .set(
-        {
-          responses: responsesCount,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      )
-      .catch((err) => console.log(err));
-  });
-
-exports.userOnUpdated = functions.firestore
-  .document("users/{userId}")
-  .onUpdate((change, context) => {
-    return change.ref
-      .update({
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      })
-      .catch((err) => console.log(err));
-  });
-
-exports.eventOnUpdated = functions.firestore
-  .document("events/{eventId}")
-  .onUpdate((change, context) => {
-    return change.ref
-      .update({
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      })
-      .catch((err) => console.log(err));
+    return null;
   });
 
 exports.eventResponsesOnUpdated = functions.firestore
   .document("event-responses/{eventResponseId}")
-  .onUpdate(async (change, context) => {
-    // 
-    // FIX: infinite loop 
-    // 
-    const previousEventResponseData = change.after.data();
+  .onUpdate((change, context) => {
+    const previousEventResponseData = change.before.data();
     const newEventResponseData = change.after.data();
-    const eventResponsesDocRef = db.collection("event-responses").doc(context.params.eventResponseId);
-    const eventResponsesQuery = db.collection("event-responses").where("event", "==", newEventResponseData.event);
-    const responsesCount = { yes: 0, no: 0 };
 
     if (previousEventResponseData.response !== newEventResponseData.response) {
-      try {
-        const eventResponsesSnapshot = await eventResponsesQuery.get();
+      console.log(
+        `Event response ${context.params.eventResponseId} updated: ${previousEventResponseData.response} -> ${newEventResponseData.response}`
+      );
 
-        if (!eventResponsesSnapshot.empty) {
-          let batch = db.batch();
-  
-          eventResponsesSnapshot.forEach((doc) => {
-            if (doc.data().response === "YES") {
-              responsesCount.yes += 1;
-            } else if (doc.data().response === "NO") {
-              responsesCount.no += 1;
-            }
-          });
-  
-          eventResponsesSnapshot.forEach((doc) => {
-            batch.update(doc.ref, {
-              responses: responsesCount,
-              updatedAt: admin.firestore.FieldValue.serverTimestamp()
-            });
-          });
-  
-          batch.commit();
-        }
-      } catch (err) {
-        console.log(err);
-      }
+      const eventRef = db
+        .collection("events")
+        .doc(newEventResponseData.event.id);
 
-      try {
-        const eventDoc = await newEventResponseData.event.get();
-
-        if (eventDoc.exists) {
-          eventDoc.update({ responses: responsesCount })
-        }
-      } catch (err) {
-        console.log(err);
+      if (newEventResponseData.response === "YES") {
+        eventRef.set(
+          {
+            responses: {
+              no: admin.firestore.FieldValue.increment(-1),
+              yes: admin.firestore.FieldValue.increment(1),
+            },
+          },
+          { merge: true }
+        );
+      } else if (newEventResponseData.response === "NO") {
+        eventRef.set(
+          {
+            responses: {
+              yes: admin.firestore.FieldValue.increment(-1),
+              no: admin.firestore.FieldValue.increment(1),
+            },
+          },
+          { merge: true }
+        );
       }
     }
+
+    return null;
   });
+
+////////////////////////////////////////////////////////////////////////////////
+// onDelete
+
+exports.eventResponsesOnDelete = functions.firestore
+  .document("event-responses/{eventResponseId}")
+  .onDelete((snapshot) => {
+    const deletedData = snapshot.data();
+
+    const eventRef = db.collection("events").doc(deletedData.event.id);
+
+    if (deletedData.response === "YES") {
+      eventRef.set(
+        { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
+        { merge: true }
+      );
+    } else if (deletedData.response === "NO") {
+      eventRef.set(
+        { responses: { no: admin.firestore.FieldValue.increment(-1) } },
+        { merge: true }
+      );
+    }
+
+    return null;
+  });
+
+////////////////////////////////////////////////////////////////////////////////
+// Helpers
+
+function shallowEqual(object1, object2) {
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (let key of keys1) {
+    if (object1[key] !== object2[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}

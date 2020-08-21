@@ -1,6 +1,5 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import { Box, Text, Badge, Flex, Image, Tooltip } from "@chakra-ui/core";
