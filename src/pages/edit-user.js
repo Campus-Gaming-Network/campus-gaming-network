@@ -205,7 +205,7 @@ const EditUser = props => {
         setIsSubmitting(false);
         toast({
           title: "An error occurred.",
-          description: error,
+          description: error.message,
           status: "error",
           isClosable: true
         });

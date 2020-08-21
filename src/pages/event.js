@@ -240,7 +240,7 @@ const Event = props => {
           setIsSubmittingEventResponse(false);
           toast({
             title: "An error occurred.",
-            description: JSON.stringify(error),
+            description: error.message,
             status: "error",
             isClosable: true
           });
@@ -274,7 +274,7 @@ const Event = props => {
           setIsSubmittingEventResponse(false);
           toast({
             title: "An error occurred.",
-            description: JSON.stringify(error),
+            description: error.message,
             status: "error",
             isClosable: true
           });
