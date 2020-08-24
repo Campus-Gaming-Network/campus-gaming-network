@@ -17,9 +17,11 @@ import {
   Flex
 } from "@chakra-ui/core";
 import * as constants from "../constants";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
+
+// Utilities
 import { firebaseAuth } from "../firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // Components
 import VisuallyHidden from "../components/VisuallyHidden";
@@ -32,7 +34,6 @@ import GameLink from "../components/GameLink";
 // Hooks
 import useFetchUserDetails from "../hooks/useFetchUserDetails";
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
-// import useFetchSchools from ".//hooks/useFetchSchools";
 
 ////////////////////////////////////////////////////////////////////////////////
 // User
@@ -40,76 +41,27 @@ import useFetchUserEvents from "../hooks/useFetchUserEvents";
 const User = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
-  const cachedUser = state.users[props.id];
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
-  const [isAuthenticatedUser, setIsAuthenticatedUser] = React.useState(false);
-  const [userFetchId, setUserFetchId] = React.useState(null);
-  const [userEventsFetchId, setUserEventsFetchId] = React.useState(null);
-  const [user, setUser] = React.useState(state.user);
-  const [events, setEvents] = React.useState(state.user.events);
-  const [fetchedUser, isLoadingFetchedUser] = useFetchUserDetails(userFetchId);
-  const [fetchedUserEvents, isLoadingFetchedUserEvents] = useFetchUserEvents(
-    userEventsFetchId
+  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [user, isLoadingUser] = useFetchUserDetails(props.id);
+  const school = React.useMemo(
+    () => (user && user.school ? state.schools[user.school.id] : null),
+    [state.schools, user]
   );
-  const school = user.school ? state.schools[user.school.id] : null;
+  const isAuthenticatedUser = React.useMemo(
+    () => !!authenticatedUser && authenticatedUser.uid === props.id,
+    [authenticatedUser, props.id]
+  );
 
-  const getUser = React.useCallback(() => {
-    if (cachedUser) {
-      setUser(cachedUser);
-    } else if (!userFetchId) {
-      setUserFetchId(props.id);
-    } else if (fetchedUser) {
-      setUser(fetchedUser);
+  React.useEffect(() => {
+    if (props.id !== state.user.id && !isLoadingUser) {
       dispatch({
         type: ACTION_TYPES.SET_USER,
-        payload: fetchedUser
+        payload: user
       });
     }
-  }, [props.id, cachedUser, fetchedUser, dispatch, userFetchId]);
+  }, [props.id, state.user.id, dispatch, user, isLoadingUser]);
 
-  const getUserEvents = React.useCallback(() => {
-    if (cachedUser && cachedUser.events) {
-      setEvents(cachedUser.events);
-    } else if (!userEventsFetchId) {
-      setUserEventsFetchId(props.id);
-    } else if (fetchedUserEvents) {
-      setEvents(fetchedUserEvents);
-      dispatch({
-        type: ACTION_TYPES.SET_USER_EVENTS,
-        payload: {
-          id: props.id,
-          events: fetchedUserEvents
-        }
-      });
-    }
-  }, [props.id, cachedUser, fetchedUserEvents, dispatch, userEventsFetchId]);
-
-  React.useEffect(() => {
-    const _isAuthenticatedUser =
-      authenticatedUser && authenticatedUser.uid === props.id;
-
-    if (_isAuthenticatedUser !== isAuthenticatedUser) {
-      setIsAuthenticatedUser(_isAuthenticatedUser);
-    }
-  }, [props.id, cachedUser, authenticatedUser, isAuthenticatedUser]);
-
-  React.useEffect(() => {
-    if (props.id !== state.user.id) {
-      getUser();
-    }
-  }, [props.id, state.user.id, cachedUser, fetchedUser, dispatch, getUser]);
-
-  React.useEffect(() => {
-    if (!user.events) {
-      getUserEvents();
-    }
-  }, [props.id, user, cachedUser, fetchedUserEvents, dispatch, getUserEvents]);
-
-  if (
-    isAuthenticating ||
-    isLoadingFetchedUser ||
-    (!!authenticatedUser && isEmpty(user))
-  ) {
+  if (isLoadingUser) {
     return <UserSilhouette />;
   }
 
@@ -256,47 +208,7 @@ const User = props => {
           >
             Accounts
           </Heading>
-          {user.hasAccounts ? (
-            <List display="flex" flexWrap="wrap" width="100%" styleType="none">
-              {Object.keys(constants.ACCOUNTS).map(key => {
-                const account = constants.ACCOUNTS[key];
-                const value = user[key];
-
-                if (!value) {
-                  return null;
-                }
-
-                return (
-                  <ListItem key={key}>
-                    <Box
-                      borderWidth="1px"
-                      rounded="lg"
-                      bg="white"
-                      pos="relative"
-                      alignItems="center"
-                      display="flex"
-                      px={4}
-                      py={2}
-                      mr={4}
-                      mb={4}
-                    >
-                      <Box borderRight="1px" borderColor="gray.300" pr={4}>
-                        <FontAwesomeIcon icon={account.icon} />
-                      </Box>
-                      <Box pl={4}>
-                        <Text fontSize="sm">{account.label}</Text>
-                        <Text fontSize="sm" fontWeight="bold">
-                          {value}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </ListItem>
-                );
-              })}
-            </List>
-          ) : (
-            <Text color="gray.400">{constants.USER_EMPTY_ACCOUNTS_TEXT}</Text>
-          )}
+          <AccountsList user={user} />
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -335,31 +247,73 @@ const User = props => {
           >
             Events Attending
           </Heading>
-          {isLoadingFetchedUserEvents ? (
-            <Box w="100%" textAlign="center">
-              <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="purple.500"
-                size="xl"
-                mt={4}
-              />
-            </Box>
-          ) : events && events.length ? (
-            <List mx={-2}>
-              {events.map(event => (
-                <EventListItem key={event.id} {...event} />
-              ))}
-            </List>
-          ) : (
-            <Text color="gray.400">
-              {constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}
-            </Text>
-          )}
+          <EventsList user={user} id={props.id} />
         </Stack>
       </Stack>
     </Box>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// AccountsList
+
+const AccountsList = props => {
+  if (props.user && props.user.hasAccounts) {
+    return (
+      <List display="flex" flexWrap="wrap" width="100%" styleType="none">
+        {Object.keys(constants.ACCOUNTS).map(key => {
+          const account = constants.ACCOUNTS[key];
+          const value = props.user[key];
+
+          return (
+            <AccountsListItem
+              key={key}
+              icon={account.icon}
+              label={account.label}
+              value={value}
+            />
+          );
+        })}
+      </List>
+    );
+  }
+
+  return <Text color="gray.400">{constants.USER_EMPTY_ACCOUNTS_TEXT}</Text>;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// AccountsListItem
+
+const AccountsListItem = props => {
+  if (!props.value) {
+    return null;
+  }
+
+  return (
+    <ListItem>
+      <Box
+        borderWidth="1px"
+        rounded="lg"
+        bg="white"
+        pos="relative"
+        alignItems="center"
+        display="flex"
+        px={4}
+        py={2}
+        mr={4}
+        mb={4}
+      >
+        <Box borderRight="1px" borderColor="gray.300" pr={4}>
+          <FontAwesomeIcon icon={props.icon} />
+        </Box>
+        <Box pl={4}>
+          <Text fontSize="sm">{props.label}</Text>
+          <Text fontSize="sm" fontWeight="bold">
+            {props.value}
+          </Text>
+        </Box>
+      </Box>
+    </ListItem>
   );
 };
 
@@ -396,5 +350,55 @@ const GameListItem = React.memo(props => {
     </ListItem>
   );
 });
+
+////////////////////////////////////////////////////////////////////////////////
+// EventsList
+
+const EventsList = props => {
+  const dispatch = useAppDispatch();
+  const state = useAppState();
+  const [events, isLoadingEvents] = useFetchUserEvents(props.id);
+
+  React.useEffect(() => {
+    if (isLoadingEvents && events) {
+      dispatch({
+        type: ACTION_TYPES.SET_USER_EVENTS,
+        payload: {
+          id: props.id,
+          events: events
+        }
+      });
+    }
+  }, [props.id, state.user.id, events, dispatch, isLoadingEvents]);
+
+  if (isLoadingEvents) {
+    return (
+      <Box w="100%" textAlign="center">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="purple.500"
+          size="xl"
+          mt={4}
+        />
+      </Box>
+    );
+  }
+
+  if (events && events.length && events.length > 0) {
+    return (
+      <List mx={-2}>
+        {events.map(event => (
+          <EventListItem key={event.id} {...event} />
+        ))}
+      </List>
+    );
+  }
+
+  return (
+    <Text color="gray.400">{constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}</Text>
+  );
+};
 
 export default User;

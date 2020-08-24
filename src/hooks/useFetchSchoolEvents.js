@@ -1,9 +1,10 @@
 import React from "react";
+import isEmpty from "lodash.isempty";
+
 import { firebase, firebaseFirestore } from "../firebase";
 import { mapEvent } from "../utilities";
 import * as constants from "../constants";
 import { useAppState } from "../store";
-import isEmpty from "lodash.isempty";
 
 const useFetchSchoolEvents = (
   id,
@@ -11,7 +12,7 @@ const useFetchSchoolEvents = (
   page = 0
 ) => {
   const state = useAppState();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [pages, setPages] = React.useState({});
@@ -23,16 +24,18 @@ const useFetchSchoolEvents = (
       setError(null);
 
       if (
+        state.schools[id] &&
+        !isEmpty(state.schools[id]) &&
         state.schools[id].events &&
         !isEmpty(state.schools[id].events) &&
         !!state.schools[id].events[page]
       ) {
-        console.log("[CACHE] fetchSchoolEvents...");
+        console.log(`[CACHE] fetchSchoolEvents...${id}`);
 
         setEvents(state.schools[id].events);
         setIsLoading(false);
       } else {
-        console.log("[API] fetchSchoolEvents...");
+        console.log(`[API] fetchSchoolEvents...${id}`);
 
         const schoolDocRef = firebaseFirestore.collection("schools").doc(id);
         const now = new Date();
@@ -60,6 +63,7 @@ const useFetchSchoolEvents = (
           .then(snapshot => {
             if (!snapshot.empty) {
               let schoolEvents = [];
+
               snapshot.forEach(doc => {
                 const data = doc.data();
                 schoolEvents.push(
@@ -72,6 +76,7 @@ const useFetchSchoolEvents = (
                   )
                 );
               });
+
               setEvents(schoolEvents);
               setIsLoading(false);
               setPages(prev => ({
@@ -108,7 +113,9 @@ const useFetchSchoolEvents = (
     if (id) {
       fetchSchoolEvents();
     }
-  }, [id, limit, page, pages, state.schools]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, limit, page, pages]);
 
   return [events, isLoading, error];
 };

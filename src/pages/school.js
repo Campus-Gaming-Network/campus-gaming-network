@@ -27,12 +27,9 @@ import EventListItem from "../components/EventListItem";
 /* eslint-disable no-unused-vars */
 import SchoolLogo from "../components/SchoolLogo";
 
-import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { firebaseAuth } from "../firebase";
 import { isUrl } from "../utilities";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +37,6 @@ import { isUrl } from "../utilities";
 
 const School = props => {
   const state = useAppState();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const school = React.useMemo(() => state.schools[props.id], [
     state.schools,
     props.id
@@ -183,7 +179,7 @@ const School = props => {
           >
             Upcoming Events
           </Heading>
-          <EventsList schoolId={school.id} schoolName={school.name} />
+          <EventsList id={props.id} />
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -194,7 +190,7 @@ const School = props => {
           >
             Members
           </Heading>
-          <UsersList schoolId={props.id} />
+          <UsersList id={props.id} />
         </Stack>
       </Stack>
     </Box>
@@ -206,30 +202,25 @@ const School = props => {
 
 const EventsList = props => {
   const dispatch = useAppDispatch();
-  const state = useAppState();
   const [page] = React.useState(0);
   const [events, isLoadingEvents] = useFetchSchoolEvents(
-    props.schoolId,
+    props.id,
     undefined,
     page
   );
-  const school = React.useMemo(() => state.schools[props.schoolId], [
-    state.schools,
-    props.schoolId
-  ]);
 
   React.useEffect(() => {
     if (isLoadingEvents && events && page >= 0) {
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL_EVENTS,
         payload: {
-          id: school.id,
+          id: props.id,
           events,
           page
         }
       });
     }
-  }, [isLoadingEvents, events, dispatch, school.id, page]);
+  }, [isLoadingEvents, events, dispatch, props.id, page]);
 
   if (isLoadingEvents) {
     return (
@@ -246,7 +237,7 @@ const EventsList = props => {
     );
   }
 
-  if (events && events.length) {
+  if (events && events.length && events.length > 0) {
     return (
       <List>
         {events.map(event => (
@@ -272,20 +263,15 @@ const EventsList = props => {
 
 const UsersList = props => {
   const dispatch = useAppDispatch();
-  const state = useAppState();
-  const school = React.useMemo(() => state.schools[props.schoolId], [
-    state.schools,
-    props.schoolId
-  ]);
   const [page, setPage] = React.useState(0);
   const [users, isLoadingUsers] = useFetchSchoolUsers(
-    props.schoolId,
+    props.id,
     undefined,
     page
   );
 
   const nextPage = () => {
-    if (users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
+    if (users && users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
       setPage(page + 1);
     }
   };
@@ -301,13 +287,13 @@ const UsersList = props => {
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL_USERS,
         payload: {
-          id: school.id,
+          id: props.id,
           users,
           page
         }
       });
     }
-  }, [isLoadingUsers, users, dispatch, school.id, page]);
+  }, [isLoadingUsers, users, dispatch, props.id, page]);
 
   if (isLoadingUsers) {
     return (
@@ -328,7 +314,7 @@ const UsersList = props => {
     );
   }
 
-  if (users && users.length) {
+  if (users && users.length && users.length > 0) {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>

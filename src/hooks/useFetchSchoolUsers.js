@@ -1,9 +1,10 @@
 import React from "react";
+import isEmpty from "lodash.isempty";
+
 import { firebaseFirestore } from "../firebase";
 import { mapUser } from "../utilities";
 import * as constants from "../constants";
 import { useAppState } from "../store";
-import isEmpty from "lodash.isempty";
 
 const useFetchSchoolUsers = (
   id,
@@ -11,7 +12,7 @@ const useFetchSchoolUsers = (
   page = 0
 ) => {
   const state = useAppState();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [pages, setPages] = React.useState({});
@@ -23,16 +24,18 @@ const useFetchSchoolUsers = (
       setError(null);
 
       if (
+        state.schools[id] &&
+        !isEmpty(state.schools[id]) &&
         state.schools[id].users &&
         !isEmpty(state.schools[id].users) &&
         !!state.schools[id].users[page]
       ) {
-        console.log("[CACHE] fetchSchoolUsers...");
+        console.log(`[CACHE] fetchSchoolUsers...${id}`);
 
         setUsers(state.schools[id].users[page]);
         setIsLoading(false);
       } else {
-        console.log("[API] fetchSchoolUsers...");
+        console.log(`[API] fetchSchoolUsers...${id}`);
 
         const schoolDocRef = firebaseFirestore.collection("schools").doc(id);
 
@@ -95,7 +98,9 @@ const useFetchSchoolUsers = (
     if (id) {
       fetchSchoolUsers();
     }
-  }, [id, limit, page, pages, state.schools]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, limit, page, pages]);
 
   return [users, isLoading, error];
 };

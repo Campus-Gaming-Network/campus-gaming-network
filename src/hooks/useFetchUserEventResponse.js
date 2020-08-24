@@ -2,7 +2,7 @@ import React from "react";
 import { firebaseFirestore } from "../firebase";
 
 const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [eventResponse, setEventResponse] = React.useState(null);
   const [error, setError] = React.useState(null);
 

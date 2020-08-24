@@ -1,9 +1,10 @@
 import React from "react";
+import isEmpty from "lodash.isempty";
+
 import { firebaseFirestore } from "../firebase";
 import { mapUser } from "../utilities";
 import * as constants from "../constants";
 import { useAppState } from "../store";
-import isEmpty from "lodash.isempty";
 
 const useFetchEventUsers = (
   id,
@@ -11,7 +12,7 @@ const useFetchEventUsers = (
   page = 0
 ) => {
   const state = useAppState();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [pages, setPages] = React.useState({});
@@ -23,16 +24,18 @@ const useFetchEventUsers = (
       setError(null);
 
       if (
+        state.events[id] &&
+        !isEmpty(state.events[id]) &&
         state.events[id].users &&
         !isEmpty(state.events[id].users) &&
         !!state.events[id].users[page]
       ) {
-        console.log("[CACHE] fetchEventUsers...");
+        console.log(`[CACHE] fetchEventUsers...${id}`);
 
         setUsers(state.events[id].users[page]);
         setIsLoading(false);
       } else {
-        console.log("[API] fetchEventUsers...");
+        console.log(`[API] fetchEventUsers...${id}`);
 
         const eventDocRef = firebaseFirestore.collection("events").doc(id);
 
@@ -55,6 +58,7 @@ const useFetchEventUsers = (
           .then(snapshot => {
             if (!snapshot.empty) {
               let eventUsers = [];
+
               snapshot.forEach(doc => {
                 const data = doc.data();
                 eventUsers.push(
@@ -64,6 +68,7 @@ const useFetchEventUsers = (
                   })
                 );
               });
+
               setUsers(eventUsers);
               setIsLoading(false);
               setPages(prev => ({
@@ -100,7 +105,9 @@ const useFetchEventUsers = (
     if (id) {
       fetchEventUsers();
     }
-  }, [id, limit, page, pages, state.events]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, limit, page, pages]);
 
   return [users, isLoading, error];
 };

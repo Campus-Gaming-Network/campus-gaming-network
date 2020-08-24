@@ -56,24 +56,9 @@ const Event = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
   const [authenticatedUser] = useAuthState(firebaseAuth);
-  const cachedEvent = state.events[props.id];
-  const [eventFetchId, setEventFetchId] = React.useState(null);
-  const [event, setEvent] = React.useState(state.event);
-  const [fetchedEvent, isLoadingFetchedEvent] = useFetchEventDetails(
-    eventFetchId
-  );
+  const [event, isLoadingEvent] = useFetchEventDetails(props.id);
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
-  const [isEventCreator, setIsEventCreator] = React.useState(false);
-  const [userFetchId, setUserFetchId] = React.useState(null);
-  const [eventResponse, isLoadingUserEventResponse] = useFetchUserEventResponse(
-    props.id,
-    userFetchId,
-    refreshEventResponse
-  );
-  const [hasResponded, setHasResponded] = React.useState(false);
-  const [canChangeEventResponse, setCanChangeEventResponse] = React.useState(
-    false
-  );
+
   const [
     isSubmittingEventResponse,
     setIsSubmittingEventResponse
@@ -82,98 +67,39 @@ const Event = props => {
     false
   );
   const [isAttendingAlertOpen, setAttendingAlertIsOpen] = React.useState(false);
-  const [isLoadingEvent, setIsLoadingEvent] = React.useState(true);
-
-  const getEvent = React.useCallback(() => {
-    if (!!cachedEvent) {
-      setEvent(cachedEvent);
-    } else if (!eventFetchId) {
-      setEventFetchId(props.id);
-    } else if (fetchedEvent) {
-      setEvent(fetchedEvent);
-      dispatch({
-        type: ACTION_TYPES.SET_EVENT,
-        payload: fetchedEvent
-      });
-    }
-  }, [props.id, cachedEvent, fetchedEvent, dispatch, eventFetchId]);
+  const isEventCreator = React.useMemo(
+    () =>
+      authenticatedUser && event && event.creator.id === authenticatedUser.uid,
+    [authenticatedUser, event]
+  );
+  const [eventResponse, isLoadingUserEventResponse] = useFetchUserEventResponse(
+    props.id,
+    authenticatedUser && !isEventCreator ? authenticatedUser.uid : null,
+    refreshEventResponse
+  );
+  const hasResponded = React.useMemo(() => !!eventResponse, [eventResponse]);
+  const canChangeEventResponse = React.useMemo(
+    () =>
+      !!authenticatedUser &&
+      !isLoadingUserEventResponse &&
+      !isEventCreator &&
+      !!event &&
+      !event.hasEnded,
+    [authenticatedUser, isLoadingUserEventResponse, isEventCreator, event]
+  );
 
   const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
 
   const onAttendingAlertCancel = () => setAttendingAlertIsOpen(false);
 
   React.useEffect(() => {
-    if (props.id !== state.event.id) {
-      getEvent();
+    if (props.id !== state.event.id && !isLoadingEvent) {
+      dispatch({
+        type: ACTION_TYPES.SET_EVENT,
+        payload: event
+      });
     }
-  }, [
-    props.id,
-    state.event.id,
-    cachedEvent,
-    fetchedEvent,
-    dispatch,
-    getEvent,
-    isLoadingFetchedEvent
-  ]);
-
-  React.useEffect(() => {
-    const _isEventCreator =
-      authenticatedUser &&
-      fetchedEvent &&
-      fetchedEvent.creator.id === authenticatedUser.uid;
-
-    if (isEventCreator !== _isEventCreator) {
-      setIsEventCreator(_isEventCreator);
-    }
-  }, [isEventCreator, authenticatedUser, fetchedEvent]);
-
-  React.useEffect(() => {
-    const _userFetchId = authenticatedUser ? authenticatedUser.uid : null;
-
-    if (_userFetchId !== userFetchId) {
-      setUserFetchId(authenticatedUser.uid);
-    }
-  }, [isEventCreator, authenticatedUser, userFetchId]);
-
-  React.useEffect(() => {
-    const _hasResponded = !!eventResponse;
-
-    if (_hasResponded !== hasResponded) {
-      setHasResponded(_hasResponded);
-    }
-  }, [eventResponse, hasResponded]);
-
-  React.useEffect(() => {
-    const _canChangeEventResponse =
-      !!authenticatedUser &&
-      !isLoadingUserEventResponse &&
-      !isEventCreator &&
-      !!fetchedEvent &&
-      !fetchedEvent.hasEnded;
-
-    if (_canChangeEventResponse !== canChangeEventResponse) {
-      setCanChangeEventResponse(_canChangeEventResponse);
-    }
-  }, [
-    authenticatedUser,
-    isLoadingUserEventResponse,
-    isEventCreator,
-    fetchedEvent,
-    canChangeEventResponse
-  ]);
-
-  React.useEffect(() => {
-    const isLoading =
-      isLoadingFetchedEvent ||
-      isEmpty(event) ||
-      isEmpty(state.event) ||
-      event.id !== props.id ||
-      (event.state && event.state.id !== props.id);
-
-    if (isLoading !== isLoadingEvent) {
-      setIsLoadingEvent(isLoading);
-    }
-  }, [isLoadingFetchedEvent, isLoadingEvent, event, props.id, state.event]);
+  }, [props.id, state.event.id, dispatch, event, isLoadingEvent]);
 
   const getResponseFormData = response => {
     const userDocRef = firebaseFirestore
@@ -513,7 +439,7 @@ const Event = props => {
             >
               Attendees
             </Heading>
-            <UsersList eventId={props.id} />
+            <UsersList id={props.id} />
           </Stack>
         </Stack>
       </Box>
@@ -614,20 +540,11 @@ const Event = props => {
 
 const UsersList = props => {
   const dispatch = useAppDispatch();
-  const state = useAppState();
-  const event = React.useMemo(() => state.events[props.eventId], [
-    state.events,
-    props.eventId
-  ]);
   const [page, setPage] = React.useState(0);
-  const [users, isLoadingUsers] = useFetchEventUsers(
-    props.eventId,
-    undefined,
-    page
-  );
+  const [users, isLoadingUsers] = useFetchEventUsers(props.id, undefined, page);
 
   const nextPage = () => {
-    if (users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
+    if (users && users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
       setPage(page + 1);
     }
   };
@@ -643,13 +560,13 @@ const UsersList = props => {
       dispatch({
         type: ACTION_TYPES.SET_EVENT_USERS,
         payload: {
-          id: event.id,
+          id: props.id,
           users,
           page
         }
       });
     }
-  }, [isLoadingUsers, users, dispatch, event.id, page]);
+  }, [isLoadingUsers, users, dispatch, props.id, page]);
 
   if (isLoadingUsers) {
     return (
@@ -670,7 +587,7 @@ const UsersList = props => {
     );
   }
 
-  if (users && users.length) {
+  if (users && users.length && users.length > 0) {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>

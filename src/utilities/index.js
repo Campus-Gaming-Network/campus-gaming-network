@@ -2,23 +2,12 @@
 // Utilities
 
 import React from "react";
-import orderBy from "lodash.orderby";
 import intersection from "lodash.intersection";
 import capitalize from "lodash.capitalize";
 import moment from "moment";
 import md5 from "md5";
 
 import * as constants from "../constants";
-
-export const sortedEvents = events => {
-  return orderBy(
-    events,
-    event => {
-      return moment(moment(event.startDateTime));
-    },
-    ["desc"]
-  );
-};
 
 export const classNames = (_classNames = []) => {
   if (isDev()) {
