@@ -1,10 +1,14 @@
-require("dotenv").config({ path: '../../.env.local' });
-const firebase = require("firebase/app");
-require("firebase/firestore");
+require("dotenv").config({ path: "../../.env.local" });
+const admin = require("firebase-admin");
 const chunk = require("lodash.chunk");
 const kebabCase = require("lodash.kebabcase");
 const geohash = require("ngeohash");
-const { performance } = require('perf_hooks');
+const { performance } = require("perf_hooks");
+
+admin.initializeApp({
+  credential: admin.credential.cert(process.env.REACT_APP_FIREBASE_SERVICE_ACCOUNT_KEY_PATH),
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+});
 
 // Source:
 // https://hifld-geoplatform.opendata.arcgis.com/datasets/colleges-and-universities
@@ -82,7 +86,7 @@ const main = async () => {
   for (const _chunk of chunks) {
     console.count("Started chunk");
 
-    let db = firebase.firestore();
+    let db = admin.firestore();
     let batch = db.batch();
 
     const mappedSchools = _chunk.map(mapSchool);

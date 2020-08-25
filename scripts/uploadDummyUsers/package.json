@@ -12,7 +12,7 @@
     "commander": "^6.0.0",
     "dotenv": "^8.2.0",
     "faker": "^4.1.0",
-    "firebase": "^7.9.1",
+    "firebase-admin": "^8.10.0",
     "lodash.isinteger": "^4.0.4",
     "lodash.sample": "^4.2.1",
     "lodash.samplesize": "^4.2.0",

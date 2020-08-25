@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "firebase": "^7.9.1",
+    "firebase-admin": "^8.10.0",
     "lodash.chunk": "^4.2.0",
     "lodash.kebabcase": "^4.1.1",
     "ngeohash": "^0.6.3"

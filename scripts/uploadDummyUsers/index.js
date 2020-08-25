@@ -1,6 +1,5 @@
 require("dotenv").config({ path: "../../.env.local" });
-const firebase = require("firebase/app");
-require("firebase/firestore");
+const admin = require("firebase-admin");
 const { performance } = require("perf_hooks");
 const md5 = require("md5");
 const faker = require("faker");
@@ -9,17 +8,12 @@ const sampleSize = require("lodash.samplesize");
 const program = require("commander");
 const isInteger = require("lodash.isinteger");
 
-firebase.initializeApp({
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+admin.initializeApp({
+  credential: admin.credential.cert(process.env.REACT_APP_FIREBASE_SERVICE_ACCOUNT_KEY_PATH),
   databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 });
 
-const db = firebase.firestore();
+const db = admin.firestore();
 const batch = db.batch();
 
 const MAX_USER_CREATION = 500;

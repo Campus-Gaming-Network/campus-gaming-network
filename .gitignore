@@ -50,3 +50,6 @@ functions/.runtimeconfig.json
 ui-debug.log
 
 .firebaserc
+
+serviceAccountKey.json
+serviceAccountKey_test.json
