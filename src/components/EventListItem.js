@@ -12,42 +12,39 @@ const EventListItem = props => {
   }
 
   return (
-    <Box
-      as="li"
-      pos="relative"
-      display="flex"
-      alignItems="center"
-      w={{ md: "75%", xs: "100%" }}
-    >
+    <Box as="li" flexBasis={{ md: "33.3333%", sm: "50%", xs: "100%" }} p={2}>
       <Box
-        m={2}
         borderWidth="1px"
         px={6}
         py={4}
         rounded="lg"
         bg="white"
         w="100%"
+        overflow="hidden"
       >
         {props.event.isOnlineEvent ? <Badge mb={3}>Online Event</Badge> : null}
         <Box mb={3} display="flex" alignItems="center">
           <Box pr={2}>
+            <Link
+              to={`/event/${props.event.id}`}
+              color="purple.500"
+              fontWeight="bold"
+              d="block"
+              fontSize="xl"
+              lineHeight="1.2"
+              mb={2}
+            >
+              {props.event.name}
+            </Link>
             <Link
               to={`/school/${props.school.id}`}
               color="purple.500"
               fontSize="sm"
               fontWeight={600}
               d="block"
+              lineHeight="1.2"
             >
               {startCase(props.school.name.toLowerCase())}
-            </Link>
-            <Link
-              to={`/event/${props.event.id}`}
-              color="purple.500"
-              fontWeight="bold"
-              d="block"
-              fontSize="2xl"
-            >
-              {props.event.name}
             </Link>
           </Box>
           <Flex

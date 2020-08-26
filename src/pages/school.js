@@ -239,7 +239,7 @@ const EventsList = props => {
 
   if (events && events.length && events.length > 0) {
     return (
-      <List>
+      <List d="flex" flexWrap="wrap" m={-2} p={0}>
         {events.map(event => (
           <EventListItem
             key={event.id}
