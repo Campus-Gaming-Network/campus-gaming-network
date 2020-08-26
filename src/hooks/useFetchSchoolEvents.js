@@ -32,7 +32,7 @@ const useFetchSchoolEvents = (
       ) {
         console.log(`[CACHE] fetchSchoolEvents...${id}`);
 
-        setEvents(state.schools[id].events);
+        setEvents(state.schools[id].events[page]);
         setIsLoading(false);
       } else {
         console.log(`[API] fetchSchoolEvents...${id}`);
