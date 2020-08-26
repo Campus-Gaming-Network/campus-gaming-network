@@ -13,44 +13,51 @@ const axios = require("axios");
 exports.searchGames = functions.https.onCall((data) => {
   const gameQueryRef = db.collection("game-queries").doc(data.text);
 
-  return gameQueryRef.get()
-    .then((doc) => {
-      if (doc.exists) {
-        gameQueryRef.set({ queries: admin.firestore.FieldValue.increment(1) }, { merge: true });
+  return gameQueryRef.get().then((doc) => {
+    if (doc.exists) {
+      gameQueryRef.set(
+        { queries: admin.firestore.FieldValue.increment(1) },
+        { merge: true }
+      );
 
-        return new Promise(function(resolve, reject) {
-          resolve({
-            games: doc.data().games,
-            query: data.text,
-          });
+      return new Promise(function (resolve, reject) {
+        resolve({
+          games: doc.data().games,
+          query: data.text,
         });
-      } else {
-        return new Promise(function (resolve, reject) {
-          axios({
-            url: "https://api-v3.igdb.com/games",
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "user-key": functions.config().igdb.key,
-            },
-            data: `search "${data.text}"; fields name,cover.url,slug; limit 10;`,
-          })
-            .then((response) => {
-              db
-                .collection("game-queries")
-                .doc(data.text)
-                .set({ games: response.data || [], queries: admin.firestore.FieldValue.increment(1) }, { merge: true });
-      
-              resolve({
-                games: response.data,
-                query: data.text,
-              });
-            })
-            .catch((err) => {
-              reject(err);
+      });
+    } else {
+      return new Promise(function (resolve, reject) {
+        axios({
+          url: "https://api-v3.igdb.com/games",
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "user-key": functions.config().igdb.key,
+          },
+          data: `search "${data.text}"; fields name,cover.url,slug; limit 10;`,
+        })
+          .then((response) => {
+            db.collection("game-queries")
+              .doc(data.text)
+              .set(
+                {
+                  games: response.data || [],
+                  queries: admin.firestore.FieldValue.increment(1),
+                },
+                { merge: true }
+              );
+
+            resolve({
+              games: response.data,
+              query: data.text,
             });
-        });
-      }
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
   });
 });
 
@@ -61,7 +68,13 @@ exports.searchGames = functions.https.onCall((data) => {
 exports.trackCreatedUpdated = functions.firestore
   .document("{colId}/{docId}")
   .onWrite(async (change, context) => {
-    const setCols = ["events", "event-responses", "users", "schools", "game-queries"];
+    const setCols = [
+      "events",
+      "event-responses",
+      "users",
+      "schools",
+      "game-queries",
+    ];
 
     if (setCols.indexOf(context.params.colId) === -1) {
       return null;
@@ -134,11 +147,15 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
     }
 
     if (previousEventData.isOnlineEvent !== newEventData.isOnlineEvent) {
-      changes.push(`${previousEventData.isOnlineEvent} -> ${newEventData.isOnlineEvent}`);
+      changes.push(
+        `${previousEventData.isOnlineEvent} -> ${newEventData.isOnlineEvent}`
+      );
     }
 
     if (!shallowEqual(previousEventData.responses, newEventData.responses)) {
-      changes.push(`${previousEventData.isOnlineEvent} -> ${newEventData.isOnlineEvent}`);
+      changes.push(
+        `${previousEventData.isOnlineEvent} -> ${newEventData.isOnlineEvent}`
+      );
     }
 
     if (changes.length > 0) {
@@ -147,7 +164,9 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
         .collection("event-responses")
         .where("event", "==", eventDocRef);
 
-      console.log(`Event ${context.params.eventId} updated: ${changes.join(", ")}`);
+      console.log(
+        `Event ${context.params.eventId} updated: ${changes.join(", ")}`
+      );
 
       return eventResponsesQuery
         .get()
@@ -156,13 +175,17 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
             let batch = db.batch();
 
             snapshot.forEach((doc) => {
-              batch.set(doc.ref, {
-                eventDetails: {
-                  name: newEventData.name,
-                  isOnlineEvent: newEventData.isOnlineEvent,
-                  responses: newEventData.responses,
-                }
-              }, { merge: true });
+              batch.set(
+                doc.ref,
+                {
+                  eventDetails: {
+                    name: newEventData.name,
+                    isOnlineEvent: newEventData.isOnlineEvent,
+                    responses: newEventData.responses,
+                  },
+                },
+                { merge: true }
+              );
             });
 
             return batch.commit();
@@ -196,7 +219,11 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
         .collection("event-responses")
         .where("school", "==", schoolDocRef);
 
-      console.log(`School updated ${context.params.schoolId} updated: ${changes.join(", ")}`)
+      console.log(
+        `School updated ${context.params.schoolId} updated: ${changes.join(
+          ", "
+        )}`
+      );
 
       return eventResponsesQuery
         .get()
@@ -207,11 +234,15 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
             let batch = db.batch();
 
             snapshot.forEach((doc) => {
-              batch.update(doc.ref, {
-                schoolDetails: {
-                  name: newSchoolData.name,
+              batch.update(
+                doc.ref,
+                {
+                  schoolDetails: {
+                    name: newSchoolData.name,
+                  },
                 },
-              }, { merge: true });
+                { merge: true }
+              );
             });
 
             return batch.commit();
@@ -251,7 +282,9 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
         .collection("event-responses")
         .where("user", "==", userDocRef);
 
-      console.log(`User updated ${context.params.userId} updated: ${changes.join(", ")}`)
+      console.log(
+        `User updated ${context.params.userId} updated: ${changes.join(", ")}`
+      );
 
       return eventResponsesQuery
         .get()
@@ -260,13 +293,17 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
             let batch = db.batch();
 
             snapshot.forEach((doc) => {
-              batch.set(doc.ref, {
-                userDetails: {
-                  firstName: newUserData.firstName,
-                  lastName: newUserData.lastName,
-                  gravatar: newUserData.gravatar,
+              batch.set(
+                doc.ref,
+                {
+                  userDetails: {
+                    firstName: newUserData.firstName,
+                    lastName: newUserData.lastName,
+                    gravatar: newUserData.gravatar,
+                  },
                 },
-              }, { merge: true });
+                { merge: true }
+              );
             });
 
             return batch.commit();
@@ -291,21 +328,25 @@ exports.eventResponsesOnCreated = functions.firestore
     const eventRef = db.collection("events").doc(eventResponseData.event.id);
 
     if (eventResponseData.response === "YES") {
-      return eventRef.set(
-        { responses: { yes: admin.firestore.FieldValue.increment(1) } },
-        { merge: true }
-      ).catch((err) => {
-        console.log(err);
-        return false;
-      });
+      return eventRef
+        .set(
+          { responses: { yes: admin.firestore.FieldValue.increment(1) } },
+          { merge: true }
+        )
+        .catch((err) => {
+          console.log(err);
+          return false;
+        });
     } else if (eventResponseData.response === "NO") {
-      return eventRef.set(
-        { responses: { no: admin.firestore.FieldValue.increment(1) } },
-        { merge: true }
-      ).catch((err) => {
-        console.log(err);
-        return false;
-      });
+      return eventRef
+        .set(
+          { responses: { no: admin.firestore.FieldValue.increment(1) } },
+          { merge: true }
+        )
+        .catch((err) => {
+          console.log(err);
+          return false;
+        });
     }
 
     return null;
@@ -319,7 +360,9 @@ exports.eventResponsesOnUpdated = functions.firestore
     const changes = [];
 
     if (previousEventResponseData.response !== newEventResponseData.response) {
-      changes.push(`${previousEventResponseData.response} -> ${newEventResponseData.response}`);
+      changes.push(
+        `${previousEventResponseData.response} -> ${newEventResponseData.response}`
+      );
     }
 
     if (changes.length > 0) {
@@ -327,34 +370,42 @@ exports.eventResponsesOnUpdated = functions.firestore
         .collection("events")
         .doc(newEventResponseData.event.id);
 
-      console.log(`Event Response ${context.params.eventResponseId} updated: ${changes.join(", ")}`)
+      console.log(
+        `Event Response ${
+          context.params.eventResponseId
+        } updated: ${changes.join(", ")}`
+      );
 
       if (newEventResponseData.response === "YES") {
-        return eventRef.set(
-          {
-            responses: {
-              no: admin.firestore.FieldValue.increment(-1),
-              yes: admin.firestore.FieldValue.increment(1),
+        return eventRef
+          .set(
+            {
+              responses: {
+                no: admin.firestore.FieldValue.increment(-1),
+                yes: admin.firestore.FieldValue.increment(1),
+              },
             },
-          },
-          { merge: true }
-        ).catch((err) => {
-          console.log(err);
-          return false;
-        });
+            { merge: true }
+          )
+          .catch((err) => {
+            console.log(err);
+            return false;
+          });
       } else if (newEventResponseData.response === "NO") {
-        return eventRef.set(
-          {
-            responses: {
-              yes: admin.firestore.FieldValue.increment(-1),
-              no: admin.firestore.FieldValue.increment(1),
+        return eventRef
+          .set(
+            {
+              responses: {
+                yes: admin.firestore.FieldValue.increment(-1),
+                no: admin.firestore.FieldValue.increment(1),
+              },
             },
-          },
-          { merge: true }
-        ).catch((err) => {
-          console.log(err);
-          return false;
-        });
+            { merge: true }
+          )
+          .catch((err) => {
+            console.log(err);
+            return false;
+          });
       }
     }
 
@@ -372,21 +423,25 @@ exports.eventResponsesOnDelete = functions.firestore
     const eventRef = db.collection("events").doc(deletedData.event.id);
 
     if (deletedData.response === "YES") {
-      return eventRef.set(
-        { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
-        { merge: true }
-      ).catch((err) => {
-        console.log(err);
-        return false;
-      });
+      return eventRef
+        .set(
+          { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
+          { merge: true }
+        )
+        .catch((err) => {
+          console.log(err);
+          return false;
+        });
     } else if (deletedData.response === "NO") {
-      return eventRef.set(
-        { responses: { no: admin.firestore.FieldValue.increment(-1) } },
-        { merge: true }
-      ).catch((err) => {
-        console.log(err);
-        return false;
-      });
+      return eventRef
+        .set(
+          { responses: { no: admin.firestore.FieldValue.increment(-1) } },
+          { merge: true }
+        )
+        .catch((err) => {
+          console.log(err);
+          return false;
+        });
     }
 
     return null;
