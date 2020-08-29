@@ -1,5 +1,4 @@
 import React from "react";
-import matchSorter from "match-sorter";
 import startCase from "lodash.startcase";
 import { Text } from "@chakra-ui/core";
 import {
@@ -9,11 +8,14 @@ import {
   ComboboxList,
   ComboboxOption
 } from "@reach/combobox";
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import worker from "workerize-loader!../workers";
 
 import { useAppState } from "../store";
-import useThrottle from "../hooks/useThrottle";
 
 const CACHED_SCHOOLS = {};
+
+const workerInstance = worker();
 
 const SchoolSearch = props => {
   const state = useAppState();
@@ -27,40 +29,31 @@ const SchoolSearch = props => {
       })),
     [state.schools]
   );
-
+  const [results, setResults] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
 
   const handleChange = event => setSearchTerm(event.target.value);
 
-  const matchSchool = value => {
-    const _value = value.trim().toLowerCase();
+  const getSchools = React.useCallback(async () => {
+    const value = searchTerm ? searchTerm.trim().toLowerCase() : "";
 
-    if (CACHED_SCHOOLS[_value]) {
-      return CACHED_SCHOOLS[_value];
+    if (CACHED_SCHOOLS[value]) {
+      setResults(CACHED_SCHOOLS[value]);
+    } else {
+      let schools = await workerInstance.getSchools(value, schoolOptions);
+
+      if (schools) {
+        schools = schools.slice(0, 10);
+      }
+
+      CACHED_SCHOOLS[value] = [...schools];
+      setResults(schools);
     }
+  }, [searchTerm, schoolOptions]);
 
-    let results = matchSorter(schoolOptions, _value, { keys: ["name"] });
-
-    if (results) {
-      results = results.slice(0, 10);
-    }
-
-    CACHED_SCHOOLS[_value] = [...results];
-
-    return results;
-  };
-
-  const useSchoolMatch = searchTerm => {
-    const throttledTerm = useThrottle(searchTerm, 100);
-    const results = React.useMemo(
-      () =>
-        throttledTerm.trim() === "" || throttledTerm.trim().length < 3
-          ? null
-          : matchSchool(throttledTerm),
-      [throttledTerm]
-    );
-    return results;
-  };
+  React.useEffect(() => {
+    getSchools();
+  }, [getSchools]);
 
   const handleSchoolSelect = selectedSchool => {
     const [schoolName, location] = selectedSchool.split(" – ");
@@ -79,12 +72,6 @@ const SchoolSearch = props => {
     }
   };
 
-  const results = useSchoolMatch(searchTerm);
-
-  if (!schoolOptions || !schoolOptions.length) {
-    return null;
-  }
-
   return (
     <Combobox aria-label="School" name="school" onSelect={handleSchoolSelect}>
       <ComboboxInput
@@ -93,6 +80,7 @@ const SchoolSearch = props => {
         placeholder={props.inputPlaceholder || "Search schools"}
         onChange={handleChange}
         value={searchTerm}
+        disabled={!schoolOptions || !schoolOptions.length}
       />
       {results && (
         <ComboboxPopover>
