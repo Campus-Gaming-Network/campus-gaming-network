@@ -5,8 +5,10 @@ import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
+import isEmpty from "lodash.isempty";
+import moment from "moment";
 import {
-  Input as ChakraInput,
+  Input,
   Stack,
   FormControl,
   FormLabel,
@@ -19,9 +21,13 @@ import {
   Spinner,
   Checkbox,
   useToast,
-  Select as ChakraSelect,
+  Select,
   Flex,
-  Avatar
+  Avatar,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription
 } from "@chakra-ui/core";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
@@ -63,15 +69,22 @@ const CreateEvent = props => {
     formReducer,
     initialFormState
   );
-  const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
-  const school =
-    authenticatedUser && user ? state.schools[user.school.id] : null;
+  const user = React.useMemo(
+    () => (!!authenticatedUser ? state.users[authenticatedUser.uid] : null),
+    [state.users, authenticatedUser]
+  );
+  const school = React.useMemo(
+    () => (!!authenticatedUser && user ? state.schools[user.school.id] : null),
+    [state.schools, authenticatedUser, user]
+  );
   const [event, setEvent] = React.useState(null);
+  const [errors, setErrors] = React.useState({});
   const [fetchedEvent] = useFetchEventDetails(props.id);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const handleFieldChange = React.useCallback(e => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
+  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
   const toast = useToast();
 
   // TODO: Tournament feature
@@ -86,10 +99,87 @@ const CreateEvent = props => {
     formDispatch({ field: "game", value });
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    let isValid = true;
+
+    if (!formState.host || formState.host.trim() === "") {
+      errors["host"] = "Event host cannot be empty.";
+    }
+
+    if (!formState.name || formState.name.trim() === "") {
+      errors["name"] = "Event name cannot be empty.";
+    }
+
+    if (!formState.description || formState.description.trim() === "") {
+      errors["description"] = "Event description cannot be empty.";
+    } else if (
+      formState.description.trim().length > 3000 ||
+      formState.description.trim().length < 0
+    ) {
+      errors["description"] =
+        "Event description must be between 1 and 3,000 characters.";
+    }
+
+    if (!formState.game || isEmpty(formState.game)) {
+      errors["game"] = "Event game cannot be empty.";
+    }
+
+    if (
+      !formState.isOnlineEvent &&
+      (!formState.location || formState.location.trim() === "")
+    ) {
+      errors["location"] = "Event location cannot be empty.";
+    }
+
+    if (!formState.startDateTime) {
+      errors["startDateTime"] = "Event starting date/time cannot be empty.";
+    } else if (!moment(formState.startDateTime).isValid()) {
+      errors["startDateTime"] =
+        "Event starting date/time is not a valid date/time.";
+    } else if (
+      moment(formState.startDateTime).isSameOrAfter(
+        moment(formState.endDateTime)
+      )
+    ) {
+      errors["startDateTime"] =
+        "Event starting date/time must be before ending date/time.";
+    }
+
+    if (!formState.endDateTime) {
+      errors["endDateTime"] = "Event ending date/time cannot be empty.";
+    } else if (!moment(formState.endDateTime).isValid()) {
+      errors["endDateTime"] =
+        "Event ending date/time is not a valid date/time.";
+    } else if (
+      moment(formState.endDateTime).isSameOrBefore(
+        moment(formState.startDateTime)
+      )
+    ) {
+      errors["endDateTime"] =
+        "Event ending date/time must be after starting date/time.";
+    }
+
+    setErrors(errors);
+
+    isValid = isEmpty(errors);
+
+    return isValid;
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
     setIsSubmitting(true);
+
+    const isValid = validateForm();
+
+    if (!isValid) {
+      setIsSubmitting(false);
+      window.scrollTo(0, 0);
+      return;
+    }
 
     // Double check the address for a geocode if they blur or something
     // Probably want to save the address and lat/long
@@ -282,6 +372,16 @@ const CreateEvent = props => {
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+      {hasErrors ? (
+        <Alert status="error" mb={4}>
+          <AlertIcon />
+          <AlertTitle mr={2}>Form Errors.</AlertTitle>
+          <AlertDescription>
+            There are errors in the form below. Please review and correct before
+            submitting again.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           {props.edit ? "Edit Event" : "Create an Event"}
@@ -308,8 +408,10 @@ const CreateEvent = props => {
               <Flex>
                 {user.gravatar ? (
                   <Avatar
-                    name={user.fullname}
+                    name={user.fullName}
                     src={user.gravatarUrl}
+                    alt={`The profile picture for ${user.fullName}`}
+                    title={`The profile picture for ${user.fullName}`}
                     h={10}
                     w={10}
                     rounded="full"
@@ -320,11 +422,11 @@ const CreateEvent = props => {
                 </Text>
               </Flex>
             </Box>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={errors["host"]}>
               <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
                 Event Host
               </FormLabel>
-              <ChakraSelect
+              <Select
                 id="host"
                 name="host"
                 onChange={handleFieldChange}
@@ -337,13 +439,14 @@ const CreateEvent = props => {
                   {startCase(school.name.toLowerCase())} (Insufficient
                   Permissions)
                 </option>
-              </ChakraSelect>
+              </Select>
+              <FormErrorMessage>{errors["host"]}</FormErrorMessage>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={errors["name"]}>
               <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
                 Event Name
               </FormLabel>
-              <ChakraInput
+              <Input
                 id="name"
                 name="name"
                 type="text"
@@ -353,8 +456,12 @@ const CreateEvent = props => {
                 value={formState.name}
                 size="lg"
               />
+              <FormErrorMessage>{errors["name"]}</FormErrorMessage>
             </FormControl>
-            <FormControl>
+            <FormControl
+              isRequired={!formState.isOnlineEvent}
+              isInvalid={errors["location"]}
+            >
               <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
                 Location
               </FormLabel>
@@ -373,7 +480,7 @@ const CreateEvent = props => {
                     loading
                   }) => (
                     <div>
-                      <ChakraInput
+                      <Input
                         {...getInputProps({
                           placeholder: "Add a place or address",
                           className: "location-search-input",
@@ -428,6 +535,7 @@ const CreateEvent = props => {
                     </div>
                   )}
                 </PlacesAutocomplete>
+                <FormErrorMessage>{errors["location"]}</FormErrorMessage>
                 <Text>or</Text>
                 <Checkbox
                   size="lg"
@@ -445,7 +553,7 @@ const CreateEvent = props => {
                 </Checkbox>
               </Stack>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={errors["description"]}>
               <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
                 Description
               </FormLabel>
@@ -461,7 +569,8 @@ const CreateEvent = props => {
                 h="150px"
               />
             </FormControl>
-            <FormControl isRequired>
+            <FormErrorMessage>{errors["description"]}</FormErrorMessage>
+            <FormControl isRequired isInvalid={errors["game"]}>
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
@@ -486,8 +595,9 @@ const CreateEvent = props => {
                   </Box>
                 </Flex>
               ) : null}
+              <FormErrorMessage>{errors["game"]}</FormErrorMessage>
             </FormControl>
-            <FormControl isRequired isInvalid={!formState.startDateTime}>
+            <FormControl isRequired isInvalid={errors["startDateTime"]}>
               <FormLabel
                 htmlFor="startDateTime"
                 fontSize="lg"
@@ -505,11 +615,9 @@ const CreateEvent = props => {
                 min={new Date()}
                 step={15}
               />
-              <FormErrorMessage>
-                Please select an end date and time.
-              </FormErrorMessage>
+              <FormErrorMessage>{errors["startDateTime"]}</FormErrorMessage>
             </FormControl>
-            <FormControl isRequired isInvalid={!formState.endDateTime}>
+            <FormControl isRequired isInvalid={errors["endDateTime"]}>
               <FormLabel htmlFor="endDateTime" fontSize="lg" fontWeight="bold">
                 Ends
               </FormLabel>
@@ -523,9 +631,7 @@ const CreateEvent = props => {
                 min={new Date()}
                 step={15}
               />
-              <FormErrorMessage>
-                Please select an end date and time.
-              </FormErrorMessage>
+              <FormErrorMessage>{errors["endDateTime"]}</FormErrorMessage>
             </FormControl>
             {/* TODO: Tournament feature */}
             {/* <FormControl>

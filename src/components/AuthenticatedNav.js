@@ -127,8 +127,10 @@ const AuthenticatedNav = () => {
           >
             {user.gravatar ? (
               <Avatar
-                name={user.fullname}
+                name={user.fullName}
                 src={user.gravatarUrl}
+                alt={`The profile picture for ${user.fullName}`}
+                title={`The profile picture for ${user.fullName}`}
                 h={10}
                 w={10}
                 rounded="full"
@@ -149,8 +151,10 @@ const AuthenticatedNav = () => {
               <Flex alignItems="center">
                 {user.gravatar ? (
                   <Avatar
-                    name={user.fullname}
+                    name={user.fullName}
                     src={user.gravatarUrl}
+                    alt={`The profile picture for ${user.fullName}`}
+                    title={`The profile picture for ${user.fullName}`}
                     h={6}
                     w={6}
                     rounded="full"

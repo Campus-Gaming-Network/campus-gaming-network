@@ -660,8 +660,10 @@ const UsersListItem = props => {
         height="calc(100% - 1rem)"
       >
         <Avatar
-          name={props.fullname}
+          name={props.fullName}
           src={props.gravatarUrl}
+          alt={`The profile picture for ${props.fullName}`}
+          title={`The profile picture for ${props.fullName}`}
           h={60}
           w={60}
           rounded="full"

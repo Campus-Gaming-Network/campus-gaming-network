@@ -44,16 +44,17 @@ const GameSearch = props => {
   };
 
   const fetchGames = value => {
+    return Promise.resolve([]);
     if (CACHED_GAMES[value]) {
       return Promise.resolve(CACHED_GAMES[value]);
     }
 
-    const searchGames = firebase.functions().httpsCallable("searchGames");
+    // const searchGames = firebase.functions().httpsCallable("searchGames");
 
-    return searchGames({ text: value }).then(result => {
-      CACHED_GAMES[value] = result.data.games;
-      return result.data.games;
-    });
+    // return searchGames({ text: value }).then(result => {
+    //   CACHED_GAMES[value] = result.data.games;
+    //   return result.data.games;
+    // });
   };
 
   const handleGameSelect = selectedGame => {

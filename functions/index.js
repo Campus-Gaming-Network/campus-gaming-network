@@ -18,11 +18,17 @@ exports.searchGames = functions.https.onCall((data) => {
       gameQueryRef.set(
         { queries: admin.firestore.FieldValue.increment(1) },
         { merge: true }
-      );
+      )
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
+
+      const docData = doc.data();
 
       return new Promise(function (resolve, reject) {
         resolve({
-          games: doc.data().games,
+          games: docData.games,
           query: data.text,
         });
       });
@@ -143,19 +149,31 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
     const changes = [];
 
     if (previousEventData.name !== newEventData.name) {
-      changes.push(`${previousEventData.name} -> ${newEventData.name}`);
+      changes.push(changeLog(previousEventData.name, newEventData.name));
+    }
+
+    if (previousEventData.description !== newEventData.description) {
+      changes.push(changeLog(previousEventData.description, newEventData.description));
+    }
+
+    if (previousEventData.startDateTime !== newEventData.startDateTime) {
+      changes.push(changeLog(previousEventData.startDateTime, newEventData.startDateTime));
+    }
+
+    if (previousEventData.endDateTime !== newEventData.endDateTime) {
+      changes.push(changeLog(previousEventData.endDateTime, newEventData.endDateTime));
     }
 
     if (previousEventData.isOnlineEvent !== newEventData.isOnlineEvent) {
-      changes.push(
-        `${previousEventData.isOnlineEvent} -> ${newEventData.isOnlineEvent}`
-      );
+      changes.push(changeLog(previousEventData.isOnlineEvent, newEventData.isOnlineEvent));
     }
 
     if (!shallowEqual(previousEventData.responses, newEventData.responses)) {
-      changes.push(
-        `${previousEventData.isOnlineEvent} -> ${newEventData.isOnlineEvent}`
-      );
+      changes.push(changeLog(previousEventData.responses, newEventData.responses));
+    }
+
+    if (!shallowEqual(previousEventData.game, newEventData.game)) {
+      changes.push(changeLog(previousEventData.game, newEventData.game));
     }
 
     if (changes.length > 0) {
@@ -180,8 +198,12 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
                 {
                   eventDetails: {
                     name: newEventData.name,
+                    description: newEventData.description,
+                    startDateTime: newEventData.startDateTime,
+                    endDateTime: newEventData.endDateTime,
                     isOnlineEvent: newEventData.isOnlineEvent,
                     responses: newEventData.responses,
+                    game: newEventData.game,
                   },
                 },
                 { merge: true }
@@ -208,7 +230,7 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
     const changes = [];
 
     if (previousSchoolData.name !== newSchoolData.name) {
-      changes.push(`${previousSchoolData.name} -> ${newSchoolData.name}`);
+      changes.push(changeLog(previousSchoolData.name, newSchoolData.name));
     }
 
     if (changes.length > 0) {
@@ -265,15 +287,15 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
     const changes = [];
 
     if (previousUserData.firstName !== newUserData.firstName) {
-      changes.push(`${previousUserData.firstName} -> ${newUserData.firstName}`);
+      changes.push(changeLog(previousUserData.firstName, newUserData.firstName));
     }
 
     if (previousUserData.lastName !== newUserData.lastName) {
-      changes.push(`${previousUserData.lastName} -> ${newUserData.lastName}`);
+      changes.push(changeLog(previousUserData.lastName, newUserData.lastName));
     }
 
     if (previousUserData.gravatar !== newUserData.gravatar) {
-      changes.push(`${previousUserData.gravatar} -> ${newUserData.gravatar}`);
+      changes.push(changeLog(previousUserData.gravatar, newUserData.gravatar));
     }
 
     if (changes.length > 0) {
@@ -360,9 +382,7 @@ exports.eventResponsesOnUpdated = functions.firestore
     const changes = [];
 
     if (previousEventResponseData.response !== newEventResponseData.response) {
-      changes.push(
-        `${previousEventResponseData.response} -> ${newEventResponseData.response}`
-      );
+      changes.push(changeLog(previousEventResponseData.response, newEventResponseData.response));
     }
 
     if (changes.length > 0) {
@@ -465,4 +485,8 @@ function shallowEqual(object1, object2) {
   }
 
   return true;
+}
+
+function changeLog(prev, curr) {
+  return `${prev} -> ${curr}`;
 }

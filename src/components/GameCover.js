@@ -12,7 +12,8 @@ const GameCover = React.memo(({ url, name, ...rest }) => {
   return (
     <Image
       src={`https:${url}`}
-      alt={`The cover art for ${name}`}
+      alt={`The cover art for the game ${name}`}
+      title={`The cover art for the game ${name}`}
       rounded="md"
       shadow="md"
       {...rest}
