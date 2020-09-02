@@ -1,7 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
 
-import TEST_DATA from "../test_data";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import {
   faTwitter,
@@ -26,37 +25,6 @@ export const MOMENT_CALENDAR_FORMAT = {
 export const GOOGLE_MAPS_QUERY_URL =
   "https://www.google.com/maps/search/?api=1&query=";
 
-export const STYLES = {
-  BUTTON: {
-    DEFAULT:
-      "bg-white border-gray-400 focus:bg-gray-200 hover:bg-gray-200 text-gray-900",
-    PURPLE:
-      "bg-purple-100 border-purple-700 focus:bg-purple-200 hover:bg-purple-200 text-purple-700"
-  },
-  LINK: {
-    DEFAULT:
-      "font-medium text-purple-700 hover:text-purple-800 hover:underline focus:underline"
-  },
-  INPUT: {
-    DEFAULT:
-      "bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500",
-    ERROR:
-      "bg-red-200 appearance-none border-2 border-red-500 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:bg-white focus:border-purple-500"
-  },
-  SELECT: {
-    DEFAULT:
-      "block appearance-none w-full bg-gray-200 border-2 border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:bg-white focus:border-purple-500"
-  },
-  ALERT: {
-    DEFAULT: "bg-gray-200 text-gray-800",
-    YELLOW: "bg-yellow-200 text-yellow-800",
-    GREEN: "bg-green-200 text-green-800"
-  },
-  LABEL: {
-    DEFAULT: "block text-gray-500 font-bold mb-1 md:mb-0 pr-4 w-1/3"
-  }
-};
-
 export const STUDENT_STATUS_OPTIONS = [
   { value: "", label: "Select your status" },
   { value: "FRESHMAN", label: "Freshman" },
@@ -67,14 +35,6 @@ export const STUDENT_STATUS_OPTIONS = [
   { value: "ALUMNI", label: "Alumni" },
   { value: "FACULTY", label: "Faculty" },
   { value: "OTHER", label: "Other" }
-];
-
-export const SCHOOL_OPTIONS = [
-  { value: "", label: "Select your school" },
-  ...TEST_DATA.schools.map(school => ({
-    value: school.id,
-    label: school.name
-  }))
 ];
 
 export const USER_EMPTY_ACCOUNTS_TEXT = "This user has not added any accounts.";

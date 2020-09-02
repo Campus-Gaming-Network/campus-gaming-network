@@ -6,7 +6,6 @@ import startCase from "lodash.startcase";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
-import moment from "moment";
 import {
   Input,
   Stack,
@@ -25,8 +24,6 @@ import {
   Flex,
   Avatar,
   Alert,
-  AlertIcon,
-  AlertTitle,
   AlertDescription
 } from "@chakra-ui/core";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
@@ -37,6 +34,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import GameSearch from "../components/GameSearch";
 import GameCover from "../components/GameCover";
+import { validateCreateEvent } from "../utilities/validation";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
@@ -99,81 +97,14 @@ const CreateEvent = props => {
     formDispatch({ field: "game", value });
   };
 
-  const validateForm = () => {
-    const errors = {};
-
-    let isValid = true;
-
-    if (!formState.host || formState.host.trim() === "") {
-      errors["host"] = "Event host cannot be empty.";
-    }
-
-    if (!formState.name || formState.name.trim() === "") {
-      errors["name"] = "Event name cannot be empty.";
-    }
-
-    if (!formState.description || formState.description.trim() === "") {
-      errors["description"] = "Event description cannot be empty.";
-    } else if (
-      formState.description.trim().length > 3000 ||
-      formState.description.trim().length < 0
-    ) {
-      errors["description"] =
-        "Event description must be between 1 and 3,000 characters.";
-    }
-
-    if (!formState.game || isEmpty(formState.game)) {
-      errors["game"] = "Event game cannot be empty.";
-    }
-
-    if (
-      !formState.isOnlineEvent &&
-      (!formState.location || formState.location.trim() === "")
-    ) {
-      errors["location"] = "Event location cannot be empty.";
-    }
-
-    if (!formState.startDateTime) {
-      errors["startDateTime"] = "Event starting date/time cannot be empty.";
-    } else if (!moment(formState.startDateTime).isValid()) {
-      errors["startDateTime"] =
-        "Event starting date/time is not a valid date/time.";
-    } else if (
-      moment(formState.startDateTime).isSameOrAfter(
-        moment(formState.endDateTime)
-      )
-    ) {
-      errors["startDateTime"] =
-        "Event starting date/time must be before ending date/time.";
-    }
-
-    if (!formState.endDateTime) {
-      errors["endDateTime"] = "Event ending date/time cannot be empty.";
-    } else if (!moment(formState.endDateTime).isValid()) {
-      errors["endDateTime"] =
-        "Event ending date/time is not a valid date/time.";
-    } else if (
-      moment(formState.endDateTime).isSameOrBefore(
-        moment(formState.startDateTime)
-      )
-    ) {
-      errors["endDateTime"] =
-        "Event ending date/time must be after starting date/time.";
-    }
-
-    setErrors(errors);
-
-    isValid = isEmpty(errors);
-
-    return isValid;
-  };
-
   const handleSubmit = async e => {
     e.preventDefault();
 
     setIsSubmitting(true);
 
-    const isValid = validateForm();
+    const { isValid, errors } = validateCreateEvent(formState);
+
+    setErrors(errors);
 
     if (!isValid) {
       setIsSubmitting(false);
@@ -210,14 +141,17 @@ const CreateEvent = props => {
       isOnlineEvent: formState.isOnlineEvent,
       startDateTime: firestoreStartDateTime,
       endDateTime: firestoreEndDateTime,
-      location: formState.location,
-      placeId: formState.placeId,
       school: schoolDocRef,
       schoolDetails: {
         name: school.name
       },
       game: formState.game
     };
+
+    if (!formState.isOnlineEvent) {
+      eventData["location"] = formState.location;
+      eventData["placeId"] = formState.placeId;
+    }
 
     const cleanedData = omitBy(eventData, isNil);
 
@@ -374,8 +308,6 @@ const CreateEvent = props => {
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       {hasErrors ? (
         <Alert status="error" mb={4}>
-          <AlertIcon />
-          <AlertTitle mr={2}>Form Errors.</AlertTitle>
           <AlertDescription>
             There are errors in the form below. Please review and correct before
             submitting again.
@@ -422,7 +354,7 @@ const CreateEvent = props => {
                 </Text>
               </Flex>
             </Box>
-            <FormControl isRequired isInvalid={errors["host"]}>
+            <FormControl isRequired isInvalid={errors.host}>
               <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
                 Event Host
               </FormLabel>
@@ -440,9 +372,9 @@ const CreateEvent = props => {
                   Permissions)
                 </option>
               </Select>
-              <FormErrorMessage>{errors["host"]}</FormErrorMessage>
+              <FormErrorMessage>{errors.host}</FormErrorMessage>
             </FormControl>
-            <FormControl isRequired isInvalid={errors["name"]}>
+            <FormControl isRequired isInvalid={errors.name}>
               <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
                 Event Name
               </FormLabel>
@@ -456,11 +388,11 @@ const CreateEvent = props => {
                 value={formState.name}
                 size="lg"
               />
-              <FormErrorMessage>{errors["name"]}</FormErrorMessage>
+              <FormErrorMessage>{errors.name}</FormErrorMessage>
             </FormControl>
             <FormControl
               isRequired={!formState.isOnlineEvent}
-              isInvalid={errors["location"]}
+              isInvalid={errors.location}
             >
               <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
                 Location
@@ -535,7 +467,7 @@ const CreateEvent = props => {
                     </div>
                   )}
                 </PlacesAutocomplete>
-                <FormErrorMessage>{errors["location"]}</FormErrorMessage>
+                <FormErrorMessage>{errors.location}</FormErrorMessage>
                 <Text>or</Text>
                 <Checkbox
                   size="lg"
@@ -553,7 +485,7 @@ const CreateEvent = props => {
                 </Checkbox>
               </Stack>
             </FormControl>
-            <FormControl isRequired isInvalid={errors["description"]}>
+            <FormControl isInvalid={errors.description}>
               <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
                 Description
               </FormLabel>
@@ -565,12 +497,12 @@ const CreateEvent = props => {
                 placeholder="Tell people what your event is about."
                 size="lg"
                 resize="vertical"
-                maxLength="3000"
+                maxLength="5000"
                 h="150px"
               />
             </FormControl>
-            <FormErrorMessage>{errors["description"]}</FormErrorMessage>
-            <FormControl isRequired isInvalid={errors["game"]}>
+            <FormErrorMessage>{errors.description}</FormErrorMessage>
+            <FormControl isRequired isInvalid={errors.game}>
               <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                 Game
               </FormLabel>
@@ -595,9 +527,9 @@ const CreateEvent = props => {
                   </Box>
                 </Flex>
               ) : null}
-              <FormErrorMessage>{errors["game"]}</FormErrorMessage>
+              <FormErrorMessage>{errors.game}</FormErrorMessage>
             </FormControl>
-            <FormControl isRequired isInvalid={errors["startDateTime"]}>
+            <FormControl isRequired isInvalid={errors.startDateTime}>
               <FormLabel
                 htmlFor="startDateTime"
                 fontSize="lg"
@@ -615,9 +547,9 @@ const CreateEvent = props => {
                 min={new Date()}
                 step={15}
               />
-              <FormErrorMessage>{errors["startDateTime"]}</FormErrorMessage>
+              <FormErrorMessage>{errors.startDateTime}</FormErrorMessage>
             </FormControl>
-            <FormControl isRequired isInvalid={errors["endDateTime"]}>
+            <FormControl isRequired isInvalid={errors.endDateTime}>
               <FormLabel htmlFor="endDateTime" fontSize="lg" fontWeight="bold">
                 Ends
               </FormLabel>
@@ -631,7 +563,7 @@ const CreateEvent = props => {
                 min={new Date()}
                 step={15}
               />
-              <FormErrorMessage>{errors["endDateTime"]}</FormErrorMessage>
+              <FormErrorMessage>{errors.endDateTime}</FormErrorMessage>
             </FormControl>
             {/* TODO: Tournament feature */}
             {/* <FormControl>
