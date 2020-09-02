@@ -6,13 +6,23 @@ import { SkipNavLink } from "@reach/skip-nav";
 import * as serviceWorker from "./serviceWorker";
 import { AppProvider } from "./store";
 import { firebase, firebaseAuth } from "./firebase";
+import { isDev } from "./utilities";
 import { LocationProvider } from "@reach/router";
+import * as Sentry from "@sentry/react";
+import { Integrations } from "@sentry/tracing";
 import { theme, ThemeProvider, CSSReset } from "@chakra-ui/core";
 import moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import "@reach/skip-nav/styles.css";
 import "react-widgets/dist/css/react-widgets.css";
 import "@reach/combobox/styles.css";
+
+Sentry.init({
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  integrations: [new Integrations.BrowserTracing()],
+  tracesSampleRate: 1.0,
+  environment: isDev() ? "development" : "production"
+});
 
 moment.locale("en");
 momentLocalizer();

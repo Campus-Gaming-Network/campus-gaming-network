@@ -5,7 +5,7 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  Input as ChakraInput,
+  Input,
   Stack,
   FormControl,
   FormLabel,
@@ -15,7 +15,8 @@ import {
   Button,
   Divider,
   Heading,
-  FormHelperText
+  FormHelperText,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -185,7 +186,7 @@ const DetailSection = React.memo(props => {
         <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
           First Name
         </FormLabel>
-        <ChakraInput
+        <Input
           id="firstName"
           name="firstName"
           type="text"
@@ -200,7 +201,7 @@ const DetailSection = React.memo(props => {
         <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
           Last Name
         </FormLabel>
-        <ChakraInput
+        <Input
           id="lastName"
           name="lastName"
           type="text"
@@ -215,7 +216,7 @@ const DetailSection = React.memo(props => {
         <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
           Email
         </FormLabel>
-        <ChakraInput
+        <Input
           id="email"
           name="email"
           type="email"
@@ -234,7 +235,7 @@ const DetailSection = React.memo(props => {
         <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
           Password
         </FormLabel>
-        <ChakraInput
+        <Input
           id="password"
           name="password"
           type={isShowingPassword ? "text" : "password"}

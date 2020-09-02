@@ -5,7 +5,7 @@ import {
   AlertIcon,
   AlertDescription,
   Box,
-  Input as ChakraInput,
+  Input,
   Stack,
   FormControl,
   FormLabel,
@@ -13,7 +13,8 @@ import {
   Button,
   Heading,
   Divider,
-  Flex
+  Flex,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
@@ -105,7 +106,7 @@ const Login = () => {
             <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
               Email
             </FormLabel>
-            <ChakraInput
+            <Input
               id="email"
               name="email"
               type="email"
@@ -120,7 +121,7 @@ const Login = () => {
             <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
               Password
             </FormLabel>
-            <ChakraInput
+            <Input
               id="password"
               name="password"
               type="password"
