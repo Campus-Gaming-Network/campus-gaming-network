@@ -13,10 +13,12 @@ import {
   FormControl,
   AlertDescription
 } from "@chakra-ui/core";
+import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 import queryString from "query-string";
 
 import { useFormFields } from "../utilities";
+import { validatePasswordReset } from "../utilities/validation";
 
 import { firebaseAuth } from "../firebase";
 
@@ -28,6 +30,8 @@ const PasswordReset = props => {
   const [isChangingPassword, setIsChangingPassword] = React.useState(false);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [errors, setErrors] = React.useState({});
+  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   if (isAuthenticating) {
     return null;
@@ -49,6 +53,16 @@ const PasswordReset = props => {
     }
 
     setIsChangingPassword(true);
+
+    const { isValid, errors } = validatePasswordReset(fields);
+
+    setErrors(errors);
+
+    if (!isValid) {
+      setIsChangingPassword(false);
+      window.scrollTo(0, 0);
+      return;
+    }
 
     firebaseAuth
       .verifyPasswordResetCode(oobCode)
@@ -87,6 +101,14 @@ const PasswordReset = props => {
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      {hasErrors ? (
+        <Alert status="error" mb={4}>
+          <AlertDescription>
+            There are errors in the form below. Please review and correct before
+            submitting again.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <Box
         as="form"
         borderWidth="1px"
@@ -108,7 +130,7 @@ const PasswordReset = props => {
           </Alert>
         ) : null}
         <Stack spacing={6}>
-          <FormControl isRequired>
+          <FormControl isRequired isInvalid={errors.password}>
             <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
               New Password
             </FormLabel>
@@ -130,6 +152,7 @@ const PasswordReset = props => {
             >
               {isShowingPassword ? "Hide" : "Show"} password
             </Button>
+            <FormErrorMessage>{errors.password}</FormErrorMessage>
           </FormControl>
         </Stack>
         <Button

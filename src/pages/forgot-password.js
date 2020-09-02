@@ -16,9 +16,11 @@ import {
   AlertTitle,
   AlertDescription
 } from "@chakra-ui/core";
+import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { useFormFields } from "../utilities";
+import { validateForgotPassword } from "../utilities/validation";
 
 import Link from "../components/Link";
 
@@ -32,6 +34,8 @@ const ForgotPassword = () => {
   const [isSendingEmail, setIsSendingEmail] = React.useState(false);
   const [emailSent, setEmailSent] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [errors, setErrors] = React.useState({});
+  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   if (isAuthenticating) {
     return null;
@@ -52,6 +56,16 @@ const ForgotPassword = () => {
 
     setIsSendingEmail(true);
 
+    const { isValid, errors } = validateForgotPassword(fields);
+
+    setErrors(errors);
+
+    if (!isValid) {
+      setIsSendingEmail(false);
+      window.scrollTo(0, 0);
+      return;
+    }
+
     try {
       await firebaseAuth.sendPasswordResetEmail(fields.email);
       setEmailSent(true);
@@ -69,6 +83,14 @@ const ForgotPassword = () => {
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      {hasErrors ? (
+        <Alert status="error" mb={4}>
+          <AlertDescription>
+            There are errors in the form below. Please review and correct before
+            submitting again.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <Box
         as="form"
         borderWidth="1px"
@@ -112,7 +134,7 @@ const ForgotPassword = () => {
         ) : (
           <React.Fragment>
             <Stack spacing={6}>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={errors.email}>
                 <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
                   Email
                 </FormLabel>
@@ -125,6 +147,7 @@ const ForgotPassword = () => {
                   value={fields.email}
                   size="lg"
                 />
+                <FormErrorMessage>{props.errors.email}</FormErrorMessage>
               </FormControl>
             </Stack>
             <Button

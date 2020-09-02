@@ -112,6 +112,7 @@ const CreateEvent = props => {
       return;
     }
 
+    // TODO:
     // Double check the address for a geocode if they blur or something
     // Probably want to save the address and lat/long
     // If we save the placeId, it may be easier to render the map for that place

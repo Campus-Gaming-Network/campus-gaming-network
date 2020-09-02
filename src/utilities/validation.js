@@ -36,33 +36,31 @@ export const validateSignUp = ({
   const errors = {};
 
   if (isNilOrEmpty(firstName)) {
-    errors["firstName"] = "First name is required.";
+    errors.firstName = "First name is required.";
   }
 
   if (isNilOrEmpty(lastName)) {
-    errors["lastName"] = "Last name is required.";
+    errors.lastName = "Last name is required.";
   }
 
   if (isNilOrEmpty(email)) {
-    errors["email"] = "Email is required.";
+    errors.email = "Email is required.";
   } else if (!isValidEmail(email)) {
-    errors["email"] = `${email} is not a valid email.`;
+    errors.email = `${email} is not a valid email.`;
   }
 
   if (isNilOrEmpty(password)) {
-    errors["password"] = "Password is required.";
+    errors.password = "Password is required.";
   } else if (isLessThan(password.trim().length, minPasswordLength)) {
-    errors[
-      "password"
-    ] = `Password is too short (minimum is ${minPasswordLength} characters).`;
+    errors.password = `Password is too short (minimum is ${minPasswordLength} characters).`;
   }
 
   if (isNilOrEmpty(school)) {
-    errors["school"] = "School is required.";
+    errors.school = "School is required.";
   }
 
   if (isWithin(status, statuses)) {
-    errors["status"] = `${status} is not a valid status`;
+    errors.status = `${status} is not a valid status`;
   }
 
   return {
@@ -75,13 +73,43 @@ export const validateLogIn = ({ email, password }) => {
   const errors = {};
 
   if (isNilOrEmpty(email)) {
-    errors["email"] = "Email is required.";
+    errors.email = "Email is required.";
   } else if (!isValidEmail(email)) {
-    errors["email"] = `${email} is not a valid email.`;
+    errors.email = `${email} is not a valid email.`;
   }
 
   if (isNilOrEmpty(password)) {
-    errors["password"] = "Password is required.";
+    errors.password = "Password is required.";
+  }
+
+  return {
+    isValid: isValid(errors),
+    errors
+  };
+};
+
+export const validateForgotPassword = ({ email }) => {
+  const errors = {};
+
+  if (isNilOrEmpty(email)) {
+    errors.email = "Email is required.";
+  } else if (!isValidEmail(email)) {
+    errors.email = `${email} is not a valid email.`;
+  }
+
+  return {
+    isValid: isValid(errors),
+    errors
+  };
+};
+
+export const validatePasswordReset = ({ password }) => {
+  const errors = {};
+
+  if (isNilOrEmpty(password)) {
+    errors.password = "Password is required.";
+  } else if (isLessThan(password.trim().length, minPasswordLength)) {
+    errors.password = `Password is too short (minimum is ${minPasswordLength} characters).`;
   }
 
   return {
@@ -103,47 +131,47 @@ export const validateCreateEvent = ({
   const errors = {};
 
   if (isNilOrEmpty(host)) {
-    errors["host"] = "Host is required.";
+    errors.host = "Host is required.";
   }
 
   if (isNilOrEmpty(name)) {
-    errors["name"] = "Name is required.";
+    errors.name = "Name is required.";
   }
 
-  if (isGreaterThan(description.trim().length, maxDescriptionLength)) {
-    errors[
-      "description"
-    ] = `Description is too long (maximum is ${maxDescriptionLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(description) &&
+    isGreaterThan(description.trim().length, maxDescriptionLength)
+  ) {
+    errors.description = `Description is too long (maximum is ${maxDescriptionLength.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(game)) {
-    errors["game"] = "Game is required.";
+    errors.game = "Game is required.";
   }
 
   if (!isOnlineEvent && isNilOrEmpty(location)) {
-    errors["location"] = "Location is required.";
+    errors.location = "Location is required.";
   }
 
   if (isNilOrEmpty(startDateTime)) {
-    errors["startDateTime"] = "Starting date/time is required.";
+    errors.startDateTime = "Starting date/time is required.";
   } else if (isInvalidDateTime(startDateTime)) {
-    errors["startDateTime"] = `${startDateTime} is not a valid date/time`;
+    errors.startDateTime = `${startDateTime} is not a valid date/time`;
   } else if (isBeforeToday(startDateTime)) {
-    errors["startDateTime"] = "Starting date/time cannot be in the past.";
+    errors.startDateTime = "Starting date/time cannot be in the past.";
   } else if (isSameOrAfterEndDateTime(startDateTime, endDateTime)) {
-    errors["startDateTime"] =
+    errors.startDateTime =
       "Starting date/time must be before ending date/time.";
   }
 
   if (isNilOrEmpty(endDateTime)) {
-    errors["endDateTime"] = "Ending date/time is required.";
+    errors.endDateTime = "Ending date/time is required.";
   } else if (isInvalidDateTime(endDateTime)) {
-    errors["endDateTime"] = `${endDateTime} is not a valid date/time`;
+    errors.endDateTime = `${endDateTime} is not a valid date/time`;
   } else if (isBeforeToday(endDateTime)) {
-    errors["endDateTime"] = "Ending date/time cannot be in the past.";
+    errors.endDateTime = "Ending date/time cannot be in the past.";
   } else if (isSameOrBeforeStartDateTime(endDateTime, startDateTime)) {
-    errors["endDateTime"] =
-      "Ending date/time must be after starting date/time.";
+    errors.endDateTime = "Ending date/time must be after starting date/time.";
   }
 
   return {
@@ -157,6 +185,8 @@ export const validateEditUser = ({
   lastName,
   school,
   status,
+  major,
+  minor,
   bio,
   timezone,
   hometown,
@@ -175,99 +205,122 @@ export const validateEditUser = ({
   const errors = {};
 
   if (isNilOrEmpty(firstName)) {
-    errors["firstName"] = "First name is required.";
+    errors.firstName = "First name is required.";
   }
 
   if (isNilOrEmpty(lastName)) {
-    errors["lastName"] = "Last name is required.";
+    errors.lastName = "Last name is required.";
   }
 
   if (isNilOrEmpty(school)) {
-    errors["school"] = "School is required.";
+    errors.school = "School is required.";
   }
 
   if (isWithin(status, statuses)) {
-    errors["status"] = `${status} is not a valid status`;
+    errors.status = `${status} is not a valid status`;
+  }
+
+  if (
+    !isNilOrEmpty(major) &&
+    isGreaterThan(major.trim().length, maxDefaultStringLength)
+  ) {
+    errors.major = `Major is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  }
+
+  if (
+    !isNilOrEmpty(minor) &&
+    isGreaterThan(minor.trim().length, maxDefaultStringLength)
+  ) {
+    errors.minor = `Minor is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
   if (isWithin(timezone, timezones)) {
-    errors["timezone"] = `${timezone} is not a valid timezone`;
+    errors.timezone = `${timezone} is not a valid timezone`;
   }
 
-  if (isGreaterThan(bio.trim().length, maxBioLength)) {
-    errors[
-      "bio"
-    ] = `Bio is too long (maximum is ${maxBioLength.toLocaleString()} characters).`;
+  if (!isNilOrEmpty(bio) && isGreaterThan(bio.trim().length, maxBioLength)) {
+    errors.bio = `Bio is too long (maximum is ${maxBioLength.toLocaleString()} characters).`;
   }
 
   if (isInvalidDateTime(birthdate)) {
-    errors["birthdate"] = `${birthdate} is not a valid date`;
+    errors.birthdate = `${birthdate} is not a valid date`;
   }
 
-  if (isGreaterThan(hometown.trim().length, maxDefaultStringLength)) {
-    errors[
-      "hometown"
-    ] = `Hometown is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(hometown) &&
+    isGreaterThan(hometown.trim().length, maxDefaultStringLength)
+  ) {
+    errors.hometown = `Hometown is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(website.trim().length, maxDefaultStringLength)) {
-    errors[
-      "website"
-    ] = `Website is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(website) &&
+    isGreaterThan(website.trim().length, maxDefaultStringLength)
+  ) {
+    errors.website = `Website is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(twitter.trim().length, maxDefaultStringLength)) {
-    errors[
-      "twitter"
-    ] = `Twitter is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(twitter) &&
+    isGreaterThan(twitter.trim().length, maxDefaultStringLength)
+  ) {
+    errors.twitter = `Twitter is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(twitch.trim().length, maxDefaultStringLength)) {
-    errors[
-      "twitch"
-    ] = `Twitch is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(twitch) &&
+    isGreaterThan(twitch.trim().length, maxDefaultStringLength)
+  ) {
+    errors.twitch = `Twitch is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(youtube.trim().length, maxDefaultStringLength)) {
-    errors[
-      "youtube"
-    ] = `YouTube is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(youtube) &&
+    isGreaterThan(youtube.trim().length, maxDefaultStringLength)
+  ) {
+    errors.youtube = `YouTube is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(skype.trim().length, maxDefaultStringLength)) {
-    errors[
-      "skype"
-    ] = `Skype is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(skype) &&
+    isGreaterThan(skype.trim().length, maxDefaultStringLength)
+  ) {
+    errors.skype = `Skype is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(discord.trim().length, maxDefaultStringLength)) {
-    errors[
-      "discord"
-    ] = `Discord is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(discord) &&
+    isGreaterThan(discord.trim().length, maxDefaultStringLength)
+  ) {
+    errors.discord = `Discord is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(battlenet.trim().length, maxDefaultStringLength)) {
-    errors[
-      "battlenet"
-    ] = `Battlenet is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(battlenet) &&
+    isGreaterThan(battlenet.trim().length, maxDefaultStringLength)
+  ) {
+    errors.battlenet = `Battlenet is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(steam.trim().length, maxDefaultStringLength)) {
-    errors[
-      "steam"
-    ] = `Steam is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(steam) &&
+    isGreaterThan(steam.trim().length, maxDefaultStringLength)
+  ) {
+    errors.steam = `Steam is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(xbox.trim().length, maxDefaultStringLength)) {
-    errors[
-      "xbox"
-    ] = `Xbox is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(xbox) &&
+    isGreaterThan(xbox.trim().length, maxDefaultStringLength)
+  ) {
+    errors.xbox = `Xbox is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isGreaterThan(psn.trim().length, maxDefaultStringLength)) {
-    errors[
-      "psn"
-    ] = `PSN is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  if (
+    !isNilOrEmpty(psn) &&
+    isGreaterThan(psn.trim().length, maxDefaultStringLength)
+  ) {
+    errors.psn = `PSN is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
   return {

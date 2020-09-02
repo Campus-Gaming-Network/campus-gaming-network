@@ -16,8 +16,10 @@ import {
   Flex
 } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
+import isEmpty from "lodash.isempty";
 
 import { useFormFields } from "../utilities";
+import { validateLogIn } from "../utilities/validation";
 
 import { firebaseAuth } from "../firebase";
 
@@ -31,6 +33,8 @@ const Login = () => {
   });
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
+  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   if (authenticatedUser && !isAuthenticating) {
     return <Redirect to="/" noThrow />;
@@ -41,6 +45,16 @@ const Login = () => {
 
     setError(null);
     setIsLoading(true);
+
+    const { isValid, errors } = validateLogIn(fields);
+
+    setErrors(errors);
+
+    if (!isValid) {
+      setIsLoading(false);
+      window.scrollTo(0, 0);
+      return;
+    }
 
     firebaseAuth
       .signInWithEmailAndPassword(fields.email, fields.password)
@@ -57,6 +71,14 @@ const Login = () => {
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      {hasErrors ? (
+        <Alert status="error" mb={4}>
+          <AlertDescription>
+            There are errors in the form below. Please review and correct before
+            submitting again.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <Box
         as="form"
         borderWidth="1px"
@@ -79,7 +101,7 @@ const Login = () => {
           </Alert>
         ) : null}
         <Stack spacing={6}>
-          <FormControl isRequired>
+          <FormControl isRequired isInvalid={errors.email}>
             <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
               Email
             </FormLabel>
@@ -92,8 +114,9 @@ const Login = () => {
               value={fields.email}
               size="lg"
             />
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
           </FormControl>
-          <FormControl isRequired>
+          <FormControl isRequired isInvalid={errors.email}>
             <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
               Password
             </FormLabel>
@@ -106,6 +129,7 @@ const Login = () => {
               value={fields.password}
               size="lg"
             />
+            <FormErrorMessage>{errors.password}</FormErrorMessage>
           </FormControl>
         </Stack>
         <Button

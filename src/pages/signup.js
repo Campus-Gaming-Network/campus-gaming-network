@@ -17,10 +17,12 @@ import {
   Heading,
   FormHelperText
 } from "@chakra-ui/core";
+import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 import * as constants from "../constants";
 
 import { createGravatarHash } from "../utilities";
+import { validateSignUp } from "../utilities/validation";
 
 import Link from "../components/Link";
 import SchoolSearch from "../components/SchoolSearch";
@@ -57,6 +59,8 @@ const Signup = () => {
   };
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
+  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   if (authenticatedUser && !isAuthenticating) {
     return <Redirect to="/" noThrow />;
@@ -66,6 +70,16 @@ const Signup = () => {
     e.preventDefault();
 
     setIsSubmitting(true);
+
+    const { isValid, errors } = validateSignUp(formState);
+
+    setErrors(errors);
+
+    if (!isValid) {
+      setIsSubmitting(false);
+      window.scrollTo(0, 0);
+      return;
+    }
 
     firebaseAuth
       .createUserWithEmailAndPassword(formState.email, formState.password)
@@ -94,6 +108,14 @@ const Signup = () => {
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      {hasErrors ? (
+        <Alert status="error" mb={4}>
+          <AlertDescription>
+            There are errors in the form below. Please review and correct before
+            submitting again.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <Box
         as="form"
         borderWidth="1px"
@@ -116,6 +138,7 @@ const Signup = () => {
         ) : null}
         <DetailSection
           handleFieldChange={handleFieldChange}
+          errors={errors}
           firstName={formState.firstName}
           lastName={formState.lastName}
           email={formState.email}
@@ -123,6 +146,7 @@ const Signup = () => {
         />
         <SchoolSection
           handleFieldChange={handleFieldChange}
+          errors={errors}
           status={formState.status}
           onSchoolSelect={onSchoolSelect}
         />
@@ -157,7 +181,7 @@ const DetailSection = React.memo(props => {
 
   return (
     <Stack spacing={6}>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={props.errors.firstName}>
         <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
           First Name
         </FormLabel>
@@ -170,8 +194,9 @@ const DetailSection = React.memo(props => {
           value={props.firstName}
           size="lg"
         />
+        <FormErrorMessage>{props.errors.firstName}</FormErrorMessage>
       </FormControl>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={props.errors.lastName}>
         <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
           Last Name
         </FormLabel>
@@ -184,8 +209,9 @@ const DetailSection = React.memo(props => {
           value={props.lastName}
           size="lg"
         />
+        <FormErrorMessage>{props.errors.lastName}</FormErrorMessage>
       </FormControl>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={props.errors.email}>
         <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
           Email
         </FormLabel>
@@ -202,8 +228,9 @@ const DetailSection = React.memo(props => {
         <FormHelperText id="email-helper-text">
           This is how you will login.
         </FormHelperText>
+        <FormErrorMessage>{props.errors.email}</FormErrorMessage>
       </FormControl>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={props.errors.password}>
         <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
           Password
         </FormLabel>
@@ -225,6 +252,7 @@ const DetailSection = React.memo(props => {
         >
           {isShowingPassword ? "Hide" : "Show"} password
         </Button>
+        <FormErrorMessage>{props.errors.password}</FormErrorMessage>
       </FormControl>
     </Stack>
   );
@@ -233,13 +261,14 @@ const DetailSection = React.memo(props => {
 const SchoolSection = React.memo(props => {
   return (
     <Stack spacing={6} pt={6}>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={props.errors.school}>
         <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
           School
         </FormLabel>
         <SchoolSearch onSelect={props.onSchoolSelect} />
+        <FormErrorMessage>{props.errors.school}</FormErrorMessage>
       </FormControl>
-      <FormControl isRequired>
+      <FormControl isRequired isInvalid={props.errors.status}>
         <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
           Status
         </FormLabel>
@@ -256,6 +285,7 @@ const SchoolSection = React.memo(props => {
             </option>
           ))}
         </Select>
+        <FormErrorMessage>{props.errors.status}</FormErrorMessage>
       </FormControl>
     </Stack>
   );

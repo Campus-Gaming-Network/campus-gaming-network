@@ -4,18 +4,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
+import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import moment from "moment";
 import {
-  Input as ChakraInput,
-  InputGroup as ChakraInputGroup,
+  Input,
+  InputGroup,
   InputLeftAddon,
   Stack,
   FormControl,
   FormLabel,
   FormHelperText,
   Box,
-  Select as ChakraSelect,
+  Select,
   Button,
   Textarea,
   Heading,
@@ -31,6 +32,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import SchoolSearch from "../components/SchoolSearch";
 import GameSearch from "../components/GameSearch";
+import { validateEditUser } from "../utilities/validation";
 
 const initialFormState = {
   firstName: "",
@@ -85,6 +87,8 @@ const EditUser = props => {
     () => startCase(state.schools[user.school.id].name.toLowerCase()),
     [user.school.id, state.schools]
   );
+  const [errors, setErrors] = React.useState({});
+  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   const prefillForm = () => {
     formDispatch({ field: "firstName", value: user.firstName || "" });
@@ -145,6 +149,16 @@ const EditUser = props => {
     }
 
     setIsSubmitting(true);
+
+    const { isValid, errors } = validateEditUser(formState);
+
+    setErrors(errors);
+
+    if (!isValid) {
+      setIsSubmitting(false);
+      window.scrollTo(0, 0);
+      return;
+    }
 
     const schoolDocRef = firebaseFirestore
       .collection("schools")
@@ -227,6 +241,14 @@ const EditUser = props => {
 
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+      {hasErrors ? (
+        <Alert status="error" mb={4}>
+          <AlertDescription>
+            There are errors in the form below. Please review and correct before
+            submitting again.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h1" size="2xl">
           Your Profile
@@ -243,6 +265,7 @@ const EditUser = props => {
         </Button>
         <DetailSection
           handleFieldChange={handleFieldChange}
+          errors={errors}
           firstName={formState.firstName}
           lastName={formState.lastName}
           email={authenticatedUser.email}
@@ -253,6 +276,7 @@ const EditUser = props => {
         />
         <SchoolSection
           handleFieldChange={handleFieldChange}
+          errors={errors}
           onSchoolSelect={onSchoolSelect}
           schoolName={schoolName}
           status={formState.status}
@@ -261,6 +285,7 @@ const EditUser = props => {
         />
         <SocialAccountsSection
           handleFieldChange={handleFieldChange}
+          errors={errors}
           battlenet={formState.battlenet}
           discord={formState.discord}
           psn={formState.psn}
@@ -300,8 +325,8 @@ const EditUser = props => {
 };
 
 const DetailSection = React.memo(props => {
-  // TODO: Make a constant for 1000
-  const bioCharactersRemaining = props.bio ? 1000 - props.bio.length : 1000;
+  // TODO: Make a constant for 2500
+  const bioCharactersRemaining = props.bio ? 2500 - props.bio.length : 2500;
 
   return (
     <Box
@@ -320,11 +345,11 @@ const DetailSection = React.memo(props => {
         <Text color="gray.500">Personal information about you.</Text>
       </Box>
       <Stack spacing={6} p={8}>
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={props.errors.firstName}>
           <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
             First Name
           </FormLabel>
-          <ChakraInput
+          <Input
             id="firstName"
             name="firstName"
             type="text"
@@ -333,12 +358,13 @@ const DetailSection = React.memo(props => {
             value={props.firstName}
             size="lg"
           />
+          <FormErrorMessage>{props.errors.firstName}</FormErrorMessage>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={props.errors.lastName}>
           <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
             Last Name
           </FormLabel>
-          <ChakraInput
+          <Input
             id="lastName"
             name="lastName"
             type="text"
@@ -348,12 +374,13 @@ const DetailSection = React.memo(props => {
             roundedLeft="0"
             size="lg"
           />
+          <FormErrorMessage>{props.errors.lastName}</FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl disabled>
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
             Email
           </FormLabel>
-          <ChakraInput
+          <Input
             id="email"
             name="email"
             type="email"
@@ -367,11 +394,11 @@ const DetailSection = React.memo(props => {
             Your email cannot be changed.
           </FormHelperText>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={props.errors.hometown}>
           <FormLabel htmlFor="hometown" fontSize="lg" fontWeight="bold">
             Hometown
           </FormLabel>
-          <ChakraInput
+          <Input
             id="hometown"
             name="hometown"
             type="text"
@@ -380,12 +407,13 @@ const DetailSection = React.memo(props => {
             value={props.hometown}
             size="lg"
           />
+          <FormErrorMessage>{props.errors.hometown}</FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={props.errors.birthdate}>
           <FormLabel htmlFor="birthdate" fontSize="lg" fontWeight="bold">
             Birthday
           </FormLabel>
-          <ChakraInput
+          <Input
             id="birthdate"
             name="birthdate"
             type="date"
@@ -393,8 +421,9 @@ const DetailSection = React.memo(props => {
             value={props.birthdate}
             size="lg"
           />
+          <FormErrorMessage>{props.errors.birthdate}</FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={props.errors.bio}>
           <FormLabel htmlFor="bio" fontSize="lg" fontWeight="bold">
             Bio
           </FormLabel>
@@ -407,11 +436,11 @@ const DetailSection = React.memo(props => {
             size="lg"
             resize="vertical"
             aria-describedby="bio-helper-text"
-            maxLength="1000"
+            maxLength="2500"
             h="150px"
           />
           <FormHelperText id="bio-helper-text">
-            Describe yourself in fewer than 1000 characters.{" "}
+            Describe yourself in fewer than 2500 characters.{" "}
             <Text
               as="span"
               color={bioCharactersRemaining <= 0 ? "red.500" : undefined}
@@ -419,12 +448,13 @@ const DetailSection = React.memo(props => {
               {bioCharactersRemaining} characters remaining.
             </Text>
           </FormHelperText>
+          <FormErrorMessage>{props.errors.bio}</FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={props.errors.timezone}>
           <FormLabel htmlFor="timezone" fontSize="lg" fontWeight="bold">
             Timezone
           </FormLabel>
-          <ChakraSelect
+          <Select
             id="timezone"
             name="timezone"
             onChange={props.handleFieldChange}
@@ -438,10 +468,11 @@ const DetailSection = React.memo(props => {
                 {status.name}
               </option>
             ))}
-          </ChakraSelect>
+          </Select>
           <FormHelperText id="timezone-helper-text">
             For displaying dates and times correctly.
           </FormHelperText>
+          <FormErrorMessage>{props.errors.timezone}</FormErrorMessage>
         </FormControl>
       </Stack>
     </Box>
@@ -466,7 +497,7 @@ const SchoolSection = React.memo(props => {
         <Text color="gray.500">Where you study, what you study.</Text>
       </Box>
       <Stack spacing={6} p={8}>
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={props.errors.school}>
           <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
             School
           </FormLabel>
@@ -474,12 +505,13 @@ const SchoolSection = React.memo(props => {
             onSelect={props.onSchoolSelect}
             schoolName={props.schoolName}
           />
+          <FormErrorMessage>{props.errors.school}</FormErrorMessage>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={props.errors.status}>
           <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
             Status
           </FormLabel>
-          <ChakraSelect
+          <Select
             id="status"
             name="status"
             onChange={props.handleFieldChange}
@@ -491,13 +523,14 @@ const SchoolSection = React.memo(props => {
                 {status.label}
               </option>
             ))}
-          </ChakraSelect>
+          </Select>
+          <FormErrorMessage>{props.errors.status}</FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={props.errors.major}>
           <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
             Major
           </FormLabel>
-          <ChakraInput
+          <Input
             id="major"
             name="major"
             type="text"
@@ -505,12 +538,13 @@ const SchoolSection = React.memo(props => {
             value={props.major}
             size="lg"
           />
+          <FormErrorMessage>{props.errors.major}</FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={props.errors.minor}>
           <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
             Minor
           </FormLabel>
-          <ChakraInput
+          <Input
             id="minor"
             name="minor"
             type="text"
@@ -518,6 +552,7 @@ const SchoolSection = React.memo(props => {
             value={props.minor}
             size="lg"
           />
+          <FormErrorMessage>{props.errors.minor}</FormErrorMessage>
         </FormControl>
       </Stack>
     </Box>
@@ -546,11 +581,11 @@ const SocialAccountsSection = React.memo(props => {
           const account = constants.ACCOUNTS[id];
 
           return (
-            <FormControl key={id}>
+            <FormControl key={id} isInvalid={props.errors[id]}>
               <FormLabel htmlFor={id} fontSize="lg" fontWeight="bold">
                 {account.label}
               </FormLabel>
-              <ChakraInputGroup size="lg">
+              <InputGroup size="lg">
                 {account.icon || !!account.url ? (
                   <InputLeftAddon
                     children={
@@ -563,7 +598,7 @@ const SocialAccountsSection = React.memo(props => {
                     }
                   />
                 ) : null}
-                <ChakraInput
+                <Input
                   id={id}
                   name={id}
                   type="text"
@@ -572,7 +607,8 @@ const SocialAccountsSection = React.memo(props => {
                   value={props[id]}
                   roundedLeft="0"
                 />
-              </ChakraInputGroup>
+              </InputGroup>
+              <FormErrorMessage>{props.errors[id]}</FormErrorMessage>
             </FormControl>
           );
         })}
