@@ -34,8 +34,14 @@ import SchoolLogo from "./SchoolLogo";
 const AuthenticatedNav = () => {
   const state = useAppState();
   const [authenticatedUser] = useAuthState(firebaseAuth);
-  const [user, setUser] = React.useState({});
-  const [school, setSchool] = React.useState({});
+  const user = React.useMemo(
+    () => (authenticatedUser ? state.users[authenticatedUser.uid] : {}),
+    [authenticatedUser, state.users]
+  );
+  const school = React.useMemo(
+    () => (user ? state.schools[user.school.id] : {}),
+    [user, state.schools]
+  );
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {
@@ -45,25 +51,6 @@ const AuthenticatedNav = () => {
   const handleLogout = () => {
     firebaseAuth.signOut().then(() => navigate("/"));
   };
-
-  React.useEffect(() => {
-    const _user = authenticatedUser ? state.users[authenticatedUser.uid] : {};
-    if (!isEqual(user, _user)) {
-      setUser(_user);
-    }
-  }, [authenticatedUser, state.users, user]);
-
-  React.useEffect(() => {
-    if (!isEmpty(user)) {
-      const _school = state.schools[user.school.id];
-      const noSchoolSet = isEmpty(school) && _school;
-      const userHasChangedSchool = user.school.id !== school.id;
-
-      if (noSchoolSet || userHasChangedSchool) {
-        setSchool(_school);
-      }
-    }
-  }, [user, state.schools, school]);
 
   return (
     <Flex
