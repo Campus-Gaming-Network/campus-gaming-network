@@ -59,7 +59,7 @@ export const validateSignUp = ({
     errors.school = "School is required.";
   }
 
-  if (isWithin(status, statuses)) {
+  if (!isWithin(status, statuses)) {
     errors.status = `${status} is not a valid status`;
   }
 
@@ -216,7 +216,7 @@ export const validateEditUser = ({
     errors.school = "School is required.";
   }
 
-  if (isWithin(status, statuses)) {
+  if (!isWithin(status, statuses)) {
     errors.status = `${status} is not a valid status`;
   }
 
@@ -234,7 +234,7 @@ export const validateEditUser = ({
     errors.minor = `Minor is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (isWithin(timezone, timezones)) {
+  if (!isWithin(timezone, timezones)) {
     errors.timezone = `${timezone} is not a valid timezone`;
   }
 
