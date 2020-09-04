@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect } from "@reach/router";
+import { Redirect, navigate } from "@reach/router";
 import startCase from "lodash.startcase";
 import {
   Alert,
@@ -98,6 +98,7 @@ const Signup = () => {
               .doc(formState.school)
           });
         setIsSubmitting(false);
+        navigate("/");
       })
       .catch(error => {
         console.error(error);

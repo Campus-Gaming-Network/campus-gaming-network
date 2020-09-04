@@ -8,57 +8,109 @@ import {
   ComboboxList,
   ComboboxOption
 } from "@reach/combobox";
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import worker from "workerize-loader!../workers";
+import useDebounce from "../hooks/useDebounce";
+import { firebase } from "../firebase";
+import { isDev, mapSchool } from "../utilities";
+import useLocalStorage from "../hooks/useLocalStorage";
+import keyBy from "lodash.keyby";
+import { useAppDispatch, ACTION_TYPES } from "../store";
 
-import { useAppState } from "../store";
-
-const CACHED_SCHOOLS = {};
-
-const workerInstance = worker();
+const LOCAL_STORAGE_SCHOOLS_KEY = isDev() ? "cgn_dev.schools" : "cgn.schools";
+const LOCAL_STORAGE_SCHOOLS_QUERY_KEY = isDev()
+  ? "cgn_dev.schools_query"
+  : "cgn.schools_query";
 
 const SchoolSearch = props => {
-  const state = useAppState();
-  const schoolOptions = React.useMemo(
-    () =>
-      Object.values(state.schools).map(school => ({
-        id: school.id,
-        name: startCase(school.name.toLowerCase()),
-        city: startCase(school.city.toLowerCase()),
-        state: school.state
-      })),
-    [state.schools]
+  const dispatch = useAppDispatch();
+  const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
+    LOCAL_STORAGE_SCHOOLS_KEY,
+    null
   );
-  const [results, setResults] = React.useState([]);
-  const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
+  const [
+    localStorageSchoolQueries,
+    setSchoolsQueryInLocalStorage
+  ] = useLocalStorage(LOCAL_STORAGE_SCHOOLS_QUERY_KEY, null);
+
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   const handleChange = event => setSearchTerm(event.target.value);
 
-  const getSchools = React.useCallback(async () => {
+  const debouncedSchoolSearch = useDebounce(searchTerm, 250);
+
+  const useSchoolSearch = debouncedSchoolSearch => {
+    const [schools, setSchools] = React.useState(null);
+
+    React.useEffect(() => {
+      const _debouncedSchoolSearch = debouncedSchoolSearch.trim();
+
+      if (_debouncedSchoolSearch !== "" && _debouncedSchoolSearch.length > 3) {
+        let isFresh = true;
+
+        fetchSchools(debouncedSchoolSearch).then(schools => {
+          if (isFresh) {
+            setSchools(schools);
+          }
+        });
+        return () => (isFresh = false);
+      }
+    }, [debouncedSchoolSearch]);
+
+    return schools;
+  };
+
+  const fetchSchools = searchTerm => {
     const value = searchTerm ? searchTerm.trim().toLowerCase() : "";
+    const cachedQueryResults = localStorageSchoolQueries
+      ? localStorageSchoolQueries[value]
+      : null;
 
-    if (CACHED_SCHOOLS[value]) {
-      setResults(CACHED_SCHOOLS[value]);
-    } else {
-      let schools = await workerInstance.getSchools(value, schoolOptions);
+    if (cachedQueryResults && cachedQueryResults.length > 0) {
+      return Promise.resolve(
+        Object.entries(localStorageSchools)
+          .filter(entry => cachedQueryResults.includes(entry[0]))
+          .map(entry => entry[1])
+          .slice(0, 10)
+      );
+    }
 
-      if (schools) {
-        schools = schools.slice(0, 10);
+    const searchSchools = firebase.functions().httpsCallable("searchSchools");
+
+    return searchSchools({ query: value }).then(result => {
+      if (
+        result &&
+        result.data &&
+        result.data.hits &&
+        result.data.hits.length > 0
+      ) {
+        const mappedSchools = result.data.hits.map(hit => mapSchool(hit));
+        const schools = {
+          ...localStorageSchools,
+          ...keyBy(mappedSchools, "objectID")
+        };
+
+        setSchoolsInLocalStorage(schools);
+        setSchoolsQueryInLocalStorage({
+          ...localStorageSchoolQueries,
+          [value]: result.data.hits.map(hit => hit.objectID)
+        });
+        dispatch({
+          type: ACTION_TYPES.SET_SCHOOLS,
+          payload: schools
+        });
+
+        return mappedSchools.slice(0, 10);
       }
 
-      CACHED_SCHOOLS[value] = [...schools];
-      setResults(schools);
-    }
-  }, [searchTerm, schoolOptions]);
+      return [];
+    });
+  };
 
-  React.useEffect(() => {
-    getSchools();
-  }, [getSchools]);
+  const results = useSchoolSearch(debouncedSchoolSearch);
 
   const handleSchoolSelect = selectedSchool => {
     const [schoolName, location] = selectedSchool.split(" – ");
     const [city, state] = location.split(", ");
-    const matchedSchool = schoolOptions.find(
+    const matchedSchool = results.find(
       school =>
         school.name.toLowerCase() === schoolName.toLowerCase() &&
         school.city.toLowerCase() === city.toLowerCase() &&
@@ -80,23 +132,21 @@ const SchoolSearch = props => {
         placeholder={props.inputPlaceholder || "Search schools"}
         onChange={handleChange}
         value={searchTerm}
-        disabled={!schoolOptions || !schoolOptions.length}
       />
       {results && (
         <ComboboxPopover>
           {results.length > 0 ? (
             <ComboboxList>
               {results.map(school => {
-                return (
-                  <ComboboxOption
-                    key={school.id}
-                    value={`${school.name} – ${school.city}, ${school.state}`}
-                  />
-                );
+                const value = `${startCase(
+                  school.name.toLowerCase()
+                )} – ${startCase(school.city.toLowerCase())}, ${school.state}`;
+
+                return <ComboboxOption key={school.objectID} value={value} />;
               })}
             </ComboboxList>
           ) : (
-            <Text as="span" ma={8} d="block">
+            <Text as="span" d="block">
               No results found
             </Text>
           )}

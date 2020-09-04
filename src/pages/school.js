@@ -26,21 +26,34 @@ import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 /* eslint-disable no-unused-vars */
 import SchoolLogo from "../components/SchoolLogo";
+import SchoolSilhouette from "../components/SchoolSilhouette";
 
+import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import { useAppDispatch, useAppState, ACTION_TYPES } from "../store";
 import { isUrl } from "../utilities";
 
 ////////////////////////////////////////////////////////////////////////////////
 // School
 
 const School = props => {
+  const dispatch = useAppDispatch();
   const state = useAppState();
-  const school = React.useMemo(() => state.schools[props.id], [
-    state.schools,
-    props.id
-  ]);
+  const [school, isLoadingSchool] = useFetchSchoolDetails(props.id);
+
+  React.useEffect(() => {
+    if (props.id !== state.school.id && !isLoadingSchool) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL,
+        payload: school
+      });
+    }
+  }, [props.id, state.school.id, dispatch, school, isLoadingSchool]);
+
+  if (isLoadingSchool) {
+    return <SchoolSilhouette />;
+  }
 
   if (!school || isEmpty(school)) {
     console.error(`No school found ${props.uri}`);

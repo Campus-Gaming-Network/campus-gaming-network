@@ -1,0 +1,150 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Rules
+
+    match /{document=**} {
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read, create: if true;
+      // allow create: if canCreateUser(resource);
+      // TODO:
+      // - Limit field lengths.
+      // - Check required fields.
+      // - Check field types.
+      allow update, write: if isUser(userId);
+    }
+
+    match /schools/{schoolId} {
+      allow read, write: if true;
+      // TODO:
+      // - Only allow school leaders ability to modify school data.
+      // - Check required fields.
+      // - Check field types.
+      // allow write, create, update: if false;
+    }
+
+    match /events/{eventId} {
+      allow read, write, update: if true;
+      // TODO:
+      // - Limit field lengths.
+      // - Check required fields.
+      // - Check field types.
+      allow create: if true;
+      // allow create: if canCreateEvent(resource);
+      // allow update, write: if canModifyEvent(resource);
+    }
+
+    match /event-responses/{eventResponseId} {
+      // TODO: 
+      // - Figure out if event response read can be limited to owner.
+      // - Check field types.
+      allow read, update, write: if true;
+      allow create: if true;
+      // allow create: if canCreateEventResponse(resource);
+      // allow update, write: if canModifyEventResponse(resource);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Functions
+
+    function isSignedIn() {
+      return request.auth.uid != null;
+    }
+
+    function isUser(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isBefore(dateTime) {
+      return request.time < dateTime;
+    }
+    
+    function isAfter(dateTime) {
+      return request.time > dateTime;
+    }
+    
+    function canCreateUser(resource) {
+      return (
+        resource.data.firstName is string &&
+        resource.data.lastName is string &&
+        resource.data.status is string &&
+        resource.data.gravatar is string &&
+        resource.data.school is string &&
+        resource.data.firstName.length <= 125 &&
+        resource.data.lastName <= 125 &&
+        resource.data.status in [
+          "FRESHMAN",
+          "SOPHMORE",
+          "JUNIOR",
+          "SENIOR",
+          "GRAD",
+          "ALUMNI",
+          "FACULTY",
+          "OTHER"
+        ] &&
+        docExists(resource.data.school)
+      );
+    }
+
+    function canCreateEvent(resource) {
+      return (
+        isSignedIn()
+        // This is broken for some reason, firebase issue.
+        // validEventDateTimes(resource.data)
+      );
+    }
+    
+    function canModifyEvent(resource) {
+      return (
+        isBefore(resource.data.endDateTime)
+        // isBefore(resource.data.endDateTime) &&
+        // isOwner(resource.data.creator)
+      );
+    }
+
+    function canCreateEventResponse(resource) {
+      return (
+        isSignedIn() &&
+        docExists(resource.data.event)
+      );
+    }
+
+    function canModifyEventResponse(resource) {
+      return (
+        isWithinEventDateTime(resource.data.eventDetails) &&
+        isOwner(resource.data.user)
+      );
+    }
+
+    function docExists(docRef) {
+      return exists(/databases/$(database)/documents/$(docRef));
+    }
+
+    function isWithinEventDateTime(event) {
+      return isAfter(event.startDateTime) && isBefore(event.endDateTime);
+    }
+
+    function validEventDateTimes(event) {
+      return (
+        event.startDateTime is timestamp &&
+        event.endDateTime is timestamp &&
+        event.endDateTime > event.startDateTime
+      );
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isEmailVerified() {
+      return request.auth.token.email_verified;
+    }
+
+  }
+}

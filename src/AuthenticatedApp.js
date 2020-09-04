@@ -11,6 +11,7 @@ import { useAppState, useAppDispatch, ACTION_TYPES } from "./store";
 
 // Hooks
 import useFetchUserDetails from "./hooks/useFetchUserDetails";
+import useFetchSchoolDetails from "./hooks/useFetchSchoolDetails";
 
 // Pages
 import Home from "./pages";
@@ -39,6 +40,10 @@ const AuthenticatedApp = () => {
     authenticatedUser ? authenticatedUser.uid : null
   );
   const [isLoadingUser, setIsLoadingUser] = React.useState(true);
+  const [school] = useFetchSchoolDetails(
+    user && !isLoadingUser ? user.school.id : null
+  );
+  const [isLoadingSchool, setIsLoadingSchool] = React.useState(true);
   const [nav, setNav] = React.useState(<NavSilhouette />);
   const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
 
@@ -54,9 +59,25 @@ const AuthenticatedApp = () => {
     }
   }, [dispatch, user, state.user]);
 
+  const setSchool = React.useCallback(() => {
+    const hasSchool = !!school;
+    const hasSchoolState = !isEmpty(state.school);
+
+    if (hasSchool && !hasSchoolState) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL,
+        payload: school
+      });
+    }
+  }, [dispatch, school, state.school]);
+
   React.useEffect(() => {
     setUser();
   }, [setUser, user, state.user]);
+
+  React.useEffect(() => {
+    setSchool();
+  }, [setSchool, school, state.school]);
 
   React.useEffect(() => {
     const hasUserState = !isEmpty(state.user);
@@ -68,11 +89,20 @@ const AuthenticatedApp = () => {
   }, [state.user, isLoadingUser, isAuthenticating]);
 
   React.useEffect(() => {
-    if (!isLoadingUser) {
+    const hasSchoolState = !isEmpty(state.school);
+    const isLoading = !hasSchoolState || isAuthenticating;
+
+    if (isLoading !== setIsLoadingSchool) {
+      setIsLoadingSchool(isLoading);
+    }
+  }, [state.school, setIsLoadingSchool, isAuthenticating]);
+
+  React.useEffect(() => {
+    if (!isLoadingUser && !isLoadingSchool) {
       setNav(<AuthenticatedNav />);
       setRoutes(<Routes />);
     }
-  }, [isLoadingUser]);
+  }, [isLoadingUser, isLoadingSchool]);
 
   return (
     <React.Fragment>

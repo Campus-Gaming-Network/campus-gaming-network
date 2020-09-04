@@ -1,5 +1,5 @@
 import React from "react";
-import { isDev, mapUser } from "../utilities";
+import { isDev, mapUser, mapSchool } from "../utilities";
 
 const INITIAL_STATE = {
   event: {},
@@ -38,10 +38,10 @@ const reducer = (state, action) => {
     case ACTION_TYPES.SET_SCHOOL:
       return {
         ...state,
-        school: action.payload,
+        school: mapSchool(action.payload),
         schools: {
           ...state.schools,
-          [action.payload.id]: action.payload
+          [action.payload.id]: mapSchool(action.payload)
         }
       };
     case ACTION_TYPES.SET_SCHOOL_USERS:
@@ -70,10 +70,7 @@ const reducer = (state, action) => {
         ...state,
         school: {
           ...state.school,
-          events: {
-            ...state.school.events,
-            [action.payload.page]: action.payload.events
-          }
+          events: action.payload.events
         },
         schools: {
           ...state.schools,

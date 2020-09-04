@@ -51,7 +51,7 @@ const GameSearch = props => {
 
     // const searchGames = firebase.functions().httpsCallable("searchGames");
 
-    // return searchGames({ text: value }).then(result => {
+    // return searchGames({ query: value }).then(result => {
     //   CACHED_GAMES[value] = result.data.games;
     //   return result.data.games;
     // });

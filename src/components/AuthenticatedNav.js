@@ -1,7 +1,5 @@
 import React from "react";
 import { navigate } from "@reach/router";
-import isEmpty from "lodash.isempty";
-import isEqual from "lodash.isequal";
 import { Link as ReachLink } from "@reach/router";
 import {
   Button,
@@ -155,7 +153,7 @@ const AuthenticatedNav = () => {
                 <Text lineHeight="1">Profile</Text>
               </Flex>
             </MenuItem>
-            <MenuItem as={ReachLink} to={`school/${school.id}`}>
+            <MenuItem as={ReachLink} to={`school/${user.school.id}`}>
               {/* <SchoolLogo
                 schoolId={school.id}
                 alt={`${school.name} school logo`}

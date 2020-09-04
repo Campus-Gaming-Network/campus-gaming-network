@@ -53,3 +53,5 @@ ui-debug.log
 
 serviceAccountKey.json
 serviceAccountKey_test.json
+
+hosting.*

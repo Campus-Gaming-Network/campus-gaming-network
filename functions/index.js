@@ -6,12 +6,29 @@ admin.initializeApp();
 const db = admin.firestore();
 
 const axios = require("axios");
+const algoliasearch = require("algoliasearch");
+
+const ALGOLIA_ID = functions.config().algolia.app;
+const ALGOLIA_ADMIN_KEY = functions.config().algolia.key;
+const ALGOLIA_SEARCH_KEY = functions.config().algolia.search;
+const ALGOLIA_SCHOOLS_COLLECTION = "test_SCHOOLS";
+
+const algoliaAdminClient = algoliasearch(
+  ALGOLIA_ID,
+  ALGOLIA_ADMIN_KEY,
+);
+const algoliaSearchClient = algoliasearch(
+  ALGOLIA_ID,
+  ALGOLIA_SEARCH_KEY,
+);
+const algoliaAdminIndex = algoliaAdminClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
+const algoliaSearchIndex = algoliaSearchClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
 
 ////////////////////////////////////////////////////////////////////////////////
 // onCall
 
 exports.searchGames = functions.https.onCall((data) => {
-  const gameQueryRef = db.collection("game-queries").doc(data.text);
+  const gameQueryRef = db.collection("game-queries").doc(data.query);
 
   return gameQueryRef.get().then((doc) => {
     if (doc.exists) {
@@ -29,7 +46,7 @@ exports.searchGames = functions.https.onCall((data) => {
       return new Promise(function (resolve, reject) {
         resolve({
           games: docData.games,
-          query: data.text,
+          query: data.query,
         });
       });
     } else {
@@ -41,11 +58,11 @@ exports.searchGames = functions.https.onCall((data) => {
             Accept: "application/json",
             "user-key": functions.config().igdb.key,
           },
-          data: `search "${data.text}"; fields name,cover.url,slug; limit 10;`,
+          data: `search "${data.query}"; fields name,cover.url,slug; limit 10;`,
         })
           .then((response) => {
             db.collection("game-queries")
-              .doc(data.text)
+              .doc(data.query)
               .set(
                 {
                   games: response.data || [],
@@ -56,7 +73,7 @@ exports.searchGames = functions.https.onCall((data) => {
 
             resolve({
               games: response.data,
-              query: data.text,
+              query: data.query,
             });
           })
           .catch((err) => {
@@ -67,13 +84,19 @@ exports.searchGames = functions.https.onCall((data) => {
   });
 });
 
+exports.searchSchools = functions.https.onCall((data) => {
+  return algoliaSearchIndex.search(data.query, {
+    hitsPerPage: data.limit,
+  });
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 // onWrite
 
 // Source: https://stackoverflow.com/a/60963531
 exports.trackCreatedUpdated = functions.firestore
   .document("{colId}/{docId}")
-  .onWrite(async (change, context) => {
+  .onWrite((change, context) => {
     const setCols = [
       "events",
       "event-responses",
@@ -140,6 +163,15 @@ exports.trackCreatedUpdated = functions.firestore
 
 ////////////////////////////////////////////////////////////////////////////////
 // onUpdate
+
+exports.updateAlgoliaIndex = functions.firestore
+  .document("schools/{schoolId}")
+  .onUpdate((change) => {
+    const { createdAt, updatedAt, ...newData } = change.after.data();
+    const objectID = change.after.id;
+
+    return algoliaAdminIndex.saveObject({ ...newData, objectID });
+  });
 
 exports.updateEventResponsesOnEventUpdate = functions.firestore
   .document("events/{eventId}")
@@ -340,41 +372,7 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
     return null;
   });
 
-////////////////////////////////////////////////////////////////////////////////
-// onCreate
-
-exports.eventResponsesOnCreated = functions.firestore
-  .document("event-responses/{eventResponseId}")
-  .onCreate((snapshot) => {
-    const eventResponseData = snapshot.data();
-    const eventRef = db.collection("events").doc(eventResponseData.event.id);
-
-    if (eventResponseData.response === "YES") {
-      return eventRef
-        .set(
-          { responses: { yes: admin.firestore.FieldValue.increment(1) } },
-          { merge: true }
-        )
-        .catch((err) => {
-          console.log(err);
-          return false;
-        });
-    } else if (eventResponseData.response === "NO") {
-      return eventRef
-        .set(
-          { responses: { no: admin.firestore.FieldValue.increment(1) } },
-          { merge: true }
-        )
-        .catch((err) => {
-          console.log(err);
-          return false;
-        });
-    }
-
-    return null;
-  });
-
-exports.eventResponsesOnUpdated = functions.firestore
+  exports.eventResponsesOnUpdated = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onUpdate((change, context) => {
     const previousEventResponseData = change.before.data();
@@ -433,38 +431,97 @@ exports.eventResponsesOnUpdated = functions.firestore
   });
 
 ////////////////////////////////////////////////////////////////////////////////
+// onCreate
+
+exports.addAlgoliaIndex = functions.firestore
+  .document("schools/{schoolId}")
+  .onCreate((snapshot) => {
+    if (snapshot.exists) {
+      const { createdAt, updatedAt, ...data } = snapshot.data();
+      const objectID = snapshot.id;
+
+      return algoliaAdminIndex.saveObject({ ...data, objectID });
+    }
+  });
+
+exports.eventResponsesOnCreated = functions.firestore
+  .document("event-responses/{eventResponseId}")
+  .onCreate((snapshot) => {
+    if (snapshot.exists) {
+      const eventResponseData = snapshot.data();
+      const eventRef = db.collection("events").doc(eventResponseData.event.id);
+
+      if (eventResponseData.response === "YES") {
+        return eventRef
+          .set(
+            { responses: { yes: admin.firestore.FieldValue.increment(1) } },
+            { merge: true }
+          )
+          .catch((err) => {
+            console.log(err);
+            return false;
+          });
+      } else if (eventResponseData.response === "NO") {
+        return eventRef
+          .set(
+            { responses: { no: admin.firestore.FieldValue.increment(1) } },
+            { merge: true }
+          )
+          .catch((err) => {
+            console.log(err);
+            return false;
+          });
+      }
+
+      return null;
+    }
+  });
+
+////////////////////////////////////////////////////////////////////////////////
 // onDelete
+
+exports.removeAlgoliaIndex = functions.firestore
+  .document("schools/{schoolId}")
+  .onDelete((snapshot) => {
+    if (snapshot.exists) {
+      return algoliaAdminIndex.deleteObject(snapshot.id);
+    }
+  });
 
 exports.eventResponsesOnDelete = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onDelete((snapshot) => {
-    const deletedData = snapshot.data();
+    if (snapshot.exists) {
+      const deletedData = snapshot.data();
 
-    const eventRef = db.collection("events").doc(deletedData.event.id);
+      if (deletedData) {
+        const eventRef = db.collection("events").doc(deletedData.event.id);
 
-    if (deletedData.response === "YES") {
-      return eventRef
-        .set(
-          { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
-          { merge: true }
-        )
-        .catch((err) => {
-          console.log(err);
-          return false;
-        });
-    } else if (deletedData.response === "NO") {
-      return eventRef
-        .set(
-          { responses: { no: admin.firestore.FieldValue.increment(-1) } },
-          { merge: true }
-        )
-        .catch((err) => {
-          console.log(err);
-          return false;
-        });
+        if (deletedData.response === "YES") {
+          return eventRef
+            .set(
+              { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
+              { merge: true }
+            )
+            .catch((err) => {
+              console.log(err);
+              return false;
+            });
+        } else if (deletedData.response === "NO") {
+          return eventRef
+            .set(
+              { responses: { no: admin.firestore.FieldValue.increment(-1) } },
+              { merge: true }
+            )
+            .catch((err) => {
+              console.log(err);
+              return false;
+            });
+        }
+
+        return null;
+      }
     }
-
-    return null;
   });
 
 ////////////////////////////////////////////////////////////////////////////////

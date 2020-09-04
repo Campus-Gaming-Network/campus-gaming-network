@@ -128,8 +128,8 @@ export const mapEventResponse = (eventResponse, ref) => ({
 });
 
 export const mapSchool = (school, ref) => ({
-  id: school.id || ref.id,
   ...school,
+  id: school.objectID || school.id || ref.id,
   googleMapsAddressLink: googleMapsLink(school.address)
 });
 

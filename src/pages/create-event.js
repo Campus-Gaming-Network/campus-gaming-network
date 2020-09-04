@@ -391,6 +391,30 @@ const CreateEvent = props => {
               />
               <FormErrorMessage>{errors.name}</FormErrorMessage>
             </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="onlineEvent" fontSize="lg" fontWeight="bold">
+                Is this an online event?
+              </FormLabel>
+              <Stack>
+                <Checkbox
+                  id="onlineEvent"
+                  name="onlineEvent"
+                  size="lg"
+                  disabled={!!formState.placeId}
+                  isChecked={formState.isOnlineEvent}
+                  value={formState.isOnlineEvent}
+                  onChange={e =>
+                    formDispatch({
+                      field: "isOnlineEvent",
+                      value: e.target.checked
+                    })
+                  }
+                >
+                  Yes, this is an online event
+                </Checkbox>
+              </Stack>
+            </FormControl>
+            <Text>or</Text>
             <FormControl
               isRequired={!formState.isOnlineEvent}
               isInvalid={errors.location}
@@ -469,21 +493,6 @@ const CreateEvent = props => {
                   )}
                 </PlacesAutocomplete>
                 <FormErrorMessage>{errors.location}</FormErrorMessage>
-                <Text>or</Text>
-                <Checkbox
-                  size="lg"
-                  disabled={!!formState.placeId}
-                  isChecked={formState.isOnlineEvent}
-                  value={formState.isOnlineEvent}
-                  onChange={e =>
-                    formDispatch({
-                      field: "isOnlineEvent",
-                      value: e.target.checked
-                    })
-                  }
-                >
-                  This is an online event
-                </Checkbox>
               </Stack>
             </FormControl>
             <FormControl isInvalid={errors.description}>
