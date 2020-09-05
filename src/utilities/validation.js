@@ -1,5 +1,6 @@
 import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
+import isDate from "lodash.isdate";
 import moment from "moment";
 
 import { STUDENT_STATUS_OPTIONS } from "../constants";
@@ -7,17 +8,20 @@ import timezoneOptions from "../data/timezones.json";
 
 const isValid = errors => isEmpty(errors);
 const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const isNilOrEmpty = value => isNil(value) || isEmpty(value);
+const isNilOrEmpty = value =>
+  !isDate(value) ? isNil(value) || isEmpty(value) : false;
 const isWithin = (value, options) => options.includes(value);
 const isGreaterThan = (value, other) => value > other;
 const isLessThan = (value, other) => value < other;
-const isInvalidDateTime = dateTime => moment(dateTime).isValid();
+const isValidDateTime = dateTime => moment(dateTime).isValid();
 const isBeforeToday = dateTime => moment(dateTime).isBefore(moment());
 const isSameOrAfterEndDateTime = (startDateTime, endDateTime) =>
   moment(startDateTime).isSameOrAfter(moment(endDateTime));
-const isSameOrBeforeStartDateTime = () => (endDateTime, startDateTime) =>
+const isSameOrBeforeStartDateTime = (endDateTime, startDateTime) =>
   moment(endDateTime).isSameOrBefore(moment(startDateTime));
 
+const maxFavoriteGameLimit = 5;
+const maxCurrentlyPlayingLimit = 5;
 const maxDefaultStringLength = 255;
 const maxDescriptionLength = 5000;
 const maxBioLength = 2500;
@@ -155,7 +159,7 @@ export const validateCreateEvent = ({
 
   if (isNilOrEmpty(startDateTime)) {
     errors.startDateTime = "Starting date/time is required.";
-  } else if (isInvalidDateTime(startDateTime)) {
+  } else if (!isValidDateTime(startDateTime)) {
     errors.startDateTime = `${startDateTime} is not a valid date/time`;
   } else if (isBeforeToday(startDateTime)) {
     errors.startDateTime = "Starting date/time cannot be in the past.";
@@ -166,7 +170,7 @@ export const validateCreateEvent = ({
 
   if (isNilOrEmpty(endDateTime)) {
     errors.endDateTime = "Ending date/time is required.";
-  } else if (isInvalidDateTime(endDateTime)) {
+  } else if (!isValidDateTime(endDateTime)) {
     errors.endDateTime = `${endDateTime} is not a valid date/time`;
   } else if (isBeforeToday(endDateTime)) {
     errors.endDateTime = "Ending date/time cannot be in the past.";
@@ -200,7 +204,9 @@ export const validateEditUser = ({
   battlenet,
   steam,
   xbox,
-  psn
+  psn,
+  currentlyPlaying,
+  favoriteGames
 }) => {
   const errors = {};
 
@@ -234,7 +240,7 @@ export const validateEditUser = ({
     errors.minor = `Minor is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
   }
 
-  if (!isWithin(timezone, timezones)) {
+  if (!isNilOrEmpty(timezone) && !isWithin(timezone, timezones)) {
     errors.timezone = `${timezone} is not a valid timezone`;
   }
 
@@ -242,7 +248,7 @@ export const validateEditUser = ({
     errors.bio = `Bio is too long (maximum is ${maxBioLength.toLocaleString()} characters).`;
   }
 
-  if (isInvalidDateTime(birthdate)) {
+  if (!isNilOrEmpty(birthdate) && !isValidDateTime(birthdate)) {
     errors.birthdate = `${birthdate} is not a valid date`;
   }
 
@@ -321,6 +327,20 @@ export const validateEditUser = ({
     isGreaterThan(psn.trim().length, maxDefaultStringLength)
   ) {
     errors.psn = `PSN is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+  }
+
+  if (
+    !isNilOrEmpty(favoriteGames) &&
+    isGreaterThan(favoriteGames.length, maxFavoriteGameLimit)
+  ) {
+    errors.favoriteGames = `Too many games selected (maximum is ${maxFavoriteGameLimit.toLocaleString()} games).`;
+  }
+
+  if (
+    !isNilOrEmpty(currentlyPlaying) &&
+    isGreaterThan(currentlyPlaying.length, maxCurrentlyPlayingLimit)
+  ) {
+    errors.currentlyPlaying = `Too many games selected (maximum is ${maxCurrentlyPlayingLimit.toLocaleString()} games).`;
   }
 
   return {

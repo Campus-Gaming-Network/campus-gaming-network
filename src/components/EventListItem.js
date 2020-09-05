@@ -1,8 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { faSchool } from "@fortawesome/free-solid-svg-icons";
-import { Box, Text, Badge, Flex, Image, Tooltip } from "@chakra-ui/core";
+import { faGlobe, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { Box, Text, Badge, Flex, Stack } from "@chakra-ui/core";
 import startCase from "lodash.startcase";
 import Link from "./Link";
 
@@ -15,113 +14,85 @@ const EventListItem = props => {
     <Box as="li" flexBasis={{ md: "33.3333%", sm: "50%", xs: "100%" }} p={2}>
       <Box
         borderWidth="1px"
-        px={6}
-        py={4}
         rounded="lg"
         bg="white"
         w="100%"
         overflow="hidden"
+        pos="relative"
       >
-        {props.event.isOnlineEvent ? <Badge mb={3}>Online Event</Badge> : null}
-        <Box mb={3} display="flex" alignItems="center">
-          <Box pr={2}>
-            <Link
-              to={`/event/${props.event.id}`}
-              color="purple.500"
-              fontWeight="bold"
-              d="block"
-              fontSize="xl"
-              lineHeight="1.2"
-              mb={2}
-            >
-              {props.event.name}
-            </Link>
-            <Link
-              to={`/school/${props.school.id}`}
-              color="purple.500"
-              fontSize="sm"
-              fontWeight={600}
-              d="block"
-              lineHeight="1.2"
-            >
-              {startCase(props.school.name.toLowerCase())}
-            </Link>
+        <Stack p="4">
+          <Box mr="auto">
+            {props.event.hasEnded ? (
+              <Badge
+                mb={2}
+                variantColor="red"
+                fontSize="xs"
+                textTransform="uppercase"
+              >
+                Event ended
+              </Badge>
+            ) : props.event.hasStarted ? (
+              <Badge
+                mb={2}
+                variantColor="green"
+                fontSize="xs"
+                textTransform="uppercase"
+                fontWeight="bold"
+              >
+                Happening now
+              </Badge>
+            ) : (
+              <Badge
+                as="time"
+                dateTime={props.event.startDateTime.toDate()}
+                mb={2}
+                fontSize="xs"
+                textTransform="uppercase"
+              >
+                {props.event.formattedStartDateTime}
+              </Badge>
+            )}
           </Box>
-          <Flex
-            alignItems="center"
-            justifyContent="center"
-            color="gray.100"
-            h={12}
-            w={12}
-            bg="gray.400"
-            rounded="full"
-            ml="auto"
+          <Link
+            to={`/event/${props.event.id}`}
+            color="purple.500"
+            fontWeight="bold"
+            fontSize="lg"
+            isTruncated
+            mt={-2}
           >
-            <FontAwesomeIcon icon={faSchool} />
-          </Flex>
-        </Box>
-        {props.event.hasEnded ? (
-          <Badge
-            variantColor="red"
-            variant="subtle"
-            px={2}
-            rounded="full"
-            mr="auto"
-            mb={4}
+            {props.event.name}
+          </Link>
+          <Link
+            to={`/school/${props.school.id}`}
+            color="purple.500"
             fontSize="sm"
+            fontWeight={600}
+            isTruncated
+            mt={-2}
           >
-            Event Ended
-          </Badge>
-        ) : props.event.hasStarted ? (
-          <Badge
-            variantColor="green"
-            variant="subtle"
-            px={2}
-            rounded="full"
-            mr="auto"
-            mb={4}
-            fontSize="sm"
-          >
-            Happening Now
-          </Badge>
-        ) : (
-          <Box d="block">
-            <Text d="inline" mr={2} color="gray.500">
-              <FontAwesomeIcon icon={faClock} />
-            </Text>
-            <Text
-              as="time"
-              fontSize="lg"
-              dateTime={props.event.formattedStartDateTime}
-            >
-              {props.event.formattedStartDateTime}
-            </Text>
-          </Box>
-        )}
-        {props.event.game ? (
-          <Box>
-            {props.event.game &&
-            props.event.game.cover &&
-            props.event.game.cover.url ? (
-              <Tooltip label={props.event.game.name}>
-                <Image
-                  src={props.event.game.cover.url}
-                  rounded="full"
-                  h={6}
-                  w={6}
-                  mr={2}
-                />
-              </Tooltip>
-            ) : null}
-          </Box>
-        ) : null}
-        {props.event.responses && props.event.responses.yes > 0 ? (
-          <Box d="block">
-            <Text fontSize="xs" textTransform="uppercase" fontWeight="bold">
-              {props.event.responses.yes} Going
-            </Text>
-          </Box>
-        ) : null}
+            {startCase(props.school.name.toLowerCase())}
+          </Link>
+          {props.event.isOnlineEvent ? (
+            <Flex alignItems="center" color="gray.600">
+              <Box color="gray.500" mb={1}>
+                <FontAwesomeIcon icon={faGlobe} size="xs" />
+              </Box>
+              <Text ml={1} fontSize="xs" fontWeight={600}>
+                Online event
+              </Text>
+            </Flex>
+          ) : (
+            <Flex alignItems="center" color="gray.600">
+              <Box color="gray.500" mb={1}>
+                <FontAwesomeIcon icon={faMapMarkerAlt} size="xs" />
+              </Box>
+              <Text ml={1} fontSize="xs" fontWeight={600}>
+                {props.event.location}
+              </Text>
+            </Flex>
+          )}
+        </Stack>
       </Box>
     </Box>
   );

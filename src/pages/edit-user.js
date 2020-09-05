@@ -24,6 +24,7 @@ import {
   Image,
   Tooltip,
   Alert,
+  AlertIcon,
   AlertDescription,
   FormErrorMessage,
   useToast
@@ -153,7 +154,11 @@ const EditUser = props => {
 
     setIsSubmitting(true);
 
-    const { isValid, errors } = validateEditUser(formState);
+    const { isValid, errors } = validateEditUser({
+      ...formState,
+      currentlyPlaying,
+      favoriteGames
+    });
 
     setErrors(errors);
 
@@ -245,7 +250,8 @@ const EditUser = props => {
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       {hasErrors ? (
-        <Alert status="error" mb={4}>
+        <Alert status="error" mb={4} rounded="lg">
+          <AlertIcon />
           <AlertDescription>
             There are errors in the form below. Please review and correct before
             submitting again.
@@ -302,12 +308,14 @@ const EditUser = props => {
         />
         <FavoriteGamesSection
           handleFieldChange={handleFieldChange}
+          errors={errors}
           toggleFavoriteGame={toggleFavoriteGame}
           favoriteGames={favoriteGames}
           onGameSelect={onFavoriteGameSelect}
         />
         <CurrentlyPlayingSection
           handleFieldChange={handleFieldChange}
+          errors={errors}
           toggleCurrentGame={toggleCurrentGame}
           currentlyPlaying={currentlyPlaying}
           onGameSelect={onCurrentlyPlayingGameSelect}
@@ -443,12 +451,12 @@ const DetailSection = React.memo(props => {
             h="150px"
           />
           <FormHelperText id="bio-helper-text">
-            Describe yourself in fewer than 2500 characters.{" "}
+            Describe yourself in fewer than 2,500 characters.{" "}
             <Text
               as="span"
               color={bioCharactersRemaining <= 0 ? "red.500" : undefined}
             >
-              {bioCharactersRemaining} characters remaining.
+              {bioCharactersRemaining.toLocaleString()} characters remaining.
             </Text>
           </FormHelperText>
           <FormErrorMessage>{props.errors.bio}</FormErrorMessage>
@@ -643,7 +651,7 @@ const FavoriteGamesSection = React.memo(props => {
         </Text>
       </Box>
       <Stack spacing={6} p={8}>
-        <FormControl>
+        <FormControl isInvalid={props.errors.favoriteGames}>
           <FormLabel
             htmlFor="favoriteGameSearch"
             fontSize="lg"
@@ -659,6 +667,7 @@ const FavoriteGamesSection = React.memo(props => {
             disabled={props.favoriteGames.length === favoriteGameLimit}
           />
         </FormControl>
+        <FormErrorMessage>{props.errors.favoriteGames}</FormErrorMessage>
         <Stack spacing={2}>
           <Text fontWeight="bold">
             Your favorites{" "}
@@ -734,7 +743,7 @@ const CurrentlyPlayingSection = React.memo(props => {
         <Text color="gray.500">What are you currently playing? Max 5.</Text>
       </Box>
       <Stack spacing={6} p={8}>
-        <FormControl>
+        <FormControl isInvalid={props.errors.favoriteGames}>
           <FormLabel
             htmlFor="currentGameSearch"
             fontSize="lg"
@@ -749,6 +758,7 @@ const CurrentlyPlayingSection = React.memo(props => {
             clearInputOnSelect={true}
             disabled={props.currentlyPlaying.length === currentlyPlayingLimit}
           />
+          <FormErrorMessage>{props.errors.favoriteGames}</FormErrorMessage>
         </FormControl>
         <Stack spacing={2}>
           <Text fontWeight="bold">

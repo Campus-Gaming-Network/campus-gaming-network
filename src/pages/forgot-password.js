@@ -85,7 +85,8 @@ const ForgotPassword = () => {
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
       {hasErrors ? (
-        <Alert status="error" mb={4}>
+        <Alert status="error" mb={4} rounded="lg">
+          <AlertIcon />
           <AlertDescription>
             There are errors in the form below. Please review and correct before
             submitting again.

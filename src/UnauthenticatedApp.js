@@ -29,24 +29,19 @@ import Empty from "./components/Empty";
 
 const UnauthenticatedApp = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const isReady = React.useMemo(() => !isAuthenticating && !authenticatedUser, [
+    isAuthenticating,
+    authenticatedUser
+  ]);
   const [nav, setNav] = React.useState(<NavSilhouette />);
   const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
 
   React.useEffect(() => {
-    const _isLoading = isAuthenticating;
-
-    if (isLoading !== _isLoading) {
-      setIsLoading(_isLoading);
-    }
-  }, [isAuthenticating, isLoading]);
-
-  React.useEffect(() => {
-    if (!isLoading && !authenticatedUser) {
+    if (isReady) {
       setNav(<UnauthenticatedNav />);
       setRoutes(<Routes />);
     }
-  }, [isLoading, authenticatedUser]);
+  }, [isReady]);
 
   return (
     <React.Fragment>

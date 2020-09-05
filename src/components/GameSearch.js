@@ -20,7 +20,7 @@ const GameSearch = props => {
 
   const handleChange = event => setSearchTerm(event.target.value);
 
-  const debouncedGameSearch = useDebounce(searchTerm, 500);
+  const debouncedGameSearch = useDebounce(searchTerm, 250);
 
   const useGameSearch = debouncedGameSearch => {
     const [games, setGames] = React.useState(null);
@@ -28,7 +28,7 @@ const GameSearch = props => {
     React.useEffect(() => {
       const _debouncedGameSearch = debouncedGameSearch.trim();
 
-      if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 3) {
+      if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 2) {
         let isFresh = true;
 
         fetchGames(debouncedGameSearch).then(games => {
@@ -44,17 +44,16 @@ const GameSearch = props => {
   };
 
   const fetchGames = value => {
-    return Promise.resolve([]);
     if (CACHED_GAMES[value]) {
       return Promise.resolve(CACHED_GAMES[value]);
     }
 
-    // const searchGames = firebase.functions().httpsCallable("searchGames");
+    const searchGames = firebase.functions().httpsCallable("searchGames");
 
-    // return searchGames({ query: value }).then(result => {
-    //   CACHED_GAMES[value] = result.data.games;
-    //   return result.data.games;
-    // });
+    return searchGames({ query: value }).then(result => {
+      CACHED_GAMES[value] = result.data.games;
+      return result.data.games;
+    });
   };
 
   const handleGameSelect = selectedGame => {

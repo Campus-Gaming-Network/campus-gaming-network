@@ -36,73 +36,59 @@ const AuthenticatedApp = () => {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
-  const [user] = useFetchUserDetails(
+  const [user, isFetchingUser] = useFetchUserDetails(
     authenticatedUser ? authenticatedUser.uid : null
   );
-  const [isLoadingUser, setIsLoadingUser] = React.useState(true);
-  const [school] = useFetchSchoolDetails(
-    user && !isLoadingUser ? user.school.id : null
+  const [school, isFetchingSchool] = useFetchSchoolDetails(
+    user ? user.school.id : null
   );
-  const [isLoadingSchool, setIsLoadingSchool] = React.useState(true);
+  const isLoadingUserData = React.useMemo(
+    () => isEmpty(state.user) || isAuthenticating || isFetchingUser,
+    [state.user, isAuthenticating, isFetchingUser]
+  );
+  const isLoadingUserSchoolData = React.useMemo(
+    () => isEmpty(state.school) || isAuthenticating || isFetchingSchool,
+    [state.school, isAuthenticating, isFetchingSchool]
+  );
+  const shouldSetUser = React.useMemo(
+    () => !!user && (isEmpty(state.user) || state.user.id !== user.id),
+    [user, state.user]
+  );
+  const shouldSetSchool = React.useMemo(
+    () => !!school && (isEmpty(state.school) || state.school.id !== school.id),
+    [school, state.school]
+  );
+  const isReady = React.useMemo(
+    () => !isLoadingUserData && !isLoadingUserSchoolData,
+    [isLoadingUserData, isLoadingUserSchoolData]
+  );
   const [nav, setNav] = React.useState(<NavSilhouette />);
   const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
 
-  const setUser = React.useCallback(() => {
-    const hasUser = !!user;
-    const hasUserState = !isEmpty(state.user);
-
-    if (hasUser && !hasUserState) {
+  React.useEffect(() => {
+    if (shouldSetUser) {
       dispatch({
         type: ACTION_TYPES.SET_USER,
         payload: user
       });
     }
-  }, [dispatch, user, state.user]);
+  }, [dispatch, shouldSetUser, user]);
 
-  const setSchool = React.useCallback(() => {
-    const hasSchool = !!school;
-    const hasSchoolState = !isEmpty(state.school);
-
-    if (hasSchool && !hasSchoolState) {
+  React.useEffect(() => {
+    if (shouldSetSchool) {
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL,
         payload: school
       });
     }
-  }, [dispatch, school, state.school]);
+  }, [dispatch, shouldSetSchool, school]);
 
   React.useEffect(() => {
-    setUser();
-  }, [setUser, user, state.user]);
-
-  React.useEffect(() => {
-    setSchool();
-  }, [setSchool, school, state.school]);
-
-  React.useEffect(() => {
-    const hasUserState = !isEmpty(state.user);
-    const isLoading = !hasUserState || isAuthenticating;
-
-    if (isLoading !== isLoadingUser) {
-      setIsLoadingUser(isLoading);
-    }
-  }, [state.user, isLoadingUser, isAuthenticating]);
-
-  React.useEffect(() => {
-    const hasSchoolState = !isEmpty(state.school);
-    const isLoading = !hasSchoolState || isAuthenticating;
-
-    if (isLoading !== setIsLoadingSchool) {
-      setIsLoadingSchool(isLoading);
-    }
-  }, [state.school, setIsLoadingSchool, isAuthenticating]);
-
-  React.useEffect(() => {
-    if (!isLoadingUser && !isLoadingSchool) {
+    if (isReady) {
       setNav(<AuthenticatedNav />);
       setRoutes(<Routes />);
     }
-  }, [isLoadingUser, isLoadingSchool]);
+  }, [isReady]);
 
   return (
     <React.Fragment>

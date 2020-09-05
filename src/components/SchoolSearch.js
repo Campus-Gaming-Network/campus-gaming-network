@@ -31,7 +31,7 @@ const SchoolSearch = props => {
     setSchoolsQueryInLocalStorage
   ] = useLocalStorage(LOCAL_STORAGE_SCHOOLS_QUERY_KEY, null);
 
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
 
   const handleChange = event => setSearchTerm(event.target.value);
 
