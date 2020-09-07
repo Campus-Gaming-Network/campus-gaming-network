@@ -13,7 +13,7 @@ import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
 const now = new Date();
 
-const Home = props => {
+const Home = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const isAuthenticated = React.useMemo(
     () => !isAuthenticating && !!authenticatedUser,
@@ -30,13 +30,6 @@ const Home = props => {
       .orderBy("createdAt", "desc")
       .limit(25)
   );
-
-  const test =
-    recentlyCreatedEvents && recentlyCreatedEvents.length
-      ? recentlyCreatedEvents.map(mapEvent)
-      : [];
-
-  console.log({ test });
 
   return (
     <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
@@ -79,10 +72,10 @@ const Home = props => {
             >
               Recently created events
             </Heading>
-            {test && test.length ? (
+            {recentlyCreatedEvents && recentlyCreatedEvents.length ? (
               <React.Fragment>
                 <List d="flex" flexWrap="wrap" m={-2} p={0}>
-                  {test.map(event => (
+                  {recentlyCreatedEvents.map(mapEvent).map(event => (
                     <EventListItem
                       key={event.id}
                       event={event}
