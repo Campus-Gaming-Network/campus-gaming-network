@@ -128,13 +128,23 @@ export const mapSchool = (school, ref) => ({
   )
 });
 
-export const hasStarted = (startDateTime, endDateTime) =>
-  moment().isBetween(
-    moment(startDateTime.toDate()),
-    moment(endDateTime.toDate())
-  );
-export const hasEnded = endDateTime =>
-  moment().isAfter(moment(endDateTime.toDate()));
+export const hasStarted = (startDateTime, endDateTime) => {
+  if (startDateTime && endDateTime) {
+    return moment().isBetween(
+      moment(startDateTime.toDate()),
+      moment(endDateTime.toDate())
+    );
+  }
+
+  return null;
+};
+export const hasEnded = endDateTime => {
+  if (endDateTime) {
+    return moment().isAfter(moment(endDateTime.toDate()));
+  }
+
+  return null;
+};
 
 export const googleMapsLink = query => {
   if (!query) {
