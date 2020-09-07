@@ -21,7 +21,6 @@ import {
   Textarea,
   Heading,
   Text,
-  Image,
   Tooltip,
   Alert,
   AlertIcon,
@@ -36,6 +35,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import SchoolSearch from "../components/SchoolSearch";
 import GameSearch from "../components/GameSearch";
+import GameCover from "../components/GameCover";
 import { mapUser } from "../utilities";
 import { validateEditUser } from "../utilities/validation";
 
@@ -732,16 +732,17 @@ const FavoriteGamesSection = React.memo(props => {
               {props.favoriteGames.map(game => (
                 <Box key={game.id} w="100px" textAlign="center" mt={4}>
                   {game.cover ? (
-                    <Image
-                      src={`https:${game.cover.url}`}
-                      alt={`The cover art for ${game.name}`}
-                    />
+                    <GameCover url={game.cover.url} name={game.name} />
                   ) : null}
-                  <Tooltip label={game.name}>
-                    <Text fontSize="sm" lineHeight="1.2" p={2} isTruncated>
-                      {game.name}
-                    </Text>
-                  </Tooltip>
+                  <Text
+                    fontSize="sm"
+                    lineHeight="1.2"
+                    p={2}
+                    isTruncated
+                    title={game.name}
+                  >
+                    {game.name}
+                  </Text>
                   <Tooltip
                     label={`Remove ${game.name} from favorite games list`}
                   >
@@ -823,16 +824,17 @@ const CurrentlyPlayingSection = React.memo(props => {
               {props.currentlyPlaying.map(game => (
                 <Box key={game.id} w="100px" textAlign="center" mt={4}>
                   {game.cover ? (
-                    <Image
-                      src={`https:${game.cover.url}`}
-                      alt={`The cover art for ${game.name}`}
-                    />
+                    <GameCover url={game.cover.url} name={game.name} />
                   ) : null}
-                  <Tooltip label={game.name}>
-                    <Text fontSize="sm" lineHeight="1.2" p={2} isTruncated>
-                      {game.name}
-                    </Text>
-                  </Tooltip>
+                  <Text
+                    fontSize="sm"
+                    lineHeight="1.2"
+                    p={2}
+                    isTruncated
+                    title={game.name}
+                  >
+                    {game.name}
+                  </Text>
                   <Tooltip
                     label={`Remove ${game.name} from currently playing list`}
                   >

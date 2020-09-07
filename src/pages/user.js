@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
+import times from "lodash.times";
 import {
   Stack,
   Box,
@@ -11,7 +12,7 @@ import {
   Text,
   List,
   ListItem,
-  Spinner,
+  Skeleton,
   PseudoBox,
   Avatar,
   Flex
@@ -78,8 +79,6 @@ const User = props => {
     console.error(`No user found ${props.uri}`);
     return <Redirect to="/not-found" noThrow />;
   }
-
-  console.log("User", { state, user });
 
   return (
     <Box as="article" mt={10} mb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
@@ -384,20 +383,22 @@ const EventsList = props => {
     }
   }, [props.id, state.user.id, events, dispatch, isLoadingEvents]);
 
-  console.log("EventsList", { state, events });
-
   if (isLoadingEvents) {
     return (
-      <Box w="100%" textAlign="center">
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="purple.500"
-          size="xl"
-          mt={4}
-        />
-      </Box>
+      <List d="flex" flexWrap="wrap" m={-2} p={0}>
+        {times(constants.DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
+          <Box key={index} w={{ md: "33%", sm: "50%", xs: "100%" }}>
+            <Skeleton
+              pos="relative"
+              d="flex"
+              m={2}
+              p={4}
+              h={151}
+              rounded="lg"
+            />
+          </Box>
+        ))}
+      </List>
     );
   }
 

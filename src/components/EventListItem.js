@@ -1,7 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGlobe, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-import { Box, Text, Badge, Flex, Stack } from "@chakra-ui/core";
+import { Box, Text, Flex, Stack } from "@chakra-ui/core";
 import startCase from "lodash.startcase";
 import Link from "./Link";
 
@@ -11,7 +9,13 @@ const EventListItem = props => {
   }
 
   return (
-    <Box as="li" flexBasis={{ md: "33.3333%", sm: "50%", xs: "100%" }} p={2}>
+    <Box
+      as="li"
+      flexBasis={{ md: "33.3333%", sm: "50%", xs: "100%" }}
+      minWidth={{ md: "33.3333%", sm: "50%", xs: "100%" }}
+      flexGrow={0}
+      p={2}
+    >
       <Box
         borderWidth="1px"
         rounded="lg"
@@ -20,78 +24,93 @@ const EventListItem = props => {
         overflow="hidden"
         pos="relative"
       >
-        <Stack p="4">
+        <Stack px={4} pt={2} pb={4}>
           <Box mr="auto">
             {props.event.hasEnded ? (
-              <Badge
-                mb={2}
-                variantColor="red"
-                fontSize="xs"
-                textTransform="uppercase"
-              >
-                Event ended
-              </Badge>
-            ) : props.event.hasStarted ? (
-              <Badge
-                mb={2}
-                variantColor="green"
-                fontSize="xs"
+              <Text
+                d="inline-block"
+                color="red.400"
+                fontSize="md"
                 textTransform="uppercase"
                 fontWeight="bold"
+                lineHeight="none"
+              >
+                Event ended
+              </Text>
+            ) : props.event.hasStarted ? (
+              <Text
+                d="inline-block"
+                color="green.400"
+                fontSize="md"
+                textTransform="uppercase"
+                fontWeight="bold"
+                lineHeight="none"
               >
                 Happening now
-              </Badge>
+              </Text>
             ) : (
-              <Badge
+              <Text
+                d="inline-block"
                 as="time"
                 dateTime={props.event.startDateTime.toDate()}
-                mb={2}
-                fontSize="xs"
+                fontSize="md"
                 textTransform="uppercase"
+                fontWeight="bold"
+                lineHeight="none"
               >
                 {props.event.formattedStartDateTime}
-              </Badge>
+              </Text>
             )}
           </Box>
           <Link
             to={`/event/${props.event.id}`}
             color="purple.500"
             fontWeight="bold"
-            fontSize="lg"
+            fontSize="3xl"
             isTruncated
+            lineHeight="short"
             mt={-2}
+            title={props.event.name}
           >
             {props.event.name}
           </Link>
           <Link
             to={`/school/${props.school.id}`}
             color="purple.500"
-            fontSize="sm"
             fontWeight={600}
             isTruncated
+            lineHeight="short"
             mt={-2}
+            title={startCase(props.school.name.toLowerCase())}
           >
             {startCase(props.school.name.toLowerCase())}
           </Link>
-          {props.event.isOnlineEvent ? (
-            <Flex alignItems="center" color="gray.600">
-              <Box color="gray.500" mb={1}>
-                <FontAwesomeIcon icon={faGlobe} size="xs" />
-              </Box>
-              <Text ml={1} fontSize="xs" fontWeight={600}>
+          <Flex justifyContent="space-between" alignItems="center">
+            {props.event.isOnlineEvent ? (
+              <Text
+                fontSize="sm"
+                color="gray.400"
+                fontWeight={600}
+                textTransform="uppercase"
+                isTruncated
+              >
                 Online event
               </Text>
-            </Flex>
-          ) : (
-            <Flex alignItems="center" color="gray.600">
-              <Box color="gray.500" mb={1}>
-                <FontAwesomeIcon icon={faMapMarkerAlt} size="xs" />
-              </Box>
-              <Text ml={1} fontSize="xs" fontWeight={600}>
-                {props.event.location}
+            ) : null}
+            {props.event.responses &&
+            props.event.responses.yes &&
+            props.event.responses.yes > 0 ? (
+              <Text
+                fontSize="sm"
+                color="gray.400"
+                fontWeight={600}
+                textTransform="uppercase"
+                flexShrink={0}
+              >
+                {props.event.responses.yes} Attending
               </Text>
-            </Flex>
-          )}
+            ) : null}
+          </Flex>
         </Stack>
       </Box>
     </Box>

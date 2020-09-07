@@ -108,8 +108,7 @@ export const mapEventResponse = (eventResponse, ref) => ({
       eventResponse.eventDetails.startDateTime,
       eventResponse.eventDetails.endDateTime
     ),
-    hasEnded: hasEnded(eventResponse.eventDetails.endDateTime),
-    responses: eventResponse.responses
+    hasEnded: hasEnded(eventResponse.eventDetails.endDateTime)
   },
   school: {
     ...eventResponse.schoolDetails,
@@ -125,7 +124,7 @@ export const mapSchool = (school, ref) => ({
   ...school,
   id: school.objectID || school.id || ref.id,
   googleMapsAddressLink: googleMapsLink(
-    `${school.address} ${school.city} ${school.state}`
+    `${school.address} ${school.city}, ${school.state}`
   )
 });
 
