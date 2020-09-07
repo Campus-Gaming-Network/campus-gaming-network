@@ -59,6 +59,10 @@ export const createGravatarRequestUrl = hash => {
 
 export const noop = () => {};
 
+const getUserDisplayStatus = status =>
+  ({ ALUMNI: "Alumni of ", GRAD: "Graduate Student at " }[status] ||
+  `${capitalize(status)} at `);
+
 export const mapUser = (user, ref) => ({
   ...user,
   id: user.id || ref.id,
@@ -68,12 +72,7 @@ export const mapUser = (user, ref) => ({
   hasCurrentlyPlaying: !!(
     user.currentlyPlaying && user.currentlyPlaying.length
   ),
-  displayStatus:
-    user.status === "ALUMNI"
-      ? "Alumni of "
-      : user.status === "GRAD"
-      ? "Graduate Student at "
-      : `${capitalize(user.status)} at `,
+  displayStatus: getUserDisplayStatus(user.status),
   gravatarUrl: createGravatarRequestUrl(user.gravatar),
   doc: ref
 });
@@ -84,11 +83,8 @@ export const mapEvent = (event, ref) => ({
   formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
   formattedEndDateTime: formatCalendarDateTime(event.endDateTime),
   googleMapsAddressLink: googleMapsLink(event.location),
-  hasStarted: moment().isBetween(
-    moment(event.startDateTime.toDate()),
-    moment(event.endDateTime.toDate())
-  ),
-  hasEnded: moment().isAfter(moment(event.endDateTime.toDate())),
+  hasStarted: hasStarted(event.startDateTime, event.endDateTime),
+  hasEnded: hasEnded(event.endDateTime),
   schoolDetails: {
     ...event.schoolDetails,
     id: event.school.id
@@ -108,13 +104,11 @@ export const mapEventResponse = (eventResponse, ref) => ({
     formattedEndDateTime: formatCalendarDateTime(
       eventResponse.eventDetails.endDateTime
     ),
-    hasStarted: moment().isBetween(
-      moment(eventResponse.eventDetails.startDateTime.toDate()),
-      moment(eventResponse.eventDetails.endDateTime.toDate())
+    hasStarted: hasStarted(
+      eventResponse.eventDetails.startDateTime,
+      eventResponse.eventDetails.endDateTime
     ),
-    hasEnded: moment().isAfter(
-      moment(eventResponse.eventDetails.endDateTime.toDate())
-    ),
+    hasEnded: hasEnded(eventResponse.eventDetails.endDateTime),
     responses: eventResponse.responses
   },
   school: {
@@ -132,6 +126,14 @@ export const mapSchool = (school, ref) => ({
   id: school.objectID || school.id || ref.id,
   googleMapsAddressLink: googleMapsLink(school.address)
 });
+
+export const hasStarted = (startDateTime, endDateTime) =>
+  moment().isBetween(
+    moment(startDateTime.toDate()),
+    moment(endDateTime.toDate())
+  );
+export const hasEnded = endDateTime =>
+  moment().isAfter(moment(endDateTime.toDate()));
 
 export const googleMapsLink = query => {
   if (!query) {

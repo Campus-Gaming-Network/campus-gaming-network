@@ -39,6 +39,7 @@ import { validateCreateEvent } from "../utilities/validation";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
+import { mapEventResponse, mapEvent } from "../utilities";
 
 const initialFormState = {
   name: "",
@@ -143,16 +144,19 @@ const CreateEvent = props => {
       isOnlineEvent: formState.isOnlineEvent,
       startDateTime: firestoreStartDateTime,
       endDateTime: firestoreEndDateTime,
-      school: schoolDocRef,
-      schoolDetails: {
-        name: school.name
-      },
       game: formState.game
     };
 
     if (!formState.isOnlineEvent) {
-      eventData["location"] = formState.location;
-      eventData["placeId"] = formState.placeId;
+      eventData.location = formState.location;
+      eventData.placeId = formState.placeId;
+    }
+
+    if (!props.edit) {
+      eventData.school = schoolDocRef;
+      eventData.schoolDetails = {
+        name: school.name
+      };
     }
 
     const cleanedData = omitBy(eventData, isNil);
@@ -170,6 +174,76 @@ const CreateEvent = props => {
               ...cleanedData
             }
           });
+
+          Object.keys(state.users).forEach(id => {
+            const userToUpdate = { ...state.users[id] };
+
+            if (userToUpdate.events) {
+              const updatedEvents = userToUpdate.events
+                .map(eventResponse =>
+                  eventResponse.event.id === props.id
+                    ? {
+                        ...eventResponse,
+                        eventDetails: {
+                          ...eventResponse.eventDetails,
+                          ...cleanedData
+                        }
+                      }
+                    : eventResponse
+                )
+                .map(mapEventResponse);
+
+              userToUpdate.events = updatedEvents;
+
+              dispatch({
+                type: ACTION_TYPES.SET_USER_EVENTS,
+                payload: {
+                  id,
+                  events: updatedEvents
+                }
+              });
+
+              if (state.user.id === id) {
+                dispatch({
+                  type: ACTION_TYPES.SET_USER,
+                  payload: userToUpdate
+                });
+              }
+            }
+          });
+
+          // TODO:
+          // Object.keys(state.schools).forEach((id) => {
+          //   const schoolToUpdate = {...state.users[id]};
+
+          //   if (schoolToUpdate.events) {
+          //     const updatedEvents = schoolToUpdate.events.map((eventResponse) => eventResponse.event.id === props.id ? ({
+          //       ...eventResponse,
+          //       eventDetails: {
+          //         ...eventResponse.eventDetails,
+          //         ...cleanedData
+          //       },
+          //     }) : eventResponse).map(mapEvent);
+
+          //     schoolToUpdate.events = updatedEvents;
+
+          //     dispatch({
+          //       type: ACTION_TYPES.SET_USER_EVENTS,
+          //       payload: {
+          //         id,
+          //         events: updatedEvents
+          //       }
+          //     });
+
+          //     if (state.user.id === id) {
+          //       dispatch({
+          //         type: ACTION_TYPES.SET_USER,
+          //         payload: schoolToUpdate
+          //       });
+          //     }
+          //   }
+          // });
+
           toast({
             title: "Event updated.",
             description:
@@ -430,7 +504,9 @@ const CreateEvent = props => {
                   onChange={value => setLocation(value)}
                   onSelect={(address, placeId) => setLocation(address, placeId)}
                   debounce={600}
-                  shouldFetchSuggestions={formState.location.length >= 3}
+                  shouldFetchSuggestions={
+                    !!formState.location && formState.location.length >= 3
+                  }
                 >
                   {({
                     getInputProps,

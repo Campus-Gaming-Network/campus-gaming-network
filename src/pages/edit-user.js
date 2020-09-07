@@ -36,6 +36,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import SchoolSearch from "../components/SchoolSearch";
 import GameSearch from "../components/GameSearch";
+import { mapUser } from "../utilities";
 import { validateEditUser } from "../utilities/validation";
 
 const initialFormState = {
@@ -203,6 +204,8 @@ const EditUser = props => {
 
     const cleanedData = omitBy(data, isNil);
 
+    console.log({ data, cleanedData });
+
     firebaseFirestore
       .collection("users")
       .doc(user.id)
@@ -215,6 +218,45 @@ const EditUser = props => {
             ...cleanedData
           }
         });
+
+        const schoolToUpdate = { ...state.schools[user.school.id] };
+
+        console.log({ schoolToUpdate });
+
+        if (schoolToUpdate.users) {
+          Object.keys(schoolToUpdate.users).forEach(page => {
+            const updatedUsers = schoolToUpdate.users[page]
+              .map(_user => ({
+                ..._user,
+                firstName:
+                  _user.id === user.id
+                    ? cleanedData.firstName
+                    : _user.firstName,
+                lastName:
+                  _user.id === user.id ? cleanedData.lastName : _user.lastName
+              }))
+              .map(mapUser);
+
+            schoolToUpdate.users[page] = updatedUsers;
+
+            dispatch({
+              type: ACTION_TYPES.SET_SCHOOL_USERS,
+              payload: {
+                id: user.school.id,
+                users: updatedUsers,
+                page
+              }
+            });
+          });
+
+          if (state.school.id === user.school.id) {
+            dispatch({
+              type: ACTION_TYPES.SET_SCHOOL,
+              payload: schoolToUpdate
+            });
+          }
+        }
+
         setIsSubmitting(false);
         toast({
           title: "Profile updated.",

@@ -3,12 +3,16 @@ import { Box, Heading, Text } from "@chakra-ui/core";
 
 // Hooks
 // import useFetchUserEvents from "../hooks/useFetchUserEvents";
+// import useFetchRecentlyCreatedEvents from "../hooks/useFetchRecentlyCreatedEvents";
 
 const Home = props => {
   // const userId = props.authenticatedUser ? props.authenticatedUser.uid : null;
   // const [attendingEvents] = useFetchUserEvents(userId);
 
   // console.log("attendingEvents", attendingEvents);
+
+  // const [recentEvents] = useFetchRecentlyCreatedEvents();
+  // console.log({ recentEvents })
 
   return (
     <Box as="article" py={16} px={8} mx="auto" maxW="5xl">

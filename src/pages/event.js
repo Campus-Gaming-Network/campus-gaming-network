@@ -428,7 +428,11 @@ const Event = props => {
             >
               Event Details
             </Heading>
-            <Text>{event.description}</Text>
+            {event.description && event.description.trim().length > 0 ? (
+              <Text>{event.description}</Text>
+            ) : (
+              <Text color="gray.400">No event description provided</Text>
+            )}
           </Stack>
           <Stack as="section" spacing={4}>
             <Heading

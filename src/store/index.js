@@ -1,5 +1,12 @@
 import React from "react";
-import { isDev, mapUser, mapSchool } from "../utilities";
+import {
+  isDev,
+  mapUser,
+  mapSchool,
+  mapEvent,
+  mapEventResponse
+} from "../utilities";
+import keyBy from "lodash.keyby";
 
 const INITIAL_STATE = {
   event: {},
@@ -51,7 +58,7 @@ const reducer = (state, action) => {
           ...state.school,
           users: {
             ...state.school.users,
-            [action.payload.page]: action.payload.users
+            [action.payload.page]: action.payload.users.map(mapUser)
           }
         },
         schools: {
@@ -60,7 +67,7 @@ const reducer = (state, action) => {
             ...state.schools[action.payload.id],
             users: {
               ...state.schools[action.payload.id].users,
-              [action.payload.page]: action.payload.users
+              [action.payload.page]: action.payload.users.map(mapUser)
             }
           }
         }
@@ -70,7 +77,7 @@ const reducer = (state, action) => {
         ...state,
         school: {
           ...state.school,
-          events: action.payload.events
+          events: action.payload.events.map(mapEvent)
         },
         schools: {
           ...state.schools,
@@ -78,9 +85,13 @@ const reducer = (state, action) => {
             ...state.schools[action.payload.id],
             events: {
               ...state.schools[action.payload.id].events,
-              [action.payload.page]: action.payload.events
+              [action.payload.page]: action.payload.events.map(mapEvent)
             }
           }
+        },
+        events: {
+          ...state.events,
+          ...keyBy(action.payload.events.map(mapEvent), "id")
         }
       };
     case ACTION_TYPES.SET_SCHOOL_LOGO:
@@ -112,14 +123,18 @@ const reducer = (state, action) => {
         ...state,
         user: {
           ...state.user,
-          events: action.payload.events
+          events: action.payload.events.map(mapEventResponse)
         },
         users: {
           ...state.users,
           [action.payload.id]: {
             ...state.users[action.payload.id],
-            events: action.payload.events
+            events: action.payload.events.map(mapEventResponse)
           }
+        },
+        events: {
+          ...state.events,
+          ...keyBy(action.payload.events.map(mapEventResponse), "id")
         }
       };
     case ACTION_TYPES.SET_EVENT:
@@ -138,7 +153,7 @@ const reducer = (state, action) => {
           ...state.event,
           users: {
             ...state.school.users,
-            [action.payload.page]: action.payload.users
+            [action.payload.page]: action.payload.users.map(mapUser)
           }
         },
         events: {
@@ -147,7 +162,7 @@ const reducer = (state, action) => {
             ...state.events[action.payload.id],
             users: {
               ...state.events[action.payload.id].users,
-              [action.payload.page]: action.payload.users
+              [action.payload.page]: action.payload.users.map(mapUser)
             }
           }
         }

@@ -42,46 +42,47 @@ const AuthenticatedApp = () => {
   const [school, isFetchingSchool] = useFetchSchoolDetails(
     user ? user.school.id : null
   );
-  const isLoadingUserData = React.useMemo(
+  const isLoadingAuthenticatedUserData = React.useMemo(
     () => isEmpty(state.user) || isAuthenticating || isFetchingUser,
     [state.user, isAuthenticating, isFetchingUser]
   );
-  const isLoadingUserSchoolData = React.useMemo(
+  const isLoadingAuthenticatedUserSchoolData = React.useMemo(
     () => isEmpty(state.school) || isAuthenticating || isFetchingSchool,
     [state.school, isAuthenticating, isFetchingSchool]
   );
-  const shouldSetUser = React.useMemo(
-    () => !!user && (isEmpty(state.user) || state.user.id !== user.id),
+  const shouldSetAuthenticatedUser = React.useMemo(
+    () => !!user && isEmpty(state.user),
     [user, state.user]
   );
-  const shouldSetSchool = React.useMemo(
-    () => !!school && (isEmpty(state.school) || state.school.id !== school.id),
+  const shouldSetAuthenticatedUserSchool = React.useMemo(
+    () => !!school && isEmpty(state.school),
     [school, state.school]
   );
   const isReady = React.useMemo(
-    () => !isLoadingUserData && !isLoadingUserSchoolData,
-    [isLoadingUserData, isLoadingUserSchoolData]
+    () =>
+      !isLoadingAuthenticatedUserData && !isLoadingAuthenticatedUserSchoolData,
+    [isLoadingAuthenticatedUserData, isLoadingAuthenticatedUserSchoolData]
   );
   const [nav, setNav] = React.useState(<NavSilhouette />);
   const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
 
   React.useEffect(() => {
-    if (shouldSetUser) {
+    if (shouldSetAuthenticatedUser) {
       dispatch({
         type: ACTION_TYPES.SET_USER,
         payload: user
       });
     }
-  }, [dispatch, shouldSetUser, user]);
+  }, [dispatch, shouldSetAuthenticatedUser, user]);
 
   React.useEffect(() => {
-    if (shouldSetSchool) {
+    if (shouldSetAuthenticatedUserSchool) {
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL,
         payload: school
       });
     }
-  }, [dispatch, shouldSetSchool, school]);
+  }, [dispatch, shouldSetAuthenticatedUserSchool, school]);
 
   React.useEffect(() => {
     if (isReady) {

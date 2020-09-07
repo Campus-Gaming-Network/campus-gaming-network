@@ -34,6 +34,7 @@ import GameLink from "../components/GameLink";
 // Hooks
 import useFetchUserDetails from "../hooks/useFetchUserDetails";
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
+import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
 
 ////////////////////////////////////////////////////////////////////////////////
 // User
@@ -43,9 +44,8 @@ const User = props => {
   const state = useAppState();
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const [user, isLoadingUser] = useFetchUserDetails(props.id);
-  const school = React.useMemo(
-    () => (user && user.school ? state.schools[user.school.id] : null),
-    [state.schools, user]
+  const [school, isLoadingSchool] = useFetchSchoolDetails(
+    user ? user.school.id : null
   );
   const isAuthenticatedUser = React.useMemo(
     () => !!authenticatedUser && authenticatedUser.uid === props.id,
@@ -61,7 +61,16 @@ const User = props => {
     }
   }, [props.id, state.user.id, dispatch, user, isLoadingUser]);
 
-  if (isLoadingUser) {
+  React.useEffect(() => {
+    if (!!school && school.id !== state.school.id && !isLoadingSchool) {
+      dispatch({
+        type: ACTION_TYPES.SET_SCHOOL,
+        payload: school
+      });
+    }
+  }, [state.school.id, dispatch, school, isLoadingSchool]);
+
+  if (isLoadingUser || isLoadingSchool) {
     return <UserSilhouette />;
   }
 
@@ -69,6 +78,8 @@ const User = props => {
     console.error(`No user found ${props.uri}`);
     return <Redirect to="/not-found" noThrow />;
   }
+
+  console.log("User", { state, user });
 
   return (
     <Box as="article" mt={10} mb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
@@ -362,7 +373,7 @@ const EventsList = props => {
   const [events, isLoadingEvents] = useFetchUserEvents(props.id);
 
   React.useEffect(() => {
-    if (isLoadingEvents && events) {
+    if (isLoadingEvents && !!events) {
       dispatch({
         type: ACTION_TYPES.SET_USER_EVENTS,
         payload: {
@@ -372,6 +383,8 @@ const EventsList = props => {
       });
     }
   }, [props.id, state.user.id, events, dispatch, isLoadingEvents]);
+
+  console.log("EventsList", { state, events });
 
   if (isLoadingEvents) {
     return (

@@ -37,7 +37,10 @@ const AuthenticatedNav = () => {
     [authenticatedUser, state.users]
   );
   const school = React.useMemo(
-    () => (user ? state.schools[user.school.id] : {}),
+    () =>
+      user && user.school && user.school.id
+        ? state.schools[user.school.id]
+        : {},
     [user, state.schools]
   );
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -49,6 +52,8 @@ const AuthenticatedNav = () => {
   const handleLogout = () => {
     firebaseAuth.signOut().then(() => navigate("/"));
   };
+
+  console.log("AuthenticatedNav", { user, school });
 
   return (
     <Flex
