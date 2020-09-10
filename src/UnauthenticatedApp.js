@@ -57,7 +57,7 @@ const SilhouetteRoutes = () => {
   return (
     <Router>
       <ScrollToTop default>
-        <Home path="/" />
+        <Empty path="/" />
         <Empty path="edit-user" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />

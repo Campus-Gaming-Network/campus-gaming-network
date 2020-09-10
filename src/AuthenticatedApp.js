@@ -31,6 +31,7 @@ import FormSilhouette from "./components/FormSilhouette";
 import UserSilhouette from "./components/UserSilhouette";
 import SchoolSilhouette from "./components/SchoolSilhouette";
 import EventSilhouette from "./components/EventSilhouette";
+import Empty from "./components/Empty";
 
 const AuthenticatedApp = () => {
   const state = useAppState();
@@ -105,7 +106,7 @@ const SilhouetteRoutes = () => {
   return (
     <Router>
       <ScrollToTop default>
-        <Home path="/" />
+        <Empty path="/" />
         <FormSilhouette path="edit-user" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
