@@ -77,7 +77,7 @@ const Footer = () => {
           </ListItem>
           <ListItem fontSize="sm">
             Join our{" "}
-            <OutsideLink href="https://discord.gg/dpYU6TY" color="purple.500">
+            <OutsideLink href="https://discord.gg/dpYU6TY">
               Discord
               <Text as="span" ml={1}>
                 <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
@@ -86,11 +86,7 @@ const Footer = () => {
           </ListItem>
           <ListItem fontSize="sm">
             Contribute on{" "}
-            <OutsideLink
-              href="https://github.com/bsansone/campus-gaming-network"
-              color="purple.500"
-              fontWeight={600}
-            >
+            <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
               GitHub
               <Text as="span" ml={1}>
                 <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
@@ -117,11 +113,7 @@ const Footer = () => {
           </ListItem>
           <ListItem fontSize="sm">
             Enjoying the site?{" "}
-            <OutsideLink
-              href="https://www.buymeacoffee.com/cgnbrandon"
-              color="purple.500"
-              fontWeight={600}
-            >
+            <OutsideLink href="https://www.buymeacoffee.com/cgnbrandon">
               Buy me a coffee.
               <Text as="span" ml={1}>
                 <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />

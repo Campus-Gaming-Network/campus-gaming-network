@@ -109,7 +109,6 @@ const Event = props => {
       .collection("schools")
       .doc(event.school.id);
     const user = state.users[authenticatedUser.uid];
-    const school = state.schools[user.school.id];
 
     const data = {
       user: userDocRef,
@@ -133,7 +132,7 @@ const Event = props => {
         }
       },
       schoolDetails: {
-        name: school.name
+        name: event.schoolDetails.name
       }
     };
 

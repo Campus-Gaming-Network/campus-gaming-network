@@ -64,8 +64,8 @@ const SilhouetteRoutes = () => {
     <Router>
       <ScrollToTop default>
         <Empty path="/" />
-        <AboutUs path="about-us" />
-        <FrequentlyAskedQuestions path="frequently-asked-questions" />
+        <Empty path="about-us" />
+        <Empty path="frequently-asked-questions" />
         <Empty path="edit-user" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
