@@ -121,7 +121,7 @@ const Signup = () => {
       ) : null}
       <Box
         as="form"
-        borderWidth="1px"
+        borderWidth={1}
         boxShadow="lg"
         rounded="lg"
         bg="white"

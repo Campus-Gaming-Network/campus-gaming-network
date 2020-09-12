@@ -390,7 +390,8 @@ const UsersListItem = props => {
   return (
     <ListItem w={{ md: "20%", sm: "33%", xs: "50%" }}>
       <Box
-        borderWidth="1px"
+        shadow="sm"
+        borderWidth={1}
         rounded="lg"
         bg="white"
         pos="relative"

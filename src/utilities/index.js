@@ -173,3 +173,23 @@ export const userHasAccounts = user => {
 };
 
 export const isUrl = url => url.startsWith("http") || url.startsWith("https");
+
+// Move an array element from one array index to another
+export const move = (array, from, to) => {
+  if (from === to) {
+    return array;
+  }
+
+  const newArray = [...array];
+
+  const target = newArray[from];
+  const inc = to < from ? -1 : 1;
+
+  for (let i = from; i !== to; i += inc) {
+    newArray[i] = newArray[i + inc];
+  }
+
+  newArray[to] = target;
+
+  return newArray;
+};

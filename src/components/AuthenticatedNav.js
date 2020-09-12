@@ -1,6 +1,5 @@
 import React from "react";
-import { navigate } from "@reach/router";
-import { Link as ReachLink } from "@reach/router";
+import { Link as ReachLink, navigate } from "@reach/router";
 import {
   Button,
   Flex,
@@ -26,6 +25,7 @@ import {
 import { firebaseAuth } from "../firebase";
 import { useAppState } from "../store";
 import Link from "./Link";
+import SchoolSearch from "./SchoolSearch";
 /* eslint-disable no-unused-vars */
 import SchoolLogo from "./SchoolLogo";
 
@@ -53,7 +53,11 @@ const AuthenticatedNav = () => {
     firebaseAuth.signOut().then(() => navigate("/"));
   };
 
-  console.log("AuthenticatedNav", { user, school });
+  const onSchoolSelect = selectedSchool => {
+    if (selectedSchool && selectedSchool.id) {
+      navigate(`/school/${selectedSchool.id}`);
+    }
+  };
 
   return (
     <Flex
@@ -63,7 +67,7 @@ const AuthenticatedNav = () => {
       justify="space-between"
       wrap="wrap"
       padding="1rem"
-      shadow="sm"
+      borderBottomWidth={2}
       bg="white"
     >
       <Flex align="center" mr={5}>
@@ -73,6 +77,13 @@ const AuthenticatedNav = () => {
           </Heading>
         </Link>
       </Flex>
+
+      <SchoolSearch
+        id="siteSchoolSearch"
+        name="siteSchoolSearch"
+        onSelect={onSchoolSelect}
+        clearInputOnSelect
+      />
 
       <Box display={{ sm: "block", md: "none" }} onClick={toggleMenu}>
         <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />

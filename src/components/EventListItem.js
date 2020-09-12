@@ -11,18 +11,19 @@ const EventListItem = props => {
   return (
     <Box
       as="li"
-      flexBasis={{ md: "33.3333%", sm: "50%", xs: "100%" }}
-      minWidth={{ md: "33.3333%", sm: "50%", xs: "100%" }}
+      flexBasis={{ md: "33.3333%", sm: "100%" }}
+      minWidth={{ md: "33.3333%", sm: "100%" }}
       flexGrow={0}
       p={2}
     >
       <Box
-        borderWidth="1px"
+        borderWidth={1}
         rounded="lg"
         bg="white"
         w="100%"
         overflow="hidden"
         pos="relative"
+        shadow="sm"
       >
         <Stack px={4} pt={2} pb={4}>
           <Box mr="auto">
@@ -34,6 +35,7 @@ const EventListItem = props => {
                 textTransform="uppercase"
                 fontWeight="bold"
                 lineHeight="none"
+                isTruncated
               >
                 Event ended
               </Text>
@@ -45,6 +47,7 @@ const EventListItem = props => {
                 textTransform="uppercase"
                 fontWeight="bold"
                 lineHeight="none"
+                isTruncated
               >
                 Happening now
               </Text>
@@ -53,10 +56,12 @@ const EventListItem = props => {
                 d="inline-block"
                 as="time"
                 dateTime={props.event.startDateTime.toDate()}
+                title={props.event.startDateTime.toDate()}
                 fontSize="md"
                 textTransform="uppercase"
                 fontWeight="bold"
                 lineHeight="none"
+                isTruncated
               >
                 {props.event.formattedStartDateTime}
               </Text>
@@ -94,7 +99,7 @@ const EventListItem = props => {
                 textTransform="uppercase"
                 isTruncated
               >
-                Online event
+                Online
               </Text>
             ) : null}
             {props.event.responses &&

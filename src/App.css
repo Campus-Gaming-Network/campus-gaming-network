@@ -78,70 +78,6 @@ html {
   cursor: not-allowed;
 }
 
-.pulse {
-  display: inline-block;
-  -moz-animation: pulse 2s infinite linear;
-  -o-animation: pulse 2s infinite linear;
-  -webkit-animation: pulse 2s infinite linear;
-  animation: pulse 2s infinite linear;
-}
-
-@-webkit-keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@-moz-keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@-o-keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@-ms-keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
 .rw-widget-container {
   border-width: 2px;
   border-color: #cbd5e0;
@@ -150,4 +86,42 @@ html {
 .rw-select-bordered {
   border-left-width: 2px;
   border-left-color: #cbd5e0;
+}
+
+#siteSchoolSearch {
+  width: 100%;
+  display: flex;
+  -moz-box-align: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.2s ease 0s;
+  outline: currentcolor none medium;
+  appearance: none;
+  font-size: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  height: 2.5rem;
+  border-radius: 0.25rem;
+  border: 2px solid transparent;
+  background-color: rgb(237, 242, 247);
+  max-width: 400px;
+}
+
+#siteSchoolSearch:hover {
+  background-color: rgb(226, 232, 240);
+}
+
+#siteSchoolSearch:focus {
+  z-index: 1;
+  background-color: transparent;
+  border-color: rgb(49, 130, 206);
+}
+
+nav [data-reach-combobox] {
+  max-width: 350px;
+  width: 100%;
+}
+
+nav [data-reach-list] {
+  font-size-adjust: 0.6rem;
 }

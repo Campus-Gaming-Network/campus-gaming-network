@@ -15,6 +15,18 @@ import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
 const now = new Date();
 
+// const showPosition = (position) => {
+//   console.log({ position })
+// };
+
+// const getLocation = () => {
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(showPosition);
+//   } else {
+//     console.error("Geolocation is not supported by this browser.");
+//   }
+// };
+
 ////////////////////////////////////////////////////////////////////////////////
 // There is a lot to do here to make this better
 // I just wanted to add some stuff so it isn't completely
@@ -38,6 +50,9 @@ const Home = () => {
         : null,
     [user, state.schools]
   );
+  const userDocRef = user
+    ? firebaseFirestore.collection("users").doc(user.id)
+    : null;
   const schoolDocRef = school
     ? firebaseFirestore.collection("schools").doc(school.id)
     : null;
@@ -46,11 +61,12 @@ const Home = () => {
       .collection("events")
       .where("school", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
-      .limit(25)
+      .limit(12)
   );
 
   const [attendingEvents] = useFetchUserEvents(
-    isAuthenticated ? authenticatedUser.uid : null
+    isAuthenticated ? authenticatedUser.uid : null,
+    12
   );
   const [recentlyCreatedEvents] = useCollectionDataOnce(
     firebaseFirestore
@@ -58,8 +74,19 @@ const Home = () => {
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .orderBy("endDateTime")
       .orderBy("createdAt", "desc")
-      .limit(25)
+      .limit(12)
   );
+  const [yourEvents] = useCollectionDataOnce(
+    firebaseFirestore
+      .collection("events")
+      .where("creator", "==", userDocRef)
+      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
+      .limit(12)
+  );
+
+  // React.useEffect(() => {
+  //   getLocation();
+  // }, []);
 
   return (
     <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
@@ -71,15 +98,35 @@ const Home = () => {
           Connect with other collegiate gamers for casual or competitive gaming
           at your school or nearby.
         </Text>
-        <Stack pt={8} spacing={10}>
+        <Stack pt={8} spacing={8}>
           {isAuthenticated ? (
-            <Stack as="section" spacing={4}>
-              <Heading
-                as="h3"
-                fontSize="sm"
-                textTransform="uppercase"
-                color="gray.500"
-              >
+            <Stack as="section" spacing={2} py={4}>
+              <Heading as="h3" fontSize="xl" pb={4}>
+                Your events
+              </Heading>
+              {yourEvents && yourEvents.length ? (
+                <React.Fragment>
+                  <List d="flex" flexWrap="wrap" m={-2} p={0}>
+                    {yourEvents.map(mapEvent).map(event => (
+                      <EventListItem
+                        key={event.id}
+                        event={event}
+                        school={event.schoolDetails}
+                      />
+                    ))}
+                  </List>
+                </React.Fragment>
+              ) : (
+                <Text color="gray.400" fontSize="xl" fontWeight="600">
+                  You have no events
+                </Text>
+              )}
+            </Stack>
+          ) : null}
+
+          {isAuthenticated ? (
+            <Stack as="section" spacing={2} py={4}>
+              <Heading as="h3" fontSize="xl" pb={4}>
                 Events you're attending
               </Heading>
               {attendingEvents && attendingEvents.length ? (
@@ -91,19 +138,16 @@ const Home = () => {
                   </List>
                 </React.Fragment>
               ) : (
-                <Text color="gray.400">None</Text>
+                <Text color="gray.400" fontSize="xl" fontWeight="600">
+                  You are not attending any upcoming events
+                </Text>
               )}
             </Stack>
           ) : null}
 
           {isAuthenticated && school && school.name ? (
-            <Stack as="section" spacing={4}>
-              <Heading
-                as="h3"
-                fontSize="sm"
-                textTransform="uppercase"
-                color="gray.500"
-              >
+            <Stack as="section" spacing={2} py={4}>
+              <Heading as="h3" fontSize="xl" pb={4}>
                 Upcoming events at{" "}
                 <Link
                   to={`/school/${school.id}`}
@@ -130,18 +174,16 @@ const Home = () => {
                   </List>
                 </React.Fragment>
               ) : (
-                <Text color="gray.400">None</Text>
+                <Text color="gray.400" fontSize="xl" fontWeight="600">
+                  There are no upcoming events at{" "}
+                  {startCase(school.name.toLowerCase())}
+                </Text>
               )}
             </Stack>
           ) : null}
 
-          <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+          <Stack as="section" spacing={2} py={4}>
+            <Heading as="h3" fontSize="xl" pb={4}>
               Recently created events
             </Heading>
             {recentlyCreatedEvents && recentlyCreatedEvents.length ? (
@@ -156,7 +198,11 @@ const Home = () => {
                   ))}
                 </List>
               </React.Fragment>
-            ) : null}
+            ) : (
+              <Text color="gray.400" fontSize="xl" fontWeight="600">
+                No events have been recently created
+              </Text>
+            )}
           </Stack>
         </Stack>
       </Box>

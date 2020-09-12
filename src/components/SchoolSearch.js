@@ -112,7 +112,8 @@ const SchoolSearch = props => {
     const [city, state] = location.split(", ");
     const matchedSchool = results.find(
       school =>
-        school.name.toLowerCase() === schoolName.toLowerCase() &&
+        startCase(school.name.toLowerCase()) ===
+          startCase(schoolName.toLowerCase()) &&
         school.city.toLowerCase() === city.toLowerCase() &&
         school.state.toLowerCase() === state.toLowerCase()
     );
@@ -120,12 +121,20 @@ const SchoolSearch = props => {
     props.onSelect(matchedSchool);
 
     if (matchedSchool) {
-      setSearchTerm(selectedSchool);
+      if (props.clearInputOnSelect) {
+        setSearchTerm("");
+      } else {
+        setSearchTerm(selectedSchool);
+      }
     }
   };
 
   return (
-    <Combobox aria-label="School" name="school" onSelect={handleSchoolSelect}>
+    <Combobox
+      aria-label="School"
+      name={props.name || "school"}
+      onSelect={handleSchoolSelect}
+    >
       <ComboboxInput
         id={props.id || "school"}
         name={props.name || "school"}

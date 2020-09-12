@@ -5,7 +5,6 @@ import {
   faMapMarkerAlt,
   faGlobe,
   faSchool,
-  faBolt,
   faGamepad
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
@@ -29,7 +28,6 @@ import {
   ListItem,
   Flex,
   PseudoBox,
-  Image,
   useToast,
   Avatar,
   Skeleton
@@ -43,6 +41,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import OutsideLink from "../components/OutsideLink";
 import Link from "../components/Link";
 import EventSilhouette from "../components/EventSilhouette";
+import GameCover from "../components/GameCover";
 
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
@@ -221,8 +220,8 @@ const Event = props => {
     <React.Fragment>
       <Box
         as="article"
-        mt={10}
-        mb={16}
+        pt={10}
+        pb={16}
         px={8}
         mx="auto"
         fontSize="xl"
@@ -280,15 +279,22 @@ const Event = props => {
           <Stack as="section">
             <Flex align="center" pt={2}>
               {event.game.cover && event.game.cover.url ? (
-                <Image
-                  src={event.game.cover.url}
-                  rounded="lg"
-                  shadow="md"
+                <GameCover
+                  name={event.game.name}
+                  url={event.game.cover.url}
                   h={10}
                   w={10}
                   mr={2}
                 />
               ) : (
+                // <Image
+                //   src={event.game.cover.url}
+                //   rounded="lg"
+                //   shadow="md"
+                //   h={10}
+                //   w={10}
+                //   mr={2}
+                // />
                 <Box mr={2}>
                   <FontAwesomeIcon icon={faGamepad} />
                 </Box>
@@ -323,9 +329,6 @@ const Event = props => {
                 bg="green.100"
                 rounded="lg"
               >
-                <Text mr={2} color="green.600">
-                  <FontAwesomeIcon size="xs" icon={faBolt} className="pulse" />
-                </Text>
                 <Text
                   as="span"
                   fontSize="lg"
@@ -341,13 +344,21 @@ const Event = props => {
               <Text as="span" color="gray.600" mr={2} fontSize="lg">
                 <FontAwesomeIcon icon={faClock} />
               </Text>
-              <time dateTime={event.formattedStartDateTime}>
+              <Text
+                as="time"
+                dateTime={event.startDateTime.toDate()}
+                title={event.startDateTime.toDate()}
+              >
                 {event.formattedStartDateTime}
-              </time>{" "}
+              </Text>{" "}
               to{" "}
-              <time dateTime={event.formattedEndDateTime}>
+              <Text
+                as="time"
+                dateTime={event.endDateTime.toDate()}
+                title={event.endDateTime.toDate()}
+              >
                 {event.formattedEndDateTime}
-              </time>
+              </Text>
             </Box>
             <Box>
               {event.isOnlineEvent ? (
@@ -575,7 +586,7 @@ const UsersList = props => {
   if (isLoadingUsers) {
     return (
       <Flex flexWrap="wrap" mx={-2}>
-        {times(constants.DEFAULT_USERS_LIST_PAGE_SIZE, index => (
+        {times(constants.DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
           <Box key={index} w={{ md: "20%", sm: "33%", xs: "50%" }}>
             <Skeleton
               pos="relative"
@@ -651,7 +662,8 @@ const UsersListItem = props => {
   return (
     <ListItem w={{ md: "20%", sm: "33%", xs: "50%" }}>
       <Box
-        borderWidth="1px"
+        shadow="sm"
+        borderWidth={1}
         rounded="lg"
         bg="white"
         pos="relative"

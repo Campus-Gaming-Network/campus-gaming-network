@@ -60,6 +60,7 @@ export const validateSignUp = ({
   }
 
   if (isNilOrEmpty(school)) {
+    // TODO: Check for actual selected school
     errors.school = "School is required.";
   }
 

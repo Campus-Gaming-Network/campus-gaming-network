@@ -81,7 +81,7 @@ const User = props => {
   }
 
   return (
-    <Box as="article" mt={10} mb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+    <Box as="article" pt={10} pb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       {isAuthenticatedUser ? (
         <PseudoBox
           mb={10}
@@ -304,7 +304,8 @@ const AccountsListItem = props => {
   return (
     <ListItem>
       <Box
-        borderWidth="1px"
+        shadow="sm"
+        borderWidth={1}
         rounded="lg"
         bg="white"
         pos="relative"

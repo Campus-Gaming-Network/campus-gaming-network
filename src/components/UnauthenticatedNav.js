@@ -2,16 +2,23 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Box, Button, Flex, Heading } from "@chakra-ui/core";
-import { Link as ReachLink } from "@reach/router";
+import { Link as ReachLink, navigate } from "@reach/router";
 
 // Components
 import Link from "./Link";
+import SchoolSearch from "./SchoolSearch";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const onSchoolSelect = selectedSchool => {
+    if (selectedSchool && selectedSchool.id) {
+      navigate(`/school/${selectedSchool.id}`);
+    }
   };
 
   return (
@@ -32,6 +39,13 @@ const Header = () => {
           </Heading>
         </Link>
       </Flex>
+
+      <SchoolSearch
+        id="siteSchoolSearch"
+        name="siteSchoolSearch"
+        onSelect={onSchoolSelect}
+        clearInputOnSelect
+      />
 
       <Box display={{ sm: "block", md: "none" }} onClick={toggleMenu}>
         <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />

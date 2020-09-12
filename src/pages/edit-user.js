@@ -8,6 +8,7 @@ import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import moment from "moment";
 import {
+  Flex,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -36,8 +37,9 @@ import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import SchoolSearch from "../components/SchoolSearch";
 import GameSearch from "../components/GameSearch";
 import GameCover from "../components/GameCover";
-import { mapUser } from "../utilities";
+import { mapUser, move } from "../utilities";
 import { validateEditUser } from "../utilities/validation";
+import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
 const initialFormState = {
   firstName: "",
@@ -146,6 +148,14 @@ const EditUser = props => {
     toggleCurrentGame(game);
   };
 
+  const reorderCurrentlyPlaying = (from, to) => {
+    setCurrentGames(move(currentlyPlaying, from, to));
+  };
+
+  const reorderFavoriteGames = (from, to) => {
+    setFavoriteGames(move(favoriteGames, from, to));
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -204,8 +214,6 @@ const EditUser = props => {
 
     const cleanedData = omitBy(data, isNil);
 
-    console.log({ data, cleanedData });
-
     firebaseFirestore
       .collection("users")
       .doc(user.id)
@@ -220,8 +228,6 @@ const EditUser = props => {
         });
 
         const schoolToUpdate = { ...state.schools[user.school.id] };
-
-        console.log({ schoolToUpdate });
 
         if (schoolToUpdate.users) {
           Object.keys(schoolToUpdate.users).forEach(page => {
@@ -354,6 +360,7 @@ const EditUser = props => {
           toggleFavoriteGame={toggleFavoriteGame}
           favoriteGames={favoriteGames}
           onGameSelect={onFavoriteGameSelect}
+          reorderFavoriteGames={reorderFavoriteGames}
         />
         <CurrentlyPlayingSection
           handleFieldChange={handleFieldChange}
@@ -361,6 +368,7 @@ const EditUser = props => {
           toggleCurrentGame={toggleCurrentGame}
           currentlyPlaying={currentlyPlaying}
           onGameSelect={onCurrentlyPlayingGameSelect}
+          reorderCurrentlyPlaying={reorderCurrentlyPlaying}
         />
         <Button
           variantColor="purple"
@@ -729,34 +737,74 @@ const FavoriteGamesSection = React.memo(props => {
             <Text color="gray.500">You haven’t selected any.</Text>
           ) : (
             <Stack isInline>
-              {props.favoriteGames.map(game => (
-                <Box key={game.id} w="100px" textAlign="center" mt={4}>
-                  {game.cover ? (
-                    <GameCover url={game.cover.url} name={game.name} />
-                  ) : null}
-                  <Text
-                    fontSize="sm"
-                    lineHeight="1.2"
-                    p={2}
-                    isTruncated
-                    title={game.name}
-                  >
-                    {game.name}
-                  </Text>
-                  <Tooltip
-                    label={`Remove ${game.name} from favorite games list`}
-                  >
-                    <Button
-                      size="xs"
-                      variant="ghost"
-                      variantColor="red"
-                      onClick={() => props.toggleFavoriteGame(game)}
+              {props.favoriteGames.map((game, index) => {
+                const nextGame = props.favoriteGames[index + 1];
+                const isLast = index === props.favoriteGames.length - 1;
+
+                return (
+                  <Box key={game.id} w="125px" mt={4}>
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <GameCover
+                        url={game.cover ? game.cover.url : null}
+                        name={game.name}
+                      />
+                      {!isLast ? (
+                        <Stack px={2}>
+                          <Tooltip
+                            label={`Move ${game.name} to spot #${index + 2}`}
+                          >
+                            <Button
+                              size="xs"
+                              variant="ghost"
+                              onClick={() =>
+                                props.reorderFavoriteGames(index, index + 1)
+                              }
+                            >
+                              <FontAwesomeIcon icon={faCaretRight} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            label={`Move ${nextGame.name} to spot #${index +
+                              1}`}
+                          >
+                            <Button
+                              size="xs"
+                              variant="ghost"
+                              onClick={() =>
+                                props.reorderFavoriteGames(index + 1, index)
+                              }
+                            >
+                              <FontAwesomeIcon icon={faCaretLeft} />
+                            </Button>
+                          </Tooltip>
+                        </Stack>
+                      ) : null}
+                    </Flex>
+                    <Text
+                      fontSize="sm"
+                      lineHeight="1.2"
+                      pr={2}
+                      py={2}
+                      isTruncated
+                      title={game.name}
                     >
-                      Remove
-                    </Button>
-                  </Tooltip>
-                </Box>
-              ))}
+                      {game.name}
+                    </Text>
+                    <Tooltip
+                      label={`Remove ${game.name} from favorite games list`}
+                    >
+                      <Button
+                        size="xs"
+                        variant="ghost"
+                        variantColor="red"
+                        onClick={() => props.toggleFavoriteGame(game)}
+                      >
+                        Remove
+                      </Button>
+                    </Tooltip>
+                  </Box>
+                );
+              })}
             </Stack>
           )}
         </Stack>
@@ -820,35 +868,75 @@ const CurrentlyPlayingSection = React.memo(props => {
           {props.currentlyPlaying.length === 0 ? (
             <Text color="gray.500">You haven’t selected any.</Text>
           ) : (
-            <Stack isInline spacing={12} wrap="wrap">
-              {props.currentlyPlaying.map(game => (
-                <Box key={game.id} w="100px" textAlign="center" mt={4}>
-                  {game.cover ? (
-                    <GameCover url={game.cover.url} name={game.name} />
-                  ) : null}
-                  <Text
-                    fontSize="sm"
-                    lineHeight="1.2"
-                    p={2}
-                    isTruncated
-                    title={game.name}
-                  >
-                    {game.name}
-                  </Text>
-                  <Tooltip
-                    label={`Remove ${game.name} from currently playing list`}
-                  >
-                    <Button
-                      size="xs"
-                      variant="ghost"
-                      variantColor="red"
-                      onClick={() => props.toggleCurrentGame(game)}
+            <Stack isInline>
+              {props.currentlyPlaying.map((game, index) => {
+                const nextGame = props.currentlyPlaying[index + 1];
+                const isLast = index === props.currentlyPlaying.length - 1;
+
+                return (
+                  <Box key={game.id} w="125px" mt={4}>
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <GameCover
+                        url={game.cover ? game.cover.url : null}
+                        name={game.name}
+                      />
+                      {!isLast ? (
+                        <Stack px={2}>
+                          <Tooltip
+                            label={`Move ${game.name} to spot #${index + 2}`}
+                          >
+                            <Button
+                              size="xs"
+                              variant="ghost"
+                              onClick={() =>
+                                props.reorderCurrentlyPlaying(index, index + 1)
+                              }
+                            >
+                              <FontAwesomeIcon icon={faCaretRight} />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            label={`Move ${nextGame.name} to spot #${index +
+                              1}`}
+                          >
+                            <Button
+                              size="xs"
+                              variant="ghost"
+                              onClick={() =>
+                                props.reorderCurrentlyPlaying(index + 1, index)
+                              }
+                            >
+                              <FontAwesomeIcon icon={faCaretLeft} />
+                            </Button>
+                          </Tooltip>
+                        </Stack>
+                      ) : null}
+                    </Flex>
+                    <Text
+                      fontSize="sm"
+                      lineHeight="1.2"
+                      pr={2}
+                      py={2}
+                      isTruncated
+                      title={game.name}
                     >
-                      Remove
-                    </Button>
-                  </Tooltip>
-                </Box>
-              ))}
+                      {game.name}
+                    </Text>
+                    <Tooltip
+                      label={`Remove ${game.name} from currently playing list`}
+                    >
+                      <Button
+                        size="xs"
+                        variant="ghost"
+                        variantColor="red"
+                        onClick={() => props.toggleCurrentGame(game)}
+                      >
+                        Remove
+                      </Button>
+                    </Tooltip>
+                  </Box>
+                );
+              })}
             </Stack>
           )}
         </Stack>

@@ -17,6 +17,8 @@ import Signup from "./pages/signup";
 import Login from "./pages/login";
 import ForgotPassword from "./pages/forgot-password";
 import PasswordReset from "./pages/password-reset";
+import AboutUs from "./pages/about-us";
+import FrequentlyAskedQuestions from "./pages/frequently-asked-questions";
 
 // Components
 import UnauthenticatedNav from "./components/UnauthenticatedNav";
@@ -26,6 +28,7 @@ import UserSilhouette from "./components/UserSilhouette";
 import SchoolSilhouette from "./components/SchoolSilhouette";
 import EventSilhouette from "./components/EventSilhouette";
 import Empty from "./components/Empty";
+import Footer from "./components/Footer";
 
 const UnauthenticatedApp = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
@@ -35,20 +38,23 @@ const UnauthenticatedApp = () => {
   ]);
   const [nav, setNav] = React.useState(<NavSilhouette />);
   const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
+  const [footer, setFooter] = React.useState(<Empty />);
 
   React.useEffect(() => {
     if (isReady) {
       setNav(<UnauthenticatedNav />);
       setRoutes(<Routes />);
+      setFooter(<Footer />);
     }
   }, [isReady]);
 
   return (
     <React.Fragment>
       {nav}
-      <Box as="main" pb={12}>
+      <Box as="main" pb={12} bg="#fdfdfd">
         {routes}
       </Box>
+      {footer}
     </React.Fragment>
   );
 };
@@ -58,6 +64,8 @@ const SilhouetteRoutes = () => {
     <Router>
       <ScrollToTop default>
         <Empty path="/" />
+        <AboutUs path="about-us" />
+        <FrequentlyAskedQuestions path="frequently-asked-questions" />
         <Empty path="edit-user" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
@@ -80,6 +88,8 @@ const Routes = () => {
     <Router>
       <ScrollToTop default>
         <Home path="/" />
+        <AboutUs path="about-us" />
+        <FrequentlyAskedQuestions path="frequently-asked-questions" />
         <User path="user/:id" />
         <School path="school/:id" />
         <Event path="event/:id" />
