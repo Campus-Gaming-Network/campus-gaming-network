@@ -488,6 +488,33 @@ exports.removeAlgoliaIndex = functions.firestore
     }
   });
 
+exports.eventOnDelete = functions.firestore
+  .document("events/{eventId}")
+  .onDelete((snapshot, context) => {
+    const eventDocRef = db.collection("events").doc(context.params.eventId);
+    const eventResponsesQuery = db
+      .collection("event-responses")
+      .where("event", "==", eventDocRef);
+
+      return eventResponsesQuery
+      .get()
+      .then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          let batch = db.batch();
+
+          querySnapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+          });
+
+          return batch.commit();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        return false;
+      });
+  });
+
 exports.eventResponsesOnDelete = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onDelete((snapshot) => {
@@ -497,26 +524,28 @@ exports.eventResponsesOnDelete = functions.firestore
       if (deletedData) {
         const eventRef = db.collection("events").doc(deletedData.event.id);
 
-        if (deletedData.response === "YES") {
-          return eventRef
-            .set(
-              { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
-              { merge: true }
-            )
-            .catch((err) => {
-              console.log(err);
-              return false;
-            });
-        } else if (deletedData.response === "NO") {
-          return eventRef
-            .set(
-              { responses: { no: admin.firestore.FieldValue.increment(-1) } },
-              { merge: true }
-            )
-            .catch((err) => {
-              console.log(err);
-              return false;
-            });
+        if (eventRef.exists) {
+          if (deletedData.response === "YES") {
+            return eventRef
+              .set(
+                { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
+                { merge: true }
+              )
+              .catch((err) => {
+                console.log(err);
+                return false;
+              });
+          } else if (deletedData.response === "NO") {
+            return eventRef
+              .set(
+                { responses: { no: admin.firestore.FieldValue.increment(-1) } },
+                { merge: true }
+              )
+              .catch((err) => {
+                console.log(err);
+                return false;
+              });
+          }
         }
 
         return null;

@@ -99,7 +99,7 @@ const AuthenticatedApp = () => {
   return (
     <React.Fragment>
       {nav}
-      <Box as="main" pb={12} bg="#fdfdfd">
+      <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%">
         {routes}
       </Box>
       {footer}

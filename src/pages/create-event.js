@@ -25,7 +25,13 @@ import {
   Avatar,
   Alert,
   AlertIcon,
-  AlertDescription
+  AlertDescription,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay
 } from "@chakra-ui/core";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
@@ -63,6 +69,8 @@ const formReducer = (state, { field, value }) => {
 const CreateEvent = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
+  const cancelRef = React.useRef();
+  const deleteEventRef = React.useRef();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const [formState, formDispatch] = React.useReducer(
@@ -81,6 +89,11 @@ const CreateEvent = props => {
   const [errors, setErrors] = React.useState({});
   const [fetchedEvent] = useFetchEventDetails(props.id);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [
+    isDeletingEventAlertOpen,
+    setDeletingEventAlertIsOpen
+  ] = React.useState(false);
+  const [isDeletingEvent, setIsDeletingEvent] = React.useState(false);
   const handleFieldChange = React.useCallback(e => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
@@ -89,6 +102,41 @@ const CreateEvent = props => {
 
   // TODO: Tournament feature
   // const [isTournament, setIsTournament] = React.useState("no");
+
+  const onDeletingEventAlertCancel = () => setDeletingEventAlertIsOpen(false);
+
+  const onDeleteEventConfirm = async () => {
+    setIsDeletingEvent(true);
+
+    try {
+      await firebaseFirestore
+        .collection("events")
+        .doc(props.id)
+        .delete();
+
+      setDeletingEventAlertIsOpen(false);
+      setIsDeletingEvent(false);
+      toast({
+        title: "Event deleted.",
+        description: `Event ${event.name} has been deleted. You will be redirected...`,
+        status: "success",
+        isClosable: true
+      });
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      setDeletingEventAlertIsOpen(false);
+      setIsDeletingEvent(false);
+      toast({
+        title: "An error occurred.",
+        description: error.message,
+        status: "error",
+        isClosable: true
+      });
+    }
+  };
 
   const setLocation = (address, placeId) => {
     formDispatch({ field: "location", value: address });
@@ -381,280 +429,313 @@ const CreateEvent = props => {
   }
 
   return (
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
-      {hasErrors ? (
-        <Alert status="error" mb={4} rounded="lg">
-          <AlertIcon />
-          <AlertDescription>
-            There are errors in the form below. Please review and correct before
-            submitting again.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-      <Stack as="form" spacing={32} onSubmit={handleSubmit}>
-        <Heading as="h1" size="2xl">
-          {props.edit ? "Edit Event" : "Create an Event"}
-        </Heading>
-        <Box
-          as="fieldset"
-          borderWidth="1px"
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-        >
-          <Box pos="absolute" top="-5rem">
-            <Text as="legend" fontWeight="bold" fontSize="2xl">
-              Details
-            </Text>
-            <Text color="gray.500">The information for event goers.</Text>
-          </Box>
-          <Stack spacing={6} p={8}>
-            <Box>
-              <Text fontSize="lg" fontWeight="bold" pb={2}>
-                Event Creator
-              </Text>
-              <Flex>
-                {user.gravatar ? (
-                  <Avatar
-                    name={user.fullName}
-                    src={user.gravatarUrl}
-                    alt={`The profile picture for ${user.fullName}`}
-                    title={`The profile picture for ${user.fullName}`}
-                    h={10}
-                    w={10}
-                    rounded="full"
-                  />
-                ) : null}
-                <Text ml={4} as="span" alignSelf="center">
-                  {user.fullName}
-                </Text>
-              </Flex>
-            </Box>
-            <FormControl isRequired isInvalid={errors.host}>
-              <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
-                Event Host
-              </FormLabel>
-              <Select
-                id="host"
-                name="host"
-                onChange={handleFieldChange}
-                value={formState.host}
+    <React.Fragment>
+      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+        {hasErrors ? (
+          <Alert status="error" mb={4} rounded="lg">
+            <AlertIcon />
+            <AlertDescription>
+              There are errors in the form below. Please review and correct
+              before submitting again.
+            </AlertDescription>
+          </Alert>
+        ) : null}
+        <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+          >
+            <Heading as="h1" size="2xl">
+              {props.edit ? "Edit Event" : "Create an Event"}
+            </Heading>
+            {props.edit ? (
+              <Button
+                variant="ghost"
+                variantColor="red"
                 size="lg"
+                onClick={() => setDeletingEventAlertIsOpen(true)}
               >
-                <option value="">Select the host of the event</option>
-                <option value="user">{user.fullName} (You)</option>
-                <option value="school" disabled>
-                  {startCase(school.name.toLowerCase())} (Insufficient
-                  Permissions)
-                </option>
-              </Select>
-              <FormErrorMessage>{errors.host}</FormErrorMessage>
-            </FormControl>
-            <FormControl isRequired isInvalid={errors.name}>
-              <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
-                Event Name
-              </FormLabel>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="CSGO and Pizza"
-                maxLength="64"
-                onChange={handleFieldChange}
-                value={formState.name}
-                size="lg"
-              />
-              <FormErrorMessage>{errors.name}</FormErrorMessage>
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="onlineEvent" fontSize="lg" fontWeight="bold">
-                Is this an online event?
-              </FormLabel>
-              <Stack>
-                <Checkbox
-                  id="onlineEvent"
-                  name="onlineEvent"
-                  size="lg"
-                  disabled={!!formState.placeId}
-                  isChecked={formState.isOnlineEvent}
-                  value={formState.isOnlineEvent}
-                  onChange={e =>
-                    formDispatch({
-                      field: "isOnlineEvent",
-                      value: e.target.checked
-                    })
-                  }
-                >
-                  Yes, this is an online event
-                </Checkbox>
-              </Stack>
-            </FormControl>
-            <Text>or</Text>
-            <FormControl
-              isRequired={!formState.isOnlineEvent}
-              isInvalid={errors.location}
-            >
-              <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
-                Location
-              </FormLabel>
-              <Stack>
-                <PlacesAutocomplete
-                  value={formState.location}
-                  onChange={value => setLocation(value)}
-                  onSelect={(address, placeId) => setLocation(address, placeId)}
-                  debounce={600}
-                  shouldFetchSuggestions={
-                    !!formState.location && formState.location.length >= 3
-                  }
-                >
-                  {({
-                    getInputProps,
-                    suggestions,
-                    getSuggestionItemProps,
-                    loading
-                  }) => (
-                    <div>
-                      <Input
-                        {...getInputProps({
-                          placeholder: "Add a place or address",
-                          className: "location-search-input",
-                          disabled: formState.isOnlineEvent
-                        })}
-                        size="lg"
-                      />
-                      <Box className="autocomplete-dropdown-container">
-                        {loading && (
-                          <Box w="100%" textAlign="center">
-                            <Spinner
-                              thickness="4px"
-                              speed="0.65s"
-                              emptyColor="gray.200"
-                              color="purple.500"
-                              size="xl"
-                              mt={4}
-                            />
-                          </Box>
-                        )}
-                        {suggestions.map((suggestion, index, arr) => {
-                          const isLast = arr.length - 1 === index;
-                          const style = {
-                            backgroundColor: suggestion.active
-                              ? "#edf2f7"
-                              : "#ffffff",
-                            cursor: "pointer",
-                            padding: "12px",
-                            borderLeft: "1px solid #e2e8f0",
-                            borderRight: "1px solid #e2e8f0",
-                            borderBottom: isLast
-                              ? "1px solid #e2e8f0"
-                              : undefined,
-                            borderBottomLeftRadius: "0.25rem",
-                            borderBottomRightRadius: "0.25rem"
-                          };
-
-                          return (
-                            <div
-                              {...getSuggestionItemProps(suggestion, {
-                                style
-                              })}
-                            >
-                              <Box mr={4}>
-                                <FontAwesomeIcon icon={faMapMarkerAlt} />
-                              </Box>
-                              <Text as="span">{suggestion.description}</Text>
-                            </div>
-                          );
-                        })}
-                      </Box>
-                    </div>
-                  )}
-                </PlacesAutocomplete>
-                <FormErrorMessage>{errors.location}</FormErrorMessage>
-              </Stack>
-            </FormControl>
-            <FormControl isInvalid={errors.description}>
-              <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
-                Description
-              </FormLabel>
-              <Textarea
-                id="description"
-                name="description"
-                onChange={handleFieldChange}
-                value={formState.description}
-                placeholder="Tell people what your event is about."
-                size="lg"
-                resize="vertical"
-                maxLength="5000"
-                h="150px"
-              />
-            </FormControl>
-            <FormErrorMessage>{errors.description}</FormErrorMessage>
-            <FormControl isRequired isInvalid={errors.game}>
-              <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
-                Game
-              </FormLabel>
-              {(props.edit && hasPrefilledForm) || !props.edit ? (
-                <Flex alignItems="center">
-                  <Box flexGrow={1}>
-                    <GameSearch
-                      inputPlaceholder="The game being played"
-                      onSelect={setGame}
-                      gameName={formState.game ? formState.game.name : ""}
+                Delete event
+              </Button>
+            ) : null}
+          </Flex>
+          <Box
+            as="fieldset"
+            borderWidth="1px"
+            boxShadow="lg"
+            rounded="lg"
+            bg="white"
+            pos="relative"
+          >
+            <Box pos="absolute" top="-5rem">
+              <Text as="legend" fontWeight="bold" fontSize="2xl">
+                Details
+              </Text>
+              <Text color="gray.500">The information for event goers.</Text>
+            </Box>
+            <Stack spacing={6} p={8}>
+              <Box>
+                <Text fontSize="lg" fontWeight="bold" pb={2}>
+                  Event Creator
+                </Text>
+                <Flex>
+                  {user.gravatar ? (
+                    <Avatar
+                      name={user.fullName}
+                      src={user.gravatarUrl}
+                      alt={`The profile picture for ${user.fullName}`}
+                      title={`The profile picture for ${user.fullName}`}
+                      h={10}
+                      w={10}
+                      rounded="full"
                     />
-                  </Box>
-                  <Box pl={8}>
-                    {formState.game && formState.game.cover ? (
+                  ) : null}
+                  <Text ml={4} as="span" alignSelf="center">
+                    {user.fullName}
+                  </Text>
+                </Flex>
+              </Box>
+              <FormControl isRequired isInvalid={errors.host}>
+                <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
+                  Event Host
+                </FormLabel>
+                <Select
+                  id="host"
+                  name="host"
+                  onChange={handleFieldChange}
+                  value={formState.host}
+                  size="lg"
+                >
+                  <option value="">Select the host of the event</option>
+                  <option value="user">{user.fullName} (You)</option>
+                  <option value="school" disabled>
+                    {startCase(school.name.toLowerCase())} (Insufficient
+                    Permissions)
+                  </option>
+                </Select>
+                <FormErrorMessage>{errors.host}</FormErrorMessage>
+              </FormControl>
+              <FormControl isRequired isInvalid={errors.name}>
+                <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
+                  Event Name
+                </FormLabel>
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="CSGO and Pizza"
+                  maxLength="64"
+                  onChange={handleFieldChange}
+                  value={formState.name}
+                  size="lg"
+                />
+                <FormErrorMessage>{errors.name}</FormErrorMessage>
+              </FormControl>
+              <FormControl>
+                <FormLabel
+                  htmlFor="onlineEvent"
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  Is this an online event?
+                </FormLabel>
+                <Stack>
+                  <Checkbox
+                    id="onlineEvent"
+                    name="onlineEvent"
+                    size="lg"
+                    disabled={!!formState.placeId}
+                    isChecked={formState.isOnlineEvent}
+                    value={formState.isOnlineEvent}
+                    onChange={e =>
+                      formDispatch({
+                        field: "isOnlineEvent",
+                        value: e.target.checked
+                      })
+                    }
+                  >
+                    Yes, this is an online event
+                  </Checkbox>
+                </Stack>
+              </FormControl>
+              <Text>or</Text>
+              <FormControl
+                isRequired={!formState.isOnlineEvent}
+                isInvalid={errors.location}
+              >
+                <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
+                  Location
+                </FormLabel>
+                <Stack>
+                  <PlacesAutocomplete
+                    value={formState.location}
+                    onChange={value => setLocation(value)}
+                    onSelect={(address, placeId) =>
+                      setLocation(address, placeId)
+                    }
+                    debounce={600}
+                    shouldFetchSuggestions={
+                      !!formState.location && formState.location.length >= 3
+                    }
+                  >
+                    {({
+                      getInputProps,
+                      suggestions,
+                      getSuggestionItemProps,
+                      loading
+                    }) => (
+                      <div>
+                        <Input
+                          {...getInputProps({
+                            placeholder: "Add a place or address",
+                            className: "location-search-input",
+                            disabled: formState.isOnlineEvent
+                          })}
+                          size="lg"
+                        />
+                        <Box className="autocomplete-dropdown-container">
+                          {loading && (
+                            <Box w="100%" textAlign="center">
+                              <Spinner
+                                thickness="4px"
+                                speed="0.65s"
+                                emptyColor="gray.200"
+                                color="purple.500"
+                                size="xl"
+                                mt={4}
+                              />
+                            </Box>
+                          )}
+                          {suggestions.map((suggestion, index, arr) => {
+                            const isLast = arr.length - 1 === index;
+                            const style = {
+                              backgroundColor: suggestion.active
+                                ? "#edf2f7"
+                                : "#ffffff",
+                              cursor: "pointer",
+                              padding: "12px",
+                              borderLeft: "1px solid #e2e8f0",
+                              borderRight: "1px solid #e2e8f0",
+                              borderBottom: isLast
+                                ? "1px solid #e2e8f0"
+                                : undefined,
+                              borderBottomLeftRadius: "0.25rem",
+                              borderBottomRightRadius: "0.25rem"
+                            };
+
+                            return (
+                              <div
+                                {...getSuggestionItemProps(suggestion, {
+                                  style
+                                })}
+                              >
+                                <Box mr={4}>
+                                  <FontAwesomeIcon icon={faMapMarkerAlt} />
+                                </Box>
+                                <Text as="span">{suggestion.description}</Text>
+                              </div>
+                            );
+                          })}
+                        </Box>
+                      </div>
+                    )}
+                  </PlacesAutocomplete>
+                  <FormErrorMessage>{errors.location}</FormErrorMessage>
+                </Stack>
+              </FormControl>
+              <FormControl isInvalid={errors.description}>
+                <FormLabel
+                  htmlFor="description"
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  Description
+                </FormLabel>
+                <Textarea
+                  id="description"
+                  name="description"
+                  onChange={handleFieldChange}
+                  value={formState.description}
+                  placeholder="Tell people what your event is about."
+                  size="lg"
+                  resize="vertical"
+                  maxLength="5000"
+                  h="150px"
+                />
+              </FormControl>
+              <FormErrorMessage>{errors.description}</FormErrorMessage>
+              <FormControl isRequired isInvalid={errors.game}>
+                <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
+                  Game
+                </FormLabel>
+                {(props.edit && hasPrefilledForm) || !props.edit ? (
+                  <Flex alignItems="center">
+                    <Box flexGrow={1}>
+                      <GameSearch
+                        inputPlaceholder="The game being played"
+                        onSelect={setGame}
+                        gameName={formState.game ? formState.game.name : ""}
+                      />
+                    </Box>
+                    <Box pl={8}>
                       <GameCover
-                        url={formState.game.cover.url}
-                        name={formState.game.name}
+                        url={
+                          formState.game && formState.game.cover
+                            ? formState.game.cover.url
+                            : null
+                        }
+                        name={formState.game ? formState.game.name : null}
                         h={20}
                         w={20}
                       />
-                    ) : null}
-                  </Box>
-                </Flex>
-              ) : null}
-              <FormErrorMessage>{errors.game}</FormErrorMessage>
-            </FormControl>
-            <FormControl isRequired isInvalid={errors.startDateTime}>
-              <FormLabel
-                htmlFor="startDateTime"
-                fontSize="lg"
-                fontWeight="bold"
-              >
-                Starts
-              </FormLabel>
-              <DateTimePicker
-                id="startDateTime"
-                name="startDateTime"
-                value={formState.startDateTime}
-                onChange={value =>
-                  formDispatch({ field: "startDateTime", value })
-                }
-                min={new Date()}
-                step={15}
-              />
-              <FormErrorMessage>{errors.startDateTime}</FormErrorMessage>
-            </FormControl>
-            <FormControl isRequired isInvalid={errors.endDateTime}>
-              <FormLabel htmlFor="endDateTime" fontSize="lg" fontWeight="bold">
-                Ends
-              </FormLabel>
-              <DateTimePicker
-                id="endDateTime"
-                name="endDateTime"
-                value={formState.endDateTime}
-                onChange={value =>
-                  formDispatch({ field: "endDateTime", value })
-                }
-                min={new Date()}
-                step={15}
-              />
-              <FormErrorMessage>{errors.endDateTime}</FormErrorMessage>
-            </FormControl>
-            {/* TODO: Tournament feature */}
-            {/* <FormControl>
+                    </Box>
+                  </Flex>
+                ) : null}
+                <FormErrorMessage>{errors.game}</FormErrorMessage>
+              </FormControl>
+              <FormControl isRequired isInvalid={errors.startDateTime}>
+                <FormLabel
+                  htmlFor="startDateTime"
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  Starts
+                </FormLabel>
+                <DateTimePicker
+                  id="startDateTime"
+                  name="startDateTime"
+                  value={formState.startDateTime}
+                  onChange={value =>
+                    formDispatch({ field: "startDateTime", value })
+                  }
+                  min={new Date()}
+                  step={15}
+                />
+                <FormErrorMessage>{errors.startDateTime}</FormErrorMessage>
+              </FormControl>
+              <FormControl isRequired isInvalid={errors.endDateTime}>
+                <FormLabel
+                  htmlFor="endDateTime"
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  Ends
+                </FormLabel>
+                <DateTimePicker
+                  id="endDateTime"
+                  name="endDateTime"
+                  value={formState.endDateTime}
+                  onChange={value =>
+                    formDispatch({ field: "endDateTime", value })
+                  }
+                  min={new Date()}
+                  step={15}
+                />
+                <FormErrorMessage>{errors.endDateTime}</FormErrorMessage>
+              </FormControl>
+              {/* TODO: Tournament feature */}
+              {/* <FormControl>
               <FormLabel htmlFor="isTournament" fontSize="lg" fontWeight="bold">
                 Is this event a tournament?
               </FormLabel>
@@ -674,24 +755,70 @@ const CreateEvent = props => {
                 <span>TODO: Tournament form</span>
               </React.Fragment>
             ) : null} */}
-          </Stack>
-        </Box>
-        <Button
-          variantColor="purple"
-          type="submit"
-          size="lg"
-          w="full"
-          mt={-12}
-          disabled={isSubmitting}
-        >
-          {isSubmitting
-            ? "Submitting..."
-            : props.edit
-            ? "Edit Event"
-            : "Create Event"}
-        </Button>
-      </Stack>
-    </Box>
+            </Stack>
+          </Box>
+          <Button
+            variantColor="purple"
+            type="submit"
+            size="lg"
+            w="full"
+            mt={-12}
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? "Submitting..."
+              : props.edit
+              ? "Edit Event"
+              : "Create Event"}
+          </Button>
+        </Stack>
+      </Box>
+
+      <AlertDialog
+        isOpen={isDeletingEventAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onDeletingEventAlertCancel}
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Delete Event
+          </AlertDialogHeader>
+
+          <AlertDialogBody>
+            Are you sure you want to delete the event{" "}
+            <Text as="span" fontWeight="bold">
+              {event ? event.name : ""}
+            </Text>
+            ?
+          </AlertDialogBody>
+
+          <AlertDialogFooter>
+            {isDeletingEvent ? (
+              <Button variantColor="red" disabled={true}>
+                Deleting...
+              </Button>
+            ) : (
+              <React.Fragment>
+                <Button
+                  ref={deleteEventRef}
+                  onClick={onDeletingEventAlertCancel}
+                >
+                  No, nevermind
+                </Button>
+                <Button
+                  variantColor="red"
+                  onClick={onDeleteEventConfirm}
+                  ml={3}
+                >
+                  Yes, I want to delete the event
+                </Button>
+              </React.Fragment>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </React.Fragment>
   );
 };
 

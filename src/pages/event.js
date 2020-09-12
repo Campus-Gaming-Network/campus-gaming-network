@@ -4,8 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
   faGlobe,
-  faSchool,
-  faGamepad
+  faSchool
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import startCase from "lodash.startcase";
@@ -277,27 +276,15 @@ const Event = props => {
           </Flex>
           <Stack as="section">
             <Flex align="center" pt={2}>
-              {event.game.cover && event.game.cover.url ? (
-                <GameCover
-                  name={event.game.name}
-                  url={event.game.cover.url}
-                  h={10}
-                  w={10}
-                  mr={2}
-                />
-              ) : (
-                // <Image
-                //   src={event.game.cover.url}
-                //   rounded="lg"
-                //   shadow="md"
-                //   h={10}
-                //   w={10}
-                //   mr={2}
-                // />
-                <Box mr={2}>
-                  <FontAwesomeIcon icon={faGamepad} />
-                </Box>
-              )}
+              <GameCover
+                name={event.game ? event.game.name : null}
+                url={
+                  event.game && event.game.cover ? event.game.cover.url : null
+                }
+                h={10}
+                w={10}
+                mr={2}
+              />
               <Text as="span">{event.game.name}</Text>
             </Flex>
             {event.hasEnded ? (
