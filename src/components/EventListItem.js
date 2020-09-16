@@ -25,7 +25,7 @@ const EventListItem = props => {
         pos="relative"
         shadow="sm"
       >
-        <Stack px={4} pt={2} pb={4}>
+        <Stack px={4} pt={2} pb={3}>
           <Box mr="auto">
             {props.event.hasEnded ? (
               <Text
