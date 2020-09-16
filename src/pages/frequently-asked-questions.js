@@ -11,11 +11,7 @@ import {
   Link as ChakraLink
 } from "@chakra-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHeart,
-  faMugHot,
-  faExternalLinkAlt
-} from "@fortawesome/free-solid-svg-icons";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
 import OutsideLink from "../components/OutsideLink";
 
