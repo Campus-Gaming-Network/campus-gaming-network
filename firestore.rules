@@ -6,79 +6,53 @@ service cloud.firestore {
     ///////////////////////////////////////////////////////////////////////////
     // Rules
 
-    match /{document=**} {
-      allow delete: if false;
-    }
-
     match /users/{userId} {
-      allow read, create: if true;
-      // allow create: if canCreateUser(resource);
-      // TODO:
-      // - Limit field lengths.
-      // - Check required fields.
-      // - Check field types.
-      allow update, write: if isUser(userId);
-    }
-
-    match /schools/{schoolId} {
-      allow read, write: if true;
-      // TODO:
-      // - Only allow school leaders ability to modify school data.
-      // - Check required fields.
-      // - Check field types.
-      // allow write, create, update: if false;
+      allow read: if true;
+      allow create: if canCreateUser(incomingData());
+      allow update: if canUpdateUser(userId, incomingData());
+      allow delete: if canDeleteUser(userId);
+      allow write: if false;
     }
 
     match /events/{eventId} {
-      allow read, write, update: if true;
-      // TODO:
-      // - Limit field lengths.
-      // - Check required fields.
-      // - Check field types.
-      allow create: if true;
-      // allow create: if canCreateEvent(resource);
-      // allow update, write: if canModifyEvent(resource);
+      allow read: if true;
+      allow create: if canCreateEvent(incomingData());
+      allow update: if canUpdateEvent(incomingData());
+      allow delete: if canDeleteEvent(existingData());
+      allow write: if false;
+    }
+
+    match /schools/{schoolId} {
+      allow read: if true;
+      allow write, create, update, delete: if false;
     }
 
     match /event-responses/{eventResponseId} {
-      // TODO: 
-      // - Figure out if event response read can be limited to owner.
-      // - Check field types.
-      allow read, update, write: if true;
-      allow create: if true;
-      // allow create: if canCreateEventResponse(resource);
-      // allow update, write: if canModifyEventResponse(resource);
+      allow read: if canReadEventResponse(existingData());
+      allow create: if canCreateEventResponse(incomingData());
+      allow update: if canUpdateEventResponse(incomingData());
+      allow write, delete: if false;
+    }
+
+    match /game-queries/{gameQueryId} {
+      allow read: if true;
+      allow write, update, create, delete: if false;
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Functions
+    // User Functions
 
-    function isSignedIn() {
-      return request.auth.uid != null;
-    }
-
-    function isUser(userId) {
-      return request.auth.uid == userId;
+    function canCreateUser(incomingData) {
+      return isValidNewUser(incomingData);
     }
 
-    function isBefore(dateTime) {
-      return request.time < dateTime;
-    }
-    
-    function isAfter(dateTime) {
-      return request.time > dateTime;
-    }
-    
-    function canCreateUser(resource) {
+    function isValidNewUser(incomingData) {
       return (
-        resource.data.firstName is string &&
-        resource.data.lastName is string &&
-        resource.data.status is string &&
-        resource.data.gravatar is string &&
-        resource.data.school is string &&
-        resource.data.firstName.length <= 125 &&
-        resource.data.lastName <= 125 &&
-        resource.data.status in [
+        hasLength('firstName', 1, 255) &&
+        hasLength('lastName', 1, 255) &&
+        hasLength('status', 1, 15) &&
+        hasLength('gravatar', 1, 255) &&
+        isValidOption("status", [
           "FRESHMAN",
           "SOPHMORE",
           "JUNIOR",
@@ -87,43 +61,145 @@ service cloud.firestore {
           "ALUMNI",
           "FACULTY",
           "OTHER"
-        ] &&
-        docExists(resource.data.school)
+        ]) &&
+        docExists(incomingData.school.path)
       );
     }
 
-    function canCreateEvent(resource) {
+    function canUpdateUser(userId, incomingData) {
       return (
-        isSignedIn()
-        // This is broken for some reason, firebase issue.
-        // validEventDateTimes(resource.data)
-      );
-    }
-    
-    function canModifyEvent(resource) {
-      return (
-        isBefore(resource.data.endDateTime)
-        // isBefore(resource.data.endDateTime) &&
-        // isOwner(resource.data.creator)
+        isOwner(userId) &&
+        isValidNewUser(incomingData)
       );
     }
 
-    function canCreateEventResponse(resource) {
+    function canDeleteUser(userId) {
+      return (
+        isOwner(userId)
+      );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Event Functions
+
+    function canCreateEvent(incomingData) {
       return (
         isSignedIn() &&
-        docExists(resource.data.event)
+        userHasSchool(getUserData())
       );
     }
 
-    function canModifyEventResponse(resource) {
+    function canUpdateEvent(incomingData) {
       return (
-        isWithinEventDateTime(resource.data.eventDetails) &&
-        isOwner(resource.data.user)
+        canCreateEvent(incomingData) &&
+        isOwner(getDocData(incomingData.creator).id)
       );
     }
 
-    function docExists(docRef) {
-      return exists(/databases/$(database)/documents/$(docRef));
+    function canDeleteEvent(existingData) {
+      return (
+        isOwner(getDocData(existingData.creator).id)
+      )
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Event Response Functions
+
+    function canReadEventResponse(existingData) {
+      return (
+        isOwner(getDocData(existingData.user).id)
+      )
+    }
+
+    function canCreateEventResponse(incomingData) {
+      return (
+        isSignedIn() &&
+        isValidEventResponse(incomingData)
+      );
+    }
+
+    function isValidEventResponse(incomingData) {
+      return (
+        docExists(incomingData.event.path) &&
+        docExists(incomingData.school.path) &&
+        docExists(incomingData.user.path) &&
+        hasLength("response", 1, 5) &&
+        isValidOption("response", ["YES", "NO"])
+      );
+    }
+
+    function canUpdateEventResponse(incomingData) {
+      return (
+        canCreateEventResponse(incomingData) &&
+        isOwner(getDocData(incomingData.user).id)
+      );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Shared Functions
+
+    function currentUser() {
+      return request.auth;
+    }
+
+    function requestingUser() {
+      return currentUser().uid;
+    }
+
+    function isSignedIn() {
+      return requestingUser() != null;
+    }
+
+    // Does the logged-in user match the requested userId?
+    function isOwner(userId) {
+      return (
+        isSignedIn() &&
+        requestingUser() == userId
+      );
+    }
+
+    function isEmailVerified() {
+      return currentUser().token.email_verified;
+    }
+
+    // Data that exists on the Firestore document
+    function existingData() {
+      return resource.data;
+    }
+
+    // Data that is sent to a Firestore document
+    function incomingData() {
+      return request.resource.data;
+    }
+
+    // Check if document exists from reference path
+    function docExists(path) {
+      return exists(/databases/$(database)/documents/$(path));
+    }
+
+    // Fetch document data from reference path
+    function getDocData(path) {
+      return get(/databases/$(database)/documents/$(path)).data;
+    }
+
+    // Fetch the requesting user's data from Firestore
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(requestingUser())).data;
+    }
+
+    // Does the user have a school?
+    function userHasSchool(userData) {
+      return (
+        docExists(userData.school.path)
+      );
+    }
+
+    function isBefore(dateTime) {
+      return request.time < dateTime;
+    }
+
+    function isAfter(dateTime) {
+      return request.time > dateTime;
     }
 
     function isWithinEventDateTime(event) {
@@ -138,12 +214,36 @@ service cloud.firestore {
       );
     }
 
-    function isOwner(userId) {
-      return request.auth.uid == userId;
+    function has(field) {
+      return field in incomingData().keys();
     }
 
-    function isEmailVerified() {
-      return request.auth.token.email_verified;
+    function val(field) {
+      return incomingData()[field];
+    }
+
+    function isString(field) {
+      return isValueString(val(field));
+    }
+
+    function isValueString(value) {
+      return string(value) == value;
+    }
+
+    function hasLength(field, min, max) {
+      return hasValueLength(val(field), min, max);
+    }
+
+    function hasValueLength(value, min, max) {
+      return (
+        isValueString(value) &&
+        (min == 0 || value.size() >= min) &&
+        (max == 0 || value.size() <= max)
+      );
+    }
+
+    function isValidOption(field, options) {
+      return val(field) in options;
     }
 
   }
