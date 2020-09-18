@@ -14,6 +14,7 @@ import {
   Select,
   Button,
   Divider,
+  useToast,
   Heading,
   FormHelperText,
   FormErrorMessage
@@ -47,6 +48,7 @@ const formReducer = (state, { field, value }) => {
 };
 
 const Signup = () => {
+  const toast = useToast();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
@@ -95,8 +97,24 @@ const Signup = () => {
             gravatar: createGravatarHash(formState.email),
             school: firebaseFirestore
               .collection("schools")
-              .doc(formState.school)
+              .doc(formState.school),
+            schoolDetails: {
+              id: formState.school
+            }
           });
+        firebaseAuth.currentUser.sendEmailVerification().then(
+          () => {
+            toast({
+              title: "Verification email sent.",
+              description: `A verification email has been sent to ${formState.email}. Please check your inbox and click the link.`,
+              status: "success",
+              isClosable: true
+            });
+          },
+          error => {
+            console.error(error);
+          }
+        );
         setIsSubmitting(false);
         navigate("/");
       })

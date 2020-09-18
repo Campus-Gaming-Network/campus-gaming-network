@@ -55,3 +55,4 @@ serviceAccountKey.json
 serviceAccountKey_test.json
 
 hosting.*
+firebase-debug.log

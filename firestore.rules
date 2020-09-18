@@ -28,7 +28,7 @@ service cloud.firestore {
     }
 
     match /event-responses/{eventResponseId} {
-      allow read: if canReadEventResponse(existingData());
+      allow read: if true;
       allow create: if canCreateEventResponse(incomingData());
       allow update: if canUpdateEventResponse(incomingData());
       allow write, delete: if false;
@@ -62,7 +62,8 @@ service cloud.firestore {
           "FACULTY",
           "OTHER"
         ]) &&
-        docExists(incomingData.school.path)
+        incomingData.school.path is path
+        // docExists(incomingData.school.path)
       );
     }
 
@@ -83,17 +84,19 @@ service cloud.firestore {
     // Event Functions
 
     function canCreateEvent(incomingData) {
-      return (
-        isSignedIn() &&
-        userHasSchool(getUserData())
-      );
+      return isSignedIn();
+      // return (
+      //   isSignedIn() &&
+      //   userHasSchool(getUserData())
+      // );
     }
 
     function canUpdateEvent(incomingData) {
-      return (
-        canCreateEvent(incomingData) &&
-        isOwner(getDocData(incomingData.creator).id)
-      );
+      return canCreateEvent(incomingData)
+      // return (
+      //   canCreateEvent(incomingData) &&
+      //   isOwner(getDocData(incomingData.creator).id)
+      // );
     }
 
     function canDeleteEvent(existingData) {
@@ -106,9 +109,10 @@ service cloud.firestore {
     // Event Response Functions
 
     function canReadEventResponse(existingData) {
-      return (
-        isOwner(getDocData(existingData.user).id)
-      )
+      return true;
+      // return (
+      //   isOwner(getDocData(existingData.user).id)
+      // )
     }
 
     function canCreateEventResponse(incomingData) {
@@ -120,19 +124,27 @@ service cloud.firestore {
 
     function isValidEventResponse(incomingData) {
       return (
-        docExists(incomingData.event.path) &&
-        docExists(incomingData.school.path) &&
-        docExists(incomingData.user.path) &&
         hasLength("response", 1, 5) &&
         isValidOption("response", ["YES", "NO"])
       );
+      // return (
+      //   incomingData.event is path &&
+      //   incomingData.school is path &&
+      //   incomingData.user is path &&
+      //   docExists(incomingData.event.path) &&
+      //   docExists(incomingData.school.path) &&
+      //   docExists(incomingData.user.path) &&
+      //   hasLength("response", 1, 5) &&
+      //   isValidOption("response", ["YES", "NO"])
+      // );
     }
 
     function canUpdateEventResponse(incomingData) {
-      return (
-        canCreateEventResponse(incomingData) &&
-        isOwner(getDocData(incomingData.user).id)
-      );
+      return true;
+      // return (
+      //   canCreateEventResponse(incomingData) &&
+      //   isOwner(getDocData(incomingData.user).id)
+      // );
     }
 
     ///////////////////////////////////////////////////////////////////////////

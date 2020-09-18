@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect } from "@reach/router";
+import { Redirect, navigate } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import omitBy from "lodash.omitby";
@@ -26,6 +26,12 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
   FormErrorMessage,
   useToast
 } from "@chakra-ui/core";
@@ -76,10 +82,17 @@ const formReducer = (state, { field, value }) => {
 const EditUser = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
+  const cancelRef = React.useRef();
+  const deleteAccountRef = React.useRef();
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
+  const [
+    isDeletingAccountAlertOpen,
+    setDeletingAccountAlertIsOpen
+  ] = React.useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = React.useState(false);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -96,6 +109,42 @@ const EditUser = props => {
   );
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
+
+  const onDeletingAccountAlertCancel = () =>
+    setDeletingAccountAlertIsOpen(false);
+
+  const onDeleteAccountConfirm = async () => {
+    setIsDeletingAccount(true);
+
+    try {
+      await firebaseFirestore
+        .collection("users")
+        .doc(user.id)
+        .delete();
+
+      setDeletingAccountAlertIsOpen(false);
+      setIsDeletingAccount(false);
+      toast({
+        title: "Account deleted.",
+        description: "Your account has been deleted. You will be redirected...",
+        status: "success",
+        isClosable: true
+      });
+      setTimeout(() => {
+        firebaseAuth.signOut().then(() => navigate("/"));
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      setDeletingAccountAlertIsOpen(false);
+      setIsDeletingAccount(false);
+      toast({
+        title: "An error occurred.",
+        description: error.message,
+        status: "error",
+        isClosable: true
+      });
+    }
+  };
 
   const prefillForm = () => {
     formDispatch({ field: "firstName", value: user.firstName || "" });
@@ -208,6 +257,9 @@ const EditUser = props => {
       xbox: formState.xbox.trim(),
       psn: formState.psn.trim(),
       school: schoolDocRef,
+      schoolDetails: {
+        id: schoolDocRef.id
+      },
       currentlyPlaying,
       favoriteGames
     };
@@ -296,92 +348,150 @@ const EditUser = props => {
   }
 
   return (
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
-      {hasErrors ? (
-        <Alert status="error" mb={4} rounded="lg">
-          <AlertIcon />
-          <AlertDescription>
-            There are errors in the form below. Please review and correct before
-            submitting again.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-      <Stack as="form" spacing={32} onSubmit={handleSubmit}>
-        <Heading as="h1" size="2xl">
-          Your Profile
-        </Heading>
-        <Button
-          variantColor="purple"
-          type="submit"
-          size="lg"
-          w="full"
-          mt={-12}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Submitting..." : "Update Profile"}
-        </Button>
-        <DetailSection
-          handleFieldChange={handleFieldChange}
-          errors={errors}
-          firstName={formState.firstName}
-          lastName={formState.lastName}
-          email={authenticatedUser.email}
-          hometown={formState.hometown}
-          birthdate={formState.birthdate}
-          bio={formState.bio}
-          timezone={formState.timezone}
-        />
-        <SchoolSection
-          handleFieldChange={handleFieldChange}
-          errors={errors}
-          onSchoolSelect={onSchoolSelect}
-          schoolName={schoolName}
-          status={formState.status}
-          major={formState.major}
-          minor={formState.minor}
-        />
-        <SocialAccountsSection
-          handleFieldChange={handleFieldChange}
-          errors={errors}
-          battlenet={formState.battlenet}
-          discord={formState.discord}
-          psn={formState.psn}
-          skype={formState.skype}
-          steam={formState.steam}
-          twitch={formState.twitch}
-          twitter={formState.twitter}
-          website={formState.website}
-          xbox={formState.xbox}
-          youtube={formState.youtube}
-        />
-        <FavoriteGamesSection
-          handleFieldChange={handleFieldChange}
-          errors={errors}
-          toggleFavoriteGame={toggleFavoriteGame}
-          favoriteGames={favoriteGames}
-          onGameSelect={onFavoriteGameSelect}
-          reorderFavoriteGames={reorderFavoriteGames}
-        />
-        <CurrentlyPlayingSection
-          handleFieldChange={handleFieldChange}
-          errors={errors}
-          toggleCurrentGame={toggleCurrentGame}
-          currentlyPlaying={currentlyPlaying}
-          onGameSelect={onCurrentlyPlayingGameSelect}
-          reorderCurrentlyPlaying={reorderCurrentlyPlaying}
-        />
-        <Button
-          variantColor="purple"
-          type="submit"
-          size="lg"
-          w="full"
-          mt={-12}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Submitting..." : "Update Profile"}
-        </Button>
-      </Stack>
-    </Box>
+    <React.Fragment>
+      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+        {hasErrors ? (
+          <Alert status="error" mb={4} rounded="lg">
+            <AlertIcon />
+            <AlertDescription>
+              There are errors in the form below. Please review and correct
+              before submitting again.
+            </AlertDescription>
+          </Alert>
+        ) : null}
+        <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+          >
+            <Heading as="h1" size="2xl">
+              Your Profile
+            </Heading>
+            <Button
+              variant="ghost"
+              variantColor="red"
+              size="lg"
+              onClick={() => setDeletingAccountAlertIsOpen(true)}
+            >
+              Delete account
+            </Button>
+          </Flex>
+          <Button
+            variantColor="purple"
+            type="submit"
+            size="lg"
+            w="full"
+            mt={-12}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Update Profile"}
+          </Button>
+          <DetailSection
+            handleFieldChange={handleFieldChange}
+            errors={errors}
+            firstName={formState.firstName}
+            lastName={formState.lastName}
+            email={authenticatedUser.email}
+            hometown={formState.hometown}
+            birthdate={formState.birthdate}
+            bio={formState.bio}
+            timezone={formState.timezone}
+          />
+          <SchoolSection
+            handleFieldChange={handleFieldChange}
+            errors={errors}
+            onSchoolSelect={onSchoolSelect}
+            schoolName={schoolName}
+            status={formState.status}
+            major={formState.major}
+            minor={formState.minor}
+          />
+          <SocialAccountsSection
+            handleFieldChange={handleFieldChange}
+            errors={errors}
+            battlenet={formState.battlenet}
+            discord={formState.discord}
+            psn={formState.psn}
+            skype={formState.skype}
+            steam={formState.steam}
+            twitch={formState.twitch}
+            twitter={formState.twitter}
+            website={formState.website}
+            xbox={formState.xbox}
+            youtube={formState.youtube}
+          />
+          <FavoriteGamesSection
+            handleFieldChange={handleFieldChange}
+            errors={errors}
+            toggleFavoriteGame={toggleFavoriteGame}
+            favoriteGames={favoriteGames}
+            onGameSelect={onFavoriteGameSelect}
+            reorderFavoriteGames={reorderFavoriteGames}
+          />
+          <CurrentlyPlayingSection
+            handleFieldChange={handleFieldChange}
+            errors={errors}
+            toggleCurrentGame={toggleCurrentGame}
+            currentlyPlaying={currentlyPlaying}
+            onGameSelect={onCurrentlyPlayingGameSelect}
+            reorderCurrentlyPlaying={reorderCurrentlyPlaying}
+          />
+          <Button
+            variantColor="purple"
+            type="submit"
+            size="lg"
+            w="full"
+            mt={-12}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Update Profile"}
+          </Button>
+        </Stack>
+      </Box>
+
+      <AlertDialog
+        isOpen={isDeletingAccountAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onDeletingAccountAlertCancel}
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
+          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            Delete Account
+          </AlertDialogHeader>
+
+          <AlertDialogBody>
+            Are you sure you want to delete your account and all related data?
+            There is no coming back from this.
+          </AlertDialogBody>
+
+          <AlertDialogFooter>
+            {isDeletingAccount ? (
+              <Button variantColor="red" disabled={true}>
+                Deleting...
+              </Button>
+            ) : (
+              <React.Fragment>
+                <Button
+                  ref={deleteAccountRef}
+                  onClick={onDeletingAccountAlertCancel}
+                >
+                  No, nevermind
+                </Button>
+                <Button
+                  variantColor="red"
+                  onClick={onDeleteAccountConfirm}
+                  ml={3}
+                >
+                  Yes, delete my account.
+                </Button>
+              </React.Fragment>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </React.Fragment>
   );
 };
 

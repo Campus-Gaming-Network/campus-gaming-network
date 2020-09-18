@@ -16,7 +16,6 @@ import {
 } from "@chakra-ui/core";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
-import queryString from "query-string";
 
 import { useFormFields } from "../utilities";
 import { validatePasswordReset } from "../utilities/validation";
@@ -47,9 +46,7 @@ const PasswordReset = props => {
 
     setError(null);
 
-    const { oobCode } = queryString.parse(props.location.search);
-
-    if (!oobCode || !!authenticatedUser) {
+    if (!props.oobCode || !!authenticatedUser) {
       return;
     }
 
@@ -66,10 +63,10 @@ const PasswordReset = props => {
     }
 
     firebaseAuth
-      .verifyPasswordResetCode(oobCode)
+      .verifyPasswordResetCode(props.oobCode)
       .then(email => {
         firebaseAuth
-          .confirmPasswordReset(oobCode, fields.password)
+          .confirmPasswordReset(props.oobCode, fields.password)
           .then(() => {
             firebaseAuth
               .signInWithEmailAndPassword(email, fields.password)

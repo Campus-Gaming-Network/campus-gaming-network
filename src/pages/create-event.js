@@ -203,6 +203,7 @@ const CreateEvent = props => {
     if (!props.edit) {
       eventData.school = schoolDocRef;
       eventData.schoolDetails = {
+        id: schoolDocRef.id,
         name: school.name
       };
     }
@@ -341,11 +342,13 @@ const CreateEvent = props => {
             school: schoolDocRef,
             response: "YES",
             userDetails: {
+              id: userDocRef.id,
               firstName: user.firstName,
               lastName: user.lastName,
               gravatar: user.gravatar
             },
             eventDetails: {
+              id: eventDocRef.id,
               name: formState.name.trim(),
               description: formState.description.trim(),
               startDateTime: firestoreStartDateTime,
@@ -354,6 +357,7 @@ const CreateEvent = props => {
               isOnlineEvent: formState.isOnlineEvent
             },
             schoolDetails: {
+              id: schoolDocRef.id,
               name: school.name
             }
           };

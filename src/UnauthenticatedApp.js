@@ -15,6 +15,7 @@ import Event from "./pages/event";
 import NotFound from "./pages/not-found";
 import Signup from "./pages/signup";
 import Login from "./pages/login";
+import AuthAction from "./pages/auth-action";
 import ForgotPassword from "./pages/forgot-password";
 import PasswordReset from "./pages/password-reset";
 import AboutUs from "./pages/about-us";
@@ -66,6 +67,7 @@ const SilhouetteRoutes = () => {
         <Empty path="/" />
         <Empty path="about-us" />
         <Empty path="frequently-asked-questions" />
+        <Empty path="auth-action" />
         <Empty path="edit-user" />
         <UserSilhouette path="user/:id" />
         <SchoolSilhouette path="school/:id" />
@@ -90,6 +92,7 @@ const Routes = () => {
         <Home path="/" />
         <AboutUs path="about-us" />
         <FrequentlyAskedQuestions path="frequently-asked-questions" />
+        <AuthAction path="auth-action" />
         <User path="user/:id" />
         <School path="school/:id" />
         <Event path="event/:id" />

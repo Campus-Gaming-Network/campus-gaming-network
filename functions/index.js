@@ -515,7 +515,56 @@ exports.eventOnDelete = functions.firestore
       });
   });
 
-exports.eventResponsesOnDelete = functions.firestore
+exports.userOnDelete = functions.firestore
+  .document("users/{userId}")
+  .onDelete((snapshot, context) => {
+    const userDocRef = db.collection("users").doc(context.params.userId);
+    const eventsQuery = db
+      .collection("events")
+      .where("creator", "==", userDocRef);
+    const eventResponsesQuery = db
+      .collection("event-responses")
+      .where("user", "==", userDocRef);
+
+    eventResponsesQuery
+      .get()
+      .then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          let batch = db.batch();
+
+          querySnapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+          });
+
+          batch.commit();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    eventsQuery
+      .get()
+      .then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          let batch = db.batch();
+
+          querySnapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+          });
+
+          batch.commit();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    return admin.auth().deleteUser(context.params.userId);
+  });
+
+
+  exports.eventResponsesOnDelete = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onDelete((snapshot) => {
     if (snapshot.exists) {
