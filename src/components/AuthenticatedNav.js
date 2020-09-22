@@ -170,9 +170,9 @@ const AuthenticatedNav = () => {
               </Flex>
             </MenuItem>
             <MenuItem as={ReachLink} to={`school/${user.school.id}`}>
-              {/* <SchoolLogo
+              <SchoolLogo
                 schoolId={school.id}
-                alt={`${school.name} school logo`}
+                schoolName={school.name}
                 h={6}
                 w={6}
                 bg="white"
@@ -183,10 +183,7 @@ const AuthenticatedNav = () => {
                     <FontAwesomeIcon icon={faSchool} />
                   </Flex>
                 }
-              /> */}
-              <Flex alignItems="center" color="gray.600" mr={2}>
-                <FontAwesomeIcon icon={faSchool} />
-              </Flex>
+              />
               <Text lineHeight="1">School</Text>
             </MenuItem>
             <MenuDivider />

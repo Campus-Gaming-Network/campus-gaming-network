@@ -63,9 +63,9 @@ const School = props => {
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
-          {/* <SchoolLogo
+          <SchoolLogo
             schoolId={school.id}
-            alt={`${school.name} school logo`}
+            schoolName={school.name}
             h={40}
             w={40}
             bg="white"
@@ -85,18 +85,7 @@ const School = props => {
                 <FontAwesomeIcon icon={faSchool} size="4x" />
               </Flex>
             }
-          /> */}
-          <Flex
-            alignItems="center"
-            justifyContent="center"
-            color="gray.100"
-            h={40}
-            w={40}
-            bg="gray.400"
-            rounded="full"
-          >
-            <FontAwesomeIcon icon={faSchool} size="4x" />
-          </Flex>
+          />
           <Box pl={12}>
             <Heading
               as="h1"
