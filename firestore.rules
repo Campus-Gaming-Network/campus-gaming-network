@@ -7,18 +7,161 @@ service cloud.firestore {
     // Rules
 
     match /users/{userId} {
+        function canCreateUser() {
+          return isValidUser();
+        }
+
+        function isValidUser() {
+          let requiredFields = [
+            'firstName',
+            'lastName',
+            'status',
+            'gravatar',
+            'status',
+            'school',
+            'schoolDetails'
+          ];
+          let optionalFields = [
+            'major',
+            'minor',
+            'bio',
+            'timezone',
+            'hometown',
+            'birthdate',
+            'website',
+            'twitter',
+            'twitch',
+            'youtube',
+            'skype',
+            'discord',
+            'battlenet',
+            'steam',
+            'xbox',
+            'psn',
+            'currentlyPlaying',
+            'favoriteGames'
+          ];
+          let statusOptions = [
+            "FRESHMAN",
+            "SOPHMORE",
+            "JUNIOR",
+            "SENIOR",
+            "GRAD",
+            "ALUMNI",
+            "FACULTY",
+            "OTHER"
+          ];
+          let timezoneOptions = [
+            "",
+            "America/Puerto_Rico",
+            "America/New_York",
+            "America/Chicago",
+            "America/Denver",
+            "America/Phoenix",
+            "America/Los_Angeles",
+            "America/Anchorage",
+            "Pacific/Honolulu",
+          ];
+
+          return (
+            documentFieldsCheckOut(requiredFields, optionalFields) &&
+            hasLength('firstName', 1, 255) &&
+            hasLength('lastName', 1, 255) &&
+            hasLength('status', 1, 15) &&
+            hasLength('gravatar', 1, 255) &&
+            isValidOption("status", statusOptions) &&
+            incomingData().school != null &&
+            incomingData().schoolDetails != null &&
+            "id" in incomingData().schoolDetails &&
+            incomingData().schoolDetails != null &&
+            exists(/databases/$(database)/documents/schools/$(incomingData().schoolDetails.id)) &&
+            (has('major') && (hasLength('major', 0, 255) || incomingData().major == null) &&
+            (has('minor') && (hasLength('minor', 0, 255) || incomingData().minor == null) &&
+            (has('bio') && (hasLength('bio', 0, 2500) || incomingData().bio == null) &&
+            (has('timezone') && (isValidOption("timezone", timezoneOptions) || incomingData().timezone == null)) &&
+            (has('hometown') && (hasLength('hometown', 0, 255) || incomingData().hometown == null) &&
+            (has('birthdate') && (incomingData().birthdate is timestamp || incomingData().birthdate == null)) &&
+            (has('twitter') && (hasLength('twitter', 0, 255) || incomingData().twitter == null), &&
+            (has('twitch') && (hasLength('twitch', 0, 255) || incomingData().twitch == null), &&
+            (has('youtube') && (hasLength('youtube', 0, 255) || incomingData().youtube == null), &&
+            (has('skype') && (hasLength('skype', 0, 255) || incomingData().skype == null), &&
+            (has('discord') && (hasLength('discord', 0, 255) || incomingData().discord == null), &&
+            (has('battlenet') && (hasLength('battlenet', 0, 255) || incomingData().battlenet == null), &&
+            (has('steam') && (hasLength('steam', 0, 255) || incomingData().steam == null), &&
+            (has('xbox') && (hasLength('xbox', 0, 255) || incomingData().xbox == null), &&
+            (has('psn') && (hasLength('psn', 0, 255) || incomingData().psn == null), &&
+            (has('currentlyPlaying') && incomingData().currentlyPlaying.size() <= 5), &&
+            (has('favoriteGames') && incomingData().favoriteGames.size() <= 5)
+          );
+        }
+
+        function canUpdateUser() {
+          return (
+            isOwner(userId) &&
+            isValidUser()
+          );
+        }
+
+        function canDeleteUser() {
+          return (
+            isOwner(userId)
+          );
+        }
+
       allow read: if true;
-      allow create: if canCreateUser(incomingData());
-      allow update: if canUpdateUser(userId, incomingData());
-      allow delete: if canDeleteUser(userId);
+      allow create: if canCreateUser();
+      allow update: if canUpdateUser();
+      allow delete: if canDeleteUser();
       allow write: if false;
     }
 
     match /events/{eventId} {
+      function canCreateEvent() {
+        return isSignedIn();
+        // return (
+        //   isSignedIn() &&
+        //   userHasSchool(getUserData())
+        // );
+      }
+
+      function isValidEvent() {
+        let requiredFields = [
+          'creator',
+          'host',
+          'name',
+          'game',
+          'startDateTime',
+          'endDateTime',
+          'isOnlineEvent',
+          'school',
+          'schoolDetails'
+        ];
+        let optionalFields = [
+          'description',
+          'location',
+          'placeId',
+        ];
+        return documentFieldsCheckOut(requiredFields, optionalFields);
+      }
+
+      function canUpdateEvent() {
+        return canCreateEvent()
+        // return (
+        //   canCreateEvent(incomingData) &&
+        //   isOwner(getDocData(incomingData.creator).id)
+        // );
+      }
+
+      function canDeleteEvent() {
+        return (
+          isOwner(getDocData(existingData().creator).id)
+        )
+      }
+
       allow read: if true;
-      allow create: if canCreateEvent(incomingData());
-      allow update: if canUpdateEvent(incomingData());
-      allow delete: if canDeleteEvent(existingData());
+      allow create: if canCreateEvent();
+      allow update: if canUpdateEvent();
+      allow delete: if canDeleteEvent();
       allow write: if false;
     }
 
@@ -28,9 +171,50 @@ service cloud.firestore {
     }
 
     match /event-responses/{eventResponseId} {
+      function canReadEventResponse() {
+        return true;
+        // return (
+        //   isOwner(getDocData(existingData.user).id)
+        // )
+      }
+
+      function canCreateEventResponse() {
+        return (
+          isSignedIn() &&
+          isValidEventResponse()
+        );
+      }
+
+      function isValidEventResponse() {
+        let responseOptions = ["YES", "NO"];
+
+        return (
+          hasLength("response", 1, 5) &&
+          isValidOption("response", responseOptions)
+        );
+        // return (
+        //   incomingData.event is path &&
+        //   incomingData.school is path &&
+        //   incomingData.user is path &&
+        //   docExists(incomingData.event.path) &&
+        //   docExists(incomingData.school.path) &&
+        //   docExists(incomingData.user.path) &&
+        //   hasLength("response", 1, 5) &&
+        //   isValidOption("response", ["YES", "NO"])
+        // );
+      }
+
+      function canUpdateEventResponse() {
+        return true;
+        // return (
+        //   canCreateEventResponse(incomingData) &&
+        //   isOwner(getDocData(incomingData.user).id)
+        // );
+      }
+
       allow read: if true;
-      allow create: if canCreateEventResponse(incomingData());
-      allow update: if canUpdateEventResponse(incomingData());
+      allow create: if canCreateEventResponse();
+      allow update: if canUpdateEventResponse();
       allow write, delete: if false;
     }
 
@@ -39,113 +223,6 @@ service cloud.firestore {
       allow write, update, create, delete: if false;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // User Functions
-
-    function canCreateUser(incomingData) {
-      return isValidNewUser(incomingData);
-    }
-
-    function isValidNewUser(incomingData) {
-      return (
-        hasLength('firstName', 1, 255) &&
-        hasLength('lastName', 1, 255) &&
-        hasLength('status', 1, 15) &&
-        hasLength('gravatar', 1, 255) &&
-        isValidOption("status", [
-          "FRESHMAN",
-          "SOPHMORE",
-          "JUNIOR",
-          "SENIOR",
-          "GRAD",
-          "ALUMNI",
-          "FACULTY",
-          "OTHER"
-        ]) &&
-        incomingData.school.path is path
-        // docExists(incomingData.school.path)
-      );
-    }
-
-    function canUpdateUser(userId, incomingData) {
-      return (
-        isOwner(userId) &&
-        isValidNewUser(incomingData)
-      );
-    }
-
-    function canDeleteUser(userId) {
-      return (
-        isOwner(userId)
-      );
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Event Functions
-
-    function canCreateEvent(incomingData) {
-      return isSignedIn();
-      // return (
-      //   isSignedIn() &&
-      //   userHasSchool(getUserData())
-      // );
-    }
-
-    function canUpdateEvent(incomingData) {
-      return canCreateEvent(incomingData)
-      // return (
-      //   canCreateEvent(incomingData) &&
-      //   isOwner(getDocData(incomingData.creator).id)
-      // );
-    }
-
-    function canDeleteEvent(existingData) {
-      return (
-        isOwner(getDocData(existingData.creator).id)
-      )
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Event Response Functions
-
-    function canReadEventResponse(existingData) {
-      return true;
-      // return (
-      //   isOwner(getDocData(existingData.user).id)
-      // )
-    }
-
-    function canCreateEventResponse(incomingData) {
-      return (
-        isSignedIn() &&
-        isValidEventResponse(incomingData)
-      );
-    }
-
-    function isValidEventResponse(incomingData) {
-      return (
-        hasLength("response", 1, 5) &&
-        isValidOption("response", ["YES", "NO"])
-      );
-      // return (
-      //   incomingData.event is path &&
-      //   incomingData.school is path &&
-      //   incomingData.user is path &&
-      //   docExists(incomingData.event.path) &&
-      //   docExists(incomingData.school.path) &&
-      //   docExists(incomingData.user.path) &&
-      //   hasLength("response", 1, 5) &&
-      //   isValidOption("response", ["YES", "NO"])
-      // );
-    }
-
-    function canUpdateEventResponse(incomingData) {
-      return true;
-      // return (
-      //   canCreateEventResponse(incomingData) &&
-      //   isOwner(getDocData(incomingData.user).id)
-      // );
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Shared Functions
@@ -184,6 +261,14 @@ service cloud.firestore {
       return request.resource.data;
     }
 
+    function documentFieldsCheckOut(requiredFields, optionalFields) {
+        let allFields = requiredFields.concat(optionalFields);
+        return (
+          incomingData().keys().hasAll(requiredFields) &&
+          incomingData().keys().hasOnly(allFields)
+        );
+    }
+
     // Check if document exists from reference path
     function docExists(path) {
       return exists(/databases/$(database)/documents/$(path));
@@ -203,26 +288,6 @@ service cloud.firestore {
     function userHasSchool(userData) {
       return (
         docExists(userData.school.path)
-      );
-    }
-
-    function isBefore(dateTime) {
-      return request.time < dateTime;
-    }
-
-    function isAfter(dateTime) {
-      return request.time > dateTime;
-    }
-
-    function isWithinEventDateTime(event) {
-      return isAfter(event.startDateTime) && isBefore(event.endDateTime);
-    }
-
-    function validEventDateTimes(event) {
-      return (
-        event.startDateTime is timestamp &&
-        event.endDateTime is timestamp &&
-        event.endDateTime > event.startDateTime
       );
     }
 
