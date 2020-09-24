@@ -75,22 +75,22 @@ service cloud.firestore {
             "id" in incomingData().schoolDetails &&
             incomingData().schoolDetails != null &&
             exists(/databases/$(database)/documents/schools/$(incomingData().schoolDetails.id)) &&
-            (has('major') && (hasLength('major', 0, 255) || incomingData().major == null) &&
-            (has('minor') && (hasLength('minor', 0, 255) || incomingData().minor == null) &&
-            (has('bio') && (hasLength('bio', 0, 2500) || incomingData().bio == null) &&
+            (has('major') && (hasLength('major', 0, 255) || incomingData().major == null)) &&
+            (has('minor') && (hasLength('minor', 0, 255) || incomingData().minor == null)) &&
+            (has('bio') && (hasLength('bio', 0, 2500) || incomingData().bio == null)) &&
             (has('timezone') && (isValidOption("timezone", timezoneOptions) || incomingData().timezone == null)) &&
-            (has('hometown') && (hasLength('hometown', 0, 255) || incomingData().hometown == null) &&
+            (has('hometown') && (hasLength('hometown', 0, 255) || incomingData().hometown == null)) &&
             (has('birthdate') && (incomingData().birthdate is timestamp || incomingData().birthdate == null)) &&
-            (has('twitter') && (hasLength('twitter', 0, 255) || incomingData().twitter == null), &&
-            (has('twitch') && (hasLength('twitch', 0, 255) || incomingData().twitch == null), &&
-            (has('youtube') && (hasLength('youtube', 0, 255) || incomingData().youtube == null), &&
-            (has('skype') && (hasLength('skype', 0, 255) || incomingData().skype == null), &&
-            (has('discord') && (hasLength('discord', 0, 255) || incomingData().discord == null), &&
-            (has('battlenet') && (hasLength('battlenet', 0, 255) || incomingData().battlenet == null), &&
-            (has('steam') && (hasLength('steam', 0, 255) || incomingData().steam == null), &&
-            (has('xbox') && (hasLength('xbox', 0, 255) || incomingData().xbox == null), &&
-            (has('psn') && (hasLength('psn', 0, 255) || incomingData().psn == null), &&
-            (has('currentlyPlaying') && incomingData().currentlyPlaying.size() <= 5), &&
+            (has('twitter') && (hasLength('twitter', 0, 255) || incomingData().twitter == null)) &&
+            (has('twitch') && (hasLength('twitch', 0, 255) || incomingData().twitch == null)) &&
+            (has('youtube') && (hasLength('youtube', 0, 255) || incomingData().youtube == null)) &&
+            (has('skype') && (hasLength('skype', 0, 255) || incomingData().skype == null)) &&
+            (has('discord') && (hasLength('discord', 0, 255) || incomingData().discord == null)) &&
+            (has('battlenet') && (hasLength('battlenet', 0, 255) || incomingData().battlenet == null)) &&
+            (has('steam') && (hasLength('steam', 0, 255) || incomingData().steam == null)) &&
+            (has('xbox') && (hasLength('xbox', 0, 255) || incomingData().xbox == null)) &&
+            (has('psn') && (hasLength('psn', 0, 255) || incomingData().psn == null)) &&
+            (has('currentlyPlaying') && incomingData().currentlyPlaying.size() <= 5) &&
             (has('favoriteGames') && incomingData().favoriteGames.size() <= 5)
           );
         }
