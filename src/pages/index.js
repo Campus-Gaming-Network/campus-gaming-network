@@ -15,18 +15,6 @@ import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
 const now = new Date();
 
-// const showPosition = (position) => {
-//   console.log({ position })
-// };
-
-// const getLocation = () => {
-//   if (navigator.geolocation) {
-//     navigator.geolocation.getCurrentPosition(showPosition);
-//   } else {
-//     console.error("Geolocation is not supported by this browser.");
-//   }
-// };
-
 ////////////////////////////////////////////////////////////////////////////////
 // There is a lot to do here to make this better
 // I just wanted to add some stuff so it isn't completely
@@ -50,43 +38,6 @@ const Home = () => {
         : null,
     [user, state.schools]
   );
-  const userDocRef = user
-    ? firebaseFirestore.collection("users").doc(user.id)
-    : null;
-  const schoolDocRef = school
-    ? firebaseFirestore.collection("schools").doc(school.id)
-    : null;
-  const [schoolEvents] = useCollectionDataOnce(
-    firebaseFirestore
-      .collection("events")
-      .where("school", "==", schoolDocRef)
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
-      .limit(12)
-  );
-
-  const [attendingEvents] = useFetchUserEvents(
-    isAuthenticated ? authenticatedUser.uid : null,
-    12
-  );
-  const [recentlyCreatedEvents] = useCollectionDataOnce(
-    firebaseFirestore
-      .collection("events")
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
-      .orderBy("endDateTime")
-      .orderBy("createdAt", "desc")
-      .limit(12)
-  );
-  const [yourEvents] = useCollectionDataOnce(
-    firebaseFirestore
-      .collection("events")
-      .where("creator", "==", userDocRef)
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
-      .limit(12)
-  );
-
-  // React.useEffect(() => {
-  //   getLocation();
-  // }, []);
 
   return (
     <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
@@ -99,114 +50,191 @@ const Home = () => {
           at your school or nearby.
         </Text>
         <Stack pt={8} spacing={8}>
-          {isAuthenticated ? (
-            <Stack as="section" spacing={2} py={4}>
-              <Heading as="h3" fontSize="xl" pb={4}>
-                Your events
-              </Heading>
-              {yourEvents && yourEvents.length ? (
-                <React.Fragment>
-                  <List d="flex" flexWrap="wrap" m={-2} p={0}>
-                    {yourEvents.map(mapEvent).map(event => (
-                      <EventListItem
-                        key={event.id}
-                        event={event}
-                        school={event.schoolDetails}
-                      />
-                    ))}
-                  </List>
-                </React.Fragment>
-              ) : (
-                <Text color="gray.400" fontSize="xl" fontWeight="600">
-                  You have no events
-                </Text>
-              )}
-            </Stack>
-          ) : null}
-
-          {isAuthenticated ? (
-            <Stack as="section" spacing={2} py={4}>
-              <Heading as="h3" fontSize="xl" pb={4}>
-                Events you're attending
-              </Heading>
-              {attendingEvents && attendingEvents.length ? (
-                <React.Fragment>
-                  <List d="flex" flexWrap="wrap" m={-2} p={0}>
-                    {attendingEvents.map(mapEventResponse).map(event => (
-                      <EventListItem key={event.id} {...event} />
-                    ))}
-                  </List>
-                </React.Fragment>
-              ) : (
-                <Text color="gray.400" fontSize="xl" fontWeight="600">
-                  You are not attending any upcoming events
-                </Text>
-              )}
-            </Stack>
-          ) : null}
-
-          {isAuthenticated && school && school.name ? (
-            <Stack as="section" spacing={2} py={4}>
-              <Heading as="h3" fontSize="xl" pb={4}>
-                Upcoming events at{" "}
-                <Link
-                  to={`/school/${school.id}`}
-                  color="purple.500"
-                  fontWeight="bold"
-                  isTruncated
-                  lineHeight="short"
-                  mt={-2}
-                  title={startCase(school.name.toLowerCase())}
-                >
-                  {startCase(school.name.toLowerCase())}
-                </Link>
-              </Heading>
-              {schoolEvents && schoolEvents.length ? (
-                <React.Fragment>
-                  <List d="flex" flexWrap="wrap" m={-2} p={0}>
-                    {schoolEvents.map(mapEvent).map(event => (
-                      <EventListItem
-                        key={event.id}
-                        event={event}
-                        school={event.schoolDetails}
-                      />
-                    ))}
-                  </List>
-                </React.Fragment>
-              ) : (
-                <Text color="gray.400" fontSize="xl" fontWeight="600">
-                  There are no upcoming events at{" "}
-                  {startCase(school.name.toLowerCase())}
-                </Text>
-              )}
-            </Stack>
-          ) : null}
-
-          <Stack as="section" spacing={2} py={4}>
-            <Heading as="h3" fontSize="xl" pb={4}>
-              Recently created events
-            </Heading>
-            {recentlyCreatedEvents && recentlyCreatedEvents.length ? (
-              <React.Fragment>
-                <List d="flex" flexWrap="wrap" m={-2} p={0}>
-                  {recentlyCreatedEvents.map(mapEvent).map(event => (
-                    <EventListItem
-                      key={event.id}
-                      event={event}
-                      school={event.schoolDetails}
-                    />
-                  ))}
-                </List>
-              </React.Fragment>
-            ) : (
-              <Text color="gray.400" fontSize="xl" fontWeight="600">
-                No events have been recently created
-              </Text>
-            )}
-          </Stack>
+          <UserCreatedEvents isAuthenticated={isAuthenticated} user={user} />
+          <AttendingEvents
+            isAuthenticated={isAuthenticated}
+            authenticatedUser={authenticatedUser}
+          />
+          <UpcomingSchoolEvents
+            isAuthenticated={isAuthenticated}
+            school={school}
+          />
+          <RecentlyCreatedEvents />
         </Stack>
       </Box>
     </Box>
+  );
+};
+
+const UserCreatedEvents = props => {
+  const userDocRef = props.user
+    ? firebaseFirestore.collection("users").doc(props.user.id)
+    : null;
+  const [userCreatedEvents, isLoading] = useCollectionDataOnce(
+    firebaseFirestore
+      .collection("events")
+      .where("creator", "==", userDocRef)
+      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
+      .limit(12)
+  );
+
+  if (!props.isAuthenticated || isLoading) {
+    return null;
+  }
+
+  return (
+    <Stack as="section" spacing={2} py={4}>
+      <Heading as="h3" fontSize="xl" pb={4}>
+        Your events
+      </Heading>
+      {userCreatedEvents && userCreatedEvents.length ? (
+        <React.Fragment>
+          <List d="flex" flexWrap="wrap" m={-2} p={0}>
+            {userCreatedEvents.map(mapEvent).map(event => (
+              <EventListItem
+                key={event.id}
+                event={event}
+                school={event.schoolDetails}
+              />
+            ))}
+          </List>
+        </React.Fragment>
+      ) : (
+        <Text color="gray.400" fontSize="xl" fontWeight="600">
+          You have no events
+        </Text>
+      )}
+    </Stack>
+  );
+};
+
+const AttendingEvents = props => {
+  const [attendingEvents, isLoading] = useFetchUserEvents(
+    props.isAuthenticated ? props.authenticatedUser.uid : null,
+    12
+  );
+
+  if (!props.isAuthenticated || isLoading) {
+    return null;
+  }
+
+  return (
+    <Stack as="section" spacing={2} py={4}>
+      <Heading as="h3" fontSize="xl" pb={4}>
+        Events you're attending
+      </Heading>
+      {attendingEvents && attendingEvents.length ? (
+        <React.Fragment>
+          <List d="flex" flexWrap="wrap" m={-2} p={0}>
+            {attendingEvents.map(mapEventResponse).map(event => (
+              <EventListItem key={event.id} {...event} />
+            ))}
+          </List>
+        </React.Fragment>
+      ) : (
+        <Text color="gray.400" fontSize="xl" fontWeight="600">
+          You are not attending any upcoming events
+        </Text>
+      )}
+    </Stack>
+  );
+};
+
+const UpcomingSchoolEvents = props => {
+  const schoolDocRef = props.school
+    ? firebaseFirestore.collection("schools").doc(props.school.id)
+    : null;
+  const [schoolEvents, isLoading] = useCollectionDataOnce(
+    firebaseFirestore
+      .collection("events")
+      .where("school", "==", schoolDocRef)
+      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
+      .limit(12)
+  );
+  const canDisplay = React.useMemo(
+    () => props.isAuthenticated && props.school && props.school.name,
+    [props.isAuthenticated, props.school]
+  );
+
+  if (!canDisplay || isLoading) {
+    return null;
+  }
+
+  return (
+    <Stack as="section" spacing={2} py={4}>
+      <Heading as="h3" fontSize="xl" pb={4}>
+        Upcoming events at{" "}
+        <Link
+          to={`/school/${props.school.id}`}
+          color="purple.500"
+          fontWeight="bold"
+          isTruncated
+          lineHeight="short"
+          mt={-2}
+          title={startCase(props.school.name.toLowerCase())}
+        >
+          {startCase(props.school.name.toLowerCase())}
+        </Link>
+      </Heading>
+      {schoolEvents && schoolEvents.length ? (
+        <React.Fragment>
+          <List d="flex" flexWrap="wrap" m={-2} p={0}>
+            {schoolEvents.map(mapEvent).map(event => (
+              <EventListItem
+                key={event.id}
+                event={event}
+                school={event.schoolDetails}
+              />
+            ))}
+          </List>
+        </React.Fragment>
+      ) : (
+        <Text color="gray.400" fontSize="xl" fontWeight="600">
+          There are no upcoming events at{" "}
+          {startCase(props.school.name.toLowerCase())}
+        </Text>
+      )}
+    </Stack>
+  );
+};
+
+const RecentlyCreatedEvents = () => {
+  const [recentlyCreatedEvents, isLoading] = useCollectionDataOnce(
+    firebaseFirestore
+      .collection("events")
+      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
+      .orderBy("endDateTime")
+      .orderBy("createdAt", "desc")
+      .limit(12)
+  );
+
+  if (isLoading) {
+    return null;
+  }
+
+  return (
+    <Stack as="section" spacing={2} py={4}>
+      <Heading as="h3" fontSize="xl" pb={4}>
+        Recently created events
+      </Heading>
+      {recentlyCreatedEvents && recentlyCreatedEvents.length ? (
+        <React.Fragment>
+          <List d="flex" flexWrap="wrap" m={-2} p={0}>
+            {recentlyCreatedEvents.map(mapEvent).map(event => (
+              <EventListItem
+                key={event.id}
+                event={event}
+                school={event.schoolDetails}
+              />
+            ))}
+          </List>
+        </React.Fragment>
+      ) : (
+        <Text color="gray.400" fontSize="xl" fontWeight="600">
+          No events have been recently created
+        </Text>
+      )}
+    </Stack>
   );
 };
 

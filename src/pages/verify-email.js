@@ -46,7 +46,7 @@ const PasswordReset = props => {
     if (!isAuthenticating && !!authenticatedUser) {
       handleVerifyEmail();
     }
-  }, [isAuthenticating, authenticatedUser]);
+  }, [isAuthenticating, authenticatedUser, handleVerifyEmail]);
 
   if (isAuthenticating) {
     return null;
