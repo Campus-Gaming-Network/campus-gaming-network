@@ -42,20 +42,11 @@ const FrequentlyAskedQuestions = () => {
           </AccordionHeader>
           <AccordionPanel pb={4}>
             We make money by donations from our users through a service called{" "}
-            <OutsideLink href="https://www.buymeacoffee.com/">
-              Buy Me a Coffee
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>
-            . If you like what we do and want to donate to help with development
-            costs, you can visit our{" "}
-            <OutsideLink href="https://www.buymeacoffee.com/cgnbrandon">
+            <BuyMeACoffeeLink />. If you like what we do and want to donate to
+            help with development costs, you can visit our{" "}
+            <BuyMeACoffeeLink page="cgnbrandon">
               Buy Me a Coffee page
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>
+            </BuyMeACoffeeLink>
             .
           </AccordionPanel>
         </AccordionItem>
@@ -67,23 +58,10 @@ const FrequentlyAskedQuestions = () => {
             <AccordionIcon />
           </AccordionHeader>
           <AccordionPanel pb={4}>
-            Your profile picture is managed by{" "}
-            <OutsideLink href="https://en.gravatar.com/">
-              Gravatar
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>
-            . It is linked to your email address or your last known IP address.
-            If you do not have a{" "}
-            <OutsideLink href="https://en.gravatar.com/">
-              Gravatar
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>{" "}
-            account tied to your email you are given a default randomized
-            profile picture.
+            Your profile picture is managed by <GravatarLink /> . It is linked
+            to your email address or your last known IP address. If you do not
+            have a <GravatarLink /> account tied to your email you are given a
+            default randomized profile picture.
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
@@ -94,44 +72,19 @@ const FrequentlyAskedQuestions = () => {
             <AccordionIcon />
           </AccordionHeader>
           <AccordionPanel pb={4}>
-            To change your profile picture, you need to make a{" "}
-            <OutsideLink href="https://en.gravatar.com/">
-              Gravatar
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>{" "}
+            To change your profile picture, you need to make a <GravatarLink />{" "}
             account with the same email address you used to sign up for Campus
-            Gaming Network. Once you have created a{" "}
-            <OutsideLink href="https://en.gravatar.com/">
-              Gravatar
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>{" "}
-            account you can upload a profile picture there and it will
-            automatically be used on Campus Gaming Network and any other website
-            that uses the{" "}
-            <OutsideLink href="https://en.gravatar.com/">
-              Gravatar
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>{" "}
-            service.
+            Gaming Network. Once you have created a <GravatarLink /> account you
+            can upload a profile picture there and it will automatically be used
+            on Campus Gaming Network and any other website that uses the{" "}
+            <GravatarLink /> service.
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
           <AccordionHeader>
             <Box flex="1" textAlign="left" fontWeight="bold">
               Will you allow uploading of profile pictures without{" "}
-              <OutsideLink href="https://en.gravatar.com/">
-                Gravatar
-                <Text as="span" ml={1}>
-                  <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-                </Text>
-              </OutsideLink>
-              ?
+              <GravatarLink />?
             </Box>
             <AccordionIcon />
           </AccordionHeader>
@@ -148,13 +101,7 @@ const FrequentlyAskedQuestions = () => {
             <AccordionIcon />
           </AccordionHeader>
           <AccordionPanel pb={4}>
-            Our list of games comes from the{" "}
-            <OutsideLink href="https://www.igdb.com/discover">
-              Internet Games Database (IGDB)
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>
+            Our list of games comes from the <IGDBLink />
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
@@ -203,22 +150,8 @@ const FrequentlyAskedQuestions = () => {
             >
               support@campusgamingnetwork.com
             </ChakraLink>
-            , join our{" "}
-            <OutsideLink href="https://discord.gg/dpYU6TY">
-              Discord
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>
-            , or open an issue on our{" "}
-            <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
-              GitHub
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>
-            . We will try to reach back and look into the issue as soon as we
-            can.
+            , join our <DiscordLink />, or open an issue on our <GithubLink />.
+            We will try to reach back and look into the issue as soon as we can.
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
@@ -235,6 +168,61 @@ const FrequentlyAskedQuestions = () => {
         </AccordionItem>
       </Accordion>
     </Box>
+  );
+};
+
+const ExternalLink = props => {
+  return (
+    <OutsideLink href={props.href}>
+      {props.children}
+      <Text as="span" ml={1}>
+        <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
+      </Text>
+    </OutsideLink>
+  );
+};
+
+const IGDBLink = props => {
+  return (
+    <ExternalLink href="https://www.igdb.com/discover">
+      {props.children ? props.children : "Internet Games Database (IGDB)"}
+    </ExternalLink>
+  );
+};
+
+const GithubLink = props => {
+  return (
+    <ExternalLink href="https://github.com/bsansone/campus-gaming-network">
+      {props.children ? props.children : "GitHub"}
+    </ExternalLink>
+  );
+};
+
+const DiscordLink = props => {
+  return (
+    <ExternalLink href="https://discord.gg/dpYU6TY">
+      {props.children ? props.children : "Discord"}
+    </ExternalLink>
+  );
+};
+
+const GravatarLink = props => {
+  return (
+    <ExternalLink href="https://en.gravatar.com/">
+      {props.children ? props.children : "Gravatar"}
+    </ExternalLink>
+  );
+};
+
+const BuyMeACoffeeLink = props => {
+  const href = `https://www.buymeacoffee.com/${
+    props.page ? props.page : ""
+  }`.trim();
+
+  return (
+    <ExternalLink href={href}>
+      {props.children ? props.children : "Buy Me a Coffee"}
+    </ExternalLink>
   );
 };
 
