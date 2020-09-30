@@ -3,7 +3,7 @@ import isEmpty from "lodash.isempty";
 import isDate from "lodash.isdate";
 import moment from "moment";
 
-import { STUDENT_STATUS_OPTIONS } from "../constants";
+import { STUDENT_STATUS_OPTIONS, DAYS, MONTHS, YEARS } from "../constants";
 import timezoneOptions from "../data/timezones.json";
 
 const isValid = errors => isEmpty(errors);
@@ -195,7 +195,9 @@ export const validateEditUser = ({
   bio,
   timezone,
   hometown,
-  birthdate,
+  birthMonth,
+  birthDay,
+  birthYear,
   website,
   twitter,
   twitch,
@@ -249,8 +251,28 @@ export const validateEditUser = ({
     errors.bio = `Bio is too long (maximum is ${maxBioLength.toLocaleString()} characters).`;
   }
 
-  if (!isNilOrEmpty(birthdate) && !isValidDateTime(birthdate)) {
-    errors.birthdate = `${birthdate} is not a valid date`;
+  if (!isNilOrEmpty(birthYear) && !isWithin(birthYear, YEARS)) {
+    errors.birthYear = `${birthYear} is not a valid year`;
+  }
+
+  if (!isNilOrEmpty(birthMonth) && !isWithin(birthMonth, MONTHS)) {
+    errors.birthMonth = `${birthMonth} is not a valid month`;
+  }
+
+  if (!isNilOrEmpty(birthDay) && !isWithin(birthDay, DAYS)) {
+    errors.birthDay = `${birthDay} is not a valid day`;
+  }
+
+  if (
+    !isNilOrEmpty(birthYear) &&
+    !isNilOrEmpty(birthMonth) &&
+    !isNilOrEmpty(birthDay) &&
+    !errors.birthYear &&
+    !errors.birthMonth &&
+    !errors.birthDay &&
+    moment(`${birthMonth}-${birthDay}-${birthYear}`, "MMMM-DD-YYYY").isValid()
+  ) {
+    errors.birthdate = `${birthMonth}-${birthDay}-${birthYear} is not a valid date`;
   }
 
   if (

@@ -106,7 +106,7 @@ const Signup = () => {
           () => {
             toast({
               title: "Verification email sent.",
-              description: `A verification email has been sent to ${formState.email}. Please check your inbox and click the link.`,
+              description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
               status: "success",
               isClosable: true
             });

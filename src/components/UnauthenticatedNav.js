@@ -47,16 +47,23 @@ const Header = () => {
         clearInputOnSelect
       />
 
-      <Box display={{ sm: "block", md: "none" }} onClick={toggleMenu}>
+      <Box
+        display={{ xs: "block", sm: "block", md: "none" }}
+        onClick={toggleMenu}
+      >
         <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />
       </Box>
 
       <Box
-        display={{ sm: isMenuOpen ? "block" : "none", md: "flex" }}
-        width={{ sm: "full", md: "auto" }}
+        display={{
+          xs: isMenuOpen ? "block" : "none",
+          sm: isMenuOpen ? "block" : "none",
+          md: "flex"
+        }}
+        width={{ xs: "full", sm: "full", md: "auto" }}
         alignItems="center"
         flexGrow={1}
-        justifyContent={{ sm: "flex-start", md: "flex-end" }}
+        justifyContent={{ xs: "flex-start", sm: "flex-start", md: "flex-end" }}
       >
         <Link
           to="/login"
@@ -70,7 +77,11 @@ const Header = () => {
       </Box>
 
       <Box
-        display={{ sm: isMenuOpen ? "block" : "none", md: "block" }}
+        display={{
+          xs: isMenuOpen ? "block" : "none",
+          sm: isMenuOpen ? "block" : "none",
+          md: "block"
+        }}
         mt={{ base: 4, md: 0 }}
       >
         <Button as={ReachLink} to="/register" variantColor="purple" shadow="md">

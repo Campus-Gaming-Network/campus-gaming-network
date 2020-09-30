@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
 
+import moment from "moment";
+import range from "lodash.range";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import {
   faTwitter,
@@ -170,3 +172,11 @@ export const DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE = 5;
 
 export const DEFAULT_EVENTS_LIST_PAGE_SIZE = 25;
 export const DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE = 3;
+
+export const CURRENT_YEAR = moment().year();
+export const MONTHS = moment.months();
+export const MAX_DAYS_IN_MONTH = 31;
+export const DAYS = range(1, MAX_DAYS_IN_MONTH + 1).map(day => day.toString());
+export const YEARS = range(CURRENT_YEAR - 100, CURRENT_YEAR + 1).map(year =>
+  year.toString()
+);

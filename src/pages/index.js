@@ -15,11 +15,6 @@ import useFetchUserEvents from "../hooks/useFetchUserEvents";
 
 const now = new Date();
 
-////////////////////////////////////////////////////////////////////////////////
-// There is a lot to do here to make this better
-// I just wanted to add some stuff so it isn't completely
-// empty and useless.
-
 const Home = () => {
   const state = useAppState();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);

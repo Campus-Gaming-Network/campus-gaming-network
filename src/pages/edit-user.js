@@ -57,7 +57,9 @@ const initialFormState = {
   bio: "",
   timezone: "",
   hometown: "",
-  birthdate: "",
+  birthMonth: "",
+  birthDay: "",
+  birthYear: "",
   website: "",
   twitter: "",
   twitch: "",
@@ -156,12 +158,20 @@ const EditUser = props => {
     formDispatch({ field: "bio", value: user.bio || "" });
     formDispatch({ field: "timezone", value: user.timezone || "" });
     formDispatch({ field: "hometown", value: user.hometown || "" });
-    formDispatch({
-      field: "birthdate",
-      value: user.birthdate
-        ? moment(user.birthdate.toDate()).format("YYYY-MM-DD")
-        : ""
-    });
+
+    if (user.birthdate) {
+      const [birthMonth, birthDay, birthYear] = moment(user.birthdate.toDate())
+        .format("MMMM-DD-YYYY")
+        .split("-");
+      formDispatch({ field: "birthMonth", value: birthMonth });
+      formDispatch({ field: "birthDay", value: birthDay });
+      formDispatch({ field: "birthYear", value: birthYear });
+    } else {
+      formDispatch({ field: "birthMonth", value: "" });
+      formDispatch({ field: "birthDay", value: "" });
+      formDispatch({ field: "birthYear", value: "" });
+    }
+
     formDispatch({ field: "website", value: user.website || "" });
     formDispatch({ field: "twitter", value: user.twitter || "" });
     formDispatch({ field: "twitch", value: user.twitch || "" });
@@ -232,16 +242,24 @@ const EditUser = props => {
       .collection("schools")
       .doc(formState.school);
 
+    let birthdate = null;
+
+    if (formState.birthMonth && formState.birthDay && formState.birthYear) {
+      const momentBirthdate = moment(
+        `${formState.birthMonth}-${formState.birthDay}-${formState.birthYear}`,
+        "MMMM-DD-YYYY"
+      );
+      birthdate = firebase.firestore.Timestamp.fromDate(
+        new Date(momentBirthdate)
+      );
+    }
+
     const data = {
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
       status: formState.status,
       hometown: formState.hometown.trim(),
-      birthdate: formState.birthdate
-        ? firebase.firestore.Timestamp.fromDate(
-            new Date(moment(formState.birthdate))
-          )
-        : null,
+      birthdate: birthdate,
       major: formState.major.trim(),
       minor: formState.minor.trim(),
       bio: formState.bio.trim(),
@@ -361,11 +379,11 @@ const EditUser = props => {
         ) : null}
         <Stack as="form" spacing={32} onSubmit={handleSubmit}>
           <Flex
-            justifyContent="space-between"
+            justifyContent={{ md: "space-between", sm: "center", xs: "center" }}
             alignItems="center"
             flexWrap="wrap"
           >
-            <Heading as="h1" size="2xl">
+            <Heading as="h1" size="2xl" pb={{ md: 0, sm: 6, xs: 6 }}>
               Your Profile
             </Heading>
             <Button
@@ -394,7 +412,9 @@ const EditUser = props => {
             lastName={formState.lastName}
             email={authenticatedUser.email}
             hometown={formState.hometown}
-            birthdate={formState.birthdate}
+            birthYear={formState.birthYear}
+            birthMonth={formState.birthMonth}
+            birthDay={formState.birthDay}
             bio={formState.bio}
             timezone={formState.timezone}
           />
@@ -516,38 +536,54 @@ const DetailSection = React.memo(props => {
         <Text color="gray.500">Personal information about you.</Text>
       </Box>
       <Stack spacing={6} p={8}>
-        <FormControl isRequired isInvalid={props.errors.firstName}>
-          <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
-            First Name
-          </FormLabel>
-          <Input
-            id="firstName"
-            name="firstName"
-            type="text"
-            placeholder="Brandon"
-            onChange={props.handleFieldChange}
-            value={props.firstName}
-            size="lg"
-          />
-          <FormErrorMessage>{props.errors.firstName}</FormErrorMessage>
-        </FormControl>
-        <FormControl isRequired isInvalid={props.errors.lastName}>
-          <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
-            Last Name
-          </FormLabel>
-          <Input
-            id="lastName"
-            name="lastName"
-            type="text"
-            placeholder="Sansone"
-            onChange={props.handleFieldChange}
-            value={props.lastName}
-            roundedLeft="0"
-            size="lg"
-          />
-          <FormErrorMessage>{props.errors.lastName}</FormErrorMessage>
-        </FormControl>
-        <FormControl disabled>
+        <Flex flexWrap="wrap">
+          <FormControl
+            isRequired
+            isInvalid={props.errors.firstName}
+            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
+            pr={{ md: 4, sm: 0, xs: 0 }}
+          >
+            <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
+              First Name
+            </FormLabel>
+            <Input
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="Brandon"
+              onChange={props.handleFieldChange}
+              value={props.firstName}
+              size="lg"
+            />
+            <FormErrorMessage>{props.errors.firstName}</FormErrorMessage>
+          </FormControl>
+          <FormControl
+            isRequired
+            isInvalid={props.errors.lastName}
+            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
+            pt={{ md: 0, sm: 6, xs: 6 }}
+          >
+            <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
+              Last Name
+            </FormLabel>
+            <Input
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder="Sansone"
+              onChange={props.handleFieldChange}
+              value={props.lastName}
+              roundedLeft="0"
+              size="lg"
+            />
+            <FormErrorMessage>{props.errors.lastName}</FormErrorMessage>
+          </FormControl>
+        </Flex>
+        <FormControl
+          disabled
+          width={{ md: "50%", sm: "100%", xs: "100%" }}
+          pr={{ md: 4, sm: 0, xs: 0 }}
+        >
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
             Email
           </FormLabel>
@@ -565,7 +601,11 @@ const DetailSection = React.memo(props => {
             Your email cannot be changed.
           </FormHelperText>
         </FormControl>
-        <FormControl isInvalid={props.errors.hometown}>
+        <FormControl
+          isInvalid={props.errors.hometown}
+          width={{ md: "50%", sm: "100%", xs: "100%" }}
+          pr={{ md: 4, sm: 0, xs: 0 }}
+        >
           <FormLabel htmlFor="hometown" fontSize="lg" fontWeight="bold">
             Hometown
           </FormLabel>
@@ -580,20 +620,87 @@ const DetailSection = React.memo(props => {
           />
           <FormErrorMessage>{props.errors.hometown}</FormErrorMessage>
         </FormControl>
-        <FormControl isInvalid={props.errors.birthdate}>
-          <FormLabel htmlFor="birthdate" fontSize="lg" fontWeight="bold">
+        <Box as="fieldset">
+          <Text as="legend" fontSize="lg" fontWeight="bold">
             Birthday
-          </FormLabel>
-          <Input
-            id="birthdate"
-            name="birthdate"
-            type="date"
-            onChange={props.handleFieldChange}
-            value={props.birthdate}
-            size="lg"
-          />
-          <FormErrorMessage>{props.errors.birthdate}</FormErrorMessage>
-        </FormControl>
+          </Text>
+          <Flex flexWrap="wrap">
+            <FormControl
+              isInvalid={props.errors.birthMonth}
+              flexBasis={{ md: "33.3333%", sm: "100%", xs: "100%" }}
+              pr={{ md: 4, sm: 0, xs: 0 }}
+            >
+              <FormLabel htmlFor="birthMonth" fontSize="sm" fontWeight="bold">
+                Month
+              </FormLabel>
+              <Select
+                id="birthMonth"
+                name="birthMonth"
+                onChange={props.handleFieldChange}
+                value={props.birthMonth}
+                size="lg"
+              >
+                <option value="">Select month</option>
+                {constants.MONTHS.map(month => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </Select>
+              <FormErrorMessage>{props.errors.birthMonth}</FormErrorMessage>
+            </FormControl>
+            <FormControl
+              isInvalid={props.errors.birthDay}
+              flexBasis={{ md: "33.3333%", sm: "100%", xs: "100%" }}
+              pr={{ md: 4, sm: 0, xs: 0 }}
+            >
+              <FormLabel htmlFor="birthDay" fontSize="sm" fontWeight="bold">
+                Day
+              </FormLabel>
+              <Select
+                id="birthDay"
+                name="birthDay"
+                onChange={props.handleFieldChange}
+                value={props.birthDay}
+                size="lg"
+              >
+                <option value="">Select day</option>
+                {constants.DAYS.map(day => (
+                  <option key={day} value={day}>
+                    {day}
+                  </option>
+                ))}
+              </Select>
+              <FormErrorMessage>{props.errors.birthDay}</FormErrorMessage>
+            </FormControl>
+            <FormControl
+              isInvalid={props.errors.birthYear}
+              flexBasis={{ md: "33.3333%", sm: "100%", xs: "100%" }}
+            >
+              <FormLabel htmlFor="birthYear" fontSize="sm" fontWeight="bold">
+                Year
+              </FormLabel>
+              <Select
+                id="birthYear"
+                name="birthYear"
+                onChange={props.handleFieldChange}
+                value={props.birthYear}
+                size="lg"
+              >
+                <option value="">Select year</option>
+                {constants.YEARS.map(year => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </Select>
+              <FormErrorMessage>{props.errors.birthYear}</FormErrorMessage>
+            </FormControl>
+          </Flex>
+          <Text color="red.500" fontSize="sm">
+            {props.errors.birthdate}
+          </Text>
+        </Box>
         <FormControl isInvalid={props.errors.bio}>
           <FormLabel htmlFor="bio" fontSize="lg" fontWeight="bold">
             Bio
@@ -621,7 +728,11 @@ const DetailSection = React.memo(props => {
           </FormHelperText>
           <FormErrorMessage>{props.errors.bio}</FormErrorMessage>
         </FormControl>
-        <FormControl isInvalid={props.errors.timezone}>
+        <FormControl
+          isInvalid={props.errors.timezone}
+          width={{ md: "50%", sm: "100%", xs: "100%" }}
+          pr={{ md: 4, sm: 0, xs: 0 }}
+        >
           <FormLabel htmlFor="timezone" fontSize="lg" fontWeight="bold">
             Timezone
           </FormLabel>
@@ -678,7 +789,12 @@ const SchoolSection = React.memo(props => {
           />
           <FormErrorMessage>{props.errors.school}</FormErrorMessage>
         </FormControl>
-        <FormControl isRequired isInvalid={props.errors.status}>
+        <FormControl
+          isRequired
+          isInvalid={props.errors.status}
+          width={{ md: "50%", sm: "100%", xs: "100%" }}
+          pr={{ md: 4, sm: 0, xs: 0 }}
+        >
           <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
             Status
           </FormLabel>
@@ -697,34 +813,44 @@ const SchoolSection = React.memo(props => {
           </Select>
           <FormErrorMessage>{props.errors.status}</FormErrorMessage>
         </FormControl>
-        <FormControl isInvalid={props.errors.major}>
-          <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
-            Major
-          </FormLabel>
-          <Input
-            id="major"
-            name="major"
-            type="text"
-            onChange={props.handleFieldChange}
-            value={props.major}
-            size="lg"
-          />
-          <FormErrorMessage>{props.errors.major}</FormErrorMessage>
-        </FormControl>
-        <FormControl isInvalid={props.errors.minor}>
-          <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
-            Minor
-          </FormLabel>
-          <Input
-            id="minor"
-            name="minor"
-            type="text"
-            onChange={props.handleFieldChange}
-            value={props.minor}
-            size="lg"
-          />
-          <FormErrorMessage>{props.errors.minor}</FormErrorMessage>
-        </FormControl>
+        <Flex flexWrap="wrap">
+          <FormControl
+            isInvalid={props.errors.major}
+            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
+            pr={{ md: 4, sm: 0 }}
+          >
+            <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
+              Major
+            </FormLabel>
+            <Input
+              id="major"
+              name="major"
+              type="text"
+              onChange={props.handleFieldChange}
+              value={props.major}
+              size="lg"
+            />
+            <FormErrorMessage>{props.errors.major}</FormErrorMessage>
+          </FormControl>
+          <FormControl
+            isInvalid={props.errors.minor}
+            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
+            pt={{ md: 0, sm: 6, xs: 6 }}
+          >
+            <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
+              Minor
+            </FormLabel>
+            <Input
+              id="minor"
+              name="minor"
+              type="text"
+              onChange={props.handleFieldChange}
+              value={props.minor}
+              size="lg"
+            />
+            <FormErrorMessage>{props.errors.minor}</FormErrorMessage>
+          </FormControl>
+        </Flex>
       </Stack>
     </Box>
   );

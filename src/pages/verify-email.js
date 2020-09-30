@@ -16,7 +16,7 @@ const PasswordReset = props => {
   const [verifyState, setVerifyState] = React.useState("");
   const [verificationError, setError] = React.useState("");
 
-  const handleVerifyEmail = () => {
+  const handleVerifyEmail = React.useCallback(() => {
     firebaseAuth
       .applyActionCode(props.oobCode)
       .then(() => {
@@ -40,7 +40,7 @@ const PasswordReset = props => {
         setError(error.message);
         setVerifyState("error");
       });
-  };
+  }, [props.oobCode]);
 
   React.useEffect(() => {
     if (!isAuthenticating && !!authenticatedUser) {

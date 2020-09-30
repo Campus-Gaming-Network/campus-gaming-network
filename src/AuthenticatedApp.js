@@ -35,6 +35,7 @@ import SchoolSilhouette from "./components/SchoolSilhouette";
 import EventSilhouette from "./components/EventSilhouette";
 import Empty from "./components/Empty";
 import Footer from "./components/Footer";
+import VerifyEmailReminderBanner from "./components/VerifyEmailReminderBanner";
 
 const AuthenticatedApp = () => {
   const state = useAppState();
@@ -99,6 +100,7 @@ const AuthenticatedApp = () => {
 
   return (
     <React.Fragment>
+      <VerifyEmailReminderBanner />
       {nav}
       <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%">
         {routes}

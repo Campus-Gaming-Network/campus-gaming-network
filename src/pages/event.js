@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
   faGlobe,
-  faSchool
+  faSchool,
+  faExternalLinkAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import startCase from "lodash.startcase";
@@ -359,8 +360,14 @@ const Event = props => {
                   <Text as="span" color="gray.600" mr={2} fontSize="lg">
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </Text>
-                  <OutsideLink href={event.googleMapsAddressLink}>
+                  <OutsideLink
+                    d="inline-block"
+                    href={event.googleMapsAddressLink}
+                  >
                     {event.location}
+                    <Text as="span" ml={2}>
+                      <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
+                    </Text>
                   </OutsideLink>
                 </React.Fragment>
               ) : (

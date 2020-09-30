@@ -29,6 +29,7 @@
     "lodash.keyby": "^4.6.0",
     "lodash.maxby": "^4.6.0",
     "lodash.omitby": "^4.6.0",
+    "lodash.range": "^3.2.0",
     "lodash.shuffle": "^4.2.0",
     "lodash.slice": "^4.2.0",
     "lodash.sortby": "^4.7.0",
