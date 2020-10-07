@@ -417,6 +417,14 @@ describe("Schools", () => {
 
     await firebase.assertFails(schoolsRef.add(SCHOOL));
   });
+
+  it("should deny a delete to schools", async () => {
+    const db = getAuthedFirestore(null);
+
+    const schoolsRef = db.collection(COLLECTIONS.SCHOOLS).doc(SCHOOL.id);
+
+    await firebase.assertFails(schoolsRef.delete());
+  });
 });
 
 describe("Events", () => {
@@ -442,6 +450,14 @@ describe("Events", () => {
     const eventsRef = db.collection(COLLECTIONS.EVENTS);
 
     await firebase.assertSucceeds(eventsRef.add(EVENT));
+  });
+
+  it("should deny a delete to events if not owner", async () => {
+    const db = getAuthedFirestore(null);
+
+    const eventsRef = db.collection(COLLECTIONS.EVENTS).doc(EVENT.id);
+
+    await firebase.assertFails(eventsRef.delete());
   });
 });
 
