@@ -100,7 +100,24 @@ const Signup = () => {
               .doc(formState.school),
             schoolDetails: {
               id: formState.school
-            }
+            },
+            major: "",
+            minor: "",
+            bio: "",
+            timezone: "",
+            hometown: "",
+            birthdate: null,
+            twitter: "",
+            twitch: "",
+            youtube: "",
+            skype: "",
+            discord: "",
+            battlenet: "",
+            steam: "",
+            xbox: "",
+            psn: "",
+            currentlyPlaying: [],
+            favoriteGames: []
           });
         firebaseAuth.currentUser.sendEmailVerification().then(
           () => {

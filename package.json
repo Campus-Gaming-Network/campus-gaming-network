@@ -19,6 +19,7 @@
     "@sentry/tracing": "^5.22.3",
     "emotion-theming": "^10.0.27",
     "firebase": "^7.13.1",
+    "firebase-admin": "^9.2.0",
     "husky": "^3.0.5",
     "lint-staged": "^9.2.5",
     "lodash.capitalize": "^4.2.1",
@@ -61,7 +62,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test-firestore": "mocha --exit tests/collections.spec.js"
+    "test-firestore": "mocha --timeout 10000 --exit tests/collections.spec.js"
   },
   "eslintConfig": {
     "extends": "react-app"

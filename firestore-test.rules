@@ -1,0 +1,232 @@
+rules_version = "2";
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Rules
+
+    match /users/{userId} {
+      function isValidUser() {
+        let requiredFields = [
+          "firstName",
+          "lastName",
+          "status",
+          "gravatar",
+          "status",
+          "school",
+          "schoolDetails",
+        ];
+        let optionalFields = [
+          "major",
+          "minor",
+          "bio",
+          "timezone",
+          "hometown",
+          "birthdate",
+          "website",
+          "twitter",
+          "twitch",
+          "youtube",
+          "skype",
+          "discord",
+          "battlenet",
+          "steam",
+          "xbox",
+          "psn",
+          "currentlyPlaying",
+          "favoriteGames",
+        ];
+        let statusOptions = [
+          "FRESHMAN",
+          "SOPHMORE",
+          "JUNIOR",
+          "SENIOR",
+          "GRAD",
+          "ALUMNI",
+          "FACULTY",
+          "OTHER",
+        ];
+        let timezoneOptions = [
+          "",
+          "America/Puerto_Rico",
+          "America/New_York",
+          "America/Chicago",
+          "America/Denver",
+          "America/Phoenix",
+          "America/Los_Angeles",
+          "America/Anchorage",
+          "Pacific/Honolulu",
+        ];
+
+        return (
+          documentFieldsCheckOut(requiredFields, optionalFields) &&
+          hasLength("firstName", 1, 255) &&
+          hasLength("lastName", 1, 255) &&
+          hasLength("status", 1, 15) &&
+          hasLength("gravatar", 1, 255) &&
+          isValidOption("status", statusOptions) &&
+          !isNull('school') &&
+          !isNull('schoolDetails') &&
+          "id" in incomingData().schoolDetails &&
+          incomingData().schoolDetails.id != null &&
+          hasLengthOrNull("major", 255) &&
+          hasLengthOrNull("minor", 255) &&
+          hasLengthOrNull("bio", 2500) &&
+          isValidOption("timezone", timezoneOptions) &&
+          hasLengthOrNull("hometown", 255) &&
+          (isNull("birthdate") || incomingData().birthdate is timestamp) &&
+          hasLengthOrNull("twitter", 255) &&
+          hasLengthOrNull("twitch", 255) &&
+          hasLengthOrNull("youtube", 255) &&
+          hasLengthOrNull("skype", 255) &&
+          hasLengthOrNull("discord", 255) &&
+          hasLengthOrNull("battlenet", 255) &&
+          hasLengthOrNull("steam", 255) &&
+          hasLengthOrNull("xbox", 255) &&
+          hasLengthOrNull("psn", 255) &&
+          (isNull("currentlyPlaying") || incomingData().currentlyPlaying.size() <= 5) &&
+          (isNull("favoriteGames") || incomingData().favoriteGames.size() <= 5)
+        );
+      }
+
+      function canCreateUser() {
+        return isValidUser();
+      }
+
+      function canUpdateUser() {
+        return (
+          isOwner(userId) &&
+          isValidUser()
+        );
+      }
+
+      function canDeleteUser() {
+        return (
+          isOwner(userId)
+        );
+      }
+
+      allow read: if true;
+      allow create: if canUpdateUser();
+      allow update: if canUpdateUser();
+      allow delete: if canDeleteUser();
+      allow write: if false;
+    }
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /schools/{schoolId} {
+      allow read: if true;
+      allow write, create, update, delete: if false;
+    }
+
+    match /event-responses/{eventResponseId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow write, delete: if false;
+    }
+
+    match /game-queries/{gameQueryId} {
+      allow read: if true;
+      allow write, update, create, delete: if false;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Shared Functions
+
+    function currentUser() {
+      return request.auth;
+    }
+
+    function requestingUser() {
+      return currentUser().uid;
+    }
+
+    function isSignedIn() {
+      return requestingUser() != null;
+    }
+
+    // Does the logged-in user match the requested userId?
+    function isOwner(userId) {
+      return (
+        isSignedIn() &&
+        requestingUser() == userId
+      );
+    }
+
+    function isEmailVerified() {
+      return currentUser().token.email_verified;
+    }
+
+    // Data that exists on the Firestore document
+    function existingData() {
+      return resource.data;
+    }
+
+    // Data that is sent to a Firestore document
+    function incomingData() {
+      return request.resource.data;
+    }
+
+    function documentFieldsCheckOut(requiredFields, optionalFields) {
+        let allFields = requiredFields.concat(optionalFields);
+        return (
+          incomingData().keys().hasAll(requiredFields) &&
+          incomingData().keys().hasOnly(allFields)
+        );
+    }
+
+    function has(field) {
+      return field in incomingData().keys();
+    }
+
+    function val(field) {
+      return incomingData()[field];
+    }
+
+    function isNull(field) {
+      return isValueNull(val(field));
+    }
+
+    function isValueNull(value) {
+      return value == null;
+    }
+
+    function isString(field) {
+      return isValueString(val(field));
+    }
+
+    function isValueString(value) {
+      return string(value) == value;
+    }
+
+    function hasLengthOrNull(field, max) {
+      return hasLength(field, 0, max) || isNull(field);
+    }
+
+    function hasLength(field, min, max) {
+      return hasValueLength(val(field), min, max);
+    }
+
+    function hasValueLength(value, min, max) {
+      return (
+        isValueString(value) &&
+        (min == 0 || value.size() >= min) &&
+        (max == 0 || value.size() <= max)
+      );
+    }
+
+    function isValidOption(field, options) {
+      return val(field) in options;
+    }
+
+  }
+}
