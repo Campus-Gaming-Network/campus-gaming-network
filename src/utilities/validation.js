@@ -1,6 +1,7 @@
 import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
 import isDate from "lodash.isdate";
+import isString from "lodash.isstring";
 import moment from "moment";
 
 import { STUDENT_STATUS_OPTIONS, DAYS, MONTHS, YEARS } from "../constants";
@@ -8,8 +9,17 @@ import timezoneOptions from "../data/timezones.json";
 
 const isValid = errors => isEmpty(errors);
 const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const isNilOrEmpty = value =>
-  !isDate(value) ? isNil(value) || isEmpty(value) : false;
+const isNilOrEmpty = value => {
+  if (isString(value)) {
+    value = value.trim();
+  }
+
+  if (isDate(value)) {
+    return false;
+  }
+
+  return isNil(value) || isEmpty(value);
+};
 const isWithin = (value, options) => options.includes(value);
 const isGreaterThan = (value, other) => value > other;
 const isLessThan = (value, other) => value < other;
@@ -270,7 +280,7 @@ export const validateEditUser = ({
     !errors.birthYear &&
     !errors.birthMonth &&
     !errors.birthDay &&
-    moment(`${birthMonth}-${birthDay}-${birthYear}`, "MMMM-DD-YYYY").isValid()
+    !moment(`${birthMonth}-${birthDay}-${birthYear}`, "MMMM-DD-YYYY").isValid()
   ) {
     errors.birthdate = `${birthMonth}-${birthDay}-${birthYear} is not a valid date`;
   }
