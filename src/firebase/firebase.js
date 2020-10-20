@@ -5,10 +5,10 @@ import "firebase/firestore";
 import "firebase/functions";
 import "firebase/storage";
 
-import { firebaseConfig } from "./config";
+import { FIREBASE_CONFIG } from "../constants";
 
 export const _firebase = firebase;
-export const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
 
 export const firebaseAuth = firebase.auth();
 export const firebaseFirestore = firebase.firestore();
