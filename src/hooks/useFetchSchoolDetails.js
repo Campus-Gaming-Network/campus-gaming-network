@@ -4,6 +4,7 @@ import isEmpty from "lodash.isempty";
 import { firebaseFirestore } from "../firebase";
 import { mapSchool } from "../utilities";
 import { useAppState } from "../store";
+import { COLLECTIONS } from "../constants";
 
 const useFetchSchoolDetails = id => {
   const state = useAppState();
@@ -26,7 +27,7 @@ const useFetchSchoolDetails = id => {
         console.log(`[API] fetchSchoolDetails...${id}`);
 
         firebaseFirestore
-          .collection("schools")
+          .collection(COLLECTIONS.SCHOOLS)
           .doc(id)
           .get()
           .then(doc => {

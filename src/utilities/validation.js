@@ -4,8 +4,22 @@ import isDate from "lodash.isdate";
 import isString from "lodash.isstring";
 import moment from "moment";
 
-import { STUDENT_STATUS_OPTIONS, DAYS, MONTHS, YEARS } from "../constants";
-import timezoneOptions from "../data/timezones.json";
+import {
+  STUDENT_STATUS_OPTIONS,
+  DAYS,
+  MONTHS,
+  YEARS,
+  TIMEZONES,
+  MAX_FAVORITE_GAME_LIST,
+  MAX_CURRENTLY_PLAYING_LIST,
+  MAX_BIO_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  MAX_DEFAULT_STRING_LENGTH
+} from "../constants";
+
+////////////////////////////////////////////////////////////////////////////////
+// Local Helpers
 
 const isValid = errors => isEmpty(errors);
 const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -30,14 +44,14 @@ const isSameOrAfterEndDateTime = (startDateTime, endDateTime) =>
 const isSameOrBeforeStartDateTime = (endDateTime, startDateTime) =>
   moment(endDateTime).isSameOrBefore(moment(startDateTime));
 
-const maxFavoriteGameLimit = 5;
-const maxCurrentlyPlayingLimit = 5;
-const maxDefaultStringLength = 255;
-const maxDescriptionLength = 5000;
-const maxBioLength = 2500;
-const minPasswordLength = 6;
-const statuses = STUDENT_STATUS_OPTIONS.map(option => option.value);
-const timezones = timezoneOptions.map(option => option.value);
+////////////////////////////////////////////////////////////////////////////////
+// Local Constants
+
+const STATUS_VALUES = STUDENT_STATUS_OPTIONS.map(option => option.value);
+const TIMEZONE_VALUES = TIMEZONES.map(option => option.value);
+
+////////////////////////////////////////////////////////////////////////////////
+// Validate Sign Up
 
 export const validateSignUp = ({
   firstName,
@@ -65,8 +79,8 @@ export const validateSignUp = ({
 
   if (isNilOrEmpty(password)) {
     errors.password = "Password is required.";
-  } else if (isLessThan(password.trim().length, minPasswordLength)) {
-    errors.password = `Password is too short (minimum is ${minPasswordLength} characters).`;
+  } else if (isLessThan(password.trim().length, MIN_PASSWORD_LENGTH)) {
+    errors.password = `Password is too short (minimum is ${MIN_PASSWORD_LENGTH} characters).`;
   }
 
   if (isNilOrEmpty(school)) {
@@ -74,7 +88,7 @@ export const validateSignUp = ({
     errors.school = "School is required.";
   }
 
-  if (!isWithin(status, statuses)) {
+  if (!isWithin(status, STATUS_VALUES)) {
     errors.status = `${status} is not a valid status`;
   }
 
@@ -83,6 +97,9 @@ export const validateSignUp = ({
     errors
   };
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Validate Log In
 
 export const validateLogIn = ({ email, password }) => {
   const errors = {};
@@ -103,6 +120,9 @@ export const validateLogIn = ({ email, password }) => {
   };
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Validate Forgot Password
+
 export const validateForgotPassword = ({ email }) => {
   const errors = {};
 
@@ -118,13 +138,16 @@ export const validateForgotPassword = ({ email }) => {
   };
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Validate Password Reset
+
 export const validatePasswordReset = ({ password }) => {
   const errors = {};
 
   if (isNilOrEmpty(password)) {
     errors.password = "Password is required.";
-  } else if (isLessThan(password.trim().length, minPasswordLength)) {
-    errors.password = `Password is too short (minimum is ${minPasswordLength} characters).`;
+  } else if (isLessThan(password.trim().length, MIN_PASSWORD_LENGTH)) {
+    errors.password = `Password is too short (minimum is ${MIN_PASSWORD_LENGTH} characters).`;
   }
 
   return {
@@ -132,6 +155,9 @@ export const validatePasswordReset = ({ password }) => {
     errors
   };
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Validate Create Event
 
 export const validateCreateEvent = ({
   host,
@@ -155,9 +181,9 @@ export const validateCreateEvent = ({
 
   if (
     !isNilOrEmpty(description) &&
-    isGreaterThan(description.trim().length, maxDescriptionLength)
+    isGreaterThan(description.trim().length, MAX_DESCRIPTION_LENGTH)
   ) {
-    errors.description = `Description is too long (maximum is ${maxDescriptionLength.toLocaleString()} characters).`;
+    errors.description = `Description is too long (maximum is ${MAX_DESCRIPTION_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(game)) {
@@ -194,6 +220,9 @@ export const validateCreateEvent = ({
     errors
   };
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Validate Edit User
 
 export const validateEditUser = ({
   firstName,
@@ -235,30 +264,30 @@ export const validateEditUser = ({
     errors.school = "School is required.";
   }
 
-  if (!isWithin(status, statuses)) {
+  if (!isWithin(status, STATUS_VALUES)) {
     errors.status = `${status} is not a valid status`;
   }
 
   if (
     !isNilOrEmpty(major) &&
-    isGreaterThan(major.trim().length, maxDefaultStringLength)
+    isGreaterThan(major.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.major = `Major is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.major = `Major is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(minor) &&
-    isGreaterThan(minor.trim().length, maxDefaultStringLength)
+    isGreaterThan(minor.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.minor = `Minor is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.minor = `Minor is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (!isNilOrEmpty(timezone) && !isWithin(timezone, timezones)) {
+  if (!isNilOrEmpty(timezone) && !isWithin(timezone, TIMEZONE_VALUES)) {
     errors.timezone = `${timezone} is not a valid timezone`;
   }
 
-  if (!isNilOrEmpty(bio) && isGreaterThan(bio.trim().length, maxBioLength)) {
-    errors.bio = `Bio is too long (maximum is ${maxBioLength.toLocaleString()} characters).`;
+  if (!isNilOrEmpty(bio) && isGreaterThan(bio.trim().length, MAX_BIO_LENGTH)) {
+    errors.bio = `Bio is too long (maximum is ${MAX_BIO_LENGTH.toLocaleString()} characters).`;
   }
 
   if (!isNilOrEmpty(birthYear) && !isWithin(birthYear, YEARS)) {
@@ -287,93 +316,93 @@ export const validateEditUser = ({
 
   if (
     !isNilOrEmpty(hometown) &&
-    isGreaterThan(hometown.trim().length, maxDefaultStringLength)
+    isGreaterThan(hometown.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.hometown = `Hometown is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.hometown = `Hometown is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(website) &&
-    isGreaterThan(website.trim().length, maxDefaultStringLength)
+    isGreaterThan(website.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.website = `Website is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.website = `Website is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(twitter) &&
-    isGreaterThan(twitter.trim().length, maxDefaultStringLength)
+    isGreaterThan(twitter.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.twitter = `Twitter is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.twitter = `Twitter is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(twitch) &&
-    isGreaterThan(twitch.trim().length, maxDefaultStringLength)
+    isGreaterThan(twitch.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.twitch = `Twitch is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.twitch = `Twitch is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(youtube) &&
-    isGreaterThan(youtube.trim().length, maxDefaultStringLength)
+    isGreaterThan(youtube.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.youtube = `YouTube is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.youtube = `YouTube is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(skype) &&
-    isGreaterThan(skype.trim().length, maxDefaultStringLength)
+    isGreaterThan(skype.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.skype = `Skype is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.skype = `Skype is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(discord) &&
-    isGreaterThan(discord.trim().length, maxDefaultStringLength)
+    isGreaterThan(discord.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.discord = `Discord is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.discord = `Discord is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(battlenet) &&
-    isGreaterThan(battlenet.trim().length, maxDefaultStringLength)
+    isGreaterThan(battlenet.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.battlenet = `Battlenet is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.battlenet = `Battlenet is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(steam) &&
-    isGreaterThan(steam.trim().length, maxDefaultStringLength)
+    isGreaterThan(steam.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.steam = `Steam is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.steam = `Steam is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(xbox) &&
-    isGreaterThan(xbox.trim().length, maxDefaultStringLength)
+    isGreaterThan(xbox.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.xbox = `Xbox is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.xbox = `Xbox is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(psn) &&
-    isGreaterThan(psn.trim().length, maxDefaultStringLength)
+    isGreaterThan(psn.trim().length, MAX_DEFAULT_STRING_LENGTH)
   ) {
-    errors.psn = `PSN is too long (maximum is ${maxDefaultStringLength.toLocaleString()} characters).`;
+    errors.psn = `PSN is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (
     !isNilOrEmpty(favoriteGames) &&
-    isGreaterThan(favoriteGames.length, maxFavoriteGameLimit)
+    isGreaterThan(favoriteGames.length, MAX_FAVORITE_GAME_LIST)
   ) {
-    errors.favoriteGames = `Too many games selected (maximum is ${maxFavoriteGameLimit.toLocaleString()} games).`;
+    errors.favoriteGames = `Too many games selected (maximum is ${MAX_FAVORITE_GAME_LIST.toLocaleString()} games).`;
   }
 
   if (
     !isNilOrEmpty(currentlyPlaying) &&
-    isGreaterThan(currentlyPlaying.length, maxCurrentlyPlayingLimit)
+    isGreaterThan(currentlyPlaying.length, MAX_CURRENTLY_PLAYING_LIST)
   ) {
-    errors.currentlyPlaying = `Too many games selected (maximum is ${maxCurrentlyPlayingLimit.toLocaleString()} games).`;
+    errors.currentlyPlaying = `Too many games selected (maximum is ${MAX_CURRENTLY_PLAYING_LIST.toLocaleString()} games).`;
   }
 
   return {

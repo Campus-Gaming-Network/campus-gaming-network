@@ -46,6 +46,7 @@ import { validateCreateEvent } from "../utilities/validation";
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
 import { mapEventResponse, mapEvent } from "../utilities";
+import { COLLECTIONS } from "../constants";
 
 const initialFormState = {
   name: "",
@@ -110,7 +111,7 @@ const CreateEvent = props => {
 
     try {
       await firebaseFirestore
-        .collection("events")
+        .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
         .delete();
 
@@ -181,9 +182,11 @@ const CreateEvent = props => {
       formState.endDateTime
     );
     const schoolDocRef = firebaseFirestore
-      .collection("schools")
+      .collection(COLLECTIONS.SCHOOLS)
       .doc(user.school.id);
-    const userDocRef = firebaseFirestore.collection("users").doc(user.id);
+    const userDocRef = firebaseFirestore
+      .collection(COLLECTIONS.USERS)
+      .doc(user.id);
 
     const eventData = {
       creator: userDocRef,
@@ -212,7 +215,7 @@ const CreateEvent = props => {
 
     if (props.edit) {
       firebaseFirestore
-        .collection("events")
+        .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
         .update(cleanedData)
         .then(() => {
@@ -317,7 +320,7 @@ const CreateEvent = props => {
       let eventId;
 
       firebaseFirestore
-        .collection("events")
+        .collection(COLLECTIONS.EVENTS)
         .add({
           ...cleanedData,
           responses: {
@@ -329,7 +332,7 @@ const CreateEvent = props => {
           eventId = eventDocRef.id;
 
           firebaseFirestore
-            .collection("events")
+            .collection(COLLECTIONS.EVENTS)
             .doc(eventId)
             .update({ id: eventId })
             .catch(() => {
@@ -363,7 +366,7 @@ const CreateEvent = props => {
           };
 
           firebaseFirestore
-            .collection("event-responses")
+            .collection(COLLECTIONS.EVENT_RESPONSES)
             .add(eventResponseData)
             .then(() => {
               toast({

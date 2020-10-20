@@ -9,6 +9,7 @@ import Link from "../components/Link";
 import EventListItem from "../components/EventListItem";
 import { mapEvent, mapEventResponse } from "../utilities";
 import { useAppState } from "../store";
+import { COLLECTIONS } from "../constants";
 
 // Hooks
 import useFetchUserEvents from "../hooks/useFetchUserEvents";
@@ -63,11 +64,11 @@ const Home = () => {
 
 const UserCreatedEvents = props => {
   const userDocRef = props.user
-    ? firebaseFirestore.collection("users").doc(props.user.id)
+    ? firebaseFirestore.collection(COLLECTIONS.USERS).doc(props.user.id)
     : null;
   const [userCreatedEvents, isLoading] = useCollectionDataOnce(
     firebaseFirestore
-      .collection("events")
+      .collection(COLLECTIONS.EVENTS)
       .where("creator", "==", userDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .limit(12)
@@ -137,11 +138,11 @@ const AttendingEvents = props => {
 
 const UpcomingSchoolEvents = props => {
   const schoolDocRef = props.school
-    ? firebaseFirestore.collection("schools").doc(props.school.id)
+    ? firebaseFirestore.collection(COLLECTIONS.SCHOOLS).doc(props.school.id)
     : null;
   const [schoolEvents, isLoading] = useCollectionDataOnce(
     firebaseFirestore
-      .collection("events")
+      .collection(COLLECTIONS.EVENTS)
       .where("school", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .limit(12)
@@ -196,7 +197,7 @@ const UpcomingSchoolEvents = props => {
 const RecentlyCreatedEvents = () => {
   const [recentlyCreatedEvents, isLoading] = useCollectionDataOnce(
     firebaseFirestore
-      .collection("events")
+      .collection(COLLECTIONS.EVENTS)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .orderBy("endDateTime")
       .orderBy("createdAt", "desc")
