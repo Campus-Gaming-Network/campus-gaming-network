@@ -228,7 +228,7 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
               batch.set(
                 doc.ref,
                 {
-                  eventDetails: {
+                  event: {
                     name: newEventData.name,
                     description: newEventData.description,
                     startDateTime: newEventData.startDateTime,
@@ -291,7 +291,7 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
               batch.update(
                 doc.ref,
                 {
-                  schoolDetails: {
+                  school: {
                     name: newSchoolData.name,
                   },
                 },
@@ -350,7 +350,7 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
               batch.set(
                 doc.ref,
                 {
-                  userDetails: {
+                  user: {
                     firstName: newUserData.firstName,
                     lastName: newUserData.lastName,
                     gravatar: newUserData.gravatar,

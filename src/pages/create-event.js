@@ -201,8 +201,8 @@ const CreateEvent = props => {
     }
 
     if (!props.edit) {
-      eventData.school = schoolDocRef;
-      eventData.schoolDetails = {
+      eventData.school = {
+        ref: schoolDocRef,
         id: schoolDocRef.id,
         name: school.name
       };
@@ -233,8 +233,8 @@ const CreateEvent = props => {
                   eventResponse.event.id === props.id
                     ? {
                         ...eventResponse,
-                        eventDetails: {
-                          ...eventResponse.eventDetails,
+                        event: {
+                          ...eventResponse.event,
                           ...cleanedData
                         }
                       }
@@ -268,8 +268,8 @@ const CreateEvent = props => {
           //   if (schoolToUpdate.events) {
           //     const updatedEvents = schoolToUpdate.events.map((eventResponse) => eventResponse.event.id === props.id ? ({
           //       ...eventResponse,
-          //       eventDetails: {
-          //         ...eventResponse.eventDetails,
+          //       event: {
+          //         ...eventResponse.event,
           //         ...cleanedData
           //       },
           //     }) : eventResponse).map(mapEvent);
@@ -337,17 +337,16 @@ const CreateEvent = props => {
             });
 
           const eventResponseData = {
-            user: userDocRef,
-            event: eventDocRef,
-            school: schoolDocRef,
             response: "YES",
-            userDetails: {
+            user: {
+              ref: userDocRef,
               id: userDocRef.id,
               firstName: user.firstName,
               lastName: user.lastName,
               gravatar: user.gravatar
             },
-            eventDetails: {
+            event: {
+              ref: eventDocRef,
               id: eventDocRef.id,
               name: formState.name.trim(),
               description: formState.description.trim(),
@@ -356,7 +355,8 @@ const CreateEvent = props => {
               game: formState.game,
               isOnlineEvent: formState.isOnlineEvent
             },
-            schoolDetails: {
+            school: {
+              school: schoolDocRef,
               id: schoolDocRef.id,
               name: school.name
             }

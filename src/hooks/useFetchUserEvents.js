@@ -44,7 +44,7 @@ const useFetchUserEvents = (
           .where("user", "==", userDocRef)
           .where("response", "==", "YES")
           .where(
-            "eventDetails.endDateTime",
+            "event.endDateTime",
             ">=",
             firebase.firestore.Timestamp.fromDate(now)
           );

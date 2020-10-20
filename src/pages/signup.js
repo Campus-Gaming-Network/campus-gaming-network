@@ -95,10 +95,10 @@ const Signup = () => {
             lastName: formState.lastName,
             status: formState.status,
             gravatar: createGravatarHash(formState.email),
-            school: firebaseFirestore
-              .collection("schools")
-              .doc(formState.school),
-            schoolDetails: {
+            school: {
+              ref: firebaseFirestore
+                .collection("schools")
+                .doc(formState.school),
               id: formState.school
             },
             major: "",

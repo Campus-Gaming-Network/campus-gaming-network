@@ -89,7 +89,7 @@ const UserCreatedEvents = props => {
               <EventListItem
                 key={event.id}
                 event={event}
-                school={event.schoolDetails}
+                school={event.school}
               />
             ))}
           </List>
@@ -178,7 +178,7 @@ const UpcomingSchoolEvents = props => {
               <EventListItem
                 key={event.id}
                 event={event}
-                school={event.schoolDetails}
+                school={event.school}
               />
             ))}
           </List>
@@ -219,7 +219,7 @@ const RecentlyCreatedEvents = () => {
               <EventListItem
                 key={event.id}
                 event={event}
-                school={event.schoolDetails}
+                school={event.school}
               />
             ))}
           </List>

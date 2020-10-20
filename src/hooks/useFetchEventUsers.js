@@ -64,7 +64,7 @@ const useFetchEventUsers = (
                 eventUsers.push(
                   mapUser({
                     id: data.user.id,
-                    ...data.userDetails
+                    ...data.user
                   })
                 );
               });

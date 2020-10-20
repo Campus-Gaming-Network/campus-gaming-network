@@ -275,7 +275,7 @@ const EditUser = props => {
       xbox: formState.xbox.trim(),
       psn: formState.psn.trim(),
       school: schoolDocRef,
-      schoolDetails: {
+      school: {
         id: schoolDocRef.id
       },
       currentlyPlaying,
