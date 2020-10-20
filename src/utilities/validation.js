@@ -2,7 +2,7 @@ import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
 import isDate from "lodash.isdate";
 import isString from "lodash.isstring";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import { STUDENT_STATUS_OPTIONS, DAYS, MONTHS, YEARS } from "../constants";
 import timezoneOptions from "../data/timezones.json";
@@ -23,12 +23,12 @@ const isNilOrEmpty = value => {
 const isWithin = (value, options) => options.includes(value);
 const isGreaterThan = (value, other) => value > other;
 const isLessThan = (value, other) => value < other;
-const isValidDateTime = dateTime => moment(dateTime).isValid();
-const isBeforeToday = dateTime => moment(dateTime).isBefore(moment());
+const isValidDateTime = dateTime => dateTime.isValid;
+const isBeforeToday = dateTime => dateTime < DateTime.local();
 const isSameOrAfterEndDateTime = (startDateTime, endDateTime) =>
-  moment(startDateTime).isSameOrAfter(moment(endDateTime));
+  startDateTime >= endDateTime;
 const isSameOrBeforeStartDateTime = (endDateTime, startDateTime) =>
-  moment(endDateTime).isSameOrBefore(moment(startDateTime));
+  endDateTime <= startDateTime;
 
 const maxFavoriteGameLimit = 5;
 const maxCurrentlyPlayingLimit = 5;
@@ -280,7 +280,8 @@ export const validateEditUser = ({
     !errors.birthYear &&
     !errors.birthMonth &&
     !errors.birthDay &&
-    !moment(`${birthMonth}-${birthDay}-${birthYear}`, "MMMM-DD-YYYY").isValid()
+    !DateTime.fromFormat(`${birthMonth}-${birthDay}-${birthYear}`, "MMMM-d-y")
+      .isValid
   ) {
     errors.birthdate = `${birthMonth}-${birthDay}-${birthYear} is not a valid date`;
   }

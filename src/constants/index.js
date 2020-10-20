@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
 
-import moment from "moment";
+import { DateTime, Info } from "luxon";
 import range from "lodash.range";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -18,11 +18,6 @@ import {
 
 export const TEST_VIDEO_GAME_COVER =
   "https://images.igdb.com/igdb/image/upload/t_cover_big/lxoumgqbbj3erxgq6a6l.jpg";
-
-export const MOMENT_DISPLAY_FORMAT = "ddd, MMM Do h:mm a";
-export const MOMENT_CALENDAR_FORMAT = {
-  sameElse: MOMENT_DISPLAY_FORMAT
-};
 
 export const GOOGLE_MAPS_QUERY_URL =
   "https://www.google.com/maps/search/?api=1&query=";
@@ -173,8 +168,8 @@ export const DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE = 5;
 export const DEFAULT_EVENTS_LIST_PAGE_SIZE = 25;
 export const DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE = 3;
 
-export const CURRENT_YEAR = moment().year();
-export const MONTHS = moment.months();
+export const CURRENT_YEAR = DateTime.local().year;
+export const MONTHS = Info.months();
 export const MAX_DAYS_IN_MONTH = 31;
 export const DAYS = range(1, MAX_DAYS_IN_MONTH + 1).map(day => day.toString());
 export const YEARS = range(CURRENT_YEAR - 100, CURRENT_YEAR + 1).map(year =>

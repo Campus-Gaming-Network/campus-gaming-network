@@ -6,7 +6,7 @@ import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
-import moment from "moment";
+import { DateTime } from "luxon";
 import {
   Flex,
   Input,
@@ -160,8 +160,10 @@ const EditUser = props => {
     formDispatch({ field: "hometown", value: user.hometown || "" });
 
     if (user.birthdate) {
-      const [birthMonth, birthDay, birthYear] = moment(user.birthdate.toDate())
-        .format("MMMM-DD-YYYY")
+      const [birthMonth, birthDay, birthYear] = DateTime.local(
+        user.birthdate.toDate()
+      )
+        .toFormat("MMMM-DD-YYYY")
         .split("-");
       formDispatch({ field: "birthMonth", value: birthMonth });
       formDispatch({ field: "birthDay", value: birthDay });
@@ -245,12 +247,12 @@ const EditUser = props => {
     let birthdate = null;
 
     if (formState.birthMonth && formState.birthDay && formState.birthYear) {
-      const momentBirthdate = moment(
+      const formattedBirthdate = DateTime.fromFormat(
         `${formState.birthMonth}-${formState.birthDay}-${formState.birthYear}`,
         "MMMM-DD-YYYY"
       );
       birthdate = firebase.firestore.Timestamp.fromDate(
-        new Date(momentBirthdate)
+        new Date(formattedBirthdate)
       );
     }
 

@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { STUDENT_STATUS_OPTIONS, DAYS, MONTHS, YEARS } from "../constants";
 import timezoneOptions from "../data/timezones.json";
 import {
@@ -14,13 +15,10 @@ const STATUSES = STUDENT_STATUS_OPTIONS.reduce((acc, curr) => ({
   [curr.value]: curr.value
 }));
 
-const TODAY = new Date();
-// Add an hour so we dont get caught in the past
-TODAY.setHours(TODAY.getHours() + 1);
-const TOMORROW = new Date(TODAY);
-TOMORROW.setDate(TOMORROW.getDate() + 1);
-const YESTERDAY = new Date(TODAY);
-YESTERDAY.setDate(YESTERDAY.getDate() - 1);
+// Modify by an hour so we dont get caught in the past by the time the tests reach this
+const TODAY = DateTime.local().plus({ hours: 1 });
+const TOMORROW = TODAY.plus({ days: 1 });
+const YESTERDAY = TODAY.minus({ days: 1 });
 
 const AUTH_USER = {
   email: "support@campusgamingnetwork.com",
