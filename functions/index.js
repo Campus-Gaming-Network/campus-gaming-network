@@ -85,8 +85,14 @@ exports.searchGames = functions.https.onCall((data) => {
 });
 
 exports.searchSchools = functions.https.onCall((data) => {
+  const limit = data.limit > 100
+    ? 100
+    : data.limit < 0
+    ? 0
+    : data.limit;
+
   return algoliaSearchIndex.search(data.query, {
-    hitsPerPage: data.limit,
+    hitsPerPage: limit,
   });
 });
 
@@ -212,7 +218,7 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
       const eventDocRef = db.collection("events").doc(context.params.eventId);
       const eventResponsesQuery = db
         .collection("event-responses")
-        .where("event", "==", eventDocRef);
+        .where("event.ref", "==", eventDocRef);
 
       console.log(
         `Event ${context.params.eventId} updated: ${changes.join(", ")}`
@@ -271,7 +277,7 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
         .doc(context.params.schoolId);
       const eventResponsesQuery = db
         .collection("event-responses")
-        .where("school", "==", schoolDocRef);
+        .where("school.ref", "==", schoolDocRef);
 
       console.log(
         `School updated ${context.params.schoolId} updated: ${changes.join(
@@ -334,7 +340,7 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
       const userDocRef = db.collection("users").doc(context.params.userId);
       const eventResponsesQuery = db
         .collection("event-responses")
-        .where("user", "==", userDocRef);
+        .where("user.ref", "==", userDocRef);
 
       console.log(
         `User updated ${context.params.userId} updated: ${changes.join(", ")}`
@@ -494,7 +500,7 @@ exports.eventOnDelete = functions.firestore
     const eventDocRef = db.collection("events").doc(context.params.eventId);
     const eventResponsesQuery = db
       .collection("event-responses")
-      .where("event", "==", eventDocRef);
+      .where("event.ref", "==", eventDocRef);
 
       return eventResponsesQuery
       .get()
@@ -524,7 +530,7 @@ exports.userOnDelete = functions.firestore
       .where("creator", "==", userDocRef);
     const eventResponsesQuery = db
       .collection("event-responses")
-      .where("user", "==", userDocRef);
+      .where("user.ref", "==", userDocRef);
 
     eventResponsesQuery
       .get()

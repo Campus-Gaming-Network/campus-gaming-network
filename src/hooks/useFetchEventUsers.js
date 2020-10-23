@@ -41,7 +41,7 @@ const useFetchEventUsers = (
 
         let query = firebaseFirestore
           .collection("event-responses")
-          .where("event", "==", eventDocRef)
+          .where("event.ref", "==", eventDocRef)
           .where("response", "==", "YES");
 
         if (page > 0) {

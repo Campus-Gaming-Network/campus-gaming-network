@@ -19,8 +19,8 @@ const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
 
       firebaseFirestore
         .collection("event-responses")
-        .where("event", "==", eventDocRef)
-        .where("user", "==", userDocRef)
+        .where("event.ref", "==", eventDocRef)
+        .where("user.ref", "==", userDocRef)
         .limit(1)
         .get()
         .then(snapshot => {

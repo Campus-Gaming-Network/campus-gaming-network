@@ -41,7 +41,7 @@ const useFetchSchoolUsers = (
 
         let query = firebaseFirestore
           .collection("users")
-          .where("school", "==", schoolDocRef);
+          .where("school.ref", "==", schoolDocRef);
 
         if (page > 0) {
           if (!pages[page]) {

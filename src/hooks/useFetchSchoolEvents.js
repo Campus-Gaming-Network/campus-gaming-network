@@ -42,7 +42,7 @@ const useFetchSchoolEvents = (
 
         let query = firebaseFirestore
           .collection("events")
-          .where("school", "==", schoolDocRef)
+          .where("school.ref", "==", schoolDocRef)
           .where(
             "endDateTime",
             ">=",

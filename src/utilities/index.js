@@ -63,9 +63,8 @@ const getUserDisplayStatus = status =>
   ({ ALUMNI: "Alumni of ", GRAD: "Graduate Student at " }[status] ||
   `${capitalize(status)} at `);
 
-export const mapUser = (user, ref) => ({
+export const mapUser = user => ({
   ...user,
-  id: user.id || ref.id,
   fullName: `${user.firstName} ${user.lastName}`.trim(),
   hasAccounts: userHasAccounts(user),
   hasFavoriteGames: !!(user.favoriteGames && user.favoriteGames.length),
@@ -73,31 +72,22 @@ export const mapUser = (user, ref) => ({
     user.currentlyPlaying && user.currentlyPlaying.length
   ),
   displayStatus: getUserDisplayStatus(user.status),
-  gravatarUrl: createGravatarRequestUrl(user.gravatar),
-  doc: ref
+  gravatarUrl: createGravatarRequestUrl(user.gravatar)
 });
 
-export const mapEvent = (event, ref) => ({
+export const mapEvent = event => ({
   ...event,
-  id: event.id || ref.id,
   formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
   formattedEndDateTime: formatCalendarDateTime(event.endDateTime),
   googleMapsAddressLink: googleMapsLink(event.location),
   hasStarted: hasStarted(event.startDateTime, event.endDateTime),
-  hasEnded: hasEnded(event.endDateTime),
-  school: {
-    ...event.school,
-    id: event.school.id
-  }
+  hasEnded: hasEnded(event.endDateTime)
 });
 
-export const mapEventResponse = (eventResponse, ref) => ({
+export const mapEventResponse = eventResponse => ({
   ...eventResponse,
-  id: eventResponse.id || ref.id,
-  response: eventResponse.response,
   event: {
     ...eventResponse.event,
-    id: eventResponse.event.id,
     formattedStartDateTime: formatCalendarDateTime(
       eventResponse.event.startDateTime
     ),
@@ -109,20 +99,11 @@ export const mapEventResponse = (eventResponse, ref) => ({
       eventResponse.event.endDateTime
     ),
     hasEnded: hasEnded(eventResponse.event.endDateTime)
-  },
-  school: {
-    ...eventResponse.school,
-    id: eventResponse.school.id
-  },
-  user: {
-    ...eventResponse.user,
-    id: eventResponse.user.id
   }
 });
 
-export const mapSchool = (school, ref) => ({
+export const mapSchool = school => ({
   ...school,
-  id: school.objectID || school.id || ref.id,
   googleMapsAddressLink: googleMapsLink(
     `${school.address} ${school.city}, ${school.state}`
   )

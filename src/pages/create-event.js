@@ -208,19 +208,17 @@ const CreateEvent = props => {
       };
     }
 
-    const cleanedData = omitBy(eventData, isNil);
-
     if (props.edit) {
       firebaseFirestore
         .collection("events")
         .doc(props.id)
-        .update(cleanedData)
+        .update(eventData)
         .then(() => {
           dispatch({
             type: ACTION_TYPES.SET_EVENT,
             payload: {
               ...event,
-              ...cleanedData
+              ...eventData
             }
           });
 
@@ -235,7 +233,7 @@ const CreateEvent = props => {
                         ...eventResponse,
                         event: {
                           ...eventResponse.event,
-                          ...cleanedData
+                          ...eventData
                         }
                       }
                     : eventResponse
@@ -270,7 +268,7 @@ const CreateEvent = props => {
           //       ...eventResponse,
           //       event: {
           //         ...eventResponse.event,
-          //         ...cleanedData
+          //         ...eventData
           //       },
           //     }) : eventResponse).map(mapEvent);
 
@@ -319,7 +317,7 @@ const CreateEvent = props => {
       firebaseFirestore
         .collection("events")
         .add({
-          ...cleanedData,
+          ...eventData,
           responses: {
             yes: 0,
             no: 0
@@ -356,7 +354,7 @@ const CreateEvent = props => {
               isOnlineEvent: formState.isOnlineEvent
             },
             school: {
-              school: schoolDocRef,
+              ref: schoolDocRef,
               id: schoolDocRef.id,
               name: school.name
             }

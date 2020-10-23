@@ -142,7 +142,7 @@ const UpcomingSchoolEvents = props => {
   const [schoolEvents, isLoading] = useCollectionDataOnce(
     firebaseFirestore
       .collection("events")
-      .where("school", "==", schoolDocRef)
+      .where("school.ref", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .limit(12)
   );
