@@ -91,6 +91,7 @@ const Signup = () => {
           .collection("users")
           .doc(user.uid)
           .set({
+            id: user.uid,
             firstName: formState.firstName,
             lastName: formState.lastName,
             status: formState.status,
