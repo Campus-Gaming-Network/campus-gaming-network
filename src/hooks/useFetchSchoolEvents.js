@@ -3,12 +3,12 @@ import isEmpty from "lodash.isempty";
 
 import { firebase, firebaseFirestore } from "../firebase";
 import { mapEvent } from "../utilities";
-import * as constants from "../constants";
+import { DEFAULT_EVENTS_LIST_PAGE_SIZE, COLLECTIONS } from "../constants";
 import { useAppState } from "../store";
 
 const useFetchSchoolEvents = (
   id,
-  limit = constants.DEFAULT_EVENTS_LIST_PAGE_SIZE,
+  limit = DEFAULT_EVENTS_LIST_PAGE_SIZE,
   page = 0
 ) => {
   const state = useAppState();
@@ -37,12 +37,14 @@ const useFetchSchoolEvents = (
       } else {
         console.log(`[API] fetchSchoolEvents...${id}`);
 
-        const schoolDocRef = firebaseFirestore.collection("schools").doc(id);
+        const schoolDocRef = firebaseFirestore
+          .collection(COLLECTIONS.SCHOOLS)
+          .doc(id);
         const now = new Date();
 
         let query = firebaseFirestore
-          .collection("events")
-          .where("school", "==", schoolDocRef)
+          .collection(COLLECTIONS.EVENTS)
+          .where("school.ref", "==", schoolDocRef)
           .where(
             "endDateTime",
             ">=",

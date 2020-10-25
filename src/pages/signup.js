@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/core";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
-import * as constants from "../constants";
+import { STUDENT_STATUS_OPTIONS, COLLECTIONS } from "../constants";
 
 import { createGravatarHash } from "../utilities";
 import { validateSignUp } from "../utilities/validation";
@@ -88,17 +88,18 @@ const Signup = () => {
       .createUserWithEmailAndPassword(formState.email, formState.password)
       .then(({ user }) => {
         firebaseFirestore
-          .collection("users")
+          .collection(COLLECTIONS.USERS)
           .doc(user.uid)
           .set({
+            id: user.uid,
             firstName: formState.firstName,
             lastName: formState.lastName,
             status: formState.status,
             gravatar: createGravatarHash(formState.email),
-            school: firebaseFirestore
-              .collection("schools")
-              .doc(formState.school),
-            schoolDetails: {
+            school: {
+              ref: firebaseFirestore
+                .collection(COLLECTIONS.SCHOOLS)
+                .doc(formState.school),
               id: formState.school
             },
             major: "",
@@ -317,7 +318,7 @@ const SchoolSection = React.memo(props => {
           value={props.status}
           size="lg"
         >
-          {constants.STUDENT_STATUS_OPTIONS.map(status => (
+          {STUDENT_STATUS_OPTIONS.map(status => (
             <option key={status.value} value={status.value}>
               {startCase(status.label)}
             </option>

@@ -4,6 +4,7 @@ import isEmpty from "lodash.isempty";
 import { firebaseFirestore } from "../firebase";
 import { mapEvent } from "../utilities";
 import { useAppState } from "../store";
+import { COLLECTIONS } from "../constants";
 
 const useFetchEventDetails = id => {
   const state = useAppState();
@@ -26,7 +27,7 @@ const useFetchEventDetails = id => {
         console.log(`[API] fetchEventDetails...${id}`);
 
         firebaseFirestore
-          .collection("events")
+          .collection(COLLECTIONS.EVENTS)
           .doc(id)
           .get()
           .then(doc => {

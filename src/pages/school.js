@@ -17,7 +17,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import isEmpty from "lodash.isempty";
 import times from "lodash.times";
-import * as constants from "../constants";
+import {
+  EMPTY_SCHOOL_WEBSITE,
+  SCHOOL_EMPTY_USERS_TEXT,
+  DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE,
+  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT,
+  DEFAULT_USERS_LIST_PAGE_SIZE,
+  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE,
+  COLLECTIONS
+} from "../constants";
 
 import OutsideLink from "../components/OutsideLink";
 import VisuallyHidden from "../components/VisuallyHidden";
@@ -130,8 +138,7 @@ const School = props => {
             <Text as="dt" w="50%" fontWeight="bold">
               Website
             </Text>
-            {school.website &&
-            school.website !== constants.EMPTY_SCHOOL_WEBSITE ? (
+            {school.website && school.website !== EMPTY_SCHOOL_WEBSITE ? (
               <Text as="dd" w="50%">
                 {isUrl(school.website) ? (
                   <OutsideLink d="inline-block" href={`//${school.website}`}>
@@ -226,7 +233,7 @@ const EventsList = props => {
   if (isLoadingEvents) {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {times(constants.DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
+        {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
           <Box key={index} w={{ md: "33%", sm: "50%", xs: "100%" }}>
             <Skeleton
               pos="relative"
@@ -246,11 +253,7 @@ const EventsList = props => {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
         {events.map(event => (
-          <EventListItem
-            key={event.id}
-            event={event}
-            school={event.schoolDetails}
-          />
+          <EventListItem key={event.id} event={event} school={event.school} />
         ))}
       </List>
     );
@@ -258,7 +261,7 @@ const EventsList = props => {
 
   return (
     <Text mt={4} color="gray.400">
-      {constants.SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
+      {SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
     </Text>
   );
 };
@@ -276,7 +279,7 @@ const UsersList = props => {
   );
 
   const nextPage = () => {
-    if (users && users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
+    if (users && users.length === DEFAULT_USERS_LIST_PAGE_SIZE) {
       setPage(page + 1);
     }
   };
@@ -303,7 +306,7 @@ const UsersList = props => {
   if (isLoadingUsers) {
     return (
       <Flex flexWrap="wrap" mx={-2}>
-        {times(constants.DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
+        {times(DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
           <Box key={index} w={{ md: "20%", sm: "33%", xs: "50%" }}>
             <Skeleton
               pos="relative"
@@ -347,13 +350,13 @@ const UsersList = props => {
           ) : null}
           {users &&
           users.length &&
-          users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE ? (
+          users.length === DEFAULT_USERS_LIST_PAGE_SIZE ? (
             <Button
               variant="ghost"
               size="sm"
               rightIcon="arrow-forward"
               variantColor="purple"
-              disabled={users.length !== constants.DEFAULT_USERS_LIST_PAGE_SIZE}
+              disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
               onClick={nextPage}
               ml="auto"
             >
@@ -367,7 +370,7 @@ const UsersList = props => {
 
   return (
     <Text mt={4} color="gray.400">
-      {constants.SCHOOL_EMPTY_USERS_TEXT}
+      {SCHOOL_EMPTY_USERS_TEXT}
     </Text>
   );
 };

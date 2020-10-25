@@ -33,9 +33,9 @@ import {
   AlertDialogContent,
   AlertDialogOverlay
 } from "@chakra-ui/core";
-import DateTimePicker from "react-widgets/lib/DateTimePicker";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
+import { DateTime } from "luxon";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
@@ -46,6 +46,7 @@ import { validateCreateEvent } from "../utilities/validation";
 // Hooks
 import useFetchEventDetails from "../hooks/useFetchEventDetails";
 import { mapEventResponse, mapEvent } from "../utilities";
+import { COLLECTIONS } from "../constants";
 
 const initialFormState = {
   name: "",
@@ -110,7 +111,7 @@ const CreateEvent = props => {
 
     try {
       await firebaseFirestore
-        .collection("events")
+        .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
         .delete();
 
@@ -152,7 +153,11 @@ const CreateEvent = props => {
 
     setIsSubmitting(true);
 
-    const { isValid, errors } = validateCreateEvent(formState);
+    const { isValid, errors } = validateCreateEvent({
+      ...formState,
+      startDateTime: DateTime.local(formState.startDateTime),
+      endDateTime: DateTime.local(formState.endDateTime)
+    });
 
     setErrors(errors);
 
@@ -181,9 +186,11 @@ const CreateEvent = props => {
       formState.endDateTime
     );
     const schoolDocRef = firebaseFirestore
-      .collection("schools")
+      .collection(COLLECTIONS.SCHOOLS)
       .doc(user.school.id);
-    const userDocRef = firebaseFirestore.collection("users").doc(user.id);
+    const userDocRef = firebaseFirestore
+      .collection(COLLECTIONS.USERS)
+      .doc(user.id);
 
     const eventData = {
       creator: userDocRef,
@@ -201,26 +208,24 @@ const CreateEvent = props => {
     }
 
     if (!props.edit) {
-      eventData.school = schoolDocRef;
-      eventData.schoolDetails = {
+      eventData.school = {
+        ref: schoolDocRef,
         id: schoolDocRef.id,
         name: school.name
       };
     }
 
-    const cleanedData = omitBy(eventData, isNil);
-
     if (props.edit) {
       firebaseFirestore
-        .collection("events")
+        .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
-        .update(cleanedData)
+        .update(eventData)
         .then(() => {
           dispatch({
             type: ACTION_TYPES.SET_EVENT,
             payload: {
               ...event,
-              ...cleanedData
+              ...eventData
             }
           });
 
@@ -233,9 +238,9 @@ const CreateEvent = props => {
                   eventResponse.event.id === props.id
                     ? {
                         ...eventResponse,
-                        eventDetails: {
-                          ...eventResponse.eventDetails,
-                          ...cleanedData
+                        event: {
+                          ...eventResponse.event,
+                          ...eventData
                         }
                       }
                     : eventResponse
@@ -268,9 +273,9 @@ const CreateEvent = props => {
           //   if (schoolToUpdate.events) {
           //     const updatedEvents = schoolToUpdate.events.map((eventResponse) => eventResponse.event.id === props.id ? ({
           //       ...eventResponse,
-          //       eventDetails: {
-          //         ...eventResponse.eventDetails,
-          //         ...cleanedData
+          //       event: {
+          //         ...eventResponse.event,
+          //         ...eventData
           //       },
           //     }) : eventResponse).map(mapEvent);
 
@@ -317,9 +322,9 @@ const CreateEvent = props => {
       let eventId;
 
       firebaseFirestore
-        .collection("events")
+        .collection(COLLECTIONS.EVENTS)
         .add({
-          ...cleanedData,
+          ...eventData,
           responses: {
             yes: 0,
             no: 0
@@ -329,7 +334,7 @@ const CreateEvent = props => {
           eventId = eventDocRef.id;
 
           firebaseFirestore
-            .collection("events")
+            .collection(COLLECTIONS.EVENTS)
             .doc(eventId)
             .update({ id: eventId })
             .catch(() => {
@@ -337,17 +342,16 @@ const CreateEvent = props => {
             });
 
           const eventResponseData = {
-            user: userDocRef,
-            event: eventDocRef,
-            school: schoolDocRef,
             response: "YES",
-            userDetails: {
+            user: {
+              ref: userDocRef,
               id: userDocRef.id,
               firstName: user.firstName,
               lastName: user.lastName,
               gravatar: user.gravatar
             },
-            eventDetails: {
+            event: {
+              ref: eventDocRef,
               id: eventDocRef.id,
               name: formState.name.trim(),
               description: formState.description.trim(),
@@ -356,14 +360,15 @@ const CreateEvent = props => {
               game: formState.game,
               isOnlineEvent: formState.isOnlineEvent
             },
-            schoolDetails: {
+            school: {
+              ref: schoolDocRef,
               id: schoolDocRef.id,
               name: school.name
             }
           };
 
           firebaseFirestore
-            .collection("event-responses")
+            .collection(COLLECTIONS.EVENT_RESPONSES)
             .add(eventResponseData)
             .then(() => {
               toast({
@@ -706,16 +711,6 @@ const CreateEvent = props => {
                 >
                   Starts
                 </FormLabel>
-                <DateTimePicker
-                  id="startDateTime"
-                  name="startDateTime"
-                  value={formState.startDateTime}
-                  onChange={value =>
-                    formDispatch({ field: "startDateTime", value })
-                  }
-                  min={new Date()}
-                  step={15}
-                />
                 <FormErrorMessage>{errors.startDateTime}</FormErrorMessage>
               </FormControl>
               <FormControl isRequired isInvalid={errors.endDateTime}>
@@ -726,16 +721,6 @@ const CreateEvent = props => {
                 >
                   Ends
                 </FormLabel>
-                <DateTimePicker
-                  id="endDateTime"
-                  name="endDateTime"
-                  value={formState.endDateTime}
-                  onChange={value =>
-                    formDispatch({ field: "endDateTime", value })
-                  }
-                  min={new Date()}
-                  step={15}
-                />
                 <FormErrorMessage>{errors.endDateTime}</FormErrorMessage>
               </FormControl>
               {/* TODO: Tournament feature */}

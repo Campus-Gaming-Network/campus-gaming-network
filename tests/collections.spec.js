@@ -28,7 +28,7 @@ const USER = {
   lastName: "Sansone",
   status: "FRESHMAN",
   gravatar: "xxxXXXxxx",
-  schoolDetails: {...SCHOOL},
+  school: {...SCHOOL},
   major: "",
   minor: "",
   bio: "",
@@ -70,9 +70,9 @@ const EVENT = {
 
 const EVENT_RESPONSE = {
   response: "YES",
-  userDetails: {...USER},
-  eventDetails: {...EVENT},
-  schoolDetails: {...SCHOOL},
+  user: {...USER},
+  event: {...EVENT},
+  school: {...SCHOOL},
 };
 
 const GAME_QUERY = "League of Legends";
@@ -314,7 +314,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      schoolDetails: null,
+      school: null,
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -326,7 +326,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      schoolDetails: {
+      school: {
         blah: null
       },
     });
@@ -340,7 +340,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      schoolDetails: {
+      school: {
         id: null
       },
     });

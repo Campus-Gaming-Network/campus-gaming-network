@@ -3,12 +3,12 @@ import isEmpty from "lodash.isempty";
 
 import { firebase, firebaseFirestore } from "../firebase";
 import { mapEventResponse } from "../utilities";
-import * as constants from "../constants";
+import { DEFAULT_EVENTS_LIST_PAGE_SIZE, COLLECTIONS } from "../constants";
 import { useAppState } from "../store";
 
 const useFetchUserEvents = (
   id,
-  limit = constants.DEFAULT_EVENTS_LIST_PAGE_SIZE,
+  limit = DEFAULT_EVENTS_LIST_PAGE_SIZE,
   next = null,
   prev = null
 ) => {
@@ -36,15 +36,17 @@ const useFetchUserEvents = (
       } else {
         console.log(`[API] fetchUserEvents...${id}`);
 
-        const userDocRef = firebaseFirestore.collection("users").doc(id);
+        const userDocRef = firebaseFirestore
+          .collection(COLLECTIONS.USERS)
+          .doc(id);
         const now = new Date();
 
         let query = firebaseFirestore
-          .collection("event-responses")
-          .where("user", "==", userDocRef)
+          .collection(COLLECTIONS.EVENT_RESPONSES)
+          .where("user.ref", "==", userDocRef)
           .where("response", "==", "YES")
           .where(
-            "eventDetails.endDateTime",
+            "event.endDateTime",
             ">=",
             firebase.firestore.Timestamp.fromDate(now)
           );

@@ -3,12 +3,12 @@ import isEmpty from "lodash.isempty";
 
 import { firebaseFirestore } from "../firebase";
 import { mapUser } from "../utilities";
-import * as constants from "../constants";
+import { DEFAULT_USERS_LIST_PAGE_SIZE, COLLECTIONS } from "../constants";
 import { useAppState } from "../store";
 
 const useFetchEventUsers = (
   id,
-  limit = constants.DEFAULT_USERS_LIST_PAGE_SIZE,
+  limit = DEFAULT_USERS_LIST_PAGE_SIZE,
   page = 0
 ) => {
   const state = useAppState();
@@ -37,11 +37,13 @@ const useFetchEventUsers = (
       } else {
         console.log(`[API] fetchEventUsers...${id}`);
 
-        const eventDocRef = firebaseFirestore.collection("events").doc(id);
+        const eventDocRef = firebaseFirestore
+          .collection(COLLECTIONS.EVENTS)
+          .doc(id);
 
         let query = firebaseFirestore
-          .collection("event-responses")
-          .where("event", "==", eventDocRef)
+          .collection(COLLECTIONS.EVENT_RESPONSES)
+          .where("event.ref", "==", eventDocRef)
           .where("response", "==", "YES");
 
         if (page > 0) {
@@ -64,7 +66,7 @@ const useFetchEventUsers = (
                 eventUsers.push(
                   mapUser({
                     id: data.user.id,
-                    ...data.userDetails
+                    ...data.user
                   })
                 );
               });

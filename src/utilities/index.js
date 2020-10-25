@@ -4,10 +4,15 @@
 import React from "react";
 import intersection from "lodash.intersection";
 import capitalize from "lodash.capitalize";
-import moment from "moment";
+import { DateTime, Interval } from "luxon";
 import md5 from "md5";
 
-import * as constants from "../constants";
+import {
+  GRAVATAR,
+  GOOGLE_MAPS_QUERY_URL,
+  ACCOUNTS,
+  MOMENT_CALENDAR_FORMAT
+} from "../constants";
 
 export const classNames = (_classNames = []) => {
   if (isDev()) {
@@ -54,18 +59,17 @@ export const createGravatarHash = (email = "") => {
 };
 
 export const createGravatarRequestUrl = hash => {
-  return `https://www.gravatar.com/avatar/${hash}?s=100&d=${constants.GRAVATAR.DEFAULT}&r=${constants.GRAVATAR.RA}`;
+  return `https://www.gravatar.com/avatar/${hash}?s=100&d=${GRAVATAR.DEFAULT}&r=${GRAVATAR.RA}`;
 };
 
 export const noop = () => {};
 
-const getUserDisplayStatus = status =>
+export const getUserDisplayStatus = status =>
   ({ ALUMNI: "Alumni of ", GRAD: "Graduate Student at " }[status] ||
   `${capitalize(status)} at `);
 
-export const mapUser = (user, ref) => ({
+export const mapUser = user => ({
   ...user,
-  id: user.id || ref.id,
   fullName: `${user.firstName} ${user.lastName}`.trim(),
   hasAccounts: userHasAccounts(user),
   hasFavoriteGames: !!(user.favoriteGames && user.favoriteGames.length),
@@ -73,56 +77,38 @@ export const mapUser = (user, ref) => ({
     user.currentlyPlaying && user.currentlyPlaying.length
   ),
   displayStatus: getUserDisplayStatus(user.status),
-  gravatarUrl: createGravatarRequestUrl(user.gravatar),
-  doc: ref
+  gravatarUrl: createGravatarRequestUrl(user.gravatar)
 });
 
-export const mapEvent = (event, ref) => ({
+export const mapEvent = event => ({
   ...event,
-  id: event.id || ref.id,
   formattedStartDateTime: formatCalendarDateTime(event.startDateTime),
   formattedEndDateTime: formatCalendarDateTime(event.endDateTime),
   googleMapsAddressLink: googleMapsLink(event.location),
   hasStarted: hasStarted(event.startDateTime, event.endDateTime),
-  hasEnded: hasEnded(event.endDateTime),
-  schoolDetails: {
-    ...event.schoolDetails,
-    id: event.school.id
-  }
+  hasEnded: hasEnded(event.endDateTime)
 });
 
-export const mapEventResponse = (eventResponse, ref) => ({
+export const mapEventResponse = eventResponse => ({
   ...eventResponse,
-  id: eventResponse.id || ref.id,
-  response: eventResponse.response,
   event: {
-    ...eventResponse.eventDetails,
-    id: eventResponse.event.id,
+    ...eventResponse.event,
     formattedStartDateTime: formatCalendarDateTime(
-      eventResponse.eventDetails.startDateTime
+      eventResponse.event.startDateTime
     ),
     formattedEndDateTime: formatCalendarDateTime(
-      eventResponse.eventDetails.endDateTime
+      eventResponse.event.endDateTime
     ),
     hasStarted: hasStarted(
-      eventResponse.eventDetails.startDateTime,
-      eventResponse.eventDetails.endDateTime
+      eventResponse.event.startDateTime,
+      eventResponse.event.endDateTime
     ),
-    hasEnded: hasEnded(eventResponse.eventDetails.endDateTime)
-  },
-  school: {
-    ...eventResponse.schoolDetails,
-    id: eventResponse.school.id
-  },
-  user: {
-    ...eventResponse.userDetails,
-    id: eventResponse.user.id
+    hasEnded: hasEnded(eventResponse.event.endDateTime)
   }
 });
 
-export const mapSchool = (school, ref) => ({
+export const mapSchool = school => ({
   ...school,
-  id: school.objectID || school.id || ref.id,
   googleMapsAddressLink: googleMapsLink(
     `${school.address} ${school.city}, ${school.state}`
   )
@@ -130,17 +116,17 @@ export const mapSchool = (school, ref) => ({
 
 export const hasStarted = (startDateTime, endDateTime) => {
   if (startDateTime && endDateTime) {
-    return moment().isBetween(
-      moment(startDateTime.toDate()),
-      moment(endDateTime.toDate())
-    );
+    return Interval.fromDateTimes(
+      startDateTime.toDate(),
+      endDateTime.toDate()
+    ).contains(DateTime.local());
   }
 
   return null;
 };
 export const hasEnded = endDateTime => {
   if (endDateTime) {
-    return moment().isAfter(moment(endDateTime.toDate()));
+    return DateTime.local() > DateTime.local(endDateTime.toDate());
   }
 
   return null;
@@ -151,12 +137,12 @@ export const googleMapsLink = query => {
     return null;
   }
 
-  return `${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(query)}`;
+  return `${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(query)}`;
 };
 
 export const formatCalendarDateTime = dateTime => {
   return dateTime
-    ? moment(dateTime.toDate()).calendar(null, constants.MOMENT_CALENDAR_FORMAT)
+    ? DateTime.local(dateTime.toDate()).toRelativeCalendar()
     : null;
 };
 
@@ -166,7 +152,7 @@ export const userHasAccounts = user => {
   }
 
   return (
-    intersection(Object.keys(constants.ACCOUNTS), Object.keys(user)).filter(
+    intersection(Object.keys(ACCOUNTS), Object.keys(user)).filter(
       key => !!user[key]
     ).length > 0
   );
