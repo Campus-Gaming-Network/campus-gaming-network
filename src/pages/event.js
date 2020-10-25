@@ -119,16 +119,15 @@ const Event = props => {
     const user = state.users[authenticatedUser.uid];
 
     const data = {
-      user: userDocRef,
-      event: eventDocRef,
-      school: schoolDocRef,
       response,
-      userDetails: {
+      user: {
+        ref: userDocRef,
         firstName: user.firstName,
         lastName: user.lastName,
         gravatar: user.gravatar
       },
-      eventDetails: {
+      event: {
+        ref: eventDocRef,
         name: event.name,
         description: event.description,
         startDateTime: event.startDateTime,
@@ -139,8 +138,9 @@ const Event = props => {
           no: 0
         }
       },
-      schoolDetails: {
-        name: event.schoolDetails.name
+      school: {
+        ref: schoolDocRef,
+        name: event.school.name
       }
     };
 
@@ -264,7 +264,7 @@ const Event = props => {
                 fontWeight={600}
                 fontSize="lg"
               >
-                {startCase(event.schoolDetails.name.toLowerCase())}
+                {startCase(event.school.name.toLowerCase())}
               </Link>
               <Heading as="h1" fontWeight="bold" fontSize="5xl">
                 {event.name}

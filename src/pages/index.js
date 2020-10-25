@@ -90,7 +90,7 @@ const UserCreatedEvents = props => {
               <EventListItem
                 key={event.id}
                 event={event}
-                school={event.schoolDetails}
+                school={event.school}
               />
             ))}
           </List>
@@ -143,7 +143,7 @@ const UpcomingSchoolEvents = props => {
   const [schoolEvents, isLoading] = useCollectionDataOnce(
     firebaseFirestore
       .collection(COLLECTIONS.EVENTS)
-      .where("school", "==", schoolDocRef)
+      .where("school.ref", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .limit(12)
   );
@@ -179,7 +179,7 @@ const UpcomingSchoolEvents = props => {
               <EventListItem
                 key={event.id}
                 event={event}
-                school={event.schoolDetails}
+                school={event.school}
               />
             ))}
           </List>
@@ -220,7 +220,7 @@ const RecentlyCreatedEvents = () => {
               <EventListItem
                 key={event.id}
                 event={event}
-                school={event.schoolDetails}
+                school={event.school}
               />
             ))}
           </List>

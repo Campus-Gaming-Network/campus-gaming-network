@@ -91,14 +91,15 @@ const Signup = () => {
           .collection(COLLECTIONS.USERS)
           .doc(user.uid)
           .set({
+            id: user.uid,
             firstName: formState.firstName,
             lastName: formState.lastName,
             status: formState.status,
             gravatar: createGravatarHash(formState.email),
-            school: firebaseFirestore
-              .collection(COLLECTIONS.SCHOOLS)
-              .doc(formState.school),
-            schoolDetails: {
+            school: {
+              ref: firebaseFirestore
+                .collection(COLLECTIONS.SCHOOLS)
+                .doc(formState.school),
               id: formState.school
             },
             major: "",

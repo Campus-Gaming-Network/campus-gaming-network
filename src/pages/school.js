@@ -253,11 +253,7 @@ const EventsList = props => {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
         {events.map(event => (
-          <EventListItem
-            key={event.id}
-            event={event}
-            school={event.schoolDetails}
-          />
+          <EventListItem key={event.id} event={event} school={event.school} />
         ))}
       </List>
     );

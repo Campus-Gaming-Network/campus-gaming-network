@@ -55,11 +55,14 @@ const SchoolLogo = React.memo(
       }
     }, [schoolId, logo, dispatch, setLogo, getSchoolLogo, isFetching]);
 
-    return logo ? (
-      <Image src={logo} alt={`The school logo for ${schoolName}`} {...rest} />
-    ) : fallback ? (
-      fallback
-    ) : null;
+    return fallback;
+
+    // TODO: Revisit
+    // return logo ? (
+    //   <Image src={logo} alt={`The school logo for ${schoolName}`} {...rest} />
+    // ) : fallback ? (
+    //   fallback
+    // ) : null;
   }
 );
 

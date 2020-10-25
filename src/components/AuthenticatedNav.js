@@ -33,7 +33,10 @@ const AuthenticatedNav = () => {
   const state = useAppState();
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const user = React.useMemo(
-    () => (authenticatedUser ? state.users[authenticatedUser.uid] : {}),
+    () =>
+      authenticatedUser && state.users[authenticatedUser.uid]
+        ? state.users[authenticatedUser.uid]
+        : {},
     [authenticatedUser, state.users]
   );
   const school = React.useMemo(

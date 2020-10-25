@@ -43,7 +43,7 @@ const useFetchEventUsers = (
 
         let query = firebaseFirestore
           .collection(COLLECTIONS.EVENT_RESPONSES)
-          .where("event", "==", eventDocRef)
+          .where("event.ref", "==", eventDocRef)
           .where("response", "==", "YES");
 
         if (page > 0) {
@@ -66,7 +66,7 @@ const useFetchEventUsers = (
                 eventUsers.push(
                   mapUser({
                     id: data.user.id,
-                    ...data.userDetails
+                    ...data.user
                   })
                 );
               });

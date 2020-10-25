@@ -208,26 +208,24 @@ const CreateEvent = props => {
     }
 
     if (!props.edit) {
-      eventData.school = schoolDocRef;
-      eventData.schoolDetails = {
+      eventData.school = {
+        ref: schoolDocRef,
         id: schoolDocRef.id,
         name: school.name
       };
     }
 
-    const cleanedData = omitBy(eventData, isNil);
-
     if (props.edit) {
       firebaseFirestore
         .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
-        .update(cleanedData)
+        .update(eventData)
         .then(() => {
           dispatch({
             type: ACTION_TYPES.SET_EVENT,
             payload: {
               ...event,
-              ...cleanedData
+              ...eventData
             }
           });
 
@@ -240,9 +238,9 @@ const CreateEvent = props => {
                   eventResponse.event.id === props.id
                     ? {
                         ...eventResponse,
-                        eventDetails: {
-                          ...eventResponse.eventDetails,
-                          ...cleanedData
+                        event: {
+                          ...eventResponse.event,
+                          ...eventData
                         }
                       }
                     : eventResponse
@@ -275,9 +273,9 @@ const CreateEvent = props => {
           //   if (schoolToUpdate.events) {
           //     const updatedEvents = schoolToUpdate.events.map((eventResponse) => eventResponse.event.id === props.id ? ({
           //       ...eventResponse,
-          //       eventDetails: {
-          //         ...eventResponse.eventDetails,
-          //         ...cleanedData
+          //       event: {
+          //         ...eventResponse.event,
+          //         ...eventData
           //       },
           //     }) : eventResponse).map(mapEvent);
 
@@ -326,7 +324,7 @@ const CreateEvent = props => {
       firebaseFirestore
         .collection(COLLECTIONS.EVENTS)
         .add({
-          ...cleanedData,
+          ...eventData,
           responses: {
             yes: 0,
             no: 0
@@ -344,17 +342,16 @@ const CreateEvent = props => {
             });
 
           const eventResponseData = {
-            user: userDocRef,
-            event: eventDocRef,
-            school: schoolDocRef,
             response: "YES",
-            userDetails: {
+            user: {
+              ref: userDocRef,
               id: userDocRef.id,
               firstName: user.firstName,
               lastName: user.lastName,
               gravatar: user.gravatar
             },
-            eventDetails: {
+            event: {
+              ref: eventDocRef,
               id: eventDocRef.id,
               name: formState.name.trim(),
               description: formState.description.trim(),
@@ -363,7 +360,8 @@ const CreateEvent = props => {
               game: formState.game,
               isOnlineEvent: formState.isOnlineEvent
             },
-            schoolDetails: {
+            school: {
+              ref: schoolDocRef,
               id: schoolDocRef.id,
               name: school.name
             }

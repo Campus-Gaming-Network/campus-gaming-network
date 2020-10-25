@@ -19,7 +19,6 @@ service cloud.firestore {
             'gravatar',
             'status',
             'school',
-            'schoolDetails'
           ];
           let optionalFields = [
             'major',
@@ -71,10 +70,9 @@ service cloud.firestore {
             hasLength('gravatar', 1, 255) &&
             isValidOption("status", statusOptions) &&
             incomingData().school != null &&
-            incomingData().schoolDetails != null &&
-            "id" in incomingData().schoolDetails &&
-            incomingData().schoolDetails != null &&
-            exists(/databases/$(database)/documents/schools/$(incomingData().schoolDetails.id)) &&
+            "id" in incomingData().school &&
+            incomingData().school != null &&
+            exists(/databases/$(database)/documents/schools/$(incomingData().school.id)) &&
             (has('major') && (hasLength('major', 0, 255) || incomingData().major == null)) &&
             (has('minor') && (hasLength('minor', 0, 255) || incomingData().minor == null)) &&
             (has('bio') && (hasLength('bio', 0, 2500) || incomingData().bio == null)) &&
@@ -134,7 +132,6 @@ service cloud.firestore {
           'endDateTime',
           'isOnlineEvent',
           'school',
-          'schoolDetails'
         ];
         let optionalFields = [
           'description',

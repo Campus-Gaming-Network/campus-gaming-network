@@ -15,7 +15,6 @@ service cloud.firestore {
           "gravatar",
           "status",
           "school",
-          "schoolDetails",
         ];
         let optionalFields = [
           "major",
@@ -67,9 +66,8 @@ service cloud.firestore {
           hasLength("gravatar", 1, 255) &&
           isValidOption("status", statusOptions) &&
           !isNull('school') &&
-          !isNull('schoolDetails') &&
-          "id" in incomingData().schoolDetails &&
-          incomingData().schoolDetails.id != null &&
+          "id" in incomingData().school &&
+          incomingData().school.id != null &&
           hasLengthOrNull("major", 255) &&
           hasLengthOrNull("minor", 255) &&
           hasLengthOrNull("bio", 2500) &&

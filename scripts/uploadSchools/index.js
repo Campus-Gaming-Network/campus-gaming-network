@@ -83,7 +83,10 @@ const main = async () => {
 
     mappedSchools.forEach(school => {
       const ref = db.collection("schools").doc();
-      batch.set(ref, school);
+      batch.set(ref, {
+        ...school,
+        id: ref.id,
+      });
     });
 
     try {
