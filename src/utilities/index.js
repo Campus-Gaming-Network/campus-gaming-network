@@ -4,7 +4,7 @@
 import React from "react";
 import intersection from "lodash.intersection";
 import capitalize from "lodash.capitalize";
-import moment from "moment";
+import { DateTime, Interval } from "luxon";
 import md5 from "md5";
 
 import {
@@ -135,17 +135,17 @@ export const mapSchool = (school, ref) => ({
 
 export const hasStarted = (startDateTime, endDateTime) => {
   if (startDateTime && endDateTime) {
-    return moment().isBetween(
-      moment(startDateTime.toDate()),
-      moment(endDateTime.toDate())
-    );
+    return Interval.fromDateTimes(
+      startDateTime.toDate(),
+      endDateTime.toDate()
+    ).contains(DateTime.local());
   }
 
   return null;
 };
 export const hasEnded = endDateTime => {
   if (endDateTime) {
-    return moment().isAfter(moment(endDateTime.toDate()));
+    return DateTime.local() > DateTime.local(endDateTime.toDate());
   }
 
   return null;
@@ -161,7 +161,7 @@ export const googleMapsLink = query => {
 
 export const formatCalendarDateTime = dateTime => {
   return dateTime
-    ? moment(dateTime.toDate()).calendar(null, MOMENT_CALENDAR_FORMAT)
+    ? DateTime.local(dateTime.toDate()).toRelativeCalendar()
     : null;
 };
 
