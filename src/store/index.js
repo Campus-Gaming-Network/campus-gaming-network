@@ -1,4 +1,5 @@
 import React from "react";
+import keyBy from "lodash.keyby";
 import {
   isDev,
   mapUser,
@@ -6,32 +7,7 @@ import {
   mapEvent,
   mapEventResponse
 } from "../utilities";
-import keyBy from "lodash.keyby";
-
-const INITIAL_STATE = {
-  event: {},
-  events: {},
-  school: {},
-  schools: {},
-  user: {},
-  users: {},
-  games: {}
-};
-
-const ACTION_TYPES = {
-  SET_SCHOOL: "SET_SCHOOL",
-  SET_SCHOOL_USERS: "SET_SCHOOL_USERS",
-  SET_SCHOOL_EVENTS: "SET_SCHOOL_EVENTS",
-  SET_SCHOOL_LOGO: "SET_SCHOOL_LOGO",
-  SET_USER: "SET_USER",
-  SET_USER_EVENTS: "SET_USER_EVENTS",
-  SET_EVENT: "SET_EVENT",
-  SET_EVENT_USERS: "SET_EVENT_USERS",
-  SET_SCHOOLS: "SET_SCHOOLS",
-  SET_USERS: "SET_USERS",
-  SET_EVENTS: "SET_EVENTS",
-  SET_GAMES: "SET_GAMES"
-};
+import { ACTION_TYPES, INITIAL_STORE } from "../constants";
 
 const AppStateContext = React.createContext();
 const AppDispatchContext = React.createContext();
@@ -205,7 +181,7 @@ const reducer = (state, action) => {
 };
 
 const AppProvider = props => {
-  const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
+  const [state, dispatch] = React.useReducer(reducer, INITIAL_STORE);
 
   return (
     <AppStateContext.Provider value={state}>

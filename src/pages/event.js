@@ -32,7 +32,13 @@ import {
   Avatar,
   Skeleton
 } from "@chakra-ui/core";
-import * as constants from "../constants";
+import {
+  EVENT_EMPTY_LOCATION_TEXT,
+  DEFAULT_USERS_LIST_PAGE_SIZE,
+  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE,
+  EVENT_EMPTY_USERS_TEXT,
+  COLLECTIONS
+} from "../constants";
 import { firebaseFirestore, firebaseAuth } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -102,11 +108,13 @@ const Event = props => {
 
   const getResponseFormData = response => {
     const userDocRef = firebaseFirestore
-      .collection("users")
+      .collection(COLLECTIONS.USERS)
       .doc(authenticatedUser.uid);
-    const eventDocRef = firebaseFirestore.collection("events").doc(event.id);
+    const eventDocRef = firebaseFirestore
+      .collection(COLLECTIONS.EVENTS)
+      .doc(event.id);
     const schoolDocRef = firebaseFirestore
-      .collection("schools")
+      .collection(COLLECTIONS.SCHOOLS)
       .doc(event.school.id);
     const user = state.users[authenticatedUser.uid];
 
@@ -146,7 +154,7 @@ const Event = props => {
 
     if (!hasResponded) {
       firebaseFirestore
-        .collection("event-responses")
+        .collection(COLLECTIONS.EVENT_RESPONSES)
         .add(data)
         .then(() => {
           setAttendingAlertIsOpen(false);
@@ -171,7 +179,7 @@ const Event = props => {
         });
     } else {
       firebaseFirestore
-        .collection("event-responses")
+        .collection(COLLECTIONS.EVENT_RESPONSES)
         .doc(eventResponse.id)
         .update({ response })
         .then(() => {
@@ -375,7 +383,7 @@ const Event = props => {
                   <Text as="span" color="gray.600" mr={2} fontSize="lg">
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </Text>
-                  <Text as="span">{constants.EVENT_EMPTY_LOCATION_TEXT}</Text>
+                  <Text as="span">{EVENT_EMPTY_LOCATION_TEXT}</Text>
                 </React.Fragment>
               )}
             </Box>
@@ -552,7 +560,7 @@ const UsersList = props => {
   const [users, isLoadingUsers] = useFetchEventUsers(props.id, undefined, page);
 
   const nextPage = () => {
-    if (users && users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE) {
+    if (users && users.length === DEFAULT_USERS_LIST_PAGE_SIZE) {
       setPage(page + 1);
     }
   };
@@ -579,7 +587,7 @@ const UsersList = props => {
   if (isLoadingUsers) {
     return (
       <Flex flexWrap="wrap" mx={-2}>
-        {times(constants.DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
+        {times(DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
           <Box key={index} w={{ md: "20%", sm: "33%", xs: "50%" }}>
             <Skeleton
               pos="relative"
@@ -623,13 +631,13 @@ const UsersList = props => {
           ) : null}
           {users &&
           users.length &&
-          users.length === constants.DEFAULT_USERS_LIST_PAGE_SIZE ? (
+          users.length === DEFAULT_USERS_LIST_PAGE_SIZE ? (
             <Button
               variant="ghost"
               size="sm"
               rightIcon="arrow-forward"
               variantColor="purple"
-              disabled={users.length !== constants.DEFAULT_USERS_LIST_PAGE_SIZE}
+              disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
               onClick={nextPage}
               ml="auto"
             >
@@ -643,7 +651,7 @@ const UsersList = props => {
 
   return (
     <Text mt={4} color="gray.400">
-      {constants.EVENT_EMPTY_USERS_TEXT}
+      {EVENT_EMPTY_USERS_TEXT}
     </Text>
   );
 };

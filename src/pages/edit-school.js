@@ -20,7 +20,12 @@ import {
 import omitBy from "lodash.omitby";
 import isNil from "lodash.isnil";
 import startCase from "lodash.startcase";
-import * as constants from "../constants";
+import {
+  ACCOUNTS,
+  DROPZONE_STYLES,
+  SCHOOL_ACCOUNTS,
+  COLLECTIONS
+} from "../constants";
 import { firebase, firebaseFirestore, firebaseStorage } from "../firebase";
 import { useDropzone } from "react-dropzone";
 
@@ -125,7 +130,7 @@ const EditSchool = props => {
     }
 
     firebaseFirestore
-      .collection("schools")
+      .collection(COLLECTIONS.SCHOOLS)
       .doc(props.school.id)
       .update(cleanedData)
       .then(() => {
@@ -194,7 +199,7 @@ const EditSchool = props => {
         <SocialAccountsSection
           schoolName={schoolName}
           handleFieldChange={handleFieldChange}
-          {...Object.keys(constants.ACCOUNTS).reduce(
+          {...Object.keys(ACCOUNTS).reduce(
             (acc, cur) => ({
               ...acc,
               [cur]: state[cur]
@@ -255,10 +260,10 @@ const DetailSection = React.memo(props => {
 
   const style = React.useMemo(
     () => ({
-      ...constants.DROPZONE_STYLES.BASE,
-      ...(isDragActive ? constants.DROPZONE_STYLES.ACTIVE : {}),
-      ...(isDragAccept ? constants.DROPZONE_STYLES.ACCEPT : {}),
-      ...(isDragReject ? constants.DROPZONE_STYLES.REJECT : {})
+      ...DROPZONE_STYLES.BASE,
+      ...(isDragActive ? DROPZONE_STYLES.ACTIVE : {}),
+      ...(isDragAccept ? DROPZONE_STYLES.ACCEPT : {}),
+      ...(isDragReject ? DROPZONE_STYLES.REJECT : {})
     }),
     [isDragActive, isDragReject, isDragAccept]
   );
@@ -406,8 +411,8 @@ const SocialAccountsSection = React.memo(props => {
         </Text>
       </Box>
       <Stack spacing={6} p={8}>
-        {Object.keys(constants.SCHOOL_ACCOUNTS).map(id => {
-          const account = constants.SCHOOL_ACCOUNTS[id];
+        {Object.keys(SCHOOL_ACCOUNTS).map(id => {
+          const account = SCHOOL_ACCOUNTS[id];
 
           return (
             <FormControl key={id}>

@@ -3,12 +3,12 @@ import isEmpty from "lodash.isempty";
 
 import { firebaseFirestore } from "../firebase";
 import { mapUser } from "../utilities";
-import * as constants from "../constants";
+import { DEFAULT_USERS_LIST_PAGE_SIZE, COLLECTIONS } from "../constants";
 import { useAppState } from "../store";
 
 const useFetchSchoolUsers = (
   id,
-  limit = constants.DEFAULT_USERS_LIST_PAGE_SIZE,
+  limit = DEFAULT_USERS_LIST_PAGE_SIZE,
   page = 0
 ) => {
   const state = useAppState();
@@ -37,10 +37,12 @@ const useFetchSchoolUsers = (
       } else {
         console.log(`[API] fetchSchoolUsers...${id}`);
 
-        const schoolDocRef = firebaseFirestore.collection("schools").doc(id);
+        const schoolDocRef = firebaseFirestore
+          .collection(COLLECTIONS.SCHOOLS)
+          .doc(id);
 
         let query = firebaseFirestore
-          .collection("users")
+          .collection(COLLECTIONS.USERS)
           .where("school.ref", "==", schoolDocRef);
 
         if (page > 0) {
