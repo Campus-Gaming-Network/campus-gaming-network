@@ -17,7 +17,15 @@ import {
   Avatar,
   Flex
 } from "@chakra-ui/core";
-import * as constants from "../constants";
+import {
+  USER_EMPTY_CURRENTLY_PLAYING_TEXT,
+  USER_EMPTY_FAVORITE_GAMES_TEXT,
+  ACCOUNTS,
+  DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE,
+  USER_EMPTY_UPCOMING_EVENTS_TEXT,
+  USER_EMPTY_ACCOUNTS_TEXT,
+  COLLECTIONS
+} from "../constants";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Utilities
@@ -233,7 +241,7 @@ const User = props => {
           </Heading>
           <GameList
             games={user.currentlyPlaying}
-            emptyText={constants.USER_EMPTY_CURRENTLY_PLAYING_TEXT}
+            emptyText={USER_EMPTY_CURRENTLY_PLAYING_TEXT}
           />
         </Stack>
         <Stack as="section" spacing={4}>
@@ -247,7 +255,7 @@ const User = props => {
           </Heading>
           <GameList
             games={user.favoriteGames}
-            emptyText={constants.USER_EMPTY_FAVORITE_GAMES_TEXT}
+            emptyText={USER_EMPTY_FAVORITE_GAMES_TEXT}
           />
         </Stack>
         <Stack as="section" spacing={4}>
@@ -273,8 +281,8 @@ const AccountsList = props => {
   if (props.user && props.user.hasAccounts) {
     return (
       <List display="flex" flexWrap="wrap" width="100%" styleType="none">
-        {Object.keys(constants.ACCOUNTS).map(key => {
-          const account = constants.ACCOUNTS[key];
+        {Object.keys(ACCOUNTS).map(key => {
+          const account = ACCOUNTS[key];
           const value = props.user[key];
 
           return (
@@ -290,7 +298,7 @@ const AccountsList = props => {
     );
   }
 
-  return <Text color="gray.400">{constants.USER_EMPTY_ACCOUNTS_TEXT}</Text>;
+  return <Text color="gray.400">{USER_EMPTY_ACCOUNTS_TEXT}</Text>;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -387,7 +395,7 @@ const EventsList = props => {
   if (isLoadingEvents) {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {times(constants.DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
+        {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
           <Box key={index} w={{ md: "33%", sm: "50%", xs: "100%" }}>
             <Skeleton
               pos="relative"
@@ -413,9 +421,7 @@ const EventsList = props => {
     );
   }
 
-  return (
-    <Text color="gray.400">{constants.USER_EMPTY_UPCOMING_EVENTS_TEXT}</Text>
-  );
+  return <Text color="gray.400">{USER_EMPTY_UPCOMING_EVENTS_TEXT}</Text>;
 };
 
 export default User;

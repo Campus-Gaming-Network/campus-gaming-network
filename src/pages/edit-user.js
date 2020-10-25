@@ -35,9 +35,16 @@ import {
   FormErrorMessage,
   useToast
 } from "@chakra-ui/core";
-import * as constants from "../constants";
+import {
+  MONTHS,
+  DAYS,
+  YEARS,
+  STUDENT_STATUS_OPTIONS,
+  ACCOUNTS,
+  TIMEZONES,
+  COLLECTIONS
+} from "../constants";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
-import timezones from "../data/timezones.json";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import SchoolSearch from "../components/SchoolSearch";
@@ -120,7 +127,7 @@ const EditUser = props => {
 
     try {
       await firebaseFirestore
-        .collection("users")
+        .collection(COLLECTIONS.USERS)
         .doc(user.id)
         .delete();
 
@@ -239,7 +246,7 @@ const EditUser = props => {
     }
 
     const schoolDocRef = firebaseFirestore
-      .collection("schools")
+      .collection(COLLECTIONS.SCHOOLS)
       .doc(formState.school);
 
     let birthdate = null;
@@ -285,7 +292,7 @@ const EditUser = props => {
     const cleanedData = omitBy(data, isNil);
 
     firebaseFirestore
-      .collection("users")
+      .collection(COLLECTIONS.USERS)
       .doc(user.id)
       .update(cleanedData)
       .then(() => {
@@ -641,7 +648,7 @@ const DetailSection = React.memo(props => {
                 size="lg"
               >
                 <option value="">Select month</option>
-                {constants.MONTHS.map(month => (
+                {MONTHS.map(month => (
                   <option key={month} value={month}>
                     {month}
                   </option>
@@ -665,7 +672,7 @@ const DetailSection = React.memo(props => {
                 size="lg"
               >
                 <option value="">Select day</option>
-                {constants.DAYS.map(day => (
+                {DAYS.map(day => (
                   <option key={day} value={day}>
                     {day}
                   </option>
@@ -688,7 +695,7 @@ const DetailSection = React.memo(props => {
                 size="lg"
               >
                 <option value="">Select year</option>
-                {constants.YEARS.map(year => (
+                {YEARS.map(year => (
                   <option key={year} value={year}>
                     {year}
                   </option>
@@ -745,7 +752,7 @@ const DetailSection = React.memo(props => {
             aria-describedby="timezone-helper-text"
           >
             <option value="">Select your timezone</option>
-            {timezones.map(status => (
+            {TIMEZONES.map(status => (
               <option key={status.value} value={status.value}>
                 {status.name}
               </option>
@@ -805,7 +812,7 @@ const SchoolSection = React.memo(props => {
             value={props.status}
             size="lg"
           >
-            {constants.STUDENT_STATUS_OPTIONS.map(status => (
+            {STUDENT_STATUS_OPTIONS.map(status => (
               <option key={status.value} value={status.value}>
                 {status.label}
               </option>
@@ -874,8 +881,8 @@ const SocialAccountsSection = React.memo(props => {
         <Text color="gray.500">Other places where people can find you at.</Text>
       </Box>
       <Stack spacing={6} p={8}>
-        {Object.keys(constants.ACCOUNTS).map(id => {
-          const account = constants.ACCOUNTS[id];
+        {Object.keys(ACCOUNTS).map(id => {
+          const account = ACCOUNTS[id];
 
           return (
             <FormControl key={id} isInvalid={props.errors[id]}>

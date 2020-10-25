@@ -1,0 +1,17 @@
+////////////////////////////////////////////////////////////////////////////////
+// Action Constants
+
+export const ACTION_TYPES = {
+  SET_SCHOOL: "SET_SCHOOL",
+  SET_SCHOOL_USERS: "SET_SCHOOL_USERS",
+  SET_SCHOOL_EVENTS: "SET_SCHOOL_EVENTS",
+  SET_SCHOOL_LOGO: "SET_SCHOOL_LOGO",
+  SET_USER: "SET_USER",
+  SET_USER_EVENTS: "SET_USER_EVENTS",
+  SET_EVENT: "SET_EVENT",
+  SET_EVENT_USERS: "SET_EVENT_USERS",
+  SET_SCHOOLS: "SET_SCHOOLS",
+  SET_USERS: "SET_USERS",
+  SET_EVENTS: "SET_EVENTS",
+  SET_GAMES: "SET_GAMES"
+};
