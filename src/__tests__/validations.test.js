@@ -1,6 +1,11 @@
 import { DateTime } from "luxon";
-import { STUDENT_STATUS_OPTIONS, DAYS, MONTHS, YEARS } from "../constants";
-import timezoneOptions from "../data/timezones.json";
+import {
+  STUDENT_STATUS_OPTIONS,
+  DAYS,
+  MONTHS,
+  YEARS,
+  TIMEZONES
+} from "../constants";
 import {
   validateSignUp,
   validateLogIn,
@@ -47,7 +52,7 @@ const EXTENDED_USER = {
   major: "major",
   minor: "minor",
   bio: "bio",
-  timezone: timezoneOptions[0].value,
+  timezone: TIMEZONES[0].value,
   hometown: "hometown",
   birthMonth: MONTHS[0],
   birthDay: DAYS[0],
@@ -115,6 +120,9 @@ const INVALID_TIMEZONE = "Jupiter Central Time (JCT)";
 const INVALID_YEAR = "100";
 const INVALID_MONTH = "Sharktober";
 const INVALID_DAY = "99";
+
+////////////////////////////////////////////////////////////////////////////////
+// Sign Up Form
 
 describe(SIGN_UP_FORM, () => {
   it("should be a valid sign up - FRESHMAN", () => {
@@ -373,6 +381,9 @@ describe(SIGN_UP_FORM, () => {
   });
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// Log In Form
+
 describe(LOG_IN_FORM, () => {
   it("should be a valid log in", () => {
     const { isValid } = validateLogIn({ ...FORMS.LOG_IN });
@@ -447,6 +458,9 @@ describe(LOG_IN_FORM, () => {
   });
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// Forgot Password Form
+
 describe(FORGOT_PASSWORD_FORM, () => {
   it("should be a valid forgot password", () => {
     const { isValid } = validateForgotPassword({ ...FORMS.FORGOT_PASSWORD });
@@ -500,6 +514,9 @@ describe(FORGOT_PASSWORD_FORM, () => {
   });
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// Password Reset Form
+
 describe(PASSWORD_RESET_FORM, () => {
   it("should be a valid password reset", () => {
     const { isValid } = validatePasswordReset({ ...FORMS.PASSWORD_RESET });
@@ -552,6 +569,9 @@ describe(PASSWORD_RESET_FORM, () => {
     expect(isValid).toEqual(false);
   });
 });
+
+////////////////////////////////////////////////////////////////////////////////
+// Create Event Form
 
 describe(CREATE_EVENT_FORM, () => {
   it("should be a valid create event", () => {
@@ -841,6 +861,9 @@ describe(CREATE_EVENT_FORM, () => {
     expect(isValid).toEqual(false);
   });
 });
+
+////////////////////////////////////////////////////////////////////////////////
+// Edit User Form
 
 describe(EDIT_USER_FORM, () => {
   it("should be a valid edit user - FRESHMAN", () => {

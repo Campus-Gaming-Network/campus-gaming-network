@@ -7,7 +7,12 @@ import capitalize from "lodash.capitalize";
 import { DateTime, Interval } from "luxon";
 import md5 from "md5";
 
-import * as constants from "../constants";
+import {
+  GRAVATAR,
+  GOOGLE_MAPS_QUERY_URL,
+  ACCOUNTS,
+  MOMENT_CALENDAR_FORMAT
+} from "../constants";
 
 export const classNames = (_classNames = []) => {
   if (isDev()) {
@@ -54,12 +59,12 @@ export const createGravatarHash = (email = "") => {
 };
 
 export const createGravatarRequestUrl = hash => {
-  return `https://www.gravatar.com/avatar/${hash}?s=100&d=${constants.GRAVATAR.DEFAULT}&r=${constants.GRAVATAR.RA}`;
+  return `https://www.gravatar.com/avatar/${hash}?s=100&d=${GRAVATAR.DEFAULT}&r=${GRAVATAR.RA}`;
 };
 
 export const noop = () => {};
 
-const getUserDisplayStatus = status =>
+export const getUserDisplayStatus = status =>
   ({ ALUMNI: "Alumni of ", GRAD: "Graduate Student at " }[status] ||
   `${capitalize(status)} at `);
 
@@ -151,7 +156,7 @@ export const googleMapsLink = query => {
     return null;
   }
 
-  return `${constants.GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(query)}`;
+  return `${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(query)}`;
 };
 
 export const formatCalendarDateTime = dateTime => {
@@ -166,7 +171,7 @@ export const userHasAccounts = user => {
   }
 
   return (
-    intersection(Object.keys(constants.ACCOUNTS), Object.keys(user)).filter(
+    intersection(Object.keys(ACCOUNTS), Object.keys(user)).filter(
       key => !!user[key]
     ).length > 0
   );

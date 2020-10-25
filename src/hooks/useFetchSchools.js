@@ -5,6 +5,7 @@ import keyBy from "lodash.keyby";
 // Other
 import { firebaseFirestore } from "../firebase";
 import { mapSchool } from "../utilities";
+import { COLLECTIONS } from "../constants";
 
 // Hooks
 import useLocalStorage from "./useLocalStorage";
@@ -35,7 +36,7 @@ const useFetchSchools = () => {
       console.log("[API] fetchSchools...");
 
       firebaseFirestore
-        .collection("schools")
+        .collection(COLLECTIONS.SCHOOLS)
         .get()
         .then(snapshot => {
           const schools = keyBy(
