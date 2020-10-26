@@ -2,6 +2,9 @@ import React from "react";
 import { Image } from "@chakra-ui/core";
 import { firebaseStorage } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import { getSchoolLogoPath } from "../utilities";
+
+const ERRORED_LOGOS = {};
 
 const SchoolLogo = React.memo(
   ({ schoolId, schoolName, fallback, src, ...rest }) => {
@@ -18,7 +21,7 @@ const SchoolLogo = React.memo(
         setIsFetching(false);
       } else {
         const storageRef = firebaseStorage.ref();
-        const pathRef = storageRef.child(`schools/${schoolId}/images/logo.jpg`);
+        const pathRef = storageRef.child(getSchoolLogoPath(schoolId));
 
         pathRef
           .getDownloadURL()
@@ -37,32 +40,28 @@ const SchoolLogo = React.memo(
           })
           .catch(error => {
             setIsFetching(false);
-
-            if (error.code !== "storage/object-not-found") {
-              if (error.message) {
-                console.error(error.message);
-              } else {
-                console.error(error);
-              }
-            }
+            ERRORED_LOGOS[schoolId] = error;
           });
       }
     }, [schoolId, state.schools, dispatch]);
 
     React.useEffect(() => {
-      if (schoolId && !logo && !isFetching) {
+      if (schoolId && !logo && !isFetching && !ERRORED_LOGOS[schoolId]) {
         getSchoolLogo();
       }
     }, [schoolId, logo, dispatch, setLogo, getSchoolLogo, isFetching]);
 
-    return fallback;
-
     // TODO: Revisit
-    // return logo ? (
-    //   <Image src={logo} alt={`The school logo for ${schoolName}`} {...rest} />
-    // ) : fallback ? (
-    //   fallback
-    // ) : null;
+    return logo ? (
+      <Image
+        src={logo}
+        alt={`The school logo for ${schoolName}`}
+        loading="lazy"
+        {...rest}
+      />
+    ) : fallback ? (
+      fallback
+    ) : null;
   }
 );
 

@@ -7,12 +7,7 @@ import capitalize from "lodash.capitalize";
 import { DateTime, Interval } from "luxon";
 import md5 from "md5";
 
-import {
-  GRAVATAR,
-  GOOGLE_MAPS_QUERY_URL,
-  ACCOUNTS,
-  MOMENT_CALENDAR_FORMAT
-} from "../constants";
+import { GRAVATAR, GOOGLE_MAPS_QUERY_URL, ACCOUNTS } from "../constants";
 
 export const classNames = (_classNames = []) => {
   if (isDev()) {
@@ -179,3 +174,6 @@ export const move = (array, from, to) => {
 
   return newArray;
 };
+
+export const getSchoolLogoPath = schoolId =>
+  `schools/${schoolId}/images/logo.jpg`;

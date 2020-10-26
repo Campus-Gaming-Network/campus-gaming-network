@@ -3,8 +3,6 @@ import { navigate, Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
-import omitBy from "lodash.omitby";
-import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
 import {
   Input,
@@ -51,7 +49,7 @@ import { COLLECTIONS } from "../constants";
 const initialFormState = {
   name: "",
   description: "",
-  host: "",
+  // host: "",
   game: {},
   startDateTime: new Date(),
   endDateTime: new Date(),
@@ -410,7 +408,7 @@ const CreateEvent = props => {
 
   const prefillForm = () => {
     formDispatch({ field: "name", value: event.name });
-    formDispatch({ field: "host", value: "user" });
+    // formDispatch({ field: "host", value: "user" });
     formDispatch({ field: "description", value: event.description });
     formDispatch({ field: "isOnlineEvent", value: event.isOnlineEvent });
     formDispatch({
@@ -505,7 +503,7 @@ const CreateEvent = props => {
                   </Text>
                 </Flex>
               </Box>
-              <FormControl isRequired isInvalid={errors.host}>
+              {/* <FormControl isRequired isInvalid={errors.host}>
                 <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
                   Event Host
                 </FormLabel>
@@ -524,7 +522,7 @@ const CreateEvent = props => {
                   </option>
                 </Select>
                 <FormErrorMessage>{errors.host}</FormErrorMessage>
-              </FormControl>
+              </FormControl> */}
               <FormControl isRequired isInvalid={errors.name}>
                 <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
                   Event Name

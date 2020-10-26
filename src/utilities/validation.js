@@ -4,6 +4,7 @@ import isDate from "lodash.isdate";
 import isString from "lodash.isstring";
 import { DateTime } from "luxon";
 
+import { isDev } from "./";
 import {
   STUDENT_STATUS_OPTIONS,
   DAYS,
@@ -15,21 +16,36 @@ import {
   MAX_BIO_LENGTH,
   MAX_DESCRIPTION_LENGTH,
   MIN_PASSWORD_LENGTH,
-  MAX_DEFAULT_STRING_LENGTH
+  MAX_DEFAULT_STRING_LENGTH,
+  DASHED_DATE,
+  DELETE_USER_VERIFICATION_TEXT
 } from "../constants";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local Helpers
 
+const validate = (validator, form, errors) => {
+  const validation = {
+    form,
+    errors,
+    isValid: isValid(errors)
+  };
+
+  if (isDev()) {
+    console.log(validator, validation);
+  }
+
+  return validation;
+};
 const isValid = errors => isEmpty(errors);
 const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const isNilOrEmpty = value => {
-  if (isString(value)) {
-    value = value.trim();
-  }
-
   if (isDate(value)) {
     return false;
+  }
+
+  if (isString(value)) {
+    value = value.trim();
   }
 
   return isNil(value) || isEmpty(value);
@@ -53,14 +69,8 @@ const TIMEZONE_VALUES = TIMEZONES.map(option => option.value);
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Sign Up
 
-export const validateSignUp = ({
-  firstName,
-  lastName,
-  email,
-  password,
-  school,
-  status
-}) => {
+export const validateSignUp = form => {
+  const { firstName, lastName, email, password, school, status } = form;
   const errors = {};
 
   if (isNilOrEmpty(firstName)) {
@@ -84,7 +94,7 @@ export const validateSignUp = ({
   }
 
   if (isNilOrEmpty(school)) {
-    // TODO: Check for actual selected school
+    // TODO: Check for actual selected school?
     errors.school = "School is required.";
   }
 
@@ -92,16 +102,14 @@ export const validateSignUp = ({
     errors.status = `${status} is not a valid status`;
   }
 
-  return {
-    isValid: isValid(errors),
-    errors
-  };
+  return validate("validateSignUp", form, errors);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Log In
 
-export const validateLogIn = ({ email, password }) => {
+export const validateLogIn = form => {
+  const { email, password } = form;
   const errors = {};
 
   if (isNilOrEmpty(email)) {
@@ -114,16 +122,14 @@ export const validateLogIn = ({ email, password }) => {
     errors.password = "Password is required.";
   }
 
-  return {
-    isValid: isValid(errors),
-    errors
-  };
+  return validate("validateLogIn", form, errors);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Forgot Password
 
-export const validateForgotPassword = ({ email }) => {
+export const validateForgotPassword = form => {
+  const { email } = form;
   const errors = {};
 
   if (isNilOrEmpty(email)) {
@@ -132,16 +138,14 @@ export const validateForgotPassword = ({ email }) => {
     errors.email = `${email} is not a valid email.`;
   }
 
-  return {
-    isValid: isValid(errors),
-    errors
-  };
+  return validate("validateForgotPassword", form, errors);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Password Reset
 
-export const validatePasswordReset = ({ password }) => {
+export const validatePasswordReset = form => {
+  const { password } = form;
   const errors = {};
 
   if (isNilOrEmpty(password)) {
@@ -150,30 +154,23 @@ export const validatePasswordReset = ({ password }) => {
     errors.password = `Password is too short (minimum is ${MIN_PASSWORD_LENGTH} characters).`;
   }
 
-  return {
-    isValid: isValid(errors),
-    errors
-  };
+  return validate("validatePasswordReset", form, errors);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Create Event
 
-export const validateCreateEvent = ({
-  host,
-  name,
-  description,
-  game,
-  isOnlineEvent,
-  location,
-  startDateTime,
-  endDateTime
-}) => {
+export const validateCreateEvent = form => {
+  const {
+    name,
+    description,
+    game,
+    isOnlineEvent,
+    location,
+    startDateTime,
+    endDateTime
+  } = form;
   const errors = {};
-
-  if (isNilOrEmpty(host)) {
-    errors.host = "Host is required.";
-  }
 
   if (isNilOrEmpty(name)) {
     errors.name = "Name is required.";
@@ -215,41 +212,39 @@ export const validateCreateEvent = ({
     errors.endDateTime = "Ending date/time must be after starting date/time.";
   }
 
-  return {
-    isValid: isValid(errors),
-    errors
-  };
+  return validate("validateCreateEvent", form, errors);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Edit User
 
-export const validateEditUser = ({
-  firstName,
-  lastName,
-  school,
-  status,
-  major,
-  minor,
-  bio,
-  timezone,
-  hometown,
-  birthMonth,
-  birthDay,
-  birthYear,
-  website,
-  twitter,
-  twitch,
-  youtube,
-  skype,
-  discord,
-  battlenet,
-  steam,
-  xbox,
-  psn,
-  currentlyPlaying,
-  favoriteGames
-}) => {
+export const validateEditUser = form => {
+  const {
+    firstName,
+    lastName,
+    school,
+    status,
+    major,
+    minor,
+    bio,
+    timezone,
+    hometown,
+    birthMonth,
+    birthDay,
+    birthYear,
+    website,
+    twitter,
+    twitch,
+    youtube,
+    skype,
+    discord,
+    battlenet,
+    steam,
+    xbox,
+    psn,
+    currentlyPlaying,
+    favoriteGames
+  } = form;
   const errors = {};
 
   if (isNilOrEmpty(firstName)) {
@@ -309,7 +304,7 @@ export const validateEditUser = ({
     !errors.birthYear &&
     !errors.birthMonth &&
     !errors.birthDay &&
-    !DateTime.fromFormat(`${birthMonth}-${birthDay}-${birthYear}`, "MMMM-d-y")
+    !DateTime.fromFormat(`${birthMonth}-${birthDay}-${birthYear}`, DASHED_DATE)
       .isValid
   ) {
     errors.birthdate = `${birthMonth}-${birthDay}-${birthYear} is not a valid date`;
@@ -406,8 +401,20 @@ export const validateEditUser = ({
     errors.currentlyPlaying = `Too many games selected (maximum is ${MAX_CURRENTLY_PLAYING_LIST.toLocaleString()} games).`;
   }
 
-  return {
-    isValid: isValid(errors),
-    errors
-  };
+  return validate("validateEditUser", form, errors);
+};
+
+//
+
+export const validateDeleteAccount = form => {
+  const { deleteConfirmation } = form;
+  const errors = {};
+
+  if (isNilOrEmpty(deleteConfirmation)) {
+    errors.deleteConfirmation = "Confirmation is required.";
+  } else if (deleteConfirmation.trim() !== DELETE_USER_VERIFICATION_TEXT) {
+    errors.deleteConfirmation = `${deleteConfirmation} is not the correct confirmation.`;
+  }
+
+  return validate("validateDeleteAccount", form, errors);
 };

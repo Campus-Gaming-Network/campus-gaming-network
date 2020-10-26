@@ -319,6 +319,7 @@ const DetailSection = React.memo(props => {
                 maxH={100}
                 borderWidth="1px"
                 borderColor="gray.300"
+                loading="lazy"
               />
               <Text fontSize="lg">{thumbnail.path}</Text>
             </Box>

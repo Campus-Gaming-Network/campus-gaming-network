@@ -72,7 +72,6 @@ const EXTENDED_USER = {
 };
 
 const EVENT = {
-  host: `${USER.firstName} ${USER.lastName}`,
   name: "CSGO and Pizza",
   description: "Lets play CSGO and Pizza!",
   game: "Counter-Strike Go",
@@ -578,42 +577,6 @@ describe(CREATE_EVENT_FORM, () => {
     const { isValid } = validateCreateEvent({ ...FORMS.CREATE_EVENT });
 
     expect(isValid).toEqual(true);
-  });
-
-  it("should be an invalid create event - host - empty string", () => {
-    const { isValid } = validateCreateEvent({
-      ...FORMS.CREATE_EVENT,
-      host: EMPTY_STRING
-    });
-
-    expect(isValid).toEqual(false);
-  });
-
-  it("should be an invalid create event - host - null", () => {
-    const { isValid } = validateCreateEvent({
-      ...FORMS.CREATE_EVENT,
-      host: NULL
-    });
-
-    expect(isValid).toEqual(false);
-  });
-
-  it("should be an invalid create event - host - undefined", () => {
-    const { isValid } = validateCreateEvent({
-      ...FORMS.CREATE_EVENT,
-      host: UNDEFINED
-    });
-
-    expect(isValid).toEqual(false);
-  });
-
-  it("should be an invalid create event - host - empty string space", () => {
-    const { isValid } = validateCreateEvent({
-      ...FORMS.CREATE_EVENT,
-      host: EMPTY_STRING_SPACE
-    });
-
-    expect(isValid).toEqual(false);
   });
 
   it("should be an invalid create event - name - empty string", () => {

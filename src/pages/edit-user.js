@@ -33,7 +33,11 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   FormErrorMessage,
-  useToast
+  useToast,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem
 } from "@chakra-ui/core";
 import {
   MONTHS,
@@ -42,7 +46,8 @@ import {
   STUDENT_STATUS_OPTIONS,
   ACCOUNTS,
   TIMEZONES,
-  COLLECTIONS
+  COLLECTIONS,
+  DASHED_DATE
 } from "../constants";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -51,7 +56,10 @@ import SchoolSearch from "../components/SchoolSearch";
 import GameSearch from "../components/GameSearch";
 import GameCover from "../components/GameCover";
 import { mapUser, move } from "../utilities";
-import { validateEditUser } from "../utilities/validation";
+import {
+  validateEditUser,
+  validateDeleteAccount
+} from "../utilities/validation";
 import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
 const initialFormState = {
@@ -78,7 +86,8 @@ const initialFormState = {
   xbox: "",
   psn: "",
   favoriteGameSearch: "",
-  currentGameSearch: ""
+  currentGameSearch: "",
+  deleteConfirmation: ""
 };
 
 const formReducer = (state, { field, value }) => {
@@ -117,12 +126,25 @@ const EditUser = props => {
     [user.school.id, state.schools]
   );
   const [errors, setErrors] = React.useState({});
-  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
+  const hasErrors = React.useMemo(
+    () => !isEmpty(errors) && !errors.deleteConfirmation,
+    [errors]
+  );
 
   const onDeletingAccountAlertCancel = () =>
     setDeletingAccountAlertIsOpen(false);
 
   const onDeleteAccountConfirm = async () => {
+    const { isValid, errors } = validateDeleteAccount({
+      ...formState
+    });
+
+    setErrors(errors);
+
+    if (!isValid) {
+      return;
+    }
+
     setIsDeletingAccount(true);
 
     try {
@@ -167,10 +189,10 @@ const EditUser = props => {
     formDispatch({ field: "hometown", value: user.hometown || "" });
 
     if (user.birthdate) {
-      const [birthMonth, birthDay, birthYear] = DateTime.local(
-        user.birthdate.toDate()
+      const [birthMonth, birthDay, birthYear] = DateTime.fromISO(
+        user.birthdate.toDate().toISOString()
       )
-        .toFormat("MMMM-DD-YYYY")
+        .toFormat(DASHED_DATE)
         .split("-");
       formDispatch({ field: "birthMonth", value: birthMonth });
       formDispatch({ field: "birthDay", value: birthDay });
@@ -256,7 +278,7 @@ const EditUser = props => {
     if (formState.birthMonth && formState.birthDay && formState.birthYear) {
       const formattedBirthdate = DateTime.fromFormat(
         `${formState.birthMonth}-${formState.birthDay}-${formState.birthYear}`,
-        "MMMM-DD-YYYY"
+        DASHED_DATE
       );
       birthdate = firebase.firestore.Timestamp.fromDate(
         new Date(formattedBirthdate)
@@ -395,14 +417,16 @@ const EditUser = props => {
             <Heading as="h1" size="2xl" pb={{ md: 0, sm: 6, xs: 6 }}>
               Your Profile
             </Heading>
-            <Button
-              variant="ghost"
-              variantColor="red"
-              size="lg"
-              onClick={() => setDeletingAccountAlertIsOpen(true)}
-            >
-              Delete account
-            </Button>
+            <Menu>
+              <MenuButton as={Button} rightIcon="chevron-down">
+                Options
+              </MenuButton>
+              <MenuList fontSize="md">
+                <MenuItem onClick={() => setDeletingAccountAlertIsOpen(true)}>
+                  Delete account
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </Flex>
           <Button
             variantColor="purple"
@@ -491,8 +515,24 @@ const EditUser = props => {
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Are you sure you want to delete your account and all related data?
-            There is no coming back from this.
+            <Text pb={4}>
+              Are you sure you want to delete your account and all related data?
+              There is <Text as="strong">no</Text> coming back from this.
+            </Text>
+            <FormControl isRequired isInvalid={errors.deleteConfirmation}>
+              <FormLabel htmlFor="deleteConfirmation" fontWeight="bold">
+                Type "DELETE" to confirm account deletion.
+              </FormLabel>
+              <Input
+                id="deleteConfirmation"
+                name="deleteConfirmation"
+                type="text"
+                placeholder="DELETE"
+                onChange={handleFieldChange}
+                value={formState.deleteConfirmation}
+              />
+              <FormErrorMessage>{errors.deleteConfirmation}</FormErrorMessage>
+            </FormControl>
           </AlertDialogBody>
 
           <AlertDialogFooter>

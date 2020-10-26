@@ -23,8 +23,7 @@ import {
   ACCOUNTS,
   DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE,
   USER_EMPTY_UPCOMING_EVENTS_TEXT,
-  USER_EMPTY_ACCOUNTS_TEXT,
-  COLLECTIONS
+  USER_EMPTY_ACCOUNTS_TEXT
 } from "../constants";
 import { useAuthState } from "react-firebase-hooks/auth";
 

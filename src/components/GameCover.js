@@ -34,6 +34,7 @@ const GameCover = React.memo(({ url, name, ...rest }) => {
       title={`The cover art for the game ${name}`}
       rounded="md"
       shadow="md"
+      loading="lazy"
       {...rest}
     />
   );

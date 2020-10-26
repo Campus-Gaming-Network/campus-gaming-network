@@ -9,3 +9,4 @@ export * from "./event";
 export * from "./dateTime";
 export * from "./actions";
 export * from "./firebase";
+export * from "./store";

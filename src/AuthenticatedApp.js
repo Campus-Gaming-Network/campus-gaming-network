@@ -4,6 +4,7 @@ import { Router } from "@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 import { Box } from "@chakra-ui/core";
+import { Settings } from "luxon";
 // Other
 import { firebaseAuth } from "./firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "./store";
@@ -71,6 +72,16 @@ const AuthenticatedApp = () => {
   const [nav, setNav] = React.useState(<NavSilhouette />);
   const [routes, setRoutes] = React.useState(<SilhouetteRoutes />);
   const [footer, setFooter] = React.useState(<Empty />);
+  const timezone = React.useMemo(
+    () => (isReady ? state.user.timezone : undefined),
+    [isReady, state.user.timezone]
+  );
+
+  React.useEffect(() => {
+    if (!!timezone) {
+      Settings.defaultZoneName = timezone;
+    }
+  }, [timezone]);
 
   React.useEffect(() => {
     if (shouldSetAuthenticatedUser) {
