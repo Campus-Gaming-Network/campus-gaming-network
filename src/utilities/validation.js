@@ -404,7 +404,8 @@ export const validateEditUser = form => {
   return validate("validateEditUser", form, errors);
 };
 
-//
+////////////////////////////////////////////////////////////////////////////////
+// Validate Delete Account
 
 export const validateDeleteAccount = form => {
   const { deleteConfirmation } = form;

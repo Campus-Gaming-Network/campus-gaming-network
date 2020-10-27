@@ -4,7 +4,8 @@ import {
   DAYS,
   MONTHS,
   YEARS,
-  TIMEZONES
+  TIMEZONES,
+  DELETE_USER_VERIFICATION_TEXT
 } from "../constants";
 import {
   validateSignUp,
@@ -12,7 +13,8 @@ import {
   validateForgotPassword,
   validatePasswordReset,
   validateCreateEvent,
-  validateEditUser
+  validateEditUser,
+  validateDeleteAccount
 } from "../utilities/validation";
 
 const STATUSES = STUDENT_STATUS_OPTIONS.reduce((acc, curr) => ({
@@ -87,6 +89,7 @@ const FORGOT_PASSWORD_FORM = "FORGOT_PASSWORD";
 const PASSWORD_RESET_FORM = "PASSWORD_RESET";
 const CREATE_EVENT_FORM = "CREATE_EVENT";
 const EDIT_USER_FORM = "EDIT_USER";
+const DELETE_ACCOUNT_FORM = "DELETE_ACCOUNT";
 
 const FORMS = {
   [SIGN_UP_FORM]: {
@@ -101,7 +104,10 @@ const FORMS = {
     password: AUTH_USER.password
   },
   [CREATE_EVENT_FORM]: EVENT,
-  [EDIT_USER_FORM]: EXTENDED_USER
+  [EDIT_USER_FORM]: EXTENDED_USER,
+  [DELETE_ACCOUNT_FORM]: {
+    deleteConfirmation: DELETE_USER_VERIFICATION_TEXT
+  }
 };
 
 const NULL = null;
@@ -111,6 +117,7 @@ const EMPTY_STRING_SPACE = " ";
 const SHORT_PASSWORD = "pass";
 const INVALID_EMAIL = "support@";
 const INVALID_STATUS = "something";
+const INVALID_DELETE_CONFIRMATION = "bananas";
 const LONG_EVENT_DESCRIPTION = "x".repeat(5001);
 const INVALID_DATE_TIME = "123/132/123 99:99";
 const LONG_BASE_STRING = "x".repeat(256);
@@ -1252,6 +1259,62 @@ describe(EDIT_USER_FORM, () => {
     const { isValid } = validateEditUser({
       ...FORMS.EDIT_USER,
       status: LONG_BASE_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// Delete Account Form
+
+describe(DELETE_ACCOUNT_FORM, () => {
+  it("should be a valid delete account", () => {
+    const { isValid } = validateDeleteAccount({ ...FORMS.DELETE_ACCOUNT });
+
+    expect(isValid).toEqual(true);
+  });
+
+  it("should be an invalid delete account - delete confirmation - empty string", () => {
+    const { isValid } = validateDeleteAccount({
+      ...FORMS.DELETE_ACCOUNT,
+      deleteConfirmation: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid delete account - delete confirmation - null", () => {
+    const { isValid } = validateDeleteAccount({
+      ...FORMS.DELETE_ACCOUNT,
+      deleteConfirmation: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid delete account - delete confirmation - undefined", () => {
+    const { isValid } = validateDeleteAccount({
+      ...FORMS.DELETE_ACCOUNT,
+      deleteConfirmation: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid delete account - delete confirmation - empty string space", () => {
+    const { isValid } = validateDeleteAccount({
+      ...FORMS.DELETE_ACCOUNT,
+      deleteConfirmation: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid delete account - delete confirmation - not valid", () => {
+    const { isValid } = validateDeleteAccount({
+      ...FORMS.DELETE_ACCOUNT,
+      deleteConfirmation: INVALID_DELETE_CONFIRMATION
     });
 
     expect(isValid).toEqual(false);
