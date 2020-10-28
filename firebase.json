@@ -32,6 +32,12 @@
     },
     "ui": {
       "enabled": true
+    },
+    "functions": {
+      "port": 5001
+    },
+    "hosting": {
+      "port": 5000
     }
   }
 }

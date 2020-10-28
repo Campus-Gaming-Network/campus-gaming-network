@@ -19,6 +19,6 @@ export const CURRENT_YEAR = DateTime.local().year;
 export const MONTHS = Info.months();
 export const MAX_DAYS_IN_MONTH = 31;
 export const DAYS = range(1, MAX_DAYS_IN_MONTH + 1).map(day => day.toString());
-export const YEARS = range(CURRENT_YEAR - 100, CURRENT_YEAR + 1).map(year =>
-  year.toString()
-);
+export const LAST_100_YEARS = range(CURRENT_YEAR - 100, CURRENT_YEAR + 1)
+  .map(year => year.toString())
+  .reverse();

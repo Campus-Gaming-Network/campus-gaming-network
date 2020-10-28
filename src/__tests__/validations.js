@@ -3,7 +3,7 @@ import {
   STUDENT_STATUS_OPTIONS,
   DAYS,
   MONTHS,
-  YEARS,
+  LAST_100_YEARS,
   TIMEZONES,
   DELETE_USER_VERIFICATION_TEXT
 } from "../constants";
@@ -58,7 +58,7 @@ const EXTENDED_USER = {
   hometown: "hometown",
   birthMonth: MONTHS[0],
   birthDay: DAYS[0],
-  birthYear: YEARS[YEARS.length - 1],
+  birthYear: LAST_100_YEARS[0],
   website: "website",
   twitter: "twitter",
   twitch: "twitch",

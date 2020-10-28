@@ -45,13 +45,12 @@ import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 import {
   MONTHS,
   DAYS,
-  YEARS,
+  LAST_100_YEARS,
   STUDENT_STATUS_OPTIONS,
   ACCOUNTS,
   TIMEZONES,
   COLLECTIONS,
   DASHED_DATE,
-  BASE_USER,
   MAX_BIO_LENGTH,
   MAX_FAVORITE_GAME_LIST,
   MAX_CURRENTLY_PLAYING_LIST
@@ -287,7 +286,7 @@ const EditUser = props => {
       .collection(COLLECTIONS.SCHOOLS)
       .doc(formState.school);
 
-    let birthdate = null;
+    let birthdate = "";
 
     if (formState.birthMonth && formState.birthDay && formState.birthYear) {
       const formattedBirthdate = DateTime.fromFormat(
@@ -300,7 +299,6 @@ const EditUser = props => {
     }
 
     const data = {
-      ...BASE_USER,
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
       status: formState.status,
@@ -751,7 +749,7 @@ const DetailSection = React.memo(props => {
                 size="lg"
               >
                 <option value="">Select year</option>
-                {YEARS.map(year => (
+                {LAST_100_YEARS.map(year => (
                   <option key={year} value={year}>
                     {year}
                   </option>

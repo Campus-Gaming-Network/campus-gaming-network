@@ -9,7 +9,7 @@ import {
   STUDENT_STATUS_OPTIONS,
   DAYS,
   MONTHS,
-  YEARS,
+  LAST_100_YEARS,
   TIMEZONES,
   MAX_FAVORITE_GAME_LIST,
   MAX_CURRENTLY_PLAYING_LIST,
@@ -285,7 +285,7 @@ export const validateEditUser = form => {
     errors.bio = `Bio is too long (maximum is ${MAX_BIO_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (!isNilOrEmpty(birthYear) && !isWithin(birthYear, YEARS)) {
+  if (!isNilOrEmpty(birthYear) && !isWithin(birthYear, LAST_100_YEARS)) {
     errors.birthYear = `${birthYear} is not a valid year`;
   }
 

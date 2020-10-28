@@ -53,7 +53,7 @@ import { mapEventResponse, mapEvent } from "../utilities";
 import { validateCreateEvent } from "../utilities/validation";
 
 // Constants
-import { COLLECTIONS, BASE_EVENT } from "../constants";
+import { COLLECTIONS } from "../constants";
 
 const initialFormState = {
   name: "",
@@ -202,7 +202,6 @@ const CreateEvent = props => {
       .doc(user.id);
 
     const eventData = {
-      ...BASE_EVENT,
       creator: userDocRef,
       name: formState.name.trim(),
       description: formState.description.trim(),

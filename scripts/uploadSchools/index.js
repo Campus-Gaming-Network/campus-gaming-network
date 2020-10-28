@@ -20,6 +20,12 @@ const MAX_DOCUMENTS = 500;
 // Track duplicate names
 let names = {};
 
+const millisToMinutesAndSeconds = (millis) => {
+  const minutes = Math.floor(millis / 60000);
+  const seconds = ((millis % 60000) / 1000).toFixed(0);
+  return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
+}
+
 // Map the school data fields for use in the db
 const mapSchool = ({
   NAME,
@@ -99,9 +105,10 @@ const main = async () => {
   }
 
   const t1 = performance.now();
+  const elapsedTime = millisToMinutesAndSeconds(Math.floor(t1 - t0));
 
   console.log("====================");
-  console.log(`Done. Took ${Math.floor(t1 - t0)} milliseconds.`);
+  console.log(`Done. Time elapsed: ${elapsedTime}.`);
   console.log("====================");
 
   process.exit(1);
