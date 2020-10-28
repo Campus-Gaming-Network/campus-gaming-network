@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,23 +18,23 @@ import {
   FormHelperText,
   Image
 } from "@chakra-ui/core";
-import omitBy from "lodash.omitby";
-import isNil from "lodash.isnil";
 import startCase from "lodash.startcase";
+import { useDropzone } from "react-dropzone";
+
+// Constants
 import {
   ACCOUNTS,
   DROPZONE_STYLES,
   SCHOOL_ACCOUNTS,
-  COLLECTIONS
+  COLLECTIONS,
+  BASE_SCHOOL
 } from "../constants";
+
+// Other
 import { firebase, firebaseFirestore, firebaseStorage } from "../firebase";
-import { useDropzone } from "react-dropzone";
 
 const initialFormState = {
-  description: "",
-  email: "",
-  website: "",
-  phone: "",
+  ...BASE_SCHOOL,
   logo: "",
   file: null
 };
@@ -44,6 +45,9 @@ const formReducer = (state, { field, value }) => {
     [field]: value
   };
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// EditSchool
 
 const EditSchool = props => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -72,13 +76,12 @@ const EditSchool = props => {
     setIsSubmitting(true);
 
     const data = {
+      ...BASE_SCHOOL,
       description: state.description,
       website: state.website,
       email: state.email,
       phone: state.phone
     };
-
-    const cleanedData = omitBy(data, isNil);
 
     if (state.file) {
       const storageRef = firebaseStorage.ref();
@@ -132,7 +135,7 @@ const EditSchool = props => {
     firebaseFirestore
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.school.id)
-      .update(cleanedData)
+      .update(data)
       .then(() => {
         setIsSubmitting(false);
         toast({

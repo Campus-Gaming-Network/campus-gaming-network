@@ -32,6 +32,9 @@ import {
   Avatar,
   Skeleton
 } from "@chakra-ui/core";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+// Constants
 import {
   EVENT_EMPTY_LOCATION_TEXT,
   DEFAULT_USERS_LIST_PAGE_SIZE,
@@ -39,20 +42,24 @@ import {
   EVENT_EMPTY_USERS_TEXT,
   COLLECTIONS
 } from "../constants";
+
+// Other
 import { firebaseFirestore, firebaseAuth } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 // Components
-import OutsideLink from "../components/OutsideLink";
-import Link from "../components/Link";
-import EventSilhouette from "../components/EventSilhouette";
-import GameCover from "../components/GameCover";
+import OutsideLink from "components/OutsideLink";
+import Link from "components/Link";
+import EventSilhouette from "components/EventSilhouette";
+import GameCover from "components/GameCover";
 
 // Hooks
-import useFetchEventDetails from "../hooks/useFetchEventDetails";
-import useFetchEventUsers from "../hooks/useFetchEventUsers";
-import useFetchUserEventResponse from "../hooks/useFetchUserEventResponse";
+import useFetchEventDetails from "hooks/useFetchEventDetails";
+import useFetchEventUsers from "hooks/useFetchEventUsers";
+import useFetchUserEventResponse from "hooks/useFetchUserEventResponse";
+
+////////////////////////////////////////////////////////////////////////////////
+// Event
 
 const Event = props => {
   const toast = useToast();

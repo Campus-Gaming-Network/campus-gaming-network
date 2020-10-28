@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { navigate, Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,22 +35,29 @@ import {
 import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
-import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+
+// Other
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
-import GameSearch from "../components/GameSearch";
-import GameCover from "../components/GameCover";
-import { validateCreateEvent } from "../utilities/validation";
+import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
+
+// Components
+import GameSearch from "components/GameSearch";
+import GameCover from "components/GameCover";
 
 // Hooks
-import useFetchEventDetails from "../hooks/useFetchEventDetails";
+import useFetchEventDetails from "hooks/useFetchEventDetails";
+
+// Utilities
 import { mapEventResponse, mapEvent } from "../utilities";
-import { COLLECTIONS } from "../constants";
+import { validateCreateEvent } from "../utilities/validation";
+
+// Constants
+import { COLLECTIONS, BASE_EVENT } from "../constants";
 
 const initialFormState = {
   name: "",
   description: "",
-  // host: "",
   game: {},
   startDateTime: new Date(),
   endDateTime: new Date(),
@@ -64,6 +72,9 @@ const formReducer = (state, { field, value }) => {
     [field]: value
   };
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// CreateEvent
 
 const CreateEvent = props => {
   const state = useAppState();
@@ -191,6 +202,7 @@ const CreateEvent = props => {
       .doc(user.id);
 
     const eventData = {
+      ...BASE_EVENT,
       creator: userDocRef,
       name: formState.name.trim(),
       description: formState.description.trim(),
@@ -408,7 +420,6 @@ const CreateEvent = props => {
 
   const prefillForm = () => {
     formDispatch({ field: "name", value: event.name });
-    // formDispatch({ field: "host", value: "user" });
     formDispatch({ field: "description", value: event.description });
     formDispatch({ field: "isOnlineEvent", value: event.isOnlineEvent });
     formDispatch({
@@ -503,26 +514,6 @@ const CreateEvent = props => {
                   </Text>
                 </Flex>
               </Box>
-              {/* <FormControl isRequired isInvalid={errors.host}>
-                <FormLabel htmlFor="host" fontSize="lg" fontWeight="bold">
-                  Event Host
-                </FormLabel>
-                <Select
-                  id="host"
-                  name="host"
-                  onChange={handleFieldChange}
-                  value={formState.host}
-                  size="lg"
-                >
-                  <option value="">Select the host of the event</option>
-                  <option value="user">{user.fullName} (You)</option>
-                  <option value="school" disabled>
-                    {startCase(school.name.toLowerCase())} (Insufficient
-                    Permissions)
-                  </option>
-                </Select>
-                <FormErrorMessage>{errors.host}</FormErrorMessage>
-              </FormControl> */}
               <FormControl isRequired isInvalid={errors.name}>
                 <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
                   Event Name

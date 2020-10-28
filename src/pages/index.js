@@ -5,16 +5,26 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
 
-import Link from "../components/Link";
-import EventListItem from "../components/EventListItem";
+// Components
+import Link from "components/Link";
+import EventListItem from "components/EventListItem";
+
+// Utilities
 import { mapEvent, mapEventResponse } from "../utilities";
+
+// Other
 import { useAppState } from "../store";
+
+// Constants
 import { COLLECTIONS } from "../constants";
 
 // Hooks
-import useFetchUserEvents from "../hooks/useFetchUserEvents";
+import useFetchUserEvents from "hooks/useFetchUserEvents";
 
 const now = new Date();
+
+////////////////////////////////////////////////////////////////////////////////
+// Home
 
 const Home = () => {
   const state = useAppState();

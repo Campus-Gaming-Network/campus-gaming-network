@@ -8,28 +8,28 @@ import { Box } from "@chakra-ui/core";
 import { firebaseAuth } from "./firebase";
 
 // Pages
-import Home from "./pages";
-import School from "./pages/school";
-import User from "./pages/user";
-import Event from "./pages/event";
-import NotFound from "./pages/not-found";
-import Signup from "./pages/signup";
-import Login from "./pages/login";
-import AuthAction from "./pages/auth-action";
-import ForgotPassword from "./pages/forgot-password";
-import PasswordReset from "./pages/password-reset";
-import AboutUs from "./pages/about-us";
-import FrequentlyAskedQuestions from "./pages/frequently-asked-questions";
+import Home from "pages";
+import School from "pages/school";
+import User from "pages/user";
+import Event from "pages/event";
+import NotFound from "pages/not-found";
+import Signup from "pages/signup";
+import Login from "pages/login";
+import AuthAction from "pages/auth-action";
+import ForgotPassword from "pages/forgot-password";
+import PasswordReset from "pages/password-reset";
+import AboutUs from "pages/about-us";
+import FrequentlyAskedQuestions from "pages/frequently-asked-questions";
 
 // Components
-import UnauthenticatedNav from "./components/UnauthenticatedNav";
-import ScrollToTop from "./components/ScrollToTop";
-import NavSilhouette from "./components/NavSilhouette";
-import UserSilhouette from "./components/UserSilhouette";
-import SchoolSilhouette from "./components/SchoolSilhouette";
-import EventSilhouette from "./components/EventSilhouette";
-import Empty from "./components/Empty";
-import Footer from "./components/Footer";
+import UnauthenticatedNav from "components/UnauthenticatedNav";
+import ScrollToTop from "components/ScrollToTop";
+import NavSilhouette from "components/NavSilhouette";
+import UserSilhouette from "components/UserSilhouette";
+import SchoolSilhouette from "components/SchoolSilhouette";
+import EventSilhouette from "components/EventSilhouette";
+import Empty from "components/Empty";
+import Footer from "components/Footer";
 
 const UnauthenticatedApp = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);

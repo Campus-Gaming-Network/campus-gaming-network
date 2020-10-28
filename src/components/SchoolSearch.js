@@ -8,10 +8,10 @@ import {
   ComboboxList,
   ComboboxOption
 } from "@reach/combobox";
-import useDebounce from "../hooks/useDebounce";
+import useDebounce from "hooks/useDebounce";
 import { firebase } from "../firebase";
 import { isDev, mapSchool } from "../utilities";
-import useLocalStorage from "../hooks/useLocalStorage";
+import useLocalStorage from "hooks/useLocalStorage";
 import keyBy from "lodash.keyby";
 import { useAppDispatch, ACTION_TYPES } from "../store";
 

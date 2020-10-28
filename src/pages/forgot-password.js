@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Redirect } from "@reach/router";
 import {
@@ -20,12 +21,18 @@ import {
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
+// Utilities
 import { useFormFields } from "../utilities";
 import { validateForgotPassword } from "../utilities/validation";
 
-import Link from "../components/Link";
+// Components
+import Link from "components/Link";
 
+// Other
 import { firebaseAuth } from "../firebase";
+
+////////////////////////////////////////////////////////////////////////////////
+// ForgotPassword
 
 const ForgotPassword = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);

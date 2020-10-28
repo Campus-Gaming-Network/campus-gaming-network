@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Redirect, navigate } from "@reach/router";
 import {
@@ -19,12 +20,18 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 
+// Utilities
 import { useFormFields } from "../utilities";
 import { validateLogIn } from "../utilities/validation";
 
+// Other
 import { firebaseAuth } from "../firebase";
 
-import Link from "../components/Link";
+// Components
+import Link from "components/Link";
+
+////////////////////////////////////////////////////////////////////////////////
+// Login
 
 const Login = () => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);

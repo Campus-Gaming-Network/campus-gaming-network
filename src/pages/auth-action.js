@@ -1,8 +1,11 @@
+// Libraries
 import React from "react";
 import queryString from "query-string";
 
-import Empty from "../components/Empty";
+// Components
+import Empty from "components/Empty";
 
+// Pages
 import PasswordReset from "./password-reset";
 import VerifyEmail from "./verify-email";
 
@@ -10,6 +13,9 @@ const AuthActionComponents = {
   resetPassword: PasswordReset,
   verifyEmail: VerifyEmail
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// AuthAction
 
 const AuthAction = props => {
   const { mode, oobCode } = React.useMemo(

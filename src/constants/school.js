@@ -3,6 +3,12 @@
 
 import { ACCOUNTS } from "./other";
 
+export const BASE_SCHOOL = {
+  description: "",
+  email: "",
+  website: "",
+  phone: ""
+};
 export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
   "This school currently has no upcoming events.";
 export const SCHOOL_EMPTY_USERS_TEXT = "This school currently has no users.";

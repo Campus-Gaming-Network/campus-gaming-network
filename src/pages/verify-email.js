@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import {
   Box,
@@ -7,11 +8,15 @@ import {
   AlertDescription
 } from "@chakra-ui/core";
 import { useAuthState } from "react-firebase-hooks/auth";
-
-import { firebaseAuth } from "../firebase";
 import { Redirect } from "@reach/router";
 
-const PasswordReset = props => {
+// Other
+import { firebaseAuth } from "../firebase";
+
+////////////////////////////////////////////////////////////////////////////////
+// VerifyEmail
+
+const VerifyEmail = props => {
   const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
   const [verifyState, setVerifyState] = React.useState("");
   const [verificationError, setError] = React.useState("");
@@ -86,4 +91,4 @@ const PasswordReset = props => {
   );
 };
 
-export default PasswordReset;
+export default VerifyEmail;

@@ -1,6 +1,34 @@
 ////////////////////////////////////////////////////////////////////////////////
 // User Constants
 
+export const BASE_USER = {
+  id: "",
+  firstName: "",
+  lastName: "",
+  status: "",
+  gravatar: "",
+  school: {
+    ref: "",
+    id: ""
+  },
+  major: "",
+  minor: "",
+  bio: "",
+  timezone: "",
+  hometown: "",
+  birthdate: "",
+  twitter: "",
+  twitch: "",
+  youtube: "",
+  skype: "",
+  discord: "",
+  battlenet: "",
+  steam: "",
+  xbox: "",
+  psn: "",
+  currentlyPlaying: [],
+  favoriteGames: []
+};
 export const STUDENT_STATUS_OPTIONS = [
   { value: "", label: "Select your status" },
   { value: "FRESHMAN", label: "Freshman" },

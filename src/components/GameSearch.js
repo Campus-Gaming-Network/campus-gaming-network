@@ -11,7 +11,7 @@ import { firebase } from "../firebase";
 import uniqBy from "lodash.uniqby";
 
 // Hooks
-import useDebounce from "../hooks/useDebounce";
+import useDebounce from "hooks/useDebounce";
 
 const CACHED_GAMES = {};
 

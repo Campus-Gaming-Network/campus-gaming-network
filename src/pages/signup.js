@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Redirect, navigate } from "@reach/router";
 import startCase from "lodash.startcase";
@@ -21,14 +22,19 @@ import {
 } from "@chakra-ui/core";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { STUDENT_STATUS_OPTIONS, COLLECTIONS } from "../constants";
 
+// Constants
+import { BASE_USER, STUDENT_STATUS_OPTIONS, COLLECTIONS } from "../constants";
+
+// Utilities
 import { createGravatarHash } from "../utilities";
 import { validateSignUp } from "../utilities/validation";
 
-import Link from "../components/Link";
-import SchoolSearch from "../components/SchoolSearch";
+// Components
+import Link from "components/Link";
+import SchoolSearch from "components/SchoolSearch";
 
+// Other
 import { firebaseFirestore, firebaseAuth } from "../firebase";
 
 const initialFormState = {
@@ -46,6 +52,9 @@ const formReducer = (state, { field, value }) => {
     [field]: value
   };
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Signup
 
 const Signup = () => {
   const toast = useToast();
@@ -91,6 +100,7 @@ const Signup = () => {
           .collection(COLLECTIONS.USERS)
           .doc(user.uid)
           .set({
+            ...BASE_USER,
             id: user.uid,
             firstName: formState.firstName,
             lastName: formState.lastName,
@@ -101,24 +111,7 @@ const Signup = () => {
                 .collection(COLLECTIONS.SCHOOLS)
                 .doc(formState.school),
               id: formState.school
-            },
-            major: "",
-            minor: "",
-            bio: "",
-            timezone: "",
-            hometown: "",
-            birthdate: null,
-            twitter: "",
-            twitch: "",
-            youtube: "",
-            skype: "",
-            discord: "",
-            battlenet: "",
-            steam: "",
-            xbox: "",
-            psn: "",
-            currentlyPlaying: [],
-            favoriteGames: []
+            }
           });
         firebaseAuth.currentUser.sendEmailVerification().then(
           () => {
@@ -212,6 +205,9 @@ const Signup = () => {
   );
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// DetailSection
+
 const DetailSection = React.memo(props => {
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
   const togglePasswordVisibility = () => {
@@ -296,6 +292,9 @@ const DetailSection = React.memo(props => {
     </Stack>
   );
 });
+
+////////////////////////////////////////////////////////////////////////////////
+// SchoolSection
 
 const SchoolSection = React.memo(props => {
   return (

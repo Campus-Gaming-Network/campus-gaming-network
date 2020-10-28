@@ -1,9 +1,8 @@
+// Libraries
 import React from "react";
 import { Redirect, navigate } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
-import omitBy from "lodash.omitby";
-import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import { DateTime } from "luxon";
@@ -39,6 +38,10 @@ import {
   MenuList,
   MenuItem
 } from "@chakra-ui/core";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
+
+// Constants
 import {
   MONTHS,
   DAYS,
@@ -47,20 +50,28 @@ import {
   ACCOUNTS,
   TIMEZONES,
   COLLECTIONS,
-  DASHED_DATE
+  DASHED_DATE,
+  BASE_USER,
+  MAX_BIO_LENGTH,
+  MAX_FAVORITE_GAME_LIST,
+  MAX_CURRENTLY_PLAYING_LIST
 } from "../constants";
+
+// Other
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
-import SchoolSearch from "../components/SchoolSearch";
-import GameSearch from "../components/GameSearch";
-import GameCover from "../components/GameCover";
+
+// Components
+import SchoolSearch from "components/SchoolSearch";
+import GameSearch from "components/GameSearch";
+import GameCover from "components/GameCover";
+
+// Utilities
 import { mapUser, move } from "../utilities";
 import {
   validateEditUser,
   validateDeleteAccount
 } from "../utilities/validation";
-import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
 const initialFormState = {
   firstName: "",
@@ -96,6 +107,9 @@ const formReducer = (state, { field, value }) => {
     [field]: value
   };
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// EditUser
 
 const EditUser = props => {
   const state = useAppState();
@@ -286,6 +300,7 @@ const EditUser = props => {
     }
 
     const data = {
+      ...BASE_USER,
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
       status: formState.status,
@@ -313,18 +328,16 @@ const EditUser = props => {
       favoriteGames
     };
 
-    const cleanedData = omitBy(data, isNil);
-
     firebaseFirestore
       .collection(COLLECTIONS.USERS)
       .doc(user.id)
-      .update(cleanedData)
+      .update(data)
       .then(() => {
         dispatch({
           type: ACTION_TYPES.SET_USER,
           payload: {
             ...user,
-            ...cleanedData
+            ...data
           }
         });
 
@@ -336,11 +349,8 @@ const EditUser = props => {
               .map(_user => ({
                 ..._user,
                 firstName:
-                  _user.id === user.id
-                    ? cleanedData.firstName
-                    : _user.firstName,
-                lastName:
-                  _user.id === user.id ? cleanedData.lastName : _user.lastName
+                  _user.id === user.id ? data.firstName : _user.firstName,
+                lastName: _user.id === user.id ? data.lastName : _user.lastName
               }))
               .map(mapUser);
 
@@ -564,9 +574,13 @@ const EditUser = props => {
   );
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// DetailSection
+
 const DetailSection = React.memo(props => {
-  // TODO: Make a constant for 2500
-  const bioCharactersRemaining = props.bio ? 2500 - props.bio.length : 2500;
+  const bioCharactersRemaining = props.bio
+    ? MAX_BIO_LENGTH - props.bio.length
+    : MAX_BIO_LENGTH;
 
   return (
     <Box
@@ -810,6 +824,9 @@ const DetailSection = React.memo(props => {
   );
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// SchoolSection
+
 const SchoolSection = React.memo(props => {
   return (
     <Box
@@ -905,6 +922,9 @@ const SchoolSection = React.memo(props => {
   );
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// SocialAccountsSection
+
 const SocialAccountsSection = React.memo(props => {
   return (
     <Box
@@ -963,10 +983,10 @@ const SocialAccountsSection = React.memo(props => {
   );
 });
 
-const FavoriteGamesSection = React.memo(props => {
-  // TODO: Turn into constant
-  const favoriteGameLimit = 5;
+////////////////////////////////////////////////////////////////////////////////
+// FavoriteGamesSection
 
+const FavoriteGamesSection = React.memo(props => {
   return (
     <Box
       as="fieldset"
@@ -999,7 +1019,7 @@ const FavoriteGamesSection = React.memo(props => {
             name="favoriteGameSearch"
             onSelect={props.onGameSelect}
             clearInputOnSelect={true}
-            disabled={props.favoriteGames.length === favoriteGameLimit}
+            disabled={props.favoriteGames.length === MAX_FAVORITE_GAME_LIST}
           />
         </FormControl>
         <FormErrorMessage>{props.errors.favoriteGames}</FormErrorMessage>
@@ -1009,7 +1029,7 @@ const FavoriteGamesSection = React.memo(props => {
             <Text
               as="span"
               color={`${
-                props.favoriteGames.length === favoriteGameLimit
+                props.favoriteGames.length === MAX_FAVORITE_GAME_LIST
                   ? "red.500"
                   : undefined
               }`}
@@ -1098,10 +1118,10 @@ const FavoriteGamesSection = React.memo(props => {
   );
 });
 
-const CurrentlyPlayingSection = React.memo(props => {
-  // TODO: Turn into constant
-  const currentlyPlayingLimit = 5;
+////////////////////////////////////////////////////////////////////////////////
+// CurrentlyPlayingSection
 
+const CurrentlyPlayingSection = React.memo(props => {
   return (
     <Box
       as="fieldset"
@@ -1132,7 +1152,9 @@ const CurrentlyPlayingSection = React.memo(props => {
             name="currentGameSearch"
             onSelect={props.onGameSelect}
             clearInputOnSelect={true}
-            disabled={props.currentlyPlaying.length === currentlyPlayingLimit}
+            disabled={
+              props.currentlyPlaying.length === MAX_CURRENTLY_PLAYING_LIST
+            }
           />
           <FormErrorMessage>{props.errors.favoriteGames}</FormErrorMessage>
         </FormControl>
@@ -1142,7 +1164,7 @@ const CurrentlyPlayingSection = React.memo(props => {
             <Text
               as="span"
               color={`${
-                props.currentlyPlaying.length === currentlyPlayingLimit
+                props.currentlyPlaying.length === MAX_CURRENTLY_PLAYING_LIST
                   ? "red.500"
                   : undefined
               }`}

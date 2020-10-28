@@ -5,38 +5,39 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 import { Box } from "@chakra-ui/core";
 import { Settings } from "luxon";
+
 // Other
 import { firebaseAuth } from "./firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "./store";
 
 // Hooks
-import useFetchUserDetails from "./hooks/useFetchUserDetails";
-import useFetchSchoolDetails from "./hooks/useFetchSchoolDetails";
+import useFetchUserDetails from "hooks/useFetchUserDetails";
+import useFetchSchoolDetails from "hooks/useFetchSchoolDetails";
 
 // Pages
-import Home from "./pages";
-import School from "./pages/school";
-import User from "./pages/user";
-import Event from "./pages/event";
-import EditUser from "./pages/edit-user";
-import EditSchool from "./pages/edit-school";
-import CreateEvent from "./pages/create-event";
-import AuthAction from "./pages/auth-action";
-import AboutUs from "./pages/about-us";
-import FrequentlyAskedQuestions from "./pages/frequently-asked-questions";
-import NotFound from "./pages/not-found";
+import Home from "pages";
+import School from "pages/school";
+import User from "pages/user";
+import Event from "pages/event";
+import EditUser from "pages/edit-user";
+import EditSchool from "pages/edit-school";
+import CreateEvent from "pages/create-event";
+import AuthAction from "pages/auth-action";
+import AboutUs from "pages/about-us";
+import FrequentlyAskedQuestions from "pages/frequently-asked-questions";
+import NotFound from "pages/not-found";
 
 // Components
-import AuthenticatedNav from "./components/AuthenticatedNav";
-import ScrollToTop from "./components/ScrollToTop";
-import NavSilhouette from "./components/NavSilhouette";
-import FormSilhouette from "./components/FormSilhouette";
-import UserSilhouette from "./components/UserSilhouette";
-import SchoolSilhouette from "./components/SchoolSilhouette";
-import EventSilhouette from "./components/EventSilhouette";
-import Empty from "./components/Empty";
-import Footer from "./components/Footer";
-import VerifyEmailReminderBanner from "./components/VerifyEmailReminderBanner";
+import AuthenticatedNav from "components/AuthenticatedNav";
+import ScrollToTop from "components/ScrollToTop";
+import NavSilhouette from "components/NavSilhouette";
+import FormSilhouette from "components/FormSilhouette";
+import UserSilhouette from "components/UserSilhouette";
+import SchoolSilhouette from "components/SchoolSilhouette";
+import EventSilhouette from "components/EventSilhouette";
+import Empty from "components/Empty";
+import Footer from "components/Footer";
+import VerifyEmailReminderBanner from "components/VerifyEmailReminderBanner";
 
 const AuthenticatedApp = () => {
   const state = useAppState();
@@ -153,7 +154,7 @@ const Routes = () => {
         <EditUser path="edit-user" />
         <User path="user/:id" />
         <School path="school/:id" />
-        <EditSchool path="school/:id/edit" />
+        <EditSchool path="school/:id/edit" edit={true} />
         <CreateEvent path="create-event" />
         <Event path="event/:id" />
         <CreateEvent path="event/:id/edit" edit={true} />

@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import {
   Box,
@@ -13,7 +14,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
-import OutsideLink from "../components/OutsideLink";
+// Components
+import OutsideLink from "components/OutsideLink";
+
+////////////////////////////////////////////////////////////////////////////////
+// FrequentlyAskedQuestions
 
 const FrequentlyAskedQuestions = () => {
   return (
@@ -171,6 +176,9 @@ const FrequentlyAskedQuestions = () => {
   );
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// ExternalLink
+
 const ExternalLink = props => {
   return (
     <OutsideLink href={props.href}>
@@ -182,6 +190,8 @@ const ExternalLink = props => {
   );
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// VerifyEmail=
 const IGDBLink = props => {
   return (
     <ExternalLink href="https://www.igdb.com/discover">
@@ -189,6 +199,9 @@ const IGDBLink = props => {
     </ExternalLink>
   );
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// GithubLink
 
 const GithubLink = props => {
   return (
@@ -198,6 +211,9 @@ const GithubLink = props => {
   );
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// DiscordLink
+
 const DiscordLink = props => {
   return (
     <ExternalLink href="https://discord.gg/dpYU6TY">
@@ -206,6 +222,9 @@ const DiscordLink = props => {
   );
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// GravatarLink
+
 const GravatarLink = props => {
   return (
     <ExternalLink href="https://en.gravatar.com/">
@@ -213,6 +232,9 @@ const GravatarLink = props => {
     </ExternalLink>
   );
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// BuyMeACoffeeLink
 
 const BuyMeACoffeeLink = props => {
   const href = `https://www.buymeacoffee.com/${

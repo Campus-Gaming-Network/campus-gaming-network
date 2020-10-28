@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Redirect } from "@reach/router";
 import startCase from "lodash.startcase";
@@ -17,6 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import isEmpty from "lodash.isempty";
 import times from "lodash.times";
+
+// Constants
 import {
   EMPTY_SCHOOL_WEBSITE,
   SCHOOL_EMPTY_USERS_TEXT,
@@ -26,18 +29,23 @@ import {
   DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE
 } from "../constants";
 
-import OutsideLink from "../components/OutsideLink";
-import VisuallyHidden from "../components/VisuallyHidden";
-import Link from "../components/Link";
-import EventListItem from "../components/EventListItem";
-/* eslint-disable no-unused-vars */
-import SchoolLogo from "../components/SchoolLogo";
-import SchoolSilhouette from "../components/SchoolSilhouette";
+// Components
+import OutsideLink from "components/OutsideLink";
+import VisuallyHidden from "components/VisuallyHidden";
+import Link from "components/Link";
+import EventListItem from "components/EventListItem";
+import SchoolLogo from "components/SchoolLogo";
+import SchoolSilhouette from "components/SchoolSilhouette";
 
-import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
-import useFetchSchoolEvents from "../hooks/useFetchSchoolEvents";
-import useFetchSchoolUsers from "../hooks/useFetchSchoolUsers";
+// Hooks
+import useFetchSchoolDetails from "hooks/useFetchSchoolDetails";
+import useFetchSchoolEvents from "hooks/useFetchSchoolEvents";
+import useFetchSchoolUsers from "hooks/useFetchSchoolUsers";
+
+// Store
 import { useAppDispatch, useAppState, ACTION_TYPES } from "../store";
+
+// Utilities
 import { isUrl } from "../utilities";
 
 ////////////////////////////////////////////////////////////////////////////////

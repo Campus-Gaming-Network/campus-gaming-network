@@ -1,7 +1,7 @@
+// Libraries
 import React from "react";
 import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
 import times from "lodash.times";
@@ -17,6 +17,9 @@ import {
   Avatar,
   Flex
 } from "@chakra-ui/core";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+// Constants
 import {
   USER_EMPTY_CURRENTLY_PLAYING_TEXT,
   USER_EMPTY_FAVORITE_GAMES_TEXT,
@@ -25,24 +28,23 @@ import {
   USER_EMPTY_UPCOMING_EVENTS_TEXT,
   USER_EMPTY_ACCOUNTS_TEXT
 } from "../constants";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 // Utilities
 import { firebaseAuth } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // Components
-import VisuallyHidden from "../components/VisuallyHidden";
-import Link from "../components/Link";
-import EventListItem from "../components/EventListItem";
-import UserSilhouette from "../components/UserSilhouette";
-import GameCover from "../components/GameCover";
-import GameLink from "../components/GameLink";
+import VisuallyHidden from "components/VisuallyHidden";
+import Link from "components/Link";
+import EventListItem from "components/EventListItem";
+import UserSilhouette from "components/UserSilhouette";
+import GameCover from "components/GameCover";
+import GameLink from "components/GameLink";
 
 // Hooks
-import useFetchUserDetails from "../hooks/useFetchUserDetails";
-import useFetchUserEvents from "../hooks/useFetchUserEvents";
-import useFetchSchoolDetails from "../hooks/useFetchSchoolDetails";
+import useFetchUserDetails from "hooks/useFetchUserDetails";
+import useFetchUserEvents from "hooks/useFetchUserEvents";
+import useFetchSchoolDetails from "hooks/useFetchSchoolDetails";
 
 ////////////////////////////////////////////////////////////////////////////////
 // User
@@ -143,14 +145,6 @@ const User = props => {
             display="flex"
             alignItems="center"
           >
-            {user.isVerifiedStudent && (
-              <Text>
-                <VisuallyHidden>User is a verified student</VisuallyHidden>
-                <Text mr={1} color="blue.500">
-                  <FontAwesomeIcon icon={faStar} />
-                </Text>
-              </Text>
-            )}
             {user.displayStatus}
             {school ? (
               <Link

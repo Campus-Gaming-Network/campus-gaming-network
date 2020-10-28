@@ -10,3 +10,4 @@ export * from "./dateTime";
 export * from "./actions";
 export * from "./firebase";
 export * from "./store";
+export * from "./sentry";
