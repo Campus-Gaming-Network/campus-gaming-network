@@ -51,8 +51,7 @@ ui-debug.log
 
 .firebaserc
 
-serviceAccountKey.json
-serviceAccountKey_test.json
+serviceAccountKey*.json
 
 hosting.*
 firebase-debug.log
