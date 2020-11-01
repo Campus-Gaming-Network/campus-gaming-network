@@ -24,6 +24,8 @@ const algoliaSearchClient = algoliasearch(
 const algoliaAdminIndex = algoliaAdminClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
 const algoliaSearchIndex = algoliaSearchClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
 
+const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
 ////////////////////////////////////////////////////////////////////////////////
 // onCall
 
@@ -94,6 +96,38 @@ exports.searchSchools = functions.https.onCall((data) => {
   return algoliaSearchIndex.search(data.query, {
     hitsPerPage: limit,
   });
+});
+
+exports.searchUsers = functions.https.onCall(async (data, context) => {
+  // TODO: Only allow admins access to this route
+  try {
+    const query = data.query ? data.query.trim() : "";
+
+    let authRecord;
+    let record;
+
+    if (query && query !== "") {
+      const isEmailQuery = isValidEmail(query);
+
+      if (isEmailQuery) {
+        authRecord = await admin.auth().getUserByEmail(query);
+      } else {
+        authRecord = await admin.auth().getUser(query);
+      }
+
+      if (authRecord && authRecord.uid) {
+        record = await admin.firestore().collection("users").doc(authRecord.uid).get();
+      }
+    }
+
+    return {
+        authUser: authRecord,
+        docUser: record ? record.data() : null,
+    };
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
 });
 
 ////////////////////////////////////////////////////////////////////////////////
