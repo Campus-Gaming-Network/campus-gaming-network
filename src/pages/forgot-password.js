@@ -132,7 +132,7 @@ const ForgotPassword = () => {
                 <AlertTitle>Instructions Sent</AlertTitle>
               </Flex>
               <AlertDescription>
-                Please check both your inbox and spam folder for{" "}
+                Please check both the inbox and spam folder of the email{" "}
                 <Text fontWeight="bold" as="span">
                   sansonebrandon@gmail.com
                 </Text>
