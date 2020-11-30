@@ -437,7 +437,7 @@ const EditUser = props => {
             </Menu>
           </Flex>
           <Button
-            variantColor="purple"
+            variantColor="orange"
             type="submit"
             size="lg"
             w="full"
@@ -499,7 +499,7 @@ const EditUser = props => {
             reorderCurrentlyPlaying={reorderCurrentlyPlaying}
           />
           <Button
-            variantColor="purple"
+            variantColor="orange"
             type="submit"
             size="lg"
             w="full"

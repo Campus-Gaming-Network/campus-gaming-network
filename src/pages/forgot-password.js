@@ -160,7 +160,7 @@ const ForgotPassword = () => {
               </FormControl>
             </Stack>
             <Button
-              variantColor="purple"
+              variantColor="orange"
               type="submit"
               size="lg"
               w="full"
@@ -176,7 +176,7 @@ const ForgotPassword = () => {
         <Flex align="center" justify="between">
           <Text>
             Go back to{" "}
-            <Link to="/login" color="purple.500" fontWeight={600}>
+            <Link to="/login" color="orange.500" fontWeight={600}>
               Login page
             </Link>
             .

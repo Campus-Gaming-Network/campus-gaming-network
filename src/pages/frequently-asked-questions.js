@@ -150,7 +150,7 @@ const FrequentlyAskedQuestions = () => {
             You can email us at{" "}
             <ChakraLink
               href="mailto:support@campusgamingnetwork.com"
-              color="purple.500"
+              color="orange.500"
               fontWeight={600}
             >
               support@campusgamingnetwork.com
