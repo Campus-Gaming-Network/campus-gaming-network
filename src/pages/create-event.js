@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
@@ -469,7 +469,7 @@ const CreateEvent = props => {
             {props.edit ? (
               <Button
                 variant="ghost"
-                variantColor="red"
+                colorScheme="red"
                 size="lg"
                 onClick={() => setDeletingEventAlertIsOpen(true)}
               >
@@ -735,7 +735,7 @@ const CreateEvent = props => {
             </Stack>
           </Box>
           <Button
-            variantColor="purple"
+            colorScheme="purple"
             type="submit"
             size="lg"
             w="full"
@@ -772,7 +772,7 @@ const CreateEvent = props => {
 
           <AlertDialogFooter>
             {isDeletingEvent ? (
-              <Button variantColor="red" disabled={true}>
+              <Button colorScheme="red" disabled={true}>
                 Deleting...
               </Button>
             ) : (
@@ -784,7 +784,7 @@ const CreateEvent = props => {
                   No, nevermind
                 </Button>
                 <Button
-                  variantColor="red"
+                  colorScheme="red"
                   onClick={onDeleteEventConfirm}
                   ml={3}
                 >

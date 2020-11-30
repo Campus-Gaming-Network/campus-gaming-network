@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Flex, Stack } from "@chakra-ui/core";
+import { Box, Text, Flex, Stack } from "@chakra-ui/react";
 import startCase from "lodash.startcase";
 import Link from "./Link";
 

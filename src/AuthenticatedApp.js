@@ -3,7 +3,7 @@ import React from "react";
 import { Router } from "@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
-import { Box } from "@chakra-ui/core";
+import { Box } from "@chakra-ui/react";
 import { Settings } from "luxon";
 
 // Other

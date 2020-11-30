@@ -2,7 +2,7 @@
 import React from "react";
 import { Router } from "@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Box } from "@chakra-ui/core";
+import { Box } from "@chakra-ui/react";
 
 // Other
 import { firebaseAuth } from "./firebase";

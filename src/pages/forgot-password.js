@@ -17,7 +17,7 @@ import {
   AlertTitle,
   AlertDescription,
   FormErrorMessage
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -160,7 +160,7 @@ const ForgotPassword = () => {
               </FormControl>
             </Stack>
             <Button
-              variantColor="purple"
+              colorScheme="purple"
               type="submit"
               size="lg"
               w="full"

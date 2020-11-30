@@ -17,7 +17,7 @@ import {
   useToast,
   FormHelperText,
   Image
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import startCase from "lodash.startcase";
 import { useDropzone } from "react-dropzone";
 
@@ -180,7 +180,7 @@ const EditSchool = props => {
           Edit School
         </Heading>
         <Button
-          variantColor="purple"
+          colorScheme="purple"
           type="submit"
           size="lg"
           w="full"
@@ -211,7 +211,7 @@ const EditSchool = props => {
           )}
         />
         <Button
-          variantColor="purple"
+          colorScheme="purple"
           type="submit"
           size="lg"
           w="full"

@@ -13,7 +13,8 @@ import {
   Avatar,
   Button,
   Skeleton
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
+import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import isEmpty from "lodash.isempty";
@@ -347,8 +348,8 @@ const UsersList = props => {
             <Button
               variant="ghost"
               size="sm"
-              leftIcon="arrow-back"
-              variantColor="purple"
+              leftIcon={<ArrowBack />}
+              colorScheme="purple"
               disabled={page === 0}
               onClick={prevPage}
             >
@@ -361,8 +362,8 @@ const UsersList = props => {
             <Button
               variant="ghost"
               size="sm"
-              rightIcon="arrow-forward"
-              variantColor="purple"
+              rightIcon={<ArrowForward />}
+              colorScheme="purple"
               disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
               onClick={nextPage}
               ml="auto"

@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
-import { Text } from "@chakra-ui/core";
+import { Text } from "@chakra-ui/react";
 
 // Components
 import OutsideLink from "components/OutsideLink";

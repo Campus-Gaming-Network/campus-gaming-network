@@ -8,7 +8,7 @@ import { AppProvider } from "./store";
 import { firebase, firebaseAuth } from "./firebase";
 import { LocationProvider } from "@reach/router";
 import * as Sentry from "@sentry/react";
-import { theme, ThemeProvider, CSSReset } from "@chakra-ui/core";
+import { ChakraProvider } from "@chakra-ui/react";
 import "@reach/skip-nav/styles.css";
 import "@reach/combobox/styles.css";
 
@@ -21,11 +21,10 @@ firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 ReactDOM.render(
   <LocationProvider>
     <AppProvider>
-      <ThemeProvider theme={theme}>
-        <CSSReset />
+      <ChakraProvider>
         <SkipNavLink />
         <App />
-      </ThemeProvider>
+      </ChakraProvider>
     </AppProvider>
   </LocationProvider>,
   document.getElementById("root")

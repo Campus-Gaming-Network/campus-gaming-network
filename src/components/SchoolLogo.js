@@ -1,5 +1,5 @@
 import React from "react";
-import { Image } from "@chakra-ui/core";
+import { Image } from "@chakra-ui/react";
 import { firebaseStorage } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import { getSchoolLogoPath } from "../utilities";

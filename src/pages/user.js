@@ -13,10 +13,9 @@ import {
   List,
   ListItem,
   Skeleton,
-  PseudoBox,
   Avatar,
   Flex
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Constants
@@ -92,7 +91,7 @@ const User = props => {
   return (
     <Box as="article" pt={10} pb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       {isAuthenticatedUser ? (
-        <PseudoBox
+        <Box
           mb={10}
           textAlign="center"
           display="flex"
@@ -110,7 +109,7 @@ const User = props => {
           >
             Edit Your Profile
           </Link>
-        </PseudoBox>
+        </Box>
       ) : null}
       <Box as="header" display="flex" alignItems="center">
         <Avatar

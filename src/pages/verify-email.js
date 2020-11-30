@@ -6,7 +6,7 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Redirect } from "@reach/router";
 
@@ -75,7 +75,7 @@ const VerifyEmail = props => {
         textAlign="center"
         height="200px"
       >
-        <AlertIcon size="40px" mr={0} />
+        <AlertIcon height="40px" width="40px" mr={0} />
         <AlertTitle mt={4} mb={1} fontSize="lg">
           {verifyState === "success"
             ? "Email verified!"

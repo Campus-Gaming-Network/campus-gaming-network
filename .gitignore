@@ -57,3 +57,4 @@ hosting.*
 firebase-debug.log
 firestore-debug.log
 firestore-coverage.html
+.eslintcache

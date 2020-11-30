@@ -16,7 +16,7 @@ import {
   Divider,
   Flex,
   FormErrorMessage
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 
@@ -142,7 +142,7 @@ const Login = () => {
           </FormControl>
         </Stack>
         <Button
-          variantColor="purple"
+          colorScheme="purple"
           type="submit"
           size="lg"
           w="full"

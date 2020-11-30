@@ -37,7 +37,8 @@ import {
   MenuButton,
   MenuList,
   MenuItem
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
+import { ChevronDown } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -426,7 +427,7 @@ const EditUser = props => {
               Your Profile
             </Heading>
             <Menu>
-              <MenuButton as={Button} rightIcon="chevron-down">
+              <MenuButton as={Button} rightIcon={<ChevronDown />}>
                 Options
               </MenuButton>
               <MenuList fontSize="md">
@@ -437,7 +438,7 @@ const EditUser = props => {
             </Menu>
           </Flex>
           <Button
-            variantColor="purple"
+            colorScheme="purple"
             type="submit"
             size="lg"
             w="full"
@@ -499,7 +500,7 @@ const EditUser = props => {
             reorderCurrentlyPlaying={reorderCurrentlyPlaying}
           />
           <Button
-            variantColor="purple"
+            colorScheme="purple"
             type="submit"
             size="lg"
             w="full"
@@ -545,7 +546,7 @@ const EditUser = props => {
 
           <AlertDialogFooter>
             {isDeletingAccount ? (
-              <Button variantColor="red" disabled={true}>
+              <Button colorScheme="red" disabled={true}>
                 Deleting...
               </Button>
             ) : (
@@ -557,7 +558,7 @@ const EditUser = props => {
                   No, nevermind
                 </Button>
                 <Button
-                  variantColor="red"
+                  colorScheme="red"
                   onClick={onDeleteAccountConfirm}
                   ml={3}
                 >
@@ -1099,7 +1100,7 @@ const FavoriteGamesSection = React.memo(props => {
                       <Button
                         size="xs"
                         variant="ghost"
-                        variantColor="red"
+                        colorScheme="red"
                         onClick={() => props.toggleFavoriteGame(game)}
                       >
                         Remove
@@ -1233,7 +1234,7 @@ const CurrentlyPlayingSection = React.memo(props => {
                       <Button
                         size="xs"
                         variant="ghost"
-                        variantColor="red"
+                        colorScheme="red"
                         onClick={() => props.toggleCurrentGame(game)}
                       >
                         Remove

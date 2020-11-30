@@ -1,12 +1,13 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { Box, Button, Flex, Heading } from "@chakra-ui/core";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { Link as ReachLink, navigate } from "@reach/router";
 
 // Components
 import Link from "./Link";
 import SchoolSearch from "./SchoolSearch";
+import VisuallyHidden from "./VisuallyHidden";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -34,9 +35,11 @@ const Header = () => {
     >
       <Flex align="center" mr={5}>
         <Link to="/">
-          <Heading as="h1" size="lg">
-            CGN
-          </Heading>
+          <VisuallyHidden>
+            <Heading as="h1" size="lg">
+              Campus Gaming Network
+            </Heading>
+          </VisuallyHidden>
         </Link>
       </Flex>
 
@@ -84,7 +87,7 @@ const Header = () => {
         }}
         mt={{ base: 4, md: 0 }}
       >
-        <Button as={ReachLink} to="/register" variantColor="purple" shadow="md">
+        <Button as={ReachLink} to="/register" colorScheme="purple" shadow="md">
           Sign Up Free
         </Button>
       </Box>

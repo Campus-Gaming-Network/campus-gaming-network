@@ -1,6 +1,6 @@
 import React from "react";
 import startCase from "lodash.startcase";
-import { Text } from "@chakra-ui/core";
+import { Text } from "@chakra-ui/react";
 import {
   Combobox,
   ComboboxInput,

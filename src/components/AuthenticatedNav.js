@@ -12,7 +12,7 @@ import {
   Box,
   Avatar,
   Heading
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -109,7 +109,7 @@ const AuthenticatedNav = () => {
         <Button
           as={ReachLink}
           to="/create-event"
-          variantColor="purple"
+          colorScheme="purple"
           variant="ghost"
         >
           Create an event
