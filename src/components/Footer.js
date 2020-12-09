@@ -40,14 +40,14 @@ const Footer = () => {
             Resources
           </ListItem>
           <ListItem fontSize="sm">
-            <Link to="/about-us" color="purple.500" fontWeight={600}>
+            <Link to="/about-us" color="orange.500" fontWeight={600}>
               About us
             </Link>
           </ListItem>
           <ListItem fontSize="sm">
             <Link
               to="/frequently-asked-questions"
-              color="purple.500"
+              color="orange.500"
               fontWeight={600}
             >
               <Text as="abbr" title="Frequently asked questions">
@@ -58,7 +58,7 @@ const Footer = () => {
           <ListItem fontSize="sm">
             <ChakraLink
               href="mailto:support@campusgamingnetwork.com"
-              color="purple.500"
+              color="orange.500"
               fontWeight={600}
             >
               Email us

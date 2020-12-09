@@ -142,7 +142,7 @@ const Login = () => {
           </FormControl>
         </Stack>
         <Button
-          colorScheme="purple"
+          colorScheme="orange"
           type="submit"
           size="lg"
           w="full"
@@ -156,11 +156,11 @@ const Login = () => {
         <Flex alignItems="center" justifyContent="space-between">
           <Text>
             Don’t have an account?{" "}
-            <Link to="/register" color="purple.500" fontWeight={600}>
+            <Link to="/register" color="orange.500" fontWeight={600}>
               Create one
             </Link>
           </Text>
-          <Link to="/forgot-password" color="purple.500" fontWeight={600}>
+          <Link to="/forgot-password" color="orange.500" fontWeight={600}>
             Forgot your password?
           </Link>
         </Flex>

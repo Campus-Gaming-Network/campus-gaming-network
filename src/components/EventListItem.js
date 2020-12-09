@@ -69,7 +69,7 @@ const EventListItem = props => {
           </Box>
           <Link
             to={`/event/${props.event.id}`}
-            color="purple.500"
+            color="orange.500"
             fontWeight="bold"
             fontSize="3xl"
             isTruncated
@@ -81,7 +81,7 @@ const EventListItem = props => {
           </Link>
           <Link
             to={`/school/${props.school.id}`}
-            color="purple.500"
+            color="orange.500"
             fontWeight={600}
             isTruncated
             lineHeight="short"

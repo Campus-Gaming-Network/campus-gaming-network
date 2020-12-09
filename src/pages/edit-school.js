@@ -180,7 +180,7 @@ const EditSchool = props => {
           Edit School
         </Heading>
         <Button
-          colorScheme="purple"
+          colorScheme="orange"
           type="submit"
           size="lg"
           w="full"
@@ -211,7 +211,7 @@ const EditSchool = props => {
           )}
         />
         <Button
-          colorScheme="purple"
+          colorScheme="orange"
           type="submit"
           size="lg"
           w="full"

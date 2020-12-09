@@ -11,7 +11,9 @@ import {
   MenuDivider,
   Box,
   Avatar,
-  Heading
+  Heading,
+  Image,
+  VisuallyHidden
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,6 +30,7 @@ import Link from "./Link";
 import SchoolSearch from "./SchoolSearch";
 /* eslint-disable no-unused-vars */
 import SchoolLogo from "./SchoolLogo";
+import logo from "../logo.svg";
 
 const AuthenticatedNav = () => {
   const state = useAppState();
@@ -69,15 +72,18 @@ const AuthenticatedNav = () => {
       align="center"
       justify="space-between"
       wrap="wrap"
-      padding="1rem"
+      paddingX="1rem"
       borderBottomWidth={2}
-      bg="white"
+      bg="#323031"
     >
       <Flex align="center" mr={5}>
         <Link to="/">
-          <Heading as="h1" size="lg">
-            CGN
-          </Heading>
+          <VisuallyHidden>
+            <Heading as="h1" size="lg">
+              Campus Gaming network
+            </Heading>
+          </VisuallyHidden>
+          <Image src={logo} width="200px" />
         </Link>
       </Flex>
 
@@ -109,7 +115,7 @@ const AuthenticatedNav = () => {
         <Button
           as={ReachLink}
           to="/create-event"
-          colorScheme="purple"
+          colorScheme="orange"
           variant="ghost"
         >
           Create an event

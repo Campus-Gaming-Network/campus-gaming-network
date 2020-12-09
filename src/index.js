@@ -14,6 +14,17 @@ import "@reach/combobox/styles.css";
 
 import { SENTRY_CONFIG } from "./constants";
 
+// const customTheme = {
+//   ...theme,
+//   fonts: {
+//     ...theme.fonts,
+//     body:
+//       "Lato, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji",
+//     heading:
+//       "Lato, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji"
+//   }
+// };
+
 Sentry.init(SENTRY_CONFIG);
 
 firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);

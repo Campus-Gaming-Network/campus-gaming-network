@@ -183,7 +183,7 @@ const Signup = () => {
           onSchoolSelect={onSchoolSelect}
         />
         <Button
-          colorScheme="purple"
+          colorScheme="orange"
           type="submit"
           size="lg"
           w="full"
@@ -196,7 +196,7 @@ const Signup = () => {
         </Button>
         <Text>
           Already a member?{" "}
-          <Link to="/login" color="purple.500" fontWeight={600}>
+          <Link to="/login" color="orange.500" fontWeight={600}>
             Log in
           </Link>
         </Text>

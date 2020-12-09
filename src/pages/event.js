@@ -267,7 +267,7 @@ const Event = props => {
             <Box pr={2}>
               <Link
                 to={`/school/${event.school.id}`}
-                color="purple.500"
+                color="orange.500"
                 fontWeight={600}
                 fontSize="lg"
               >
@@ -430,7 +430,7 @@ const Event = props => {
                   onClick={() =>
                     setAttendingAlertIsOpen(!isEventCreator && !event.hasEnded)
                   }
-                  colorScheme="purple"
+                  colorScheme="orange"
                   w="200px"
                 >
                   Attend Event
@@ -490,7 +490,7 @@ const Event = props => {
 
               <AlertDialogFooter>
                 {isSubmittingEventResponse ? (
-                  <Button colorScheme="purple" disabled={true}>
+                  <Button colorScheme="orange" disabled={true}>
                     RSVPing...
                   </Button>
                 ) : (
@@ -499,7 +499,7 @@ const Event = props => {
                       No, nevermind
                     </Button>
                     <Button
-                      colorScheme="purple"
+                      colorScheme="orange"
                       onClick={() => onAttendingAlertConfirm("YES")}
                       ml={3}
                     >
@@ -629,7 +629,7 @@ const UsersList = props => {
               variant="ghost"
               size="sm"
               leftIcon={<ArrowBack />}
-              colorScheme="purple"
+              colorScheme="orange"
               disabled={page === 0}
               onClick={prevPage}
             >
@@ -643,7 +643,7 @@ const UsersList = props => {
               variant="ghost"
               size="sm"
               rightIcon={<ArrowForward />}
-              colorScheme="purple"
+              colorScheme="orange"
               disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
               onClick={nextPage}
               ml="auto"
@@ -695,7 +695,7 @@ const UsersListItem = props => {
         />
         <Link
           to={`/user/${props.id}`}
-          color="purple.500"
+          color="orange.500"
           fontWeight="bold"
           mt={4}
           fontSize="sm"

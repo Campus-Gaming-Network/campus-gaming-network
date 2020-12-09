@@ -172,7 +172,7 @@ const UpcomingSchoolEvents = props => {
         Upcoming events at{" "}
         <Link
           to={`/school/${props.school.id}`}
-          color="purple.500"
+          color="orange.500"
           fontWeight="bold"
           isTruncated
           lineHeight="short"

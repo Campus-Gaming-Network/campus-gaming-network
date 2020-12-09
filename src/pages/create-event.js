@@ -598,7 +598,7 @@ const CreateEvent = props => {
                                 thickness="4px"
                                 speed="0.65s"
                                 emptyColor="gray.200"
-                                color="purple.500"
+                                color="orange.500"
                                 size="xl"
                                 mt={4}
                               />
@@ -735,7 +735,7 @@ const CreateEvent = props => {
             </Stack>
           </Box>
           <Button
-            colorScheme="purple"
+            colorScheme="orange"
             type="submit"
             size="lg"
             w="full"
@@ -783,11 +783,7 @@ const CreateEvent = props => {
                 >
                   No, nevermind
                 </Button>
-                <Button
-                  colorScheme="red"
-                  onClick={onDeleteEventConfirm}
-                  ml={3}
-                >
+                <Button colorScheme="red" onClick={onDeleteEventConfirm} ml={3}>
                   Yes, I want to delete the event
                 </Button>
               </React.Fragment>

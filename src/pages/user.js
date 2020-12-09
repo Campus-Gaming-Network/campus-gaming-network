@@ -91,12 +91,7 @@ const User = props => {
   return (
     <Box as="article" pt={10} pb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       {isAuthenticatedUser ? (
-        <Box
-          mb={10}
-          textAlign="center"
-          display="flex"
-          justifyContent="center"
-        >
+        <Box mb={10} textAlign="center" display="flex" justifyContent="center">
           <Link
             to="/edit-user"
             fontWeight="bold"
@@ -148,7 +143,7 @@ const User = props => {
             {school ? (
               <Link
                 to={`/school/${school.id}`}
-                color="purple.500"
+                color="orange.500"
                 fontWeight={600}
                 ml={2}
               >

@@ -161,7 +161,7 @@ const PasswordReset = props => {
           </FormControl>
         </Stack>
         <Button
-          colorScheme="purple"
+          colorScheme="orange"
           type="submit"
           size="lg"
           w="full"

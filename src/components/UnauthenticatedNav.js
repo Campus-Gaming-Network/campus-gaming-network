@@ -1,13 +1,20 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Image,
+  VisuallyHidden
+} from "@chakra-ui/react";
 import { Link as ReachLink, navigate } from "@reach/router";
+import logo from "../logo.svg";
 
 // Components
 import Link from "./Link";
 import SchoolSearch from "./SchoolSearch";
-import VisuallyHidden from "./VisuallyHidden";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -29,9 +36,9 @@ const Header = () => {
       align="center"
       justify="space-between"
       wrap="wrap"
-      padding="1.5rem"
+      paddingX="1.5rem"
       borderBottomWidth={2}
-      bg="white"
+      bg="#323031"
     >
       <Flex align="center" mr={5}>
         <Link to="/">
@@ -40,6 +47,7 @@ const Header = () => {
               Campus Gaming Network
             </Heading>
           </VisuallyHidden>
+          <Image src={logo} width="200px" />
         </Link>
       </Flex>
 
@@ -74,6 +82,7 @@ const Header = () => {
           mr={6}
           display="block"
           fontWeight={600}
+          color="white"
         >
           Log In
         </Link>
@@ -87,7 +96,7 @@ const Header = () => {
         }}
         mt={{ base: 4, md: 0 }}
       >
-        <Button as={ReachLink} to="/register" colorScheme="purple" shadow="md">
+        <Button as={ReachLink} to="/register" colorScheme="orange" shadow="md">
           Sign Up Free
         </Button>
       </Box>
