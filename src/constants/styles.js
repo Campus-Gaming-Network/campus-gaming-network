@@ -1,6 +1,23 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Style Constants
 
+export const FONT_STACK =
+  "Lato, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji";
+
+export const CUSTOM_CHAKRA_THEME = {
+  colors: {
+    brand: {
+      500: "#F15A29",
+      300: "#F7941D",
+      100: "#FBB040"
+    }
+  },
+  fonts: {
+    body: FONT_STACK,
+    heading: FONT_STACK
+  }
+};
+
 export const DROPZONE_STYLES = {
   BASE: {
     flex: 1,

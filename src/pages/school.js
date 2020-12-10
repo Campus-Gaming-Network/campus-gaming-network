@@ -349,7 +349,7 @@ const UsersList = props => {
               variant="ghost"
               size="sm"
               leftIcon={<ArrowBack />}
-              colorScheme="orange"
+              colorScheme="brand"
               disabled={page === 0}
               onClick={prevPage}
             >
@@ -363,7 +363,7 @@ const UsersList = props => {
               variant="ghost"
               size="sm"
               rightIcon={<ArrowForward />}
-              colorScheme="orange"
+              colorScheme="brand"
               disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
               onClick={nextPage}
               ml="auto"
@@ -415,7 +415,7 @@ const UsersListItem = props => {
         />
         <Link
           to={`/user/${props.id}`}
-          color="orange.500"
+          color="brand.500"
           fontWeight="bold"
           mt={4}
           fontSize="sm"

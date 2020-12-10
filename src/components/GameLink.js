@@ -20,7 +20,7 @@ const GameLink = React.memo(props => {
       d="inline-block"
       lineHeight="1.2"
       fontWeight="bold"
-      color="orange.500"
+      color="brand.500"
       fontSize="sm"
       mt={2}
     >

@@ -598,7 +598,7 @@ const CreateEvent = props => {
                                 thickness="4px"
                                 speed="0.65s"
                                 emptyColor="gray.200"
-                                color="orange.500"
+                                color="brand.500"
                                 size="xl"
                                 mt={4}
                               />
@@ -735,7 +735,7 @@ const CreateEvent = props => {
             </Stack>
           </Box>
           <Button
-            colorScheme="orange"
+            colorScheme="brand"
             type="submit"
             size="lg"
             w="full"

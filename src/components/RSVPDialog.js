@@ -37,7 +37,7 @@ const RSVPDialog = props => {
 
           <AlertDialogFooter>
             {props.isSubmitting ? (
-              <Button colorScheme="orange" disabled={true}>
+              <Button colorScheme="brand" disabled={true}>
                 RSVPing...
               </Button>
             ) : (
@@ -45,7 +45,7 @@ const RSVPDialog = props => {
                 <Button ref={attendRef} onClick={props.onClose}>
                   No, nevermind
                 </Button>
-                <Button colorScheme="orange" onClick={props.onConfirm} ml={3}>
+                <Button colorScheme="brand" onClick={props.onConfirm} ml={3}>
                   Yes, I want to go
                 </Button>
               </React.Fragment>

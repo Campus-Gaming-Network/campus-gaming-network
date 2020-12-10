@@ -143,7 +143,7 @@ const User = props => {
             {school ? (
               <Link
                 to={`/school/${school.id}`}
-                color="orange.500"
+                color="brand.500"
                 fontWeight={600}
                 ml={2}
               >

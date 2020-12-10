@@ -1,33 +1,22 @@
 import React from "react";
-import { Box, Flex, Heading, Image, VisuallyHidden } from "@chakra-ui/react";
-import logo from "../logo.svg";
+import { Box, Flex } from "@chakra-ui/react";
+
+// Components
+import Nav from "./Nav";
+import Logo from "./Logo";
 
 const NavSilhouette = () => {
   return (
-    <Flex
-      as="nav"
-      role="navigation"
-      align="center"
-      justify="space-between"
-      wrap="wrap"
-      paddingX="1.5rem"
-      borderBottomWidth={2}
-      bg="#323031"
-    >
+    <Nav>
       <Flex align="center" mr={5}>
-        <VisuallyHidden>
-          <Heading as="h1" size="lg">
-            Campus Gaming network
-          </Heading>
-        </VisuallyHidden>
-        <Image src={logo} width="200px" />
+        <Logo width="200px" />
       </Flex>
 
       <Flex>
         <Box bg="gray.200" w="65px" h="38px" mr="2" borderRadius="md" />
-        <Box bg="orange.500" w="125px" h="38px" borderRadius="md" />
+        <Box bg="brand" w="125px" h="38px" borderRadius="md" />
       </Flex>
-    </Flex>
+    </Nav>
   );
 };
 

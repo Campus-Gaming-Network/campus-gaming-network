@@ -10,11 +10,11 @@ import {
   VisuallyHidden
 } from "@chakra-ui/react";
 import { Link as ReachLink, navigate } from "@reach/router";
-import logo from "../logo.svg";
 
 // Components
-import Link from "./Link";
+import Nav from "./Nav";
 import SchoolSearch from "./SchoolSearch";
+import Logo from "./Logo";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -30,25 +30,9 @@ const Header = () => {
   };
 
   return (
-    <Flex
-      as="nav"
-      role="navigation"
-      align="center"
-      justify="space-between"
-      wrap="wrap"
-      paddingX="1.5rem"
-      borderBottomWidth={2}
-      bg="#323031"
-    >
+    <Nav>
       <Flex align="center" mr={5}>
-        <Link to="/">
-          <VisuallyHidden>
-            <Heading as="h1" size="lg">
-              Campus Gaming Network
-            </Heading>
-          </VisuallyHidden>
-          <Image src={logo} width="200px" />
-        </Link>
+        <Logo width="200px" />
       </Flex>
 
       <SchoolSearch
@@ -59,48 +43,19 @@ const Header = () => {
       />
 
       <Box
-        display={{ xs: "block", sm: "block", md: "none" }}
-        onClick={toggleMenu}
-      >
-        <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />
-      </Box>
-
-      <Box
-        display={{
-          xs: isMenuOpen ? "block" : "none",
-          sm: isMenuOpen ? "block" : "none",
-          md: "flex"
-        }}
-        width={{ xs: "full", sm: "full", md: "auto" }}
+        display="flex"
         alignItems="center"
         flexGrow={1}
-        justifyContent={{ xs: "flex-start", sm: "flex-start", md: "flex-end" }}
+        justifyContent="flex-end"
       >
-        <Link
-          to="/login"
-          mt={{ base: 4, md: 0 }}
-          mr={6}
-          display="block"
-          fontWeight={600}
-          color="white"
-        >
+        <Button as={ReachLink} to="/login" colorScheme="gray" mr={3}>
           Log In
-        </Link>
-      </Box>
-
-      <Box
-        display={{
-          xs: isMenuOpen ? "block" : "none",
-          sm: isMenuOpen ? "block" : "none",
-          md: "block"
-        }}
-        mt={{ base: 4, md: 0 }}
-      >
-        <Button as={ReachLink} to="/register" colorScheme="orange" shadow="md">
-          Sign Up Free
+        </Button>
+        <Button as={ReachLink} to="/register" colorScheme="brand">
+          Sign Up
         </Button>
       </Box>
-    </Flex>
+    </Nav>
   );
 };
 
