@@ -98,7 +98,7 @@ const Login = () => {
         p={12}
         onSubmit={handleSubmit}
       >
-        <Heading as="h1" size="2xl">
+        <Heading as="h2" size="2xl">
           Welcome back!
         </Heading>
         <Text color="gray.500">Log in to your account</Text>

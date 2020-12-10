@@ -8,7 +8,7 @@ import { Box, Heading, Text } from "@chakra-ui/react";
 const AboutUs = () => {
   return (
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
-      <Heading as="h1" size="2xl" mb={4}>
+      <Heading as="h2" size="2xl" mb={4}>
         About Us
       </Heading>
       <Text>

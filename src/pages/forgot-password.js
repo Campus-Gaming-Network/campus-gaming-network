@@ -110,7 +110,7 @@ const ForgotPassword = () => {
         p={12}
         onSubmit={handleSubmit}
       >
-        <Heading as="h1" size="2xl" mb={4}>
+        <Heading as="h2" size="2xl" mb={4}>
           Reset your password
         </Heading>
         <Text color="gray.500">

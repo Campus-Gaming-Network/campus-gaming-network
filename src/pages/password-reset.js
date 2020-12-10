@@ -124,7 +124,7 @@ const PasswordReset = props => {
         p={12}
         onSubmit={handleSubmit}
       >
-        <Heading as="h1" size="2xl" mb={4}>
+        <Heading as="h2" size="2xl" mb={4}>
           Change Your Password
         </Heading>
         <Divider borderColor="gray.300" mt={12} mb={10} />

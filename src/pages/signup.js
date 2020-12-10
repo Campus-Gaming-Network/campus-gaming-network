@@ -158,7 +158,7 @@ const Signup = () => {
         p={12}
         onSubmit={handleSubmit}
       >
-        <Heading as="h1" size="2xl">
+        <Heading as="h2" size="2xl">
           Create an account
         </Heading>
         <Divider borderColor="gray.300" mt={12} mb={10} />

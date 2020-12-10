@@ -122,7 +122,7 @@ const User = props => {
         />
         <Box pl={12}>
           <Heading
-            as="h1"
+            as="h2"
             fontSize="5xl"
             fontWeight="bold"
             pb={2}
@@ -383,7 +383,7 @@ const EventsList = props => {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
         {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
-          <Box key={index} w={{ md: "33%", sm: "50%", xs: "100%" }}>
+          <Box key={index} w={{ md: "33%", sm: "50%" }}>
             <Skeleton
               pos="relative"
               d="flex"

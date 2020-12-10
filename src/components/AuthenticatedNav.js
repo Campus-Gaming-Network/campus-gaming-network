@@ -10,11 +10,9 @@ import {
   MenuItem,
   MenuDivider,
   Box,
-  Avatar,
-  Heading,
-  Image,
-  VisuallyHidden
+  Avatar
 } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -78,43 +76,17 @@ const AuthenticatedNav = () => {
         clearInputOnSelect
       />
 
-      {/* <Box
-        display={{ xs: "block", sm: "block", md: "none" }}
-        onClick={toggleMenu}
-      >
-        <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />
-      </Box> */}
-
       <Box
-        display={{
-          xs: isMenuOpen ? "block" : "none",
-          sm: isMenuOpen ? "block" : "none",
-          md: "flex"
-        }}
-        width={{ xs: "full", sm: "full", md: "auto" }}
+        display="flex"
+        width="auto"
         alignItems="center"
         flexGrow={1}
-        justifyContent={{ xs: "flex-start", sm: "flex-start", md: "flex-end" }}
+        justifyContent="flex-end"
       >
-        <Button
-          as={ReachLink}
-          to="/create-event"
-          colorScheme="brand"
-          variant="ghost"
-        >
+        <Button as={ReachLink} to="/create-event" colorScheme="brand" mr={4}>
           Create an event
         </Button>
-      </Box>
 
-      <Box
-        display={{
-          xs: isMenuOpen ? "block" : "none",
-          sm: isMenuOpen ? "block" : "none",
-          md: "block"
-        }}
-        mt={{ base: 4, md: 0 }}
-        ml={2}
-      >
         <Menu>
           <MenuButton
             d="flex"
@@ -127,28 +99,33 @@ const AuthenticatedNav = () => {
             _hover={{
               bg: "gray.100"
             }}
-            px={4}
+            px={2}
             rounded="md"
           >
-            {user.gravatar ? (
-              <Avatar
-                name={user.fullName}
-                src={user.gravatarUrl}
-                alt={`The profile picture for ${user.fullName}`}
-                title={`The profile picture for ${user.fullName}`}
-                h={10}
-                w={10}
-                rounded="full"
-                mr={4}
-                bg="white"
-                borderWidth={2}
-                borderColor="gray.300"
-                height="2.5rem"
-              />
-            ) : null}
-            <Text fontWeight="bold" color="gray.900">
-              {user.firstName}
-            </Text>
+            <Flex align="center">
+              {user.gravatar ? (
+                <Avatar
+                  name={user.fullName}
+                  src={user.gravatarUrl}
+                  alt={`The profile picture for ${user.fullName}`}
+                  title={`The profile picture for ${user.fullName}`}
+                  h={10}
+                  w={10}
+                  rounded="full"
+                  mr={4}
+                  bg="white"
+                  borderWidth={2}
+                  borderColor="gray.300"
+                  height="2.5rem"
+                />
+              ) : null}
+              <Text fontWeight="bold" color="gray.900">
+                {user.firstName}
+              </Text>
+              <Box ml={2}>
+                <ChevronDownIcon />
+              </Box>
+            </Flex>
           </MenuButton>
 
           <MenuList>

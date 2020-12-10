@@ -273,7 +273,7 @@ const Event = props => {
               >
                 {startCase(event.school.name.toLowerCase())}
               </Link>
-              <Heading as="h1" fontWeight="bold" fontSize="5xl">
+              <Heading as="h2" fontWeight="bold" fontSize="5xl">
                 {event.name}
               </Heading>
             </Box>
@@ -595,7 +595,7 @@ const UsersList = props => {
     return (
       <Flex flexWrap="wrap" mx={-2}>
         {times(DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
-          <Box key={index} w={{ md: "20%", sm: "33%", xs: "50%" }}>
+          <Box key={index} w={{ md: "20%", sm: "33%" }}>
             <Skeleton
               pos="relative"
               d="flex"
@@ -668,7 +668,7 @@ const UsersList = props => {
 
 const UsersListItem = props => {
   return (
-    <ListItem w={{ md: "20%", sm: "33%", xs: "50%" }}>
+    <ListItem w={{ md: "20%", sm: "33%" }}>
       <Box
         shadow="sm"
         borderWidth={1}

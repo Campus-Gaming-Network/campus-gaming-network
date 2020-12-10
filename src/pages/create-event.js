@@ -30,7 +30,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
-  AlertDialogOverlay
+  AlertDialogOverlay,
+  Spacer
 } from "@chakra-ui/react";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
@@ -458,14 +459,11 @@ const CreateEvent = props => {
           </Alert>
         ) : null}
         <Stack as="form" spacing={32} onSubmit={handleSubmit}>
-          <Flex
-            justifyContent="space-between"
-            alignItems="center"
-            flexWrap="wrap"
-          >
-            <Heading as="h1" size="2xl">
+          <Flex alignItems="center" flexWrap="wrap">
+            <Heading as="h2" size="2xl">
               {props.edit ? "Edit Event" : "Create an Event"}
             </Heading>
+            <Spacer />
             {props.edit ? (
               <Button
                 variant="ghost"

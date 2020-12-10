@@ -36,9 +36,10 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem
+  MenuItem,
+  Spacer
 } from "@chakra-ui/react";
-import { ChevronDown } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -418,16 +419,13 @@ const EditUser = props => {
           </Alert>
         ) : null}
         <Stack as="form" spacing={32} onSubmit={handleSubmit}>
-          <Flex
-            justifyContent={{ md: "space-between", sm: "center", xs: "center" }}
-            alignItems="center"
-            flexWrap="wrap"
-          >
-            <Heading as="h1" size="2xl" pb={{ md: 0, sm: 6, xs: 6 }}>
+          <Flex alignItems="center" flexWrap="wrap">
+            <Heading as="h2" size="2xl" pb={{ md: 0, sm: 6 }}>
               Your Profile
             </Heading>
+            <Spacer />
             <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDown />}>
+              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                 Options
               </MenuButton>
               <MenuList fontSize="md">
@@ -602,8 +600,8 @@ const DetailSection = React.memo(props => {
           <FormControl
             isRequired
             isInvalid={props.errors.firstName}
-            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
-            pr={{ md: 4, sm: 0, xs: 0 }}
+            flexBasis={{ md: "50%", sm: "100%" }}
+            pr={{ md: 4, sm: 0 }}
           >
             <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
               First Name
@@ -622,8 +620,8 @@ const DetailSection = React.memo(props => {
           <FormControl
             isRequired
             isInvalid={props.errors.lastName}
-            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
-            pt={{ md: 0, sm: 6, xs: 6 }}
+            flexBasis={{ md: "50%", sm: "100%" }}
+            pt={{ md: 0, sm: 6 }}
           >
             <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
               Last Name
@@ -643,8 +641,8 @@ const DetailSection = React.memo(props => {
         </Flex>
         <FormControl
           disabled
-          width={{ md: "50%", sm: "100%", xs: "100%" }}
-          pr={{ md: 4, sm: 0, xs: 0 }}
+          width={{ md: "50%", sm: "100%" }}
+          pr={{ md: 4, sm: 0 }}
         >
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
             Email
@@ -665,8 +663,8 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl
           isInvalid={props.errors.hometown}
-          width={{ md: "50%", sm: "100%", xs: "100%" }}
-          pr={{ md: 4, sm: 0, xs: 0 }}
+          width={{ md: "50%", sm: "100%" }}
+          pr={{ md: 4, sm: 0 }}
         >
           <FormLabel htmlFor="hometown" fontSize="lg" fontWeight="bold">
             Hometown
@@ -689,8 +687,8 @@ const DetailSection = React.memo(props => {
           <Flex flexWrap="wrap">
             <FormControl
               isInvalid={props.errors.birthMonth}
-              flexBasis={{ md: "33.3333%", sm: "100%", xs: "100%" }}
-              pr={{ md: 4, sm: 0, xs: 0 }}
+              flexBasis={{ md: "33.3333%", sm: "100%" }}
+              pr={{ md: 4, sm: 0 }}
             >
               <FormLabel htmlFor="birthMonth" fontSize="sm" fontWeight="bold">
                 Month
@@ -713,8 +711,8 @@ const DetailSection = React.memo(props => {
             </FormControl>
             <FormControl
               isInvalid={props.errors.birthDay}
-              flexBasis={{ md: "33.3333%", sm: "100%", xs: "100%" }}
-              pr={{ md: 4, sm: 0, xs: 0 }}
+              flexBasis={{ md: "33.3333%", sm: "100%" }}
+              pr={{ md: 4, sm: 0 }}
             >
               <FormLabel htmlFor="birthDay" fontSize="sm" fontWeight="bold">
                 Day
@@ -737,7 +735,7 @@ const DetailSection = React.memo(props => {
             </FormControl>
             <FormControl
               isInvalid={props.errors.birthYear}
-              flexBasis={{ md: "33.3333%", sm: "100%", xs: "100%" }}
+              flexBasis={{ md: "33.3333%", sm: "100%" }}
             >
               <FormLabel htmlFor="birthYear" fontSize="sm" fontWeight="bold">
                 Year
@@ -792,8 +790,8 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl
           isInvalid={props.errors.timezone}
-          width={{ md: "50%", sm: "100%", xs: "100%" }}
-          pr={{ md: 4, sm: 0, xs: 0 }}
+          width={{ md: "50%", sm: "100%" }}
+          pr={{ md: 4, sm: 0 }}
         >
           <FormLabel htmlFor="timezone" fontSize="lg" fontWeight="bold">
             Timezone
@@ -857,8 +855,8 @@ const SchoolSection = React.memo(props => {
         <FormControl
           isRequired
           isInvalid={props.errors.status}
-          width={{ md: "50%", sm: "100%", xs: "100%" }}
-          pr={{ md: 4, sm: 0, xs: 0 }}
+          width={{ md: "50%", sm: "100%" }}
+          pr={{ md: 4, sm: 0 }}
         >
           <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
             Status
@@ -881,7 +879,7 @@ const SchoolSection = React.memo(props => {
         <Flex flexWrap="wrap">
           <FormControl
             isInvalid={props.errors.major}
-            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
+            flexBasis={{ md: "50%", sm: "100%" }}
             pr={{ md: 4, sm: 0 }}
           >
             <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
@@ -899,8 +897,8 @@ const SchoolSection = React.memo(props => {
           </FormControl>
           <FormControl
             isInvalid={props.errors.minor}
-            flexBasis={{ md: "50%", sm: "100%", xs: "100%" }}
-            pt={{ md: 0, sm: 6, xs: 6 }}
+            flexBasis={{ md: "50%", sm: "100%" }}
+            pt={{ md: 0, sm: 6 }}
           >
             <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
               Minor

@@ -104,7 +104,7 @@ const School = props => {
           />
           <Box pl={12}>
             <Heading
-              as="h1"
+              as="h2"
               fontSize="5xl"
               fontWeight="bold"
               pb={2}
@@ -242,7 +242,7 @@ const EventsList = props => {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
         {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
-          <Box key={index} w={{ md: "33%", sm: "50%", xs: "100%" }}>
+          <Box key={index} w={{ md: "33%", sm: "50%" }}>
             <Skeleton
               pos="relative"
               d="flex"
@@ -315,7 +315,7 @@ const UsersList = props => {
     return (
       <Flex flexWrap="wrap" mx={-2}>
         {times(DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
-          <Box key={index} w={{ md: "20%", sm: "33%", xs: "50%" }}>
+          <Box key={index} w={{ md: "20%", sm: "33%" }}>
             <Skeleton
               pos="relative"
               d="flex"
@@ -388,7 +388,7 @@ const UsersList = props => {
 
 const UsersListItem = props => {
   return (
-    <ListItem w={{ md: "20%", sm: "33%", xs: "50%" }}>
+    <ListItem w={{ md: "20%", sm: "33%" }}>
       <Box
         shadow="sm"
         borderWidth={1}
