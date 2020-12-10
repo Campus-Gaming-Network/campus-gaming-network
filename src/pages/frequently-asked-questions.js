@@ -27,151 +27,29 @@ const FrequentlyAskedQuestions = () => {
         Frequently Asked Questions
       </Heading>
       <Accordion defaultIndex={[]} allowMultiple>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              Does Campus Gaming Network cost anything to use?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            No, it is completely free to use.
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              How does Campus Gaming Network make money?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            We make money by donations from our users through a service called{" "}
-            <BuyMeACoffeeLink />. If you like what we do and want to donate to
-            help with development costs, you can visit our{" "}
-            <BuyMeACoffeeLink page="cgnbrandon">
-              Buy Me a Coffee page
-            </BuyMeACoffeeLink>
-            .
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              Where does my profile picture come from?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            Your profile picture is managed by <GravatarLink /> . It is linked
-            to your email address or your last known IP address. If you do not
-            have a <GravatarLink /> account tied to your email you are given a
-            default randomized profile picture.
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              How do I change my profile picture?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            To change your profile picture, you need to make a <GravatarLink />{" "}
-            account with the same email address you used to sign up for Campus
-            Gaming Network. Once you have created a <GravatarLink /> account you
-            can upload a profile picture there and it will automatically be used
-            on Campus Gaming Network and any other website that uses the{" "}
-            <GravatarLink /> service.
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              Will you allow uploading of profile pictures without{" "}
-              <GravatarLink />?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            Maybe sometime in the future, but for right now, to keep costs down
-            we are taking advantage of their service.
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              Where does the list of games come from?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            Our list of games comes from the <IGDBLink />
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              I can't find a certain game, what gives?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            You would need to take that up with the{" "}
-            <OutsideLink href="https://www.igdb.com/discover">
-              Internet Games Database (IGDB)
-              <Text as="span" ml={1}>
-                <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-              </Text>
-            </OutsideLink>
-            , we have no control over that.
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              Is there a mobile app?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            Not currently, but we plan to develop a native mobile app for both
-            iOS and Android in the future.
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              What happens if something on the site doesn't work as expected?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            You can email us at{" "}
-            <ChakraLink
-              href="mailto:support@campusgamingnetwork.com"
-              color="brand.500"
-              fontWeight={600}
-            >
-              support@campusgamingnetwork.com
-            </ChakraLink>
-            , join our <DiscordLink />, or open an issue on our <GithubLink />.
-            We will try to reach back and look into the issue as soon as we can.
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionButton>
-            <Box flex="1" textAlign="left" fontWeight="bold">
-              Who are you?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-          <AccordionPanel pb={4}>
-            An avid gamer, software developer, living in Salt Lake City, who
-            wants to see more people connected through video games.
-          </AccordionPanel>
-        </AccordionItem>
+        {QUESTIONS.map(item => {
+          return (
+            <AccordionItem>
+              <AccordionButton>
+                {item.question}
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel pb={4}>{item.answer}</AccordionPanel>
+            </AccordionItem>
+          );
+        })}
       </Accordion>
+    </Box>
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// QuestionWrapper
+
+const QuestionWrapper = props => {
+  return (
+    <Box flex="1" textAlign="left" fontWeight="bold">
+      {props.children}
     </Box>
   );
 };
@@ -247,5 +125,148 @@ const BuyMeACoffeeLink = props => {
     </ExternalLink>
   );
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Questions
+
+const QUESTIONS = [
+  {
+    question: (
+      <QuestionWrapper>
+        Does Campus Gaming Network cost anything to use?
+      </QuestionWrapper>
+    ),
+    answer: <Text>No, it is completely free to use.</Text>
+  },
+  {
+    question: (
+      <QuestionWrapper>
+        How does Campus Gaming Network make money?
+      </QuestionWrapper>
+    ),
+    answer: (
+      <Text>
+        We make money by donations from our users through a service called{" "}
+        <BuyMeACoffeeLink />. If you like what we do and want to donate to help
+        with development costs, you can visit our{" "}
+        <BuyMeACoffeeLink page="cgnbrandon">
+          Buy Me a Coffee page
+        </BuyMeACoffeeLink>
+        .
+      </Text>
+    )
+  },
+  {
+    question: (
+      <QuestionWrapper>
+        Where does my profile picture come from?
+      </QuestionWrapper>
+    ),
+    answer: (
+      <Text>
+        Your profile picture is managed by <GravatarLink /> . It is linked to
+        your email address or your last known IP address. If you do not have a{" "}
+        <GravatarLink /> account tied to your email you are given a default
+        randomized profile picture.
+      </Text>
+    )
+  },
+  {
+    question: (
+      <QuestionWrapper>How do I change my profile picture?</QuestionWrapper>
+    ),
+    answer: (
+      <Text>
+        To change your profile picture, you need to make a <GravatarLink />{" "}
+        account with the same email address you used to sign up for Campus
+        Gaming Network. Once you have created a <GravatarLink /> account you can
+        upload a profile picture there and it will automatically be used on
+        Campus Gaming Network and any other website that uses the{" "}
+        <GravatarLink /> service.
+      </Text>
+    )
+  },
+  {
+    question: (
+      <QuestionWrapper>
+        Will you allow uploading of profile pictures without <GravatarLink />?
+      </QuestionWrapper>
+    ),
+    answer: (
+      <Text>
+        Maybe sometime in the future, but for right now, to keep costs down we
+        are taking advantage of their service.
+      </Text>
+    )
+  },
+  {
+    question: (
+      <QuestionWrapper>Where does the list of games come from?</QuestionWrapper>
+    ),
+    answer: (
+      <Text>
+        Our list of games comes from the <IGDBLink />
+      </Text>
+    )
+  },
+  {
+    question: (
+      <QuestionWrapper>
+        I can't find a certain game, what gives?
+      </QuestionWrapper>
+    ),
+    answer: (
+      <Text>
+        You would need to take that up with the{" "}
+        <OutsideLink href="https://www.igdb.com/discover">
+          Internet Games Database (IGDB)
+          <Text as="span" ml={1}>
+            <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
+          </Text>
+        </OutsideLink>
+        , we have no control over that.
+      </Text>
+    )
+  },
+  {
+    question: <QuestionWrapper>Is there a mobile app?</QuestionWrapper>,
+    answer: (
+      <Text>
+        Not currently, but we plan to develop a native mobile app for both iOS
+        and Android in the future.
+      </Text>
+    )
+  },
+  {
+    question: (
+      <QuestionWrapper>
+        What happens if something on the site doesn't work as expected?
+      </QuestionWrapper>
+    ),
+    answer: (
+      <Text>
+        You can email us at{" "}
+        <ChakraLink
+          href="mailto:support@campusgamingnetwork.com"
+          color="brand.500"
+          fontWeight={600}
+        >
+          support@campusgamingnetwork.com
+        </ChakraLink>
+        , join our <DiscordLink />, or open an issue on our <GithubLink />. We
+        will try to reach back and look into the issue as soon as we can.
+      </Text>
+    )
+  },
+  {
+    question: <QuestionWrapper>Who are you?</QuestionWrapper>,
+    answer: (
+      <Text>
+        An avid gamer, software developer, living in Salt Lake City, who wants
+        to see more people connected through video games.
+      </Text>
+    )
+  }
+];
 
 export default FrequentlyAskedQuestions;
