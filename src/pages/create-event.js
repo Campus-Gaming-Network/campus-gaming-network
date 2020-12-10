@@ -19,7 +19,6 @@ import {
   Spinner,
   Checkbox,
   useToast,
-  Select,
   Flex,
   Avatar,
   Alert,
@@ -45,6 +44,10 @@ import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
 // Components
 import GameSearch from "components/GameSearch";
 import GameCover from "components/GameCover";
+import MonthSelect from "components/MonthSelect";
+import DaySelect from "components/DaySelect";
+import YearSelect from "components/YearSelect";
+import TimeSelect from "components/TimeSelect";
 
 // Hooks
 import useFetchEventDetails from "hooks/useFetchEventDetails";
@@ -54,7 +57,7 @@ import { mapEventResponse, mapEvent } from "../utilities";
 import { validateCreateEvent } from "../utilities/validation";
 
 // Constants
-import { COLLECTIONS } from "../constants";
+import { COLLECTIONS, CURRENT_YEAR } from "../constants";
 
 const initialFormState = {
   name: "",
@@ -62,6 +65,14 @@ const initialFormState = {
   game: {},
   startDateTime: new Date(),
   endDateTime: new Date(),
+  startMonth: "",
+  startDay: "",
+  startYear: "",
+  startTime: "",
+  endMonth: "",
+  endDay: "",
+  endYear: "",
+  endTime: "",
   placeId: "",
   isOnlineEvent: false,
   location: ""
@@ -689,26 +700,211 @@ const CreateEvent = props => {
                 ) : null}
                 <FormErrorMessage>{errors.game}</FormErrorMessage>
               </FormControl>
-              <FormControl isRequired isInvalid={errors.startDateTime}>
-                <FormLabel
-                  htmlFor="startDateTime"
-                  fontSize="lg"
-                  fontWeight="bold"
-                >
-                  Starts
-                </FormLabel>
-                <FormErrorMessage>{errors.startDateTime}</FormErrorMessage>
-              </FormControl>
-              <FormControl isRequired isInvalid={errors.endDateTime}>
-                <FormLabel
-                  htmlFor="endDateTime"
-                  fontSize="lg"
-                  fontWeight="bold"
-                >
-                  Ends
-                </FormLabel>
-                <FormErrorMessage>{errors.endDateTime}</FormErrorMessage>
-              </FormControl>
+              <Box as="fieldset">
+                <Text as="legend" fontSize="lg" fontWeight="bold">
+                  Start Date and Time
+                </Text>
+                <Stack spacing={4}>
+                  <Flex flexWrap="wrap">
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.startDay}
+                      flexBasis={{ md: "20%", sm: "100%" }}
+                      pr={{ md: 4, sm: 0 }}
+                    >
+                      <FormLabel
+                        htmlFor="startDay"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Day
+                      </FormLabel>
+                      <DaySelect
+                        id="startDay"
+                        name="startDay"
+                        onChange={handleFieldChange}
+                        value={formState.startDay}
+                        size="lg"
+                      />
+                      <FormErrorMessage>{errors.startDay}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.startMonth}
+                      flexBasis={{ md: "25%", sm: "100%" }}
+                      pr={{ md: 4, sm: 0 }}
+                    >
+                      <FormLabel
+                        htmlFor="startMonth"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Month
+                      </FormLabel>
+                      <MonthSelect
+                        id="startMonth"
+                        name="startMonth"
+                        onChange={handleFieldChange}
+                        value={formState.startMonth}
+                        size="lg"
+                      />
+                      <FormErrorMessage>{errors.startMonth}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.startYear}
+                      flexBasis={{ md: "25%", sm: "100%" }}
+                    >
+                      <FormLabel
+                        htmlFor="startYear"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Year
+                      </FormLabel>
+                      <YearSelect
+                        id="startYear"
+                        name="startYear"
+                        onChange={handleFieldChange}
+                        value={formState.startYear}
+                        size="lg"
+                        min={CURRENT_YEAR}
+                        max={CURRENT_YEAR + 5}
+                      />
+                      <FormErrorMessage>{errors.startYear}</FormErrorMessage>
+                    </FormControl>
+                  </Flex>
+                  <Flex>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.startTime}
+                      flexBasis={{ md: "33.3333%", sm: "100%" }}
+                    >
+                      <FormLabel
+                        htmlFor="startTime"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Start Time
+                      </FormLabel>
+                      <TimeSelect
+                        id="startTime"
+                        name="startTime"
+                        onChange={handleFieldChange}
+                        value={formState.startTime}
+                        size="lg"
+                      />
+                      <FormErrorMessage>{errors.startTime}</FormErrorMessage>
+                    </FormControl>
+                  </Flex>
+                </Stack>
+                <Text color="red.500" fontSize="sm">
+                  {errors.startDateTime}
+                </Text>
+              </Box>
+              <Box as="fieldset">
+                <Text as="legend" fontSize="lg" fontWeight="bold">
+                  End Date and Time
+                </Text>
+                <Stack spacing={4}>
+                  <Flex flexWrap="wrap">
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.endDay}
+                      flexBasis={{ md: "20%", sm: "100%" }}
+                      pr={{ md: 4, sm: 0 }}
+                    >
+                      <FormLabel
+                        htmlFor="endDay"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Day
+                      </FormLabel>
+                      <DaySelect
+                        id="endDay"
+                        name="endDay"
+                        onChange={handleFieldChange}
+                        value={formState.endDay}
+                        size="lg"
+                      />
+                      <FormErrorMessage>{errors.endDay}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.endMonth}
+                      flexBasis={{ md: "25%", sm: "100%" }}
+                      pr={{ md: 4, sm: 0 }}
+                    >
+                      <FormLabel
+                        htmlFor="endMonth"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Month
+                      </FormLabel>
+                      <MonthSelect
+                        id="endMonth"
+                        name="endMonth"
+                        onChange={handleFieldChange}
+                        value={formState.endMonth}
+                        size="lg"
+                      />
+                      <FormErrorMessage>{errors.endMonth}</FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.endYear}
+                      flexBasis={{ md: "25%", sm: "100%" }}
+                      pr={{ md: 4, sm: 0 }}
+                    >
+                      <FormLabel
+                        htmlFor="endYear"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Year
+                      </FormLabel>
+                      <YearSelect
+                        id="endYear"
+                        name="endYear"
+                        onChange={handleFieldChange}
+                        value={formState.endYear}
+                        size="lg"
+                        min={CURRENT_YEAR}
+                        max={CURRENT_YEAR + 5}
+                      />
+                      <FormErrorMessage>{errors.endYear}</FormErrorMessage>
+                    </FormControl>
+                  </Flex>
+                  <Flex>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.endTime}
+                      flexBasis={{ md: "33.3333%", sm: "100%" }}
+                    >
+                      <FormLabel
+                        htmlFor="endTime"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        End Time
+                      </FormLabel>
+                      <TimeSelect
+                        id="endTime"
+                        name="endTime"
+                        onChange={handleFieldChange}
+                        value={formState.endTime}
+                        size="lg"
+                      />
+                      <FormErrorMessage>{errors.endTime}</FormErrorMessage>
+                    </FormControl>
+                  </Flex>
+                </Stack>
+                <Text color="red.500" fontSize="sm">
+                  {errors.endDateTime}
+                </Text>
+              </Box>
               {/* TODO: Tournament feature */}
               {/* <FormControl>
               <FormLabel htmlFor="isTournament" fontSize="lg" fontWeight="bold">

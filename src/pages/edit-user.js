@@ -45,9 +45,6 @@ import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
 // Constants
 import {
-  MONTHS,
-  DAYS,
-  LAST_100_YEARS,
   STUDENT_STATUS_OPTIONS,
   ACCOUNTS,
   TIMEZONES,
@@ -55,7 +52,8 @@ import {
   DASHED_DATE,
   MAX_BIO_LENGTH,
   MAX_FAVORITE_GAME_LIST,
-  MAX_CURRENTLY_PLAYING_LIST
+  MAX_CURRENTLY_PLAYING_LIST,
+  CURRENT_YEAR
 } from "../constants";
 
 // Other
@@ -66,6 +64,9 @@ import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import SchoolSearch from "components/SchoolSearch";
 import GameSearch from "components/GameSearch";
 import GameCover from "components/GameCover";
+import MonthSelect from "components/MonthSelect";
+import DaySelect from "components/DaySelect";
+import YearSelect from "components/YearSelect";
 
 // Utilities
 import { mapUser, move } from "../utilities";
@@ -693,20 +694,13 @@ const DetailSection = React.memo(props => {
               <FormLabel htmlFor="birthMonth" fontSize="sm" fontWeight="bold">
                 Month
               </FormLabel>
-              <Select
+              <MonthSelect
                 id="birthMonth"
                 name="birthMonth"
                 onChange={props.handleFieldChange}
                 value={props.birthMonth}
                 size="lg"
-              >
-                <option value="">Select month</option>
-                {MONTHS.map(month => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </Select>
+              />
               <FormErrorMessage>{props.errors.birthMonth}</FormErrorMessage>
             </FormControl>
             <FormControl
@@ -717,20 +711,13 @@ const DetailSection = React.memo(props => {
               <FormLabel htmlFor="birthDay" fontSize="sm" fontWeight="bold">
                 Day
               </FormLabel>
-              <Select
+              <DaySelect
                 id="birthDay"
                 name="birthDay"
                 onChange={props.handleFieldChange}
                 value={props.birthDay}
                 size="lg"
-              >
-                <option value="">Select day</option>
-                {DAYS.map(day => (
-                  <option key={day} value={day}>
-                    {day}
-                  </option>
-                ))}
-              </Select>
+              />
               <FormErrorMessage>{props.errors.birthDay}</FormErrorMessage>
             </FormControl>
             <FormControl
@@ -740,20 +727,16 @@ const DetailSection = React.memo(props => {
               <FormLabel htmlFor="birthYear" fontSize="sm" fontWeight="bold">
                 Year
               </FormLabel>
-              <Select
+              <YearSelect
                 id="birthYear"
                 name="birthYear"
                 onChange={props.handleFieldChange}
                 value={props.birthYear}
                 size="lg"
-              >
-                <option value="">Select year</option>
-                {LAST_100_YEARS.map(year => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </Select>
+                min={CURRENT_YEAR - 100}
+                max={CURRENT_YEAR + 1}
+                reverseOptions
+              />
               <FormErrorMessage>{props.errors.birthYear}</FormErrorMessage>
             </FormControl>
           </Flex>

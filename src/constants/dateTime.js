@@ -4,6 +4,9 @@
 import { DateTime, Info } from "luxon";
 import range from "lodash.range";
 
+// Utilities
+import { getYears } from "../utilities";
+
 export const DASHED_DATE = "MMMM-d-y";
 export const TIMEZONES = [
   { value: "America/Puerto_Rico", name: "Puerto Rico (Atlantic)" },
@@ -19,6 +22,9 @@ export const CURRENT_YEAR = DateTime.local().year;
 export const MONTHS = Info.months();
 export const MAX_DAYS_IN_MONTH = 31;
 export const DAYS = range(1, MAX_DAYS_IN_MONTH + 1).map(day => day.toString());
-export const LAST_100_YEARS = range(CURRENT_YEAR - 100, CURRENT_YEAR + 1)
-  .map(year => year.toString())
-  .reverse();
+export const LAST_100_YEARS = getYears(CURRENT_YEAR - 100, CURRENT_YEAR + 1, {
+  reverse: true
+});
+export const NEXT_5_YEARS = getYears(CURRENT_YEAR, CURRENT_YEAR + 5, {
+  reverse: true
+});

@@ -1,6 +1,6 @@
 import React from "react";
 import startCase from "lodash.startcase";
-import { Text } from "@chakra-ui/react";
+import { Text, Spinner, Flex } from "@chakra-ui/react";
 import {
   Combobox,
   ComboboxInput,
@@ -32,6 +32,7 @@ const SchoolSearch = props => {
   ] = useLocalStorage(LOCAL_STORAGE_SCHOOLS_QUERY_KEY, null);
 
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
+  const [isFetching, setIsFetching] = React.useState(false);
 
   const handleChange = event => setSearchTerm(event.target.value);
 
@@ -45,10 +46,12 @@ const SchoolSearch = props => {
 
       if (_debouncedSchoolSearch !== "" && _debouncedSchoolSearch.length > 3) {
         let isFresh = true;
+        setIsFetching(true);
 
         fetchSchools(debouncedSchoolSearch).then(schools => {
           if (isFresh) {
             setSchools(schools);
+            setIsFetching(false);
           }
         });
         return () => (isFresh = false);
@@ -135,14 +138,25 @@ const SchoolSearch = props => {
       name={props.name || "school"}
       onSelect={handleSchoolSelect}
     >
-      <ComboboxInput
-        id={props.id || "school"}
-        name={props.name || "school"}
-        placeholder={props.inputPlaceholder || "Search schools"}
-        onChange={handleChange}
-        value={searchTerm}
-      />
-      {results && (
+      <Flex align="center">
+        <ComboboxInput
+          id={props.id || "school"}
+          name={props.name || "school"}
+          placeholder={props.inputPlaceholder || "Search schools"}
+          onChange={handleChange}
+          value={searchTerm}
+        />
+        {isFetching ? (
+          <Spinner
+            color="orange.500"
+            emptyColor="gray.100"
+            speed="0.65s"
+            thickness="3px"
+            ml={2}
+          />
+        ) : null}
+      </Flex>
+      {results ? (
         <ComboboxPopover>
           {results.length > 0 ? (
             <ComboboxList>
@@ -160,7 +174,7 @@ const SchoolSearch = props => {
             </Text>
           )}
         </ComboboxPopover>
-      )}
+      ) : null}
     </Combobox>
   );
 };
