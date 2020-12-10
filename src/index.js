@@ -8,22 +8,13 @@ import { AppProvider } from "./store";
 import { firebase, firebaseAuth } from "./firebase";
 import { LocationProvider } from "@reach/router";
 import * as Sentry from "@sentry/react";
-import { theme, ThemeProvider, CSSReset } from "@chakra-ui/core";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "@reach/skip-nav/styles.css";
 import "@reach/combobox/styles.css";
 
-import { SENTRY_CONFIG } from "./constants";
+import { SENTRY_CONFIG, CUSTOM_CHAKRA_THEME } from "./constants";
 
-const customTheme = {
-  ...theme,
-  fonts: {
-    ...theme.fonts,
-    body:
-      "Lato, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji",
-    heading:
-      "Lato, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji"
-  }
-};
+const CUSTOM_THEME = extendTheme(CUSTOM_CHAKRA_THEME);
 
 Sentry.init(SENTRY_CONFIG);
 
@@ -32,11 +23,10 @@ firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 ReactDOM.render(
   <LocationProvider>
     <AppProvider>
-      <ThemeProvider theme={customTheme}>
-        <CSSReset />
+      <ChakraProvider theme={CUSTOM_THEME}>
         <SkipNavLink />
         <App />
-      </ThemeProvider>
+      </ChakraProvider>
     </AppProvider>
   </LocationProvider>,
   document.getElementById("root")

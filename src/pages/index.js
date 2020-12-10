@@ -1,6 +1,6 @@
 import React from "react";
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
-import { Box, Heading, Text, Stack, List } from "@chakra-ui/core";
+import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
@@ -172,7 +172,7 @@ const UpcomingSchoolEvents = props => {
         Upcoming events at{" "}
         <Link
           to={`/school/${props.school.id}`}
-          color="orange.500"
+          color="brand.500"
           fontWeight="bold"
           isTruncated
           lineHeight="short"

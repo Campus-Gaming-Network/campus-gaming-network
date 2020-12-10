@@ -6,11 +6,11 @@ import {
   Text,
   Accordion,
   AccordionItem,
-  AccordionHeader,
+  AccordionButton,
   AccordionPanel,
   AccordionIcon,
   Link as ChakraLink
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
@@ -28,23 +28,23 @@ const FrequentlyAskedQuestions = () => {
       </Heading>
       <Accordion defaultIndex={[]} allowMultiple>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               Does Campus Gaming Network cost anything to use?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             No, it is completely free to use.
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               How does Campus Gaming Network make money?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             We make money by donations from our users through a service called{" "}
             <BuyMeACoffeeLink />. If you like what we do and want to donate to
@@ -56,12 +56,12 @@ const FrequentlyAskedQuestions = () => {
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               Where does my profile picture come from?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             Your profile picture is managed by <GravatarLink /> . It is linked
             to your email address or your last known IP address. If you do not
@@ -70,12 +70,12 @@ const FrequentlyAskedQuestions = () => {
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               How do I change my profile picture?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             To change your profile picture, you need to make a <GravatarLink />{" "}
             account with the same email address you used to sign up for Campus
@@ -86,36 +86,36 @@ const FrequentlyAskedQuestions = () => {
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               Will you allow uploading of profile pictures without{" "}
               <GravatarLink />?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             Maybe sometime in the future, but for right now, to keep costs down
             we are taking advantage of their service.
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               Where does the list of games come from?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             Our list of games comes from the <IGDBLink />
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               I can't find a certain game, what gives?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             You would need to take that up with the{" "}
             <OutsideLink href="https://www.igdb.com/discover">
@@ -128,29 +128,29 @@ const FrequentlyAskedQuestions = () => {
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               Is there a mobile app?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             Not currently, but we plan to develop a native mobile app for both
             iOS and Android in the future.
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               What happens if something on the site doesn't work as expected?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             You can email us at{" "}
             <ChakraLink
               href="mailto:support@campusgamingnetwork.com"
-              color="orange.500"
+              color="brand.500"
               fontWeight={600}
             >
               support@campusgamingnetwork.com
@@ -160,12 +160,12 @@ const FrequentlyAskedQuestions = () => {
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem>
-          <AccordionHeader>
+          <AccordionButton>
             <Box flex="1" textAlign="left" fontWeight="bold">
               Who are you?
             </Box>
             <AccordionIcon />
-          </AccordionHeader>
+          </AccordionButton>
           <AccordionPanel pb={4}>
             An avid gamer, software developer, living in Salt Lake City, who
             wants to see more people connected through video games.

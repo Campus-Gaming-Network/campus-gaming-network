@@ -27,11 +27,11 @@ import {
   List,
   ListItem,
   Flex,
-  PseudoBox,
   useToast,
   Avatar,
   Skeleton
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
+import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Constants
@@ -243,7 +243,7 @@ const Event = props => {
       >
         <Stack spacing={10}>
           {isEventCreator ? (
-            <PseudoBox
+            <Box
               mb={10}
               textAlign="center"
               display="flex"
@@ -261,13 +261,13 @@ const Event = props => {
               >
                 Edit Event
               </Link>
-            </PseudoBox>
+            </Box>
           ) : null}
           <Flex alignItems="center">
             <Box pr={2}>
               <Link
                 to={`/school/${event.school.id}`}
-                color="orange.500"
+                color="brand.500"
                 fontWeight={600}
                 fontSize="lg"
               >
@@ -430,7 +430,7 @@ const Event = props => {
                   onClick={() =>
                     setAttendingAlertIsOpen(!isEventCreator && !event.hasEnded)
                   }
-                  variantColor="orange"
+                  colorScheme="brand"
                   w="200px"
                 >
                   Attend Event
@@ -490,7 +490,7 @@ const Event = props => {
 
               <AlertDialogFooter>
                 {isSubmittingEventResponse ? (
-                  <Button variantColor="orange" disabled={true}>
+                  <Button colorScheme="brand" disabled={true}>
                     RSVPing...
                   </Button>
                 ) : (
@@ -499,7 +499,7 @@ const Event = props => {
                       No, nevermind
                     </Button>
                     <Button
-                      variantColor="orange"
+                      colorScheme="brand"
                       onClick={() => onAttendingAlertConfirm("YES")}
                       ml={3}
                     >
@@ -532,7 +532,7 @@ const Event = props => {
 
               <AlertDialogFooter>
                 {isSubmittingEventResponse ? (
-                  <Button variantColor="red" disabled={true}>
+                  <Button colorScheme="red" disabled={true}>
                     Cancelling...
                   </Button>
                 ) : (
@@ -541,7 +541,7 @@ const Event = props => {
                       No, nevermind
                     </Button>
                     <Button
-                      variantColor="red"
+                      colorScheme="red"
                       onClick={() => onAttendingAlertConfirm("NO")}
                       ml={3}
                     >
@@ -628,8 +628,8 @@ const UsersList = props => {
             <Button
               variant="ghost"
               size="sm"
-              leftIcon="arrow-back"
-              variantColor="orange"
+              leftIcon={<ArrowBack />}
+              colorScheme="brand"
               disabled={page === 0}
               onClick={prevPage}
             >
@@ -642,8 +642,8 @@ const UsersList = props => {
             <Button
               variant="ghost"
               size="sm"
-              rightIcon="arrow-forward"
-              variantColor="orange"
+              rightIcon={<ArrowForward />}
+              colorScheme="brand"
               disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
               onClick={nextPage}
               ml="auto"
@@ -695,7 +695,7 @@ const UsersListItem = props => {
         />
         <Link
           to={`/user/${props.id}`}
-          color="orange.500"
+          color="brand.500"
           fontWeight="bold"
           mt={4}
           fontSize="sm"

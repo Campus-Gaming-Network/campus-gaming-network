@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
-import { Text } from "@chakra-ui/core";
+import { Text } from "@chakra-ui/react";
 
 // Components
 import OutsideLink from "components/OutsideLink";
@@ -20,7 +20,7 @@ const GameLink = React.memo(props => {
       d="inline-block"
       lineHeight="1.2"
       fontWeight="bold"
-      color="orange.500"
+      color="brand.500"
       fontSize="sm"
       mt={2}
     >

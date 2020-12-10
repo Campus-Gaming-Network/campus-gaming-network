@@ -19,7 +19,7 @@ import {
   Heading,
   FormHelperText,
   FormErrorMessage
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -183,7 +183,7 @@ const Signup = () => {
           onSchoolSelect={onSchoolSelect}
         />
         <Button
-          variantColor="orange"
+          colorScheme="brand"
           type="submit"
           size="lg"
           w="full"
@@ -196,7 +196,7 @@ const Signup = () => {
         </Button>
         <Text>
           Already a member?{" "}
-          <Link to="/login" color="orange.500" fontWeight={600}>
+          <Link to="/login" color="brand.500" fontWeight={600}>
             Log in
           </Link>
         </Text>

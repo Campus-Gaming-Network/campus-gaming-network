@@ -14,7 +14,7 @@ import {
   Heading,
   Image,
   VisuallyHidden
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -26,11 +26,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { firebaseAuth } from "../firebase";
 import { useAppState } from "../store";
-import Link from "./Link";
+import Nav from "./Nav";
 import SchoolSearch from "./SchoolSearch";
 /* eslint-disable no-unused-vars */
 import SchoolLogo from "./SchoolLogo";
-import logo from '../logo.svg';
+import Logo from "./Logo";
 
 const AuthenticatedNav = () => {
   const state = useAppState();
@@ -66,25 +66,9 @@ const AuthenticatedNav = () => {
   };
 
   return (
-    <Flex
-      as="nav"
-      role="navigation"
-      align="center"
-      justify="space-between"
-      wrap="wrap"
-      paddingX="1rem"
-      borderBottomWidth={2}
-      bg="#323031"
-    >
+    <Nav>
       <Flex align="center" mr={5}>
-        <Link to="/">
-        <VisuallyHidden>
-            <Heading as="h1" size="lg">
-              Campus Gaming network
-            </Heading>
-          </VisuallyHidden>
-          <Image src={logo} width="200px" />
-        </Link>
+        <Logo width="200px" />
       </Flex>
 
       <SchoolSearch
@@ -94,12 +78,12 @@ const AuthenticatedNav = () => {
         clearInputOnSelect
       />
 
-      <Box
+      {/* <Box
         display={{ xs: "block", sm: "block", md: "none" }}
         onClick={toggleMenu}
       >
         <FontAwesomeIcon title="Menu" icon={isMenuOpen ? faTimes : faBars} />
-      </Box>
+      </Box> */}
 
       <Box
         display={{
@@ -115,7 +99,7 @@ const AuthenticatedNav = () => {
         <Button
           as={ReachLink}
           to="/create-event"
-          variantColor="orange"
+          colorScheme="brand"
           variant="ghost"
         >
           Create an event
@@ -218,7 +202,7 @@ const AuthenticatedNav = () => {
           </MenuList>
         </Menu>
       </Box>
-    </Flex>
+    </Nav>
   );
 };
 

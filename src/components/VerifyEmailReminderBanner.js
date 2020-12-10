@@ -6,7 +6,7 @@ import {
   Text,
   Button,
   useToast
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { firebaseAuth } from "../firebase";
@@ -54,7 +54,7 @@ const VerifyEmailReminderBanner = () => {
           <Button
             verticalAlign="baseline"
             onClick={sendEmailVerification}
-            variantColor="blue"
+            colorScheme="blue"
             variant="link"
           >
             Resend verification email

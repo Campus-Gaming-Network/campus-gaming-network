@@ -16,7 +16,7 @@ import {
   Divider,
   Flex,
   FormErrorMessage
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 
@@ -142,7 +142,7 @@ const Login = () => {
           </FormControl>
         </Stack>
         <Button
-          variantColor="orange"
+          colorScheme="brand"
           type="submit"
           size="lg"
           w="full"
@@ -156,11 +156,11 @@ const Login = () => {
         <Flex alignItems="center" justifyContent="space-between">
           <Text>
             Don’t have an account?{" "}
-            <Link to="/register" color="orange.500" fontWeight={600}>
+            <Link to="/register" color="brand.500" fontWeight={600}>
               Create one
             </Link>
           </Text>
-          <Link to="/forgot-password" color="orange.500" fontWeight={600}>
+          <Link to="/forgot-password" color="brand.500" fontWeight={600}>
             Forgot your password?
           </Link>
         </Flex>
