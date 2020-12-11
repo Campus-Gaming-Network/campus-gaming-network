@@ -8,6 +8,7 @@ import range from "lodash.range";
 import { getYears } from "../utilities";
 
 export const DASHED_DATE = "MMMM-d-y";
+export const DASHED_DATE_TIME = "MMMM-d-y HH:mm";
 export const TIMEZONES = [
   { value: "America/Puerto_Rico", name: "Puerto Rico (Atlantic)" },
   { value: "America/New_York", name: "New York (Eastern)" },

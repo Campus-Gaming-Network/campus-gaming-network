@@ -18,8 +18,11 @@ import {
   MIN_PASSWORD_LENGTH,
   MAX_DEFAULT_STRING_LENGTH,
   DASHED_DATE,
+  DASHED_DATE_TIME,
   DELETE_USER_VERIFICATION_TEXT
 } from "../constants";
+
+import { getTimes } from "../utilities";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local Helpers
@@ -167,8 +170,14 @@ export const validateCreateEvent = form => {
     game,
     isOnlineEvent,
     location,
-    startDateTime,
-    endDateTime
+    startMonth,
+    startDay,
+    startYear,
+    startTime,
+    endMonth,
+    endDay,
+    endYear,
+    endTime
   } = form;
   const errors = {};
 
@@ -191,25 +200,108 @@ export const validateCreateEvent = form => {
     errors.location = "Location is required.";
   }
 
-  if (isNilOrEmpty(startDateTime)) {
-    errors.startDateTime = "Starting date/time is required.";
-  } else if (!isValidDateTime(startDateTime)) {
-    errors.startDateTime = `${startDateTime} is not a valid date/time`;
-  } else if (isBeforeToday(startDateTime)) {
-    errors.startDateTime = "Starting date/time cannot be in the past.";
-  } else if (isSameOrAfterEndDateTime(startDateTime, endDateTime)) {
-    errors.startDateTime =
-      "Starting date/time must be before ending date/time.";
+  if (isNilOrEmpty(startYear)) {
+    errors.startYear = "Start year is required.";
   }
 
-  if (isNilOrEmpty(endDateTime)) {
-    errors.endDateTime = "Ending date/time is required.";
-  } else if (!isValidDateTime(endDateTime)) {
-    errors.endDateTime = `${endDateTime} is not a valid date/time`;
-  } else if (isBeforeToday(endDateTime)) {
-    errors.endDateTime = "Ending date/time cannot be in the past.";
-  } else if (isSameOrBeforeStartDateTime(endDateTime, startDateTime)) {
-    errors.endDateTime = "Ending date/time must be after starting date/time.";
+  if (isNilOrEmpty(startMonth)) {
+    errors.startMonth = "Start month is required.";
+  }
+
+  if (isNilOrEmpty(startDay)) {
+    errors.startDay = "Start day is required.";
+  }
+
+  if (isNilOrEmpty(startTime)) {
+    errors.startTime = "Start time is required.";
+  }
+
+  if (!isNilOrEmpty(startYear) && !isWithin(startYear, LAST_100_YEARS)) {
+    errors.startYear = `${startYear} is not a valid year`;
+  }
+
+  if (!isNilOrEmpty(startMonth) && !isWithin(startMonth, MONTHS)) {
+    errors.startMonth = `${startMonth} is not a valid month`;
+  }
+
+  if (!isNilOrEmpty(startDay) && !isWithin(startDay, DAYS)) {
+    errors.startDay = `${startDay} is not a valid day`;
+  }
+
+  if (
+    !isNilOrEmpty(startTime) &&
+    !isWithin(startTime, getTimes({ increment: 15 }))
+  ) {
+    errors.startTime = `${startTime} is not a valid time`;
+  }
+
+  if (
+    !isNilOrEmpty(startYear) &&
+    !isNilOrEmpty(startMonth) &&
+    !isNilOrEmpty(startDay) &&
+    !isNilOrEmpty(startTime) &&
+    !errors.startYear &&
+    !errors.startMonth &&
+    !errors.startDay &&
+    !errors.startTime &&
+    !DateTime.fromFormat(
+      `${startMonth}-${startDay}-${startYear} ${startTime}`,
+      DASHED_DATE_TIME
+    ).isValid
+  ) {
+    errors.startDateTime = `${startMonth}-${startDay}-${startYear} ${startTime} is not a valid datetime`;
+  }
+
+  if (isNilOrEmpty(endYear)) {
+    errors.endYear = "End year is required.";
+  }
+
+  if (isNilOrEmpty(endMonth)) {
+    errors.endMonth = "End month is required.";
+  }
+
+  if (isNilOrEmpty(endDay)) {
+    errors.endDay = "End day is required.";
+  }
+
+  if (isNilOrEmpty(endTime)) {
+    errors.endTime = "End time is required.";
+  }
+
+  if (!isNilOrEmpty(endYear) && !isWithin(endYear, LAST_100_YEARS)) {
+    errors.endYear = `${endYear} is not a valid year`;
+  }
+
+  if (!isNilOrEmpty(endMonth) && !isWithin(endMonth, MONTHS)) {
+    errors.endMonth = `${endMonth} is not a valid month`;
+  }
+
+  if (!isNilOrEmpty(endDay) && !isWithin(endDay, DAYS)) {
+    errors.endDay = `${endDay} is not a valid day`;
+  }
+
+  if (
+    !isNilOrEmpty(endTime) &&
+    !isWithin(endTime, getTimes({ increment: 15 }))
+  ) {
+    errors.endTime = `${endTime} is not a valid time`;
+  }
+
+  if (
+    !isNilOrEmpty(endYear) &&
+    !isNilOrEmpty(endMonth) &&
+    !isNilOrEmpty(endDay) &&
+    !isNilOrEmpty(endTime) &&
+    !errors.endYear &&
+    !errors.endMonth &&
+    !errors.endDay &&
+    !errors.endTime &&
+    !DateTime.fromFormat(
+      `${endMonth}-${endDay}-${endYear} ${endTime}`,
+      DASHED_DATE_TIME
+    ).isValid
+  ) {
+    errors.endDateTime = `${endMonth}-${endDay}-${endYear} ${endTime} is not a valid datetime`;
   }
 
   return validate("validateCreateEvent", form, errors);

@@ -1,11 +1,14 @@
 import { DateTime } from "luxon";
 import {
   STUDENT_STATUS_OPTIONS,
-  DAYS,
-  MONTHS,
-  LAST_100_YEARS,
   TIMEZONES,
-  DELETE_USER_VERIFICATION_TEXT
+  DELETE_USER_VERIFICATION_TEXT,
+  MAX_DESCRIPTION_LENGTH,
+  MAX_BIO_LENGTH,
+  MAX_CURRENTLY_PLAYING_LIST,
+  MAX_FAVORITE_GAME_LIST,
+  MAX_DEFAULT_STRING_LENGTH,
+  MIN_PASSWORD_LENGTH
 } from "../constants";
 import {
   validateSignUp,
@@ -16,6 +19,7 @@ import {
   validateEditUser,
   validateDeleteAccount
 } from "../utilities/validation";
+import { getTimes } from "../utilities";
 
 const STATUSES = STUDENT_STATUS_OPTIONS.reduce((acc, curr) => ({
   ...acc,
@@ -56,9 +60,9 @@ const EXTENDED_USER = {
   bio: "bio",
   timezone: TIMEZONES[0].value,
   hometown: "hometown",
-  birthMonth: MONTHS[0],
-  birthDay: DAYS[0],
-  birthYear: LAST_100_YEARS[0],
+  birthMonth: TODAY.monthLong,
+  birthDay: TODAY.weekday.toString(),
+  birthYear: TODAY.year.toString(),
   website: "website",
   twitter: "twitter",
   twitch: "twitch",
@@ -69,8 +73,8 @@ const EXTENDED_USER = {
   steam: "steam",
   xbox: "xbox",
   psn: "psn",
-  currentlyPlaying: [GAME, GAME, GAME, GAME, GAME],
-  favoriteGames: [GAME, GAME, GAME, GAME, GAME]
+  currentlyPlaying: Array(MAX_CURRENTLY_PLAYING_LIST).fill(GAME),
+  favoriteGames: Array(MAX_FAVORITE_GAME_LIST).fill(GAME)
 };
 
 const EVENT = {
@@ -79,8 +83,14 @@ const EVENT = {
   game: "Counter-Strike Go",
   isOnlineEvent: false,
   location: "Wrigley Field",
-  startDateTime: TODAY,
-  endDateTime: TOMORROW
+  startMonth: TODAY.monthLong,
+  startDay: TODAY.weekday.toString(),
+  startYear: TODAY.year.toString(),
+  startTime: getTimes({ increment: 15 })[1],
+  endMonth: TOMORROW.monthLong,
+  endDay: TOMORROW.weekday.toString(),
+  endYear: TOMORROW.year.toString(),
+  endTime: getTimes({ increment: 15 })[2]
 };
 
 const SIGN_UP_FORM = "SIGN_UP";
@@ -110,22 +120,23 @@ const FORMS = {
   }
 };
 
+const PASSWORD = "password";
 const NULL = null;
 const UNDEFINED = undefined;
 const EMPTY_STRING = "";
 const EMPTY_STRING_SPACE = " ";
-const SHORT_PASSWORD = "pass";
+const SHORT_PASSWORD = PASSWORD.substring(0, MIN_PASSWORD_LENGTH - 1);
 const INVALID_EMAIL = "support@";
 const INVALID_STATUS = "something";
 const INVALID_DELETE_CONFIRMATION = "bananas";
-const LONG_EVENT_DESCRIPTION = "x".repeat(5001);
-const INVALID_DATE_TIME = "123/132/123 99:99";
-const LONG_BASE_STRING = "x".repeat(256);
-const LONG_USER_BIO = "x".repeat(2501);
+const LONG_EVENT_DESCRIPTION = "x".repeat(MAX_DESCRIPTION_LENGTH + 1);
+const LONG_BASE_STRING = "x".repeat(MAX_DEFAULT_STRING_LENGTH + 1);
+const LONG_USER_BIO = "x".repeat(MAX_BIO_LENGTH + 1);
 const INVALID_TIMEZONE = "Jupiter Central Time (JCT)";
 const INVALID_YEAR = "100";
 const INVALID_MONTH = "Sharktober";
 const INVALID_DAY = "99";
+const INVALID_TIME = "99:99";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sign Up Form
@@ -703,37 +714,145 @@ describe(CREATE_EVENT_FORM, () => {
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - start date/time - empty string", () => {
+  it("should be an invalid create event - start month - empty string", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: EMPTY_STRING
+      startMonth: EMPTY_STRING
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - start date/time - null", () => {
+  it("should be an invalid create event - start month - null", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: NULL
+      startMonth: NULL
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - start date/time - undefined", () => {
+  it("should be an invalid create event - start month - undefined", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: UNDEFINED
+      startMonth: UNDEFINED
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - start date/time - empty string space", () => {
+  it("should be an invalid create event - start month - empty string space", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: EMPTY_STRING_SPACE
+      startMonth: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start day - empty string", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startDay: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start day - null", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startDay: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start day - undefined", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startDay: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start day - empty string space", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startDay: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start year - empty string", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startYear: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start year - null", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startYear: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start year - undefined", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startYear: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start year - empty string space", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startYear: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start time - empty string", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start time - null", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start time - undefined", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - start time - empty string space", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: EMPTY_STRING_SPACE
     });
 
     expect(isValid).toEqual(false);
@@ -742,7 +861,10 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - start date/time - not valid", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: INVALID_DATE_TIME
+      startMonth: INVALID_MONTH,
+      startDay: INVALID_DAY,
+      startYear: INVALID_YEAR,
+      startTime: INVALID_TIME
     });
 
     expect(isValid).toEqual(false);
@@ -751,7 +873,7 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - start date/time - cannot be in the past", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: YESTERDAY
+      startDay: YESTERDAY.weekday
     });
 
     expect(isValid).toEqual(false);
@@ -760,44 +882,152 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - start date/time - must be before end date/time", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: TOMORROW,
-      endDateTime: TODAY
+      startDay: TOMORROW.weekday,
+      endDay: TODAY.weekday
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - end date/time - empty string", () => {
+  it("should be an invalid create event - end month - empty string", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDateTime: EMPTY_STRING
+      endMonth: EMPTY_STRING
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - end date/time - null", () => {
+  it("should be an invalid create event - end month - null", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDateTime: NULL
+      endMonth: NULL
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - end date/time - undefined", () => {
+  it("should be an invalid create event - end month - undefined", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDateTime: UNDEFINED
+      endMonth: UNDEFINED
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - end date/time - empty string space", () => {
+  it("should be an invalid create event - end month - empty string space", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDateTime: EMPTY_STRING_SPACE
+      endMonth: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end day - empty string", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endDay: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end day - null", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endDay: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end day - undefined", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endDay: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end day - empty string space", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endDay: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end year - empty string", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endYear: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end year - null", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endYear: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end year - undefined", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endYear: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end year - empty string space", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      endYear: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end time - empty string", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end time - null", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end time - undefined", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - end time - empty string space", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      startTime: EMPTY_STRING_SPACE
     });
 
     expect(isValid).toEqual(false);
@@ -806,7 +1036,10 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - end date/time - not valid", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDateTime: INVALID_DATE_TIME
+      endMonth: INVALID_MONTH,
+      endDay: INVALID_DAY,
+      endYear: INVALID_YEAR,
+      endTime: INVALID_TIME
     });
 
     expect(isValid).toEqual(false);
@@ -815,17 +1048,17 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - end date/time - cannot be in the past", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDateTime: YESTERDAY
+      endDay: YESTERDAY.weekday
     });
 
     expect(isValid).toEqual(false);
   });
 
-  it("should be an invalid create event - end date/time - must be after start date/time", () => {
+  it("should be an invalid create event - end date/time - must be before start date/time", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDateTime: TOMORROW,
-      endDateTime: TODAY
+      endDay: TOMORROW.weekday,
+      startDay: TODAY.weekday
     });
 
     expect(isValid).toEqual(false);

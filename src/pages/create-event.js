@@ -57,14 +57,12 @@ import { mapEventResponse, mapEvent } from "../utilities";
 import { validateCreateEvent } from "../utilities/validation";
 
 // Constants
-import { COLLECTIONS, CURRENT_YEAR } from "../constants";
+import { COLLECTIONS, CURRENT_YEAR, DASHED_DATE_TIME } from "../constants";
 
 const initialFormState = {
   name: "",
   description: "",
   game: {},
-  startDateTime: new Date(),
-  endDateTime: new Date(),
   startMonth: "",
   startDay: "",
   startYear: "",
@@ -200,12 +198,39 @@ const CreateEvent = props => {
         console.error({ error });
       });
 
-    const firestoreStartDateTime = firebase.firestore.Timestamp.fromDate(
-      formState.startDateTime
-    );
-    const firestoreEndDateTime = firebase.firestore.Timestamp.fromDate(
-      formState.endDateTime
-    );
+    let startDateTime = "";
+    let endDateTime = "";
+
+    if (
+      formState.startMonth &&
+      formState.startDay &&
+      formState.startYear &&
+      formState.startTime
+    ) {
+      const formattedStartdate = DateTime.fromFormat(
+        `${formState.startMonth}-${formState.startDay}-${formState.startYear} ${formState.startTime}`,
+        DASHED_DATE_TIME
+      );
+      startDateTime = firebase.firestore.Timestamp.fromDate(
+        new Date(formattedStartdate)
+      );
+    }
+
+    if (
+      formState.endMonth &&
+      formState.endDay &&
+      formState.endYear &&
+      formState.endTime
+    ) {
+      const formattedEnddate = DateTime.fromFormat(
+        `${formState.endMonth}-${formState.endDay}-${formState.endYear} ${formState.endTime}`,
+        DASHED_DATE_TIME
+      );
+      endDateTime = firebase.firestore.Timestamp.fromDate(
+        new Date(formattedEnddate)
+      );
+    }
+
     const schoolDocRef = firebaseFirestore
       .collection(COLLECTIONS.SCHOOLS)
       .doc(user.school.id);
@@ -218,8 +243,8 @@ const CreateEvent = props => {
       name: formState.name.trim(),
       description: formState.description.trim(),
       isOnlineEvent: formState.isOnlineEvent,
-      startDateTime: firestoreStartDateTime,
-      endDateTime: firestoreEndDateTime,
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
       game: formState.game
     };
 
@@ -433,11 +458,29 @@ const CreateEvent = props => {
     formDispatch({ field: "name", value: event.name });
     formDispatch({ field: "description", value: event.description });
     formDispatch({ field: "isOnlineEvent", value: event.isOnlineEvent });
-    formDispatch({
-      field: "startDateTime",
-      value: event.startDateTime.toDate()
-    });
-    formDispatch({ field: "endDateTime", value: event.endDateTime.toDate() });
+
+    const [startDate, startTime] = DateTime.fromISO(
+      event.startDateTime.toDate().toISOString()
+    )
+      .toFormat(DASHED_DATE_TIME)
+      .split(" ");
+    const [startMonth, startDay, startYear] = startDate.split("-");
+    formDispatch({ field: "startMonth", value: startMonth });
+    formDispatch({ field: "startDay", value: startDay });
+    formDispatch({ field: "startYear", value: startYear });
+    formDispatch({ field: "startTime", value: startTime });
+
+    const [endDate, endTime] = DateTime.fromISO(
+      event.endDateTime.toDate().toISOString()
+    )
+      .toFormat(DASHED_DATE_TIME)
+      .split(" ");
+    const [endMonth, endDay, endYear] = endDate.split("-");
+    formDispatch({ field: "endMonth", value: endMonth });
+    formDispatch({ field: "endDay", value: endDay });
+    formDispatch({ field: "endYear", value: endYear });
+    formDispatch({ field: "endTime", value: endTime });
+
     formDispatch({ field: "placeId", value: event.location });
     formDispatch({ field: "location", value: event.placeId });
     formDispatch({ field: "game", value: event.game });
