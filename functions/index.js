@@ -24,12 +24,33 @@ const algoliaSearchClient = algoliasearch(
 const algoliaAdminIndex = algoliaAdminClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
 const algoliaSearchIndex = algoliaSearchClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
 
-const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
 ////////////////////////////////////////////////////////////////////////////////
 // onCall
 
 exports.searchGames = functions.https.onCall((data) => {
+  ////////////////////////////////////////////////////////////////////////////////
+  //
+  // Searches IGDB for games matching search query.
+  //
+  // Returns a list of matching games, limited to 10, containing the fields: name, cover url, slug.
+  //
+  // The data returned for each query isn't that important and probably doesn't change often
+  // so it isn't a priorty that we always return fresh data, so we store each query and
+  // their results in a firestore collection "game-queries" and track how many times
+  // the specific query has been made.
+  //
+  // If the query has been made previously, we grab the results from the stored document
+  // instead of querying IGDB to save on API requests. (hopefully this is more cost effective).
+  //
+  // Later on we should make a change that checks the last time the document has been updated and
+  // if its been longer than a certain time period (maybe 1-2 months?), we should update the query
+  // results so it stays just slightly relevant.
+  //
+  // By counting how many times a query is made, we can eventually optimize for the top N queries and
+  // their results.
+  //
+  ////////////////////////////////////////////////////////////////////////////////
+
   const gameQueryRef = db.collection("game-queries").doc(data.query);
 
   return gameQueryRef.get().then((doc) => {
@@ -87,6 +108,16 @@ exports.searchGames = functions.https.onCall((data) => {
 });
 
 exports.searchSchools = functions.https.onCall((data) => {
+  ////////////////////////////////////////////////////////////////////////////////
+  //
+  // Searches Algolia for schools matching search query.
+  //
+  // A school is added/removed/updated in Algolia whenever a document is
+  // added/removed/updated in the schools collection.
+  //
+  //
+  ////////////////////////////////////////////////////////////////////////////////
+
   const limit = data.limit > 100
     ? 100
     : data.limit < 0
@@ -99,6 +130,15 @@ exports.searchSchools = functions.https.onCall((data) => {
 });
 
 exports.searchUsers = functions.https.onCall(async (data, context) => {
+  ////////////////////////////////////////////////////////////////////////////////
+  //
+  // Allows admins to query for a user based on uid or email.
+  //
+  // If a matching auth user exists, it will query for the matching firestore document
+  // of the user too.
+  //
+  ////////////////////////////////////////////////////////////////////////////////
+
   // TODO: Only allow admins access to this route
   try {
     const query = data.query ? data.query.trim() : "";
@@ -133,10 +173,19 @@ exports.searchUsers = functions.https.onCall(async (data, context) => {
 ////////////////////////////////////////////////////////////////////////////////
 // onWrite
 
-// Source: https://stackoverflow.com/a/60963531
 exports.trackCreatedUpdated = functions.firestore
   .document("{colId}/{docId}")
   .onWrite((change, context) => {
+  ////////////////////////////////////////////////////////////////////////////////
+  //
+  // Source: https://stackoverflow.com/a/60963531
+  //
+  // Updates firestore documents whenever they are updated or created with the current timestamp.
+  //
+  // Only specific collections documents are being tracked.
+  //
+  ////////////////////////////////////////////////////////////////////////////////
+
     const setCols = [
       "events",
       "event-responses",
@@ -207,6 +256,13 @@ exports.trackCreatedUpdated = functions.firestore
 exports.updateAlgoliaIndex = functions.firestore
   .document("schools/{schoolId}")
   .onUpdate((change) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Updates the school in Algolia whenever the school gets updated in firestore.
+    //
+    // A school can be updated manually by admins or via the edit school page by school admins.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
     const { createdAt, updatedAt, ...newData } = change.after.data();
     const objectID = change.after.id;
 
@@ -216,6 +272,17 @@ exports.updateAlgoliaIndex = functions.firestore
 exports.updateEventResponsesOnEventUpdate = functions.firestore
   .document("events/{eventId}")
   .onUpdate((change, context) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Updates all event responses that are tied to the event we are updating.
+    //
+    // There are specific fields that are duplicated on the event responses, so we
+    // only need to update the event responses if those specific fields change.
+    //
+    // Data is duplicated on these documents because of the nature of NoSQL databases.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     const previousEventData = change.before.data();
     const newEventData = change.after.data();
     const changes = [];
@@ -297,6 +364,16 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
 exports.updateEventResponsesOnSchoolUpdate = functions.firestore
   .document("schools/{schoolId}")
   .onUpdate((change, context) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // We store the name of the school tied to an event on the event-response so that it can
+    // be used for display reasons. If the name of that school gets changed for whatever reason,
+    // we need to update all the event-responses tied to that school.
+    //
+    // Data is duplicated on these documents because of the nature of NoSQL databases.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     const previousSchoolData = change.before.data();
     const newSchoolData = change.after.data();
     const changes = [];
@@ -354,6 +431,14 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
 exports.updateEventResponsesOnUserUpdate = functions.firestore
   .document("users/{userId}")
   .onUpdate((change, context) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // When a user updates specific fields on their document, update all other documents
+    // that contain the duplicated data that we are updating.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
+
     const previousUserData = change.before.data();
     const newUserData = change.after.data();
     const changes = [];
@@ -412,9 +497,16 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
     return null;
   });
 
-  exports.eventResponsesOnUpdated = functions.firestore
+exports.eventResponsesOnUpdated = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onUpdate((change, context) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // If an event-response document response field is updated, increment or decrement
+    // the related event responses count field.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     const previousEventResponseData = change.before.data();
     const newEventResponseData = change.after.data();
     const changes = [];
@@ -476,6 +568,15 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
 exports.addAlgoliaIndex = functions.firestore
   .document("schools/{schoolId}")
   .onCreate((snapshot) => {
+  ////////////////////////////////////////////////////////////////////////////////
+  //
+  // Adds school to the Algolia collection whenever a school document is added to the
+  // schools collection so we can query for it.
+  //
+  // Schools dont get added often, except for when we initially upload all the schools.
+  //
+  ////////////////////////////////////////////////////////////////////////////////
+
     if (snapshot.exists) {
       const { createdAt, updatedAt, ...data } = snapshot.data();
       const objectID = snapshot.id;
@@ -487,6 +588,13 @@ exports.addAlgoliaIndex = functions.firestore
 exports.eventResponsesOnCreated = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onCreate((snapshot) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // To keep track of how many people are going to an event, when a event-response is created
+    // find the event tied to it and increment the responses by 1.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     if (snapshot.exists) {
       const eventResponseData = snapshot.data();
       const eventRef = db.collection("events").doc(eventResponseData.event.id);
@@ -523,6 +631,13 @@ exports.eventResponsesOnCreated = functions.firestore
 exports.removeAlgoliaIndex = functions.firestore
   .document("schools/{schoolId}")
   .onDelete((snapshot) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // If a school document is deleted, remove the document from Algolia so that it can no
+    // longer be queried.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     if (snapshot.exists) {
       return algoliaAdminIndex.deleteObject(snapshot.id);
     }
@@ -531,6 +646,13 @@ exports.removeAlgoliaIndex = functions.firestore
 exports.eventOnDelete = functions.firestore
   .document("events/{eventId}")
   .onDelete((snapshot, context) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // If a user deletes an event, find all the event-responses tied to the event and
+    // delete those too.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     const eventDocRef = db.collection("events").doc(context.params.eventId);
     const eventResponsesQuery = db
       .collection("event-responses")
@@ -558,6 +680,17 @@ exports.eventOnDelete = functions.firestore
 exports.userOnDelete = functions.firestore
   .document("users/{userId}")
   .onDelete((snapshot, context) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // A user can delete their account whenever they want.
+    //
+    // If they decide to do this, find all documents (events, event-responses) that are attached to this user
+    // and delete those too so there is no record of them.
+    //
+    // We delete both the firestore document of the user and their auth user profile.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     const userDocRef = db.collection("users").doc(context.params.userId);
     const eventsQuery = db
       .collection("events")
@@ -604,9 +737,16 @@ exports.userOnDelete = functions.firestore
   });
 
 
-  exports.eventResponsesOnDelete = functions.firestore
+exports.eventResponsesOnDelete = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onDelete((snapshot) => {
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // If an event-response document is deleted, find the attached event document if it
+    // exists and decrement the responses count by 1.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
+
     if (snapshot.exists) {
       const deletedData = snapshot.data();
 
@@ -645,7 +785,7 @@ exports.userOnDelete = functions.firestore
 ////////////////////////////////////////////////////////////////////////////////
 // Helpers
 
-function shallowEqual(object1, object2) {
+const shallowEqual = (object1, object2) => {
   const keys1 = Object.keys(object1);
   const keys2 = Object.keys(object2);
 
@@ -662,6 +802,6 @@ function shallowEqual(object1, object2) {
   return true;
 }
 
-function changeLog(prev, curr) {
-  return `${prev} -> ${curr}`;
-}
+const changeLog = (prev, curr) => `${prev} -> ${curr}`;
+
+const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
