@@ -120,12 +120,11 @@ const FORMS = {
   }
 };
 
-const PASSWORD = "password";
 const NULL = null;
 const UNDEFINED = undefined;
 const EMPTY_STRING = "";
 const EMPTY_STRING_SPACE = " ";
-const SHORT_PASSWORD = PASSWORD.substring(0, MIN_PASSWORD_LENGTH - 1);
+const SHORT_PASSWORD = AUTH_USER.password.substring(0, MIN_PASSWORD_LENGTH - 1);
 const INVALID_EMAIL = "support@";
 const INVALID_STATUS = "something";
 const INVALID_DELETE_CONFIRMATION = "bananas";
