@@ -285,21 +285,31 @@ const UsersList = props => {
     undefined,
     page
   );
+  const hasUsers = React.useMemo(
+    () => users && users.length && users.length > 0,
+    [users]
+  );
+  const isFirstPage = React.useMemo(() => page === 0, [page]);
+  const isLastPage = React.useMemo(
+    () => hasUsers && users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
+    [hasUsers, users]
+  );
+  const isValidPage = React.useMemo(() => page >= 0, [page]);
 
   const nextPage = () => {
-    if (users && users.length === DEFAULT_USERS_LIST_PAGE_SIZE) {
+    if (!isLastPage) {
       setPage(page + 1);
     }
   };
 
   const prevPage = () => {
-    if (page > 0) {
+    if (!isFirstPage) {
       setPage(page - 1);
     }
   };
 
   React.useEffect(() => {
-    if (isLoadingUsers && users && page >= 0) {
+    if (isLoadingUsers && hasUsers && isValidPage) {
       dispatch({
         type: ACTION_TYPES.SET_SCHOOL_USERS,
         payload: {
@@ -309,7 +319,7 @@ const UsersList = props => {
         }
       });
     }
-  }, [isLoadingUsers, users, dispatch, props.id, page]);
+  }, [isLoadingUsers, users, hasUsers, dispatch, props.id, page, isValidPage]);
 
   if (isLoadingUsers) {
     return (
@@ -330,7 +340,7 @@ const UsersList = props => {
     );
   }
 
-  if (users && users.length && users.length > 0) {
+  if (hasUsers) {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
@@ -344,27 +354,25 @@ const UsersList = props => {
           ))}
         </List>
         <Flex justifyContent="space-between" m={2}>
-          {page > 0 ? (
+          {!isFirstPage ? (
             <Button
               variant="ghost"
               size="sm"
               leftIcon={<ArrowBack />}
               colorScheme="brand"
-              disabled={page === 0}
+              disabled={isFirstPage}
               onClick={prevPage}
             >
               Prev Page
             </Button>
           ) : null}
-          {users &&
-          users.length &&
-          users.length === DEFAULT_USERS_LIST_PAGE_SIZE ? (
+          {!isLastPage ? (
             <Button
               variant="ghost"
               size="sm"
               rightIcon={<ArrowForward />}
               colorScheme="brand"
-              disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
+              disabled={isLastPage}
               onClick={nextPage}
               ml="auto"
             >

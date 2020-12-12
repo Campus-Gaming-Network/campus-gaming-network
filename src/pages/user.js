@@ -366,9 +366,13 @@ const EventsList = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
   const [events, isLoadingEvents] = useFetchUserEvents(props.id);
+  const hasEvents = React.useMemo(
+    () => events && events.length && events.length > 0,
+    [events]
+  );
 
   React.useEffect(() => {
-    if (isLoadingEvents && !!events) {
+    if (isLoadingEvents && hasEvents) {
       dispatch({
         type: ACTION_TYPES.SET_USER_EVENTS,
         payload: {
@@ -377,7 +381,7 @@ const EventsList = props => {
         }
       });
     }
-  }, [props.id, state.user.id, events, dispatch, isLoadingEvents]);
+  }, [props.id, state.user.id, events, hasEvents, dispatch, isLoadingEvents]);
 
   if (isLoadingEvents) {
     return (
@@ -398,7 +402,7 @@ const EventsList = props => {
     );
   }
 
-  if (events && events.length && events.length > 0) {
+  if (hasEvents) {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
         {events.map(event => (
