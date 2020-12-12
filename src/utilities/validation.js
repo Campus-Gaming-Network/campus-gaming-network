@@ -19,7 +19,8 @@ import {
   MAX_DEFAULT_STRING_LENGTH,
   DASHED_DATE,
   DASHED_DATE_TIME,
-  DELETE_USER_VERIFICATION_TEXT
+  DELETE_USER_VERIFICATION_TEXT,
+  DEFAULT_TIME_INCREMENT
 } from "../constants";
 
 import { getTimes } from "../utilities";
@@ -230,7 +231,7 @@ export const validateCreateEvent = form => {
 
   if (
     !isNilOrEmpty(startTime) &&
-    !isWithin(startTime, getTimes({ increment: 15 }))
+    !isWithin(startTime, getTimes({ increment: DEFAULT_TIME_INCREMENT }))
   ) {
     errors.startTime = `${startTime} is not a valid time`;
   }
@@ -282,7 +283,7 @@ export const validateCreateEvent = form => {
 
   if (
     !isNilOrEmpty(endTime) &&
-    !isWithin(endTime, getTimes({ increment: 15 }))
+    !isWithin(endTime, getTimes({ increment: DEFAULT_TIME_INCREMENT }))
   ) {
     errors.endTime = `${endTime} is not a valid time`;
   }

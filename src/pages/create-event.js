@@ -24,12 +24,6 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   Spacer
 } from "@chakra-ui/react";
 import PlacesAutocomplete from "react-places-autocomplete";
@@ -48,6 +42,7 @@ import MonthSelect from "components/MonthSelect";
 import DaySelect from "components/DaySelect";
 import YearSelect from "components/YearSelect";
 import TimeSelect from "components/TimeSelect";
+import DeleteEventDialog from "components/dialogs/DeleteEventDialog";
 
 // Hooks
 import useFetchEventDetails from "hooks/useFetchEventDetails";
@@ -89,8 +84,6 @@ const formReducer = (state, { field, value }) => {
 const CreateEvent = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const cancelRef = React.useRef();
-  const deleteEventRef = React.useRef();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const [formState, formDispatch] = React.useReducer(
@@ -401,8 +394,8 @@ const CreateEvent = props => {
               id: eventDocRef.id,
               name: formState.name.trim(),
               description: formState.description.trim(),
-              startDateTime: firestoreStartDateTime,
-              endDateTime: firestoreEndDateTime,
+              startDateTime: startDateTime,
+              endDateTime: endDateTime,
               game: formState.game,
               isOnlineEvent: formState.isOnlineEvent
             },
@@ -988,46 +981,13 @@ const CreateEvent = props => {
         </Stack>
       </Box>
 
-      <AlertDialog
+      <DeleteEventDialog
+        event={event}
         isOpen={isDeletingEventAlertOpen}
-        leastDestructiveRef={cancelRef}
+        isSubmitting={isDeletingEvent}
         onClose={onDeletingEventAlertCancel}
-      >
-        <AlertDialogOverlay />
-        <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete Event
-          </AlertDialogHeader>
-
-          <AlertDialogBody>
-            Are you sure you want to delete the event{" "}
-            <Text as="span" fontWeight="bold">
-              {event ? event.name : ""}
-            </Text>
-            ?
-          </AlertDialogBody>
-
-          <AlertDialogFooter>
-            {isDeletingEvent ? (
-              <Button colorScheme="red" disabled={true}>
-                Deleting...
-              </Button>
-            ) : (
-              <React.Fragment>
-                <Button
-                  ref={deleteEventRef}
-                  onClick={onDeletingEventAlertCancel}
-                >
-                  No, nevermind
-                </Button>
-                <Button colorScheme="red" onClick={onDeleteEventConfirm} ml={3}>
-                  Yes, I want to delete the event
-                </Button>
-              </React.Fragment>
-            )}
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        onConfirm={onDeleteEventConfirm}
+      />
     </React.Fragment>
   );
 };

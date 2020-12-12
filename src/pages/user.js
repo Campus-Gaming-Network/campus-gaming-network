@@ -36,7 +36,7 @@ import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 import VisuallyHidden from "components/VisuallyHidden";
 import Link from "components/Link";
 import EventListItem from "components/EventListItem";
-import UserSilhouette from "components/UserSilhouette";
+import UserSilhouette from "components/silhouettes/UserSilhouette";
 import GameCover from "components/GameCover";
 import GameLink from "components/GameLink";
 

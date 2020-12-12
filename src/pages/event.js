@@ -17,12 +17,6 @@ import {
   Button,
   Heading,
   Text,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   Alert,
   List,
   ListItem,
@@ -50,21 +44,20 @@ import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 // Components
 import OutsideLink from "components/OutsideLink";
 import Link from "components/Link";
-import EventSilhouette from "components/EventSilhouette";
+import EventSilhouette from "components/silhouettes/EventSilhouette";
 import GameCover from "components/GameCover";
 
 // Hooks
 import useFetchEventDetails from "hooks/useFetchEventDetails";
 import useFetchEventUsers from "hooks/useFetchEventUsers";
 import useFetchUserEventResponse from "hooks/useFetchUserEventResponse";
+import RSVPDialog from "components/dialogs/RSVPDialog";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Event
 
 const Event = props => {
   const toast = useToast();
-  const cancelRef = React.useRef();
-  const attendRef = React.useRef();
   const dispatch = useAppDispatch();
   const state = useAppState();
   const [authenticatedUser] = useAuthState(firebaseAuth);
@@ -100,9 +93,17 @@ const Event = props => {
     [authenticatedUser, isLoadingUserEventResponse, isEventCreator, event]
   );
 
-  const onCancellationAlertClose = () => setCancellationAlertIsOpen(false);
+  const handleCancellationAlertClose = () => setCancellationAlertIsOpen(false);
 
-  const onAttendingAlertCancel = () => setAttendingAlertIsOpen(false);
+  const handleAttendingAlertClose = () => setAttendingAlertIsOpen(false);
+
+  const onRSVPDialogClose = () => {
+    if (isCancellationAlertOpen) {
+      handleCancellationAlertClose();
+    } else if (setAttendingAlertIsOpen) {
+      handleAttendingAlertClose();
+    }
+  };
 
   React.useEffect(() => {
     if (props.id !== state.event.id && !isLoadingEvent) {
@@ -468,91 +469,14 @@ const Event = props => {
       </Box>
 
       {canChangeEventResponse ? (
-        <React.Fragment>
-          <AlertDialog
-            isOpen={isAttendingAlertOpen}
-            leastDestructiveRef={cancelRef}
-            onClose={onAttendingAlertCancel}
-          >
-            <AlertDialogOverlay />
-            <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                RSVP
-              </AlertDialogHeader>
-
-              <AlertDialogBody>
-                Are you sure you want to RSVP for{" "}
-                <Text as="span" fontWeight="bold">
-                  {event.name}
-                </Text>
-                ?
-              </AlertDialogBody>
-
-              <AlertDialogFooter>
-                {isSubmittingEventResponse ? (
-                  <Button colorScheme="brand" disabled={true}>
-                    RSVPing...
-                  </Button>
-                ) : (
-                  <React.Fragment>
-                    <Button ref={attendRef} onClick={onAttendingAlertCancel}>
-                      No, nevermind
-                    </Button>
-                    <Button
-                      colorScheme="brand"
-                      onClick={() => onAttendingAlertConfirm("YES")}
-                      ml={3}
-                    >
-                      Yes, I want to go
-                    </Button>
-                  </React.Fragment>
-                )}
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-          <AlertDialog
-            isOpen={isCancellationAlertOpen}
-            leastDestructiveRef={cancelRef}
-            onClose={onCancellationAlertClose}
-          >
-            <AlertDialogOverlay />
-            <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Cancel RSVP
-              </AlertDialogHeader>
-
-              <AlertDialogBody>
-                Are you sure you want to cancel your RSVP for{" "}
-                <Text as="span" fontWeight="bold">
-                  {event.name}
-                </Text>
-                ?
-              </AlertDialogBody>
-
-              <AlertDialogFooter>
-                {isSubmittingEventResponse ? (
-                  <Button colorScheme="red" disabled={true}>
-                    Cancelling...
-                  </Button>
-                ) : (
-                  <React.Fragment>
-                    <Button ref={cancelRef} onClick={onCancellationAlertClose}>
-                      No, nevermind
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      onClick={() => onAttendingAlertConfirm("NO")}
-                      ml={3}
-                    >
-                      Yes, cancel the RSVP
-                    </Button>
-                  </React.Fragment>
-                )}
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </React.Fragment>
+        <RSVPDialog
+          event={event}
+          eventResponse={eventResponse}
+          isOpen={isCancellationAlertOpen || isAttendingAlertOpen}
+          isSubmitting={isSubmittingEventResponse}
+          onClose={onRSVPDialogClose}
+          onConfirm={onAttendingAlertConfirm}
+        />
       ) : null}
     </React.Fragment>
   );

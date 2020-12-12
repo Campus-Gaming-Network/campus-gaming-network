@@ -29,3 +29,4 @@ export const LAST_100_YEARS = getYears(CURRENT_YEAR - 100, CURRENT_YEAR + 1, {
 export const NEXT_5_YEARS = getYears(CURRENT_YEAR, CURRENT_YEAR + 5, {
   reverse: true
 });
+export const DEFAULT_TIME_INCREMENT = 15;

@@ -10,11 +10,17 @@ import {
   AlertDialogOverlay
 } from "@chakra-ui/react";
 
+// Constants
+import { EVENT_RESPONSES } from "../../constants";
+
 const RSVPDialog = props => {
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
+  const hasResponded = React.useMemo(() => !!props.eventResponse, [
+    props.eventResponse
+  ]);
 
-  if (props.eventResponse === "YES") {
+  if (hasResponded && props.eventResponse.response === EVENT_RESPONSES.NO) {
     return (
       <AlertDialog
         isOpen={props.isOpen}
@@ -30,7 +36,7 @@ const RSVPDialog = props => {
           <AlertDialogBody>
             Are you sure you want to RSVP for{" "}
             <Text as="span" fontWeight="bold">
-              {props.eventName}
+              {props.event ? props.event.name : ""}
             </Text>
             ?
           </AlertDialogBody>
@@ -45,7 +51,11 @@ const RSVPDialog = props => {
                 <Button ref={attendRef} onClick={props.onClose}>
                   No, nevermind
                 </Button>
-                <Button colorScheme="brand" onClick={props.onConfirm} ml={3}>
+                <Button
+                  colorScheme="brand"
+                  onClick={() => props.onConfirm(EVENT_RESPONSES.YES)}
+                  ml={3}
+                >
                   Yes, I want to go
                 </Button>
               </React.Fragment>
@@ -54,7 +64,10 @@ const RSVPDialog = props => {
         </AlertDialogContent>
       </AlertDialog>
     );
-  } else if (props.eventResponse === "NO") {
+  } else if (
+    hasResponded &&
+    props.eventResponse.response === EVENT_RESPONSES.YES
+  ) {
     return (
       <AlertDialog
         isOpen={props.isOpen}
@@ -70,7 +83,7 @@ const RSVPDialog = props => {
           <AlertDialogBody>
             Are you sure you want to cancel your RSVP for{" "}
             <Text as="span" fontWeight="bold">
-              {props.eventName}
+              {props.event ? props.event.name : ""}
             </Text>
             ?
           </AlertDialogBody>
@@ -85,7 +98,11 @@ const RSVPDialog = props => {
                 <Button ref={cancelRef} onClick={props.onClose}>
                   No, nevermind
                 </Button>
-                <Button colorScheme="red" onClick={props.onConfirm} ml={3}>
+                <Button
+                  colorScheme="red"
+                  onClick={() => props.onConfirm(EVENT_RESPONSES.NO)}
+                  ml={3}
+                >
                   Yes, cancel the RSVP
                 </Button>
               </React.Fragment>

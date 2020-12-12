@@ -36,7 +36,7 @@ import VisuallyHidden from "components/VisuallyHidden";
 import Link from "components/Link";
 import EventListItem from "components/EventListItem";
 import SchoolLogo from "components/SchoolLogo";
-import SchoolSilhouette from "components/SchoolSilhouette";
+import SchoolSilhouette from "components/silhouettes/SchoolSilhouette";
 
 // Hooks
 import useFetchSchoolDetails from "hooks/useFetchSchoolDetails";

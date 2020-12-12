@@ -6,6 +6,7 @@ export * from "./styles";
 export * from "./user";
 export * from "./school";
 export * from "./event";
+export * from "./eventResponse";
 export * from "./dateTime";
 export * from "./actions";
 export * from "./firebase";

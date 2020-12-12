@@ -24,10 +24,10 @@ import FrequentlyAskedQuestions from "pages/frequently-asked-questions";
 // Components
 import UnauthenticatedNav from "components/UnauthenticatedNav";
 import ScrollToTop from "components/ScrollToTop";
-import NavSilhouette from "components/NavSilhouette";
-import UserSilhouette from "components/UserSilhouette";
-import SchoolSilhouette from "components/SchoolSilhouette";
-import EventSilhouette from "components/EventSilhouette";
+import NavSilhouette from "components/silhouettes/NavSilhouette";
+import UserSilhouette from "components/silhouettes/UserSilhouette";
+import SchoolSilhouette from "components/silhouettes/SchoolSilhouette";
+import EventSilhouette from "components/silhouettes/EventSilhouette";
 import Empty from "components/Empty";
 import Footer from "components/Footer";
 

@@ -1,10 +1,16 @@
 import React from "react";
 import { Select } from "@chakra-ui/react";
 
+import { DEFAULT_TIME_INCREMENT } from "../constants";
+
 // Utilities
 import { getTimes } from "../utilities";
 
-const TimeSelect = ({ children, increment = 15, ...rest }) => {
+const TimeSelect = ({
+  children,
+  increment = DEFAULT_TIME_INCREMENT,
+  ...rest
+}) => {
   const OPTIONS = React.useMemo(
     () =>
       getTimes({ increment }).map(time => (

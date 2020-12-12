@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Redirect, navigate } from "@reach/router";
+import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import isEmpty from "lodash.isempty";
@@ -25,12 +25,6 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   FormErrorMessage,
   useToast,
   Menu,
@@ -67,13 +61,11 @@ import GameCover from "components/GameCover";
 import MonthSelect from "components/MonthSelect";
 import DaySelect from "components/DaySelect";
 import YearSelect from "components/YearSelect";
+import DeleteAccountDialog from "components/dialogs/DeleteAccountDialog";
 
 // Utilities
 import { mapUser, move } from "../utilities";
-import {
-  validateEditUser,
-  validateDeleteAccount
-} from "../utilities/validation";
+import { validateEditUser } from "../utilities/validation";
 
 const initialFormState = {
   firstName: "",
@@ -116,8 +108,6 @@ const formReducer = (state, { field, value }) => {
 const EditUser = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const cancelRef = React.useRef();
-  const deleteAccountRef = React.useRef();
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -126,7 +116,6 @@ const EditUser = props => {
     isDeletingAccountAlertOpen,
     setDeletingAccountAlertIsOpen
   ] = React.useState(false);
-  const [isDeletingAccount, setIsDeletingAccount] = React.useState(false);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -149,49 +138,6 @@ const EditUser = props => {
 
   const onDeletingAccountAlertCancel = () =>
     setDeletingAccountAlertIsOpen(false);
-
-  const onDeleteAccountConfirm = async () => {
-    const { isValid, errors } = validateDeleteAccount({
-      ...formState
-    });
-
-    setErrors(errors);
-
-    if (!isValid) {
-      return;
-    }
-
-    setIsDeletingAccount(true);
-
-    try {
-      await firebaseFirestore
-        .collection(COLLECTIONS.USERS)
-        .doc(user.id)
-        .delete();
-
-      setDeletingAccountAlertIsOpen(false);
-      setIsDeletingAccount(false);
-      toast({
-        title: "Account deleted.",
-        description: "Your account has been deleted. You will be redirected...",
-        status: "success",
-        isClosable: true
-      });
-      setTimeout(() => {
-        firebaseAuth.signOut().then(() => navigate("/"));
-      }, 2000);
-    } catch (error) {
-      console.error(error);
-      setDeletingAccountAlertIsOpen(false);
-      setIsDeletingAccount(false);
-      toast({
-        title: "An error occurred.",
-        description: error.message,
-        status: "error",
-        isClosable: true
-      });
-    }
-  };
 
   const prefillForm = () => {
     formDispatch({ field: "firstName", value: user.firstName || "" });
@@ -511,63 +457,11 @@ const EditUser = props => {
         </Stack>
       </Box>
 
-      <AlertDialog
+      <DeleteAccountDialog
+        user={user}
         isOpen={isDeletingAccountAlertOpen}
-        leastDestructiveRef={cancelRef}
         onClose={onDeletingAccountAlertCancel}
-      >
-        <AlertDialogOverlay />
-        <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete Account
-          </AlertDialogHeader>
-
-          <AlertDialogBody>
-            <Text pb={4}>
-              Are you sure you want to delete your account and all related data?
-              There is <Text as="strong">no</Text> coming back from this.
-            </Text>
-            <FormControl isRequired isInvalid={errors.deleteConfirmation}>
-              <FormLabel htmlFor="deleteConfirmation" fontWeight="bold">
-                Type "DELETE" to confirm account deletion.
-              </FormLabel>
-              <Input
-                id="deleteConfirmation"
-                name="deleteConfirmation"
-                type="text"
-                placeholder="DELETE"
-                onChange={handleFieldChange}
-                value={formState.deleteConfirmation}
-              />
-              <FormErrorMessage>{errors.deleteConfirmation}</FormErrorMessage>
-            </FormControl>
-          </AlertDialogBody>
-
-          <AlertDialogFooter>
-            {isDeletingAccount ? (
-              <Button colorScheme="red" disabled={true}>
-                Deleting...
-              </Button>
-            ) : (
-              <React.Fragment>
-                <Button
-                  ref={deleteAccountRef}
-                  onClick={onDeletingAccountAlertCancel}
-                >
-                  No, nevermind
-                </Button>
-                <Button
-                  colorScheme="red"
-                  onClick={onDeleteAccountConfirm}
-                  ml={3}
-                >
-                  Yes, delete my account.
-                </Button>
-              </React.Fragment>
-            )}
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      />
     </React.Fragment>
   );
 };

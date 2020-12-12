@@ -8,7 +8,8 @@ import {
   MAX_CURRENTLY_PLAYING_LIST,
   MAX_FAVORITE_GAME_LIST,
   MAX_DEFAULT_STRING_LENGTH,
-  MIN_PASSWORD_LENGTH
+  MIN_PASSWORD_LENGTH,
+  DEFAULT_TIME_INCREMENT
 } from "../constants";
 import {
   validateSignUp,
@@ -86,11 +87,11 @@ const EVENT = {
   startMonth: TODAY.monthLong,
   startDay: TODAY.weekday.toString(),
   startYear: TODAY.year.toString(),
-  startTime: getTimes({ increment: 15 })[1],
+  startTime: getTimes({ increment: DEFAULT_TIME_INCREMENT })[1],
   endMonth: TOMORROW.monthLong,
   endDay: TOMORROW.weekday.toString(),
   endYear: TOMORROW.year.toString(),
-  endTime: getTimes({ increment: 15 })[2]
+  endTime: getTimes({ increment: DEFAULT_TIME_INCREMENT })[2]
 };
 
 const SIGN_UP_FORM = "SIGN_UP";
@@ -126,7 +127,7 @@ const EMPTY_STRING = "";
 const EMPTY_STRING_SPACE = " ";
 const SHORT_PASSWORD = AUTH_USER.password.substring(0, MIN_PASSWORD_LENGTH - 1);
 const INVALID_EMAIL = "support@";
-const INVALID_STATUS = "something";
+const INVALID_STATUS = "bad status";
 const INVALID_DELETE_CONFIRMATION = "bananas";
 const LONG_EVENT_DESCRIPTION = "x".repeat(MAX_DESCRIPTION_LENGTH + 1);
 const LONG_BASE_STRING = "x".repeat(MAX_DEFAULT_STRING_LENGTH + 1);
