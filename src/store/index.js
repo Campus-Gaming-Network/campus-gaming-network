@@ -70,21 +70,6 @@ const reducer = (state, action) => {
           ...keyBy(action.payload.events.map(mapEvent), "id")
         }
       };
-    case ACTION_TYPES.SET_SCHOOL_LOGO:
-      return {
-        ...state,
-        school: {
-          ...state.school,
-          logo: action.payload.logo
-        },
-        schools: {
-          ...state.schools,
-          [action.payload.id]: {
-            ...state.schools[action.payload.id],
-            logo: action.payload.logo
-          }
-        }
-      };
     case ACTION_TYPES.SET_USER:
       return {
         ...state,

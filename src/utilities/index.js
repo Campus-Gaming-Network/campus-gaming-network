@@ -176,8 +176,15 @@ export const move = (array, from, to) => {
   return newArray;
 };
 
-export const getSchoolLogoPath = schoolId =>
-  `schools/${schoolId}/images/logo.jpg`;
+export const getSchoolLogoPath = (schoolId, extension = "png") =>
+  `schools/${schoolId}/images/logo.${extension}`;
+
+export const getSchoolLogoUrl = schoolId =>
+  `https://firebasestorage.googleapis.com/v0/b/${
+    process.env.REACT_APP_FIREBASE_STORAGE_BUCKET
+  }.appspot.com/o/${encodeURIComponent(
+    getSchoolLogoPath(schoolId)
+  )}?alt=media&token=${schoolId}`;
 
 export const getYears = (
   min = 2020,

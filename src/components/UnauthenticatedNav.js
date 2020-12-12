@@ -1,6 +1,4 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { Link as ReachLink, navigate } from "@reach/router";
 
