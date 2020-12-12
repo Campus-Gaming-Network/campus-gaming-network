@@ -16,11 +16,13 @@ import {
   AlertDialogOverlay
 } from "@chakra-ui/react";
 
+// Other
 import { firebaseFirestore, firebaseAuth } from "../../firebase";
 
 // Constants
 import { COLLECTIONS } from "../../constants";
 
+// Utilities
 import { validateDeleteAccount } from "../../utilities/validation";
 
 const DeleteAccountDialog = props => {

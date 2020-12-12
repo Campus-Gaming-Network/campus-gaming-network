@@ -1,7 +1,9 @@
 import React from "react";
+import { navigate } from "@reach/router";
 import {
   Button,
   Text,
+  useToast,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -10,9 +12,50 @@ import {
   AlertDialogOverlay
 } from "@chakra-ui/react";
 
+// Other
+import { firebaseFirestore } from "../../firebase";
+
+// Constants
+import { COLLECTIONS } from "../../constants";
+
 const DeleteEventDialog = props => {
+  const toast = useToast();
   const cancelRef = React.useRef();
   const deleteEventRef = React.useRef();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const onDeleteEventConfirm = async () => {
+    setIsSubmitting(true);
+
+    try {
+      await firebaseFirestore
+        .collection(COLLECTIONS.EVENTS)
+        .doc(props.event.id)
+        .delete();
+
+      props.onClose();
+      setIsSubmitting(false);
+      toast({
+        title: "Event deleted.",
+        description: `Event ${props.event.name} has been deleted. You will be redirected...`,
+        status: "success",
+        isClosable: true
+      });
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      props.onClose();
+      setIsSubmitting(false);
+      toast({
+        title: "An error occurred.",
+        description: error.message,
+        status: "error",
+        isClosable: true
+      });
+    }
+  };
 
   return (
     <AlertDialog
@@ -35,7 +78,7 @@ const DeleteEventDialog = props => {
         </AlertDialogBody>
 
         <AlertDialogFooter>
-          {props.isSubmitting ? (
+          {isSubmitting ? (
             <Button colorScheme="red" disabled={true}>
               Deleting...
             </Button>
@@ -44,7 +87,7 @@ const DeleteEventDialog = props => {
               <Button ref={deleteEventRef} onClick={props.onClose}>
                 No, nevermind
               </Button>
-              <Button colorScheme="red" onClick={props.onConfirm} ml={3}>
+              <Button colorScheme="red" onClick={onDeleteEventConfirm} ml={3}>
                 Yes, I want to delete the event
               </Button>
             </React.Fragment>

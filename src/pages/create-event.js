@@ -106,7 +106,6 @@ const CreateEvent = props => {
     isDeletingEventAlertOpen,
     setDeletingEventAlertIsOpen
   ] = React.useState(false);
-  const [isDeletingEvent, setIsDeletingEvent] = React.useState(false);
   const handleFieldChange = React.useCallback(e => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
@@ -116,39 +115,12 @@ const CreateEvent = props => {
   // TODO: Tournament feature
   // const [isTournament, setIsTournament] = React.useState("no");
 
-  const onDeletingEventAlertCancel = () => setDeletingEventAlertIsOpen(false);
+  const openDeleteEventDialog = () => {
+    setDeletingEventAlertIsOpen(true);
+  };
 
-  const onDeleteEventConfirm = async () => {
-    setIsDeletingEvent(true);
-
-    try {
-      await firebaseFirestore
-        .collection(COLLECTIONS.EVENTS)
-        .doc(props.id)
-        .delete();
-
-      setDeletingEventAlertIsOpen(false);
-      setIsDeletingEvent(false);
-      toast({
-        title: "Event deleted.",
-        description: `Event ${event.name} has been deleted. You will be redirected...`,
-        status: "success",
-        isClosable: true
-      });
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    } catch (error) {
-      console.error(error);
-      setDeletingEventAlertIsOpen(false);
-      setIsDeletingEvent(false);
-      toast({
-        title: "An error occurred.",
-        description: error.message,
-        status: "error",
-        isClosable: true
-      });
-    }
+  const closeDeleteEventDialog = () => {
+    setDeletingEventAlertIsOpen(false);
   };
 
   const setLocation = (address, placeId) => {
@@ -458,6 +430,7 @@ const CreateEvent = props => {
       .toFormat(DASHED_DATE_TIME)
       .split(" ");
     const [startMonth, startDay, startYear] = startDate.split("-");
+
     formDispatch({ field: "startMonth", value: startMonth });
     formDispatch({ field: "startDay", value: startDay });
     formDispatch({ field: "startYear", value: startYear });
@@ -469,6 +442,7 @@ const CreateEvent = props => {
       .toFormat(DASHED_DATE_TIME)
       .split(" ");
     const [endMonth, endDay, endYear] = endDate.split("-");
+
     formDispatch({ field: "endMonth", value: endMonth });
     formDispatch({ field: "endDay", value: endDay });
     formDispatch({ field: "endYear", value: endYear });
@@ -516,7 +490,7 @@ const CreateEvent = props => {
                 variant="ghost"
                 colorScheme="red"
                 size="lg"
-                onClick={() => setDeletingEventAlertIsOpen(true)}
+                onClick={openDeleteEventDialog}
               >
                 Delete event
               </Button>
@@ -984,9 +958,7 @@ const CreateEvent = props => {
       <DeleteEventDialog
         event={event}
         isOpen={isDeletingEventAlertOpen}
-        isSubmitting={isDeletingEvent}
-        onClose={onDeletingEventAlertCancel}
-        onConfirm={onDeleteEventConfirm}
+        onClose={closeDeleteEventDialog}
       />
     </React.Fragment>
   );

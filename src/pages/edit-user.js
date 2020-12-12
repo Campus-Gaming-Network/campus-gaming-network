@@ -91,8 +91,7 @@ const initialFormState = {
   xbox: "",
   psn: "",
   favoriteGameSearch: "",
-  currentGameSearch: "",
-  deleteConfirmation: ""
+  currentGameSearch: ""
 };
 
 const formReducer = (state, { field, value }) => {
@@ -131,13 +130,15 @@ const EditUser = props => {
     [user.school.id, state.schools]
   );
   const [errors, setErrors] = React.useState({});
-  const hasErrors = React.useMemo(
-    () => !isEmpty(errors) && !errors.deleteConfirmation,
-    [errors]
-  );
+  const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  const onDeletingAccountAlertCancel = () =>
+  const openDeleteAccountDialog = () => {
+    setDeletingAccountAlertIsOpen(true);
+  };
+
+  const closeDeleteAccountDialog = () => {
     setDeletingAccountAlertIsOpen(false);
+  };
 
   const prefillForm = () => {
     formDispatch({ field: "firstName", value: user.firstName || "" });
@@ -376,7 +377,7 @@ const EditUser = props => {
                 Options
               </MenuButton>
               <MenuList fontSize="md">
-                <MenuItem onClick={() => setDeletingAccountAlertIsOpen(true)}>
+                <MenuItem onClick={openDeleteAccountDialog}>
                   Delete account
                 </MenuItem>
               </MenuList>
@@ -460,7 +461,7 @@ const EditUser = props => {
       <DeleteAccountDialog
         user={user}
         isOpen={isDeletingAccountAlertOpen}
-        onClose={onDeletingAccountAlertCancel}
+        onClose={closeDeleteAccountDialog}
       />
     </React.Fragment>
   );
@@ -470,9 +471,10 @@ const EditUser = props => {
 // DetailSection
 
 const DetailSection = React.memo(props => {
-  const bioCharactersRemaining = props.bio
-    ? MAX_BIO_LENGTH - props.bio.length
-    : MAX_BIO_LENGTH;
+  const bioCharactersRemaining = React.useMemo(
+    () => (props.bio ? MAX_BIO_LENGTH - props.bio.length : MAX_BIO_LENGTH),
+    [props.bio]
+  );
 
   return (
     <Box

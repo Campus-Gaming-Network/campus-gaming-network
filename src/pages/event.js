@@ -21,7 +21,6 @@ import {
   List,
   ListItem,
   Flex,
-  useToast,
   Avatar,
   Skeleton
 } from "@chakra-ui/react";
@@ -33,12 +32,11 @@ import {
   EVENT_EMPTY_LOCATION_TEXT,
   DEFAULT_USERS_LIST_PAGE_SIZE,
   DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE,
-  EVENT_EMPTY_USERS_TEXT,
-  COLLECTIONS
+  EVENT_EMPTY_USERS_TEXT
 } from "../constants";
 
 // Other
-import { firebaseFirestore, firebaseAuth } from "../firebase";
+import { firebaseAuth } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // Components
@@ -57,21 +55,12 @@ import RSVPDialog from "components/dialogs/RSVPDialog";
 // Event
 
 const Event = props => {
-  const toast = useToast();
   const dispatch = useAppDispatch();
   const state = useAppState();
   const [authenticatedUser] = useAuthState(firebaseAuth);
   const [event, isLoadingEvent] = useFetchEventDetails(props.id);
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
-
-  const [
-    isSubmittingEventResponse,
-    setIsSubmittingEventResponse
-  ] = React.useState(false);
-  const [isCancellationAlertOpen, setCancellationAlertIsOpen] = React.useState(
-    false
-  );
-  const [isAttendingAlertOpen, setAttendingAlertIsOpen] = React.useState(false);
+  const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
   const isEventCreator = React.useMemo(
     () =>
       authenticatedUser && event && event.creator.id === authenticatedUser.uid,
@@ -93,16 +82,11 @@ const Event = props => {
     [authenticatedUser, isLoadingUserEventResponse, isEventCreator, event]
   );
 
-  const handleCancellationAlertClose = () => setCancellationAlertIsOpen(false);
-
-  const handleAttendingAlertClose = () => setAttendingAlertIsOpen(false);
-
-  const onRSVPDialogClose = () => {
-    if (isCancellationAlertOpen) {
-      handleCancellationAlertClose();
-    } else if (setAttendingAlertIsOpen) {
-      handleAttendingAlertClose();
-    }
+  const openRSVPDialog = () => {
+    setIsRSVPAlertOpen(canChangeEventResponse);
+  };
+  const closeRSVPDialog = () => {
+    setIsRSVPAlertOpen(false);
   };
 
   React.useEffect(() => {
@@ -113,114 +97,6 @@ const Event = props => {
       });
     }
   }, [props.id, state.event.id, dispatch, event, isLoadingEvent]);
-
-  const getResponseFormData = response => {
-    const userDocRef = firebaseFirestore
-      .collection(COLLECTIONS.USERS)
-      .doc(authenticatedUser.uid);
-    const eventDocRef = firebaseFirestore
-      .collection(COLLECTIONS.EVENTS)
-      .doc(event.id);
-    const schoolDocRef = firebaseFirestore
-      .collection(COLLECTIONS.SCHOOLS)
-      .doc(event.school.id);
-    const user = state.users[authenticatedUser.uid];
-
-    const data = {
-      response,
-      user: {
-        ref: userDocRef,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        gravatar: user.gravatar
-      },
-      event: {
-        ref: eventDocRef,
-        name: event.name,
-        description: event.description,
-        startDateTime: event.startDateTime,
-        endDateTime: event.endDateTime,
-        isOnlineEvent: event.isOnlineEvent,
-        responses: {
-          yes: 1,
-          no: 0
-        }
-      },
-      school: {
-        ref: schoolDocRef,
-        name: event.school.name
-      }
-    };
-
-    return data;
-  };
-
-  const onAttendingAlertConfirm = async response => {
-    setIsSubmittingEventResponse(true);
-
-    const data = getResponseFormData(response);
-
-    if (!hasResponded) {
-      firebaseFirestore
-        .collection(COLLECTIONS.EVENT_RESPONSES)
-        .add(data)
-        .then(() => {
-          setAttendingAlertIsOpen(false);
-          setIsSubmittingEventResponse(false);
-          toast({
-            title: "RSVP created.",
-            description: "Your RSVP has been created.",
-            status: "success",
-            isClosable: true
-          });
-          setRefreshEventResponse(!refreshEventResponse);
-        })
-        .catch(error => {
-          setAttendingAlertIsOpen(false);
-          setIsSubmittingEventResponse(false);
-          toast({
-            title: "An error occurred.",
-            description: error.message,
-            status: "error",
-            isClosable: true
-          });
-        });
-    } else {
-      firebaseFirestore
-        .collection(COLLECTIONS.EVENT_RESPONSES)
-        .doc(eventResponse.id)
-        .update({ response })
-        .then(() => {
-          if (isCancellationAlertOpen) {
-            setCancellationAlertIsOpen(false);
-          } else {
-            setAttendingAlertIsOpen(false);
-          }
-          setIsSubmittingEventResponse(false);
-          toast({
-            title: "RSVP updated.",
-            description: "Your RSVP has been updated.",
-            status: "success",
-            isClosable: true
-          });
-          setRefreshEventResponse(!refreshEventResponse);
-        })
-        .catch(error => {
-          if (isCancellationAlertOpen) {
-            setCancellationAlertIsOpen(false);
-          } else {
-            setAttendingAlertIsOpen(false);
-          }
-          setIsSubmittingEventResponse(false);
-          toast({
-            title: "An error occurred.",
-            description: error.message,
-            status: "error",
-            isClosable: true
-          });
-        });
-    }
-  };
 
   if (isLoadingEvent) {
     return <EventSilhouette />;
@@ -413,11 +289,7 @@ const Event = props => {
                       You’re going!
                     </Text>
                     <Button
-                      onClick={() =>
-                        setCancellationAlertIsOpen(
-                          !isEventCreator && !event.hasEnded
-                        )
-                      }
+                      onClick={openRSVPDialog}
                       variant="link"
                       color="green.500"
                       display="inline"
@@ -427,13 +299,7 @@ const Event = props => {
                   </Stack>
                 </Alert>
               ) : (
-                <Button
-                  onClick={() =>
-                    setAttendingAlertIsOpen(!isEventCreator && !event.hasEnded)
-                  }
-                  colorScheme="brand"
-                  w="200px"
-                >
+                <Button onClick={openRSVPDialog} colorScheme="brand" w="200px">
                   Attend Event
                 </Button>
               )}
@@ -472,10 +338,10 @@ const Event = props => {
         <RSVPDialog
           event={event}
           eventResponse={eventResponse}
-          isOpen={isCancellationAlertOpen || isAttendingAlertOpen}
-          isSubmitting={isSubmittingEventResponse}
-          onClose={onRSVPDialogClose}
-          onConfirm={onAttendingAlertConfirm}
+          isOpen={isRSVPAlertOpen}
+          onClose={closeRSVPDialog}
+          refreshEventResponse={refreshEventResponse}
+          setRefreshEventResponse={setRefreshEventResponse}
         />
       ) : null}
     </React.Fragment>
@@ -489,21 +355,31 @@ const UsersList = props => {
   const dispatch = useAppDispatch();
   const [page, setPage] = React.useState(0);
   const [users, isLoadingUsers] = useFetchEventUsers(props.id, undefined, page);
+  const hasUsers = React.useMemo(
+    () => users && users.length && users.length > 0,
+    [users]
+  );
+  const isFirstPage = React.useMemo(() => page === 0, [page]);
+  const isLastPage = React.useMemo(
+    () => hasUsers && users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
+    [hasUsers, users]
+  );
+  const isValidPage = React.useMemo(() => page >= 0, [page]);
 
   const nextPage = () => {
-    if (users && users.length === DEFAULT_USERS_LIST_PAGE_SIZE) {
+    if (!isLastPage) {
       setPage(page + 1);
     }
   };
 
   const prevPage = () => {
-    if (page > 0) {
+    if (!isFirstPage) {
       setPage(page - 1);
     }
   };
 
   React.useEffect(() => {
-    if (isLoadingUsers && users && page >= 0) {
+    if (isLoadingUsers && hasUsers && isValidPage) {
       dispatch({
         type: ACTION_TYPES.SET_EVENT_USERS,
         payload: {
@@ -513,7 +389,7 @@ const UsersList = props => {
         }
       });
     }
-  }, [isLoadingUsers, users, dispatch, props.id, page]);
+  }, [isLoadingUsers, users, hasUsers, dispatch, props.id, page, isValidPage]);
 
   if (isLoadingUsers) {
     return (
@@ -534,7 +410,7 @@ const UsersList = props => {
     );
   }
 
-  if (users && users.length && users.length > 0) {
+  if (hasUsers) {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
@@ -548,27 +424,25 @@ const UsersList = props => {
           ))}
         </List>
         <Flex justifyContent="space-between" m={2}>
-          {page > 0 ? (
+          {!isFirstPage ? (
             <Button
               variant="ghost"
               size="sm"
               leftIcon={<ArrowBack />}
               colorScheme="brand"
-              disabled={page === 0}
+              disabled={isFirstPage}
               onClick={prevPage}
             >
               Prev Page
             </Button>
           ) : null}
-          {users &&
-          users.length &&
-          users.length === DEFAULT_USERS_LIST_PAGE_SIZE ? (
+          {!isLastPage ? (
             <Button
               variant="ghost"
               size="sm"
               rightIcon={<ArrowForward />}
               colorScheme="brand"
-              disabled={users.length !== DEFAULT_USERS_LIST_PAGE_SIZE}
+              disabled={isLastPage}
               onClick={nextPage}
               ml="auto"
             >
