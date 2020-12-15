@@ -231,12 +231,12 @@ export const getTimes = (options = { increment: 15 }) => {
   return times;
 };
 
-export const getClosestTime = (hour, minutes) => {
+export const getClosestTimeByN = (hour, minutes, n) => {
   let _hour = hour;
   let _minutes = Math.ceil(minutes / 10) * 10;
 
-  while (_minutes % 15 !== 0) {
-    _minutes += 5;
+  while (_minutes % n !== 0) {
+    _minutes += 1;
   }
 
   if (_minutes === 60) {

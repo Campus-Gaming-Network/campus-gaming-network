@@ -8,7 +8,8 @@ import {
   MAX_CURRENTLY_PLAYING_LIST,
   MAX_FAVORITE_GAME_LIST,
   MAX_DEFAULT_STRING_LENGTH,
-  MIN_PASSWORD_LENGTH
+  MIN_PASSWORD_LENGTH,
+  DEFAULT_TIME_INCREMENT
 } from "../constants";
 import {
   validateSignUp,
@@ -19,7 +20,7 @@ import {
   validateEditUser,
   validateDeleteAccount
 } from "../utilities/validation";
-import { getClosestTime } from "../utilities";
+import { getClosestTimeByN } from "../utilities";
 
 const STATUSES = STUDENT_STATUS_OPTIONS.reduce((acc, curr) => ({
   ...acc,
@@ -86,11 +87,19 @@ const EVENT = {
   startMonth: TODAY.monthLong,
   startDay: TODAY.day.toString(),
   startYear: TODAY.year.toString(),
-  startTime: getClosestTime(TODAY.hour, TODAY.minute),
+  startTime: getClosestTimeByN(
+    TODAY.hour,
+    TODAY.minute,
+    DEFAULT_TIME_INCREMENT
+  ),
   endMonth: TOMORROW.monthLong,
   endDay: TOMORROW.day.toString(),
   endYear: TOMORROW.year.toString(),
-  endTime: getClosestTime(TOMORROW.hour, TOMORROW.minute)
+  endTime: getClosestTimeByN(
+    TOMORROW.hour,
+    TOMORROW.minute,
+    DEFAULT_TIME_INCREMENT
+  )
 };
 
 const SIGN_UP_FORM = "SIGN_UP";
