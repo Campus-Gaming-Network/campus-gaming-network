@@ -6,7 +6,8 @@ const SchoolLogo = React.memo(
   ({ schoolId, schoolName, fallback, src, ...rest }) => {
     return (
       <Image
-        src={getSchoolLogoUrl(schoolId)}
+        src={getSchoolLogoUrl(schoolId, "webp")}
+        fallbackSrc={getSchoolLogoUrl(schoolId, "jpg")}
         alt={`The school logo for ${schoolName}`}
         loading="lazy"
         {...rest}

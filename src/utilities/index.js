@@ -179,11 +179,11 @@ export const move = (array, from, to) => {
 export const getSchoolLogoPath = (schoolId, extension = "png") =>
   `schools/${schoolId}/images/logo.${extension}`;
 
-export const getSchoolLogoUrl = schoolId =>
+export const getSchoolLogoUrl = (schoolId, extension = "png") =>
   `https://firebasestorage.googleapis.com/v0/b/${
     process.env.REACT_APP_FIREBASE_STORAGE_BUCKET
-  }.appspot.com/o/${encodeURIComponent(
-    getSchoolLogoPath(schoolId)
+  }/o/${encodeURIComponent(
+    getSchoolLogoPath(schoolId, extension)
   )}?alt=media&token=${schoolId}`;
 
 export const getYears = (
