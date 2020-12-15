@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSchool, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import isEmpty from "lodash.isempty";
 import times from "lodash.times";
 
@@ -84,23 +84,6 @@ const School = props => {
             schoolName={school.name}
             h={40}
             w={40}
-            bg="white"
-            rounded="full"
-            border="4px"
-            borderColor="gray.300"
-            fallback={
-              <Flex
-                alignItems="center"
-                justifyContent="center"
-                color="gray.100"
-                h={40}
-                w={40}
-                bg="gray.400"
-                rounded="full"
-              >
-                <FontAwesomeIcon icon={faSchool} size="4x" />
-              </Flex>
-            }
           />
           <Box pl={12}>
             <Heading
@@ -340,6 +323,12 @@ const UsersList = props => {
     );
   }
 
+  console.log({
+    users,
+    isFirstPage,
+    isLastPage
+  });
+
   if (hasUsers) {
     return (
       <React.Fragment>
@@ -353,7 +342,7 @@ const UsersList = props => {
             />
           ))}
         </List>
-        <Flex justifyContent="space-between" m={2}>
+        {/* <Flex justifyContent="space-between" m={2}>
           {!isFirstPage ? (
             <Button
               variant="ghost"
@@ -379,7 +368,7 @@ const UsersList = props => {
               Next Page
             </Button>
           ) : null}
-        </Flex>
+        </Flex> */}
       </React.Fragment>
     );
   }
@@ -411,16 +400,7 @@ const UsersListItem = props => {
         p={4}
         height="calc(100% - 1rem)"
       >
-        <Avatar
-          name={props.fullName}
-          src={props.gravatarUrl}
-          alt={`The profile picture for ${props.fullName}`}
-          title={`The profile picture for ${props.fullName}`}
-          h={60}
-          w={60}
-          rounded="full"
-          bg="white"
-        />
+        <Avatar name={props.fullName} src={props.gravatarUrl} size="md" />
         <Link
           to={`/user/${props.id}`}
           color="brand.500"

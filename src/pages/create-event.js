@@ -520,11 +520,7 @@ const CreateEvent = props => {
                     <Avatar
                       name={user.fullName}
                       src={user.gravatarUrl}
-                      alt={`The profile picture for ${user.fullName}`}
-                      title={`The profile picture for ${user.fullName}`}
-                      h={10}
-                      w={10}
-                      rounded="full"
+                      size="sm"
                     />
                   ) : null}
                   <Text ml={4} as="span" alignSelf="center">

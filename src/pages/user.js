@@ -107,19 +107,7 @@ const User = props => {
         </Box>
       ) : null}
       <Box as="header" display="flex" alignItems="center">
-        <Avatar
-          name={user.fullName}
-          src={user.gravatarUrl}
-          alt={`The profile picture for ${user.fullName}`}
-          title={`The profile picture for ${user.fullName}`}
-          h={150}
-          w={150}
-          rounded="full"
-          mr={2}
-          bg="white"
-          borderWidth={4}
-          borderColor="gray.300"
-        />
+        <Avatar name={user.fullName} src={user.gravatarUrl} mr={2} size="2xl" />
         <Box pl={12}>
           <Heading
             as="h2"

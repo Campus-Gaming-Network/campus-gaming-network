@@ -16,7 +16,6 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSchool,
   faUserCircle,
   faSignOutAlt,
   faBars,
@@ -26,7 +25,6 @@ import { firebaseAuth } from "../firebase";
 import { useAppState } from "../store";
 import Nav from "./Nav";
 import SchoolSearch from "./SchoolSearch";
-/* eslint-disable no-unused-vars */
 import SchoolLogo from "./SchoolLogo";
 import Logo from "./Logo";
 
@@ -83,7 +81,13 @@ const AuthenticatedNav = () => {
         flexGrow={1}
         justifyContent="flex-end"
       >
-        <Button as={ReachLink} to="/create-event" colorScheme="brand" mr={4}>
+        <Button
+          as={ReachLink}
+          to="/create-event"
+          colorScheme="brand"
+          size="sm"
+          mr={4}
+        >
           Create an event
         </Button>
 
@@ -107,16 +111,8 @@ const AuthenticatedNav = () => {
                 <Avatar
                   name={user.fullName}
                   src={user.gravatarUrl}
-                  alt={`The profile picture for ${user.fullName}`}
-                  title={`The profile picture for ${user.fullName}`}
-                  h={10}
-                  w={10}
-                  rounded="full"
-                  mr={4}
-                  bg="white"
-                  borderWidth={2}
-                  borderColor="gray.300"
-                  height="2.5rem"
+                  mr={2}
+                  size="xs"
                 />
               ) : null}
               <Text fontWeight="bold" color="gray.900">
@@ -135,12 +131,8 @@ const AuthenticatedNav = () => {
                   <Avatar
                     name={user.fullName}
                     src={user.gravatarUrl}
-                    alt={`The profile picture for ${user.fullName}`}
-                    title={`The profile picture for ${user.fullName}`}
-                    h={6}
-                    w={6}
-                    rounded="full"
                     mr={2}
+                    size="xs"
                   />
                 ) : (
                   <Flex alignItems="center" color="gray.600" mr={2}>
@@ -156,14 +148,7 @@ const AuthenticatedNav = () => {
                 schoolName={school.name}
                 h={6}
                 w={6}
-                bg="white"
-                rounded="full"
                 mr={2}
-                fallback={
-                  <Flex alignItems="center" color="gray.600" mr={2}>
-                    <FontAwesomeIcon icon={faSchool} />
-                  </Flex>
-                }
               />
               <Text lineHeight="1">School</Text>
             </MenuItem>
