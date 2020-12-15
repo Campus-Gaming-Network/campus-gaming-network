@@ -8,8 +8,7 @@ import {
   MAX_CURRENTLY_PLAYING_LIST,
   MAX_FAVORITE_GAME_LIST,
   MAX_DEFAULT_STRING_LENGTH,
-  MIN_PASSWORD_LENGTH,
-  DEFAULT_TIME_INCREMENT
+  MIN_PASSWORD_LENGTH
 } from "../constants";
 import {
   validateSignUp,
@@ -20,7 +19,7 @@ import {
   validateEditUser,
   validateDeleteAccount
 } from "../utilities/validation";
-import { getTimes } from "../utilities";
+import { getClosestTime } from "../utilities";
 
 const STATUSES = STUDENT_STATUS_OPTIONS.reduce((acc, curr) => ({
   ...acc,
@@ -62,7 +61,7 @@ const EXTENDED_USER = {
   timezone: TIMEZONES[0].value,
   hometown: "hometown",
   birthMonth: TODAY.monthLong,
-  birthDay: TODAY.weekday.toString(),
+  birthDay: TODAY.day.toString(),
   birthYear: TODAY.year.toString(),
   website: "website",
   twitter: "twitter",
@@ -85,13 +84,13 @@ const EVENT = {
   isOnlineEvent: false,
   location: "Wrigley Field",
   startMonth: TODAY.monthLong,
-  startDay: TODAY.weekday.toString(),
+  startDay: TODAY.day.toString(),
   startYear: TODAY.year.toString(),
-  startTime: getTimes({ increment: DEFAULT_TIME_INCREMENT })[1],
+  startTime: getClosestTime(TODAY.hour, TODAY.minute),
   endMonth: TOMORROW.monthLong,
-  endDay: TOMORROW.weekday.toString(),
+  endDay: TOMORROW.day.toString(),
   endYear: TOMORROW.year.toString(),
-  endTime: getTimes({ increment: DEFAULT_TIME_INCREMENT })[2]
+  endTime: getClosestTime(TOMORROW.hour, TOMORROW.minute)
 };
 
 const SIGN_UP_FORM = "SIGN_UP";
@@ -873,7 +872,7 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - start date/time - cannot be in the past", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDay: YESTERDAY.weekday
+      startDay: YESTERDAY.day
     });
 
     expect(isValid).toEqual(false);
@@ -882,8 +881,8 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - start date/time - must be before end date/time", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      startDay: TOMORROW.weekday,
-      endDay: TODAY.weekday
+      startDay: TOMORROW.day,
+      endDay: TODAY.day
     });
 
     expect(isValid).toEqual(false);
@@ -1048,7 +1047,7 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - end date/time - cannot be in the past", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDay: YESTERDAY.weekday
+      endDay: YESTERDAY.day
     });
 
     expect(isValid).toEqual(false);
@@ -1057,8 +1056,8 @@ describe(CREATE_EVENT_FORM, () => {
   it("should be an invalid create event - end date/time - must be before start date/time", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,
-      endDay: TOMORROW.weekday,
-      startDay: TODAY.weekday
+      endDay: TOMORROW.day,
+      startDay: TODAY.day
     });
 
     expect(isValid).toEqual(false);

@@ -236,23 +236,6 @@ export const validateCreateEvent = form => {
     errors.startTime = `${startTime} is not a valid time`;
   }
 
-  if (
-    !isNilOrEmpty(startYear) &&
-    !isNilOrEmpty(startMonth) &&
-    !isNilOrEmpty(startDay) &&
-    !isNilOrEmpty(startTime) &&
-    !errors.startYear &&
-    !errors.startMonth &&
-    !errors.startDay &&
-    !errors.startTime &&
-    !DateTime.fromFormat(
-      `${startMonth}-${startDay}-${startYear} ${startTime}`,
-      DASHED_DATE_TIME
-    ).isValid
-  ) {
-    errors.startDateTime = `${startMonth}-${startDay}-${startYear} ${startTime} is not a valid datetime`;
-  }
-
   if (isNilOrEmpty(endYear)) {
     errors.endYear = "End year is required.";
   }
@@ -289,6 +272,25 @@ export const validateCreateEvent = form => {
   }
 
   if (
+    !isNilOrEmpty(startYear) &&
+    !isNilOrEmpty(startMonth) &&
+    !isNilOrEmpty(startDay) &&
+    !isNilOrEmpty(startTime) &&
+    !errors.startYear &&
+    !errors.startMonth &&
+    !errors.startDay &&
+    !errors.startTime &&
+    !isValidDateTime(
+      DateTime.fromFormat(
+        `${startMonth}-${startDay}-${startYear} ${startTime}`,
+        DASHED_DATE_TIME
+      )
+    )
+  ) {
+    errors.startDateTime = `${startMonth}-${startDay}-${startYear} ${startTime} is not a valid datetime`;
+  }
+
+  if (
     !isNilOrEmpty(endYear) &&
     !isNilOrEmpty(endMonth) &&
     !isNilOrEmpty(endDay) &&
@@ -297,12 +299,40 @@ export const validateCreateEvent = form => {
     !errors.endMonth &&
     !errors.endDay &&
     !errors.endTime &&
-    !DateTime.fromFormat(
-      `${endMonth}-${endDay}-${endYear} ${endTime}`,
-      DASHED_DATE_TIME
-    ).isValid
+    !isValidDateTime(
+      DateTime.fromFormat(
+        `${endMonth}-${endDay}-${endYear} ${endTime}`,
+        DASHED_DATE_TIME
+      )
+    )
   ) {
     errors.endDateTime = `${endMonth}-${endDay}-${endYear} ${endTime} is not a valid datetime`;
+  }
+
+  const startDateTime = DateTime.fromFormat(
+    `${startMonth}-${startDay}-${startYear} ${startTime}`,
+    DASHED_DATE_TIME
+  );
+  const endDateTime = DateTime.fromFormat(
+    `${endMonth}-${endDay}-${endYear} ${endTime}`,
+    DASHED_DATE_TIME
+  );
+
+  if (isBeforeToday(startDateTime)) {
+    errors.startDateTime = "Starting date/time cannot be in the past.";
+  }
+
+  if (isSameOrAfterEndDateTime(startDateTime, endDateTime)) {
+    errors.startDateTime =
+      "Starting date/time must be before ending date/time.";
+  }
+
+  if (isBeforeToday(endDateTime)) {
+    errors.endDateTime = "Ending date/time cannot be in the past.";
+  }
+
+  if (isSameOrBeforeStartDateTime(endDateTime, startDateTime)) {
+    errors.endDateTime = "Ending date/time must be after starting date/time.";
   }
 
   return validate("validateCreateEvent", form, errors);
@@ -397,8 +427,9 @@ export const validateEditUser = form => {
     !errors.birthYear &&
     !errors.birthMonth &&
     !errors.birthDay &&
-    !DateTime.fromFormat(`${birthMonth}-${birthDay}-${birthYear}`, DASHED_DATE)
-      .isValid
+    !isValidDateTime(
+      DateTime.fromFormat(`${birthMonth}-${birthDay}-${birthYear}`, DASHED_DATE)
+    )
   ) {
     errors.birthdate = `${birthMonth}-${birthDay}-${birthYear} is not a valid date`;
   }

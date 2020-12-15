@@ -230,3 +230,19 @@ export const getTimes = (options = { increment: 15 }) => {
 
   return times;
 };
+
+export const getClosestTime = (hour, minutes) => {
+  let _hour = hour;
+  let _minutes = Math.ceil(minutes / 10) * 10;
+
+  while (_minutes % 15 !== 0) {
+    _minutes += 5;
+  }
+
+  if (_minutes === 60) {
+    _minutes = "00";
+    _hour += 1;
+  }
+
+  return `${_hour}:${_minutes}`;
+};
