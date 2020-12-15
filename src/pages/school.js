@@ -12,7 +12,8 @@ import {
   Flex,
   Avatar,
   Button,
-  Skeleton
+  Skeleton,
+  VisuallyHidden
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,7 +33,6 @@ import {
 
 // Components
 import OutsideLink from "components/OutsideLink";
-import VisuallyHidden from "components/VisuallyHidden";
 import Link from "components/Link";
 import EventListItem from "components/EventListItem";
 import SchoolLogo from "components/SchoolLogo";

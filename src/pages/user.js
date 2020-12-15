@@ -14,7 +14,8 @@ import {
   ListItem,
   Skeleton,
   Avatar,
-  Flex
+  Flex,
+  VisuallyHidden
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -33,7 +34,6 @@ import { firebaseAuth } from "../firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
 
 // Components
-import VisuallyHidden from "components/VisuallyHidden";
 import Link from "components/Link";
 import EventListItem from "components/EventListItem";
 import UserSilhouette from "components/silhouettes/UserSilhouette";
