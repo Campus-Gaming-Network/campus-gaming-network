@@ -36,15 +36,15 @@ const Footer = () => {
           flexGrow={0}
           pt={{ md: 0, sm: 8 }}
         >
-          <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase">
+          <ListItem fontSize="sm" fontWeight="bold" textTransform="uppercase">
             Resources
           </ListItem>
-          <ListItem fontSize="sm">
+          <ListItem fontSize="md">
             <Link to="/about-us" color="brand.500" fontWeight={600}>
               About us
             </Link>
           </ListItem>
-          <ListItem fontSize="sm">
+          <ListItem fontSize="md">
             <Link
               to="/frequently-asked-questions"
               color="brand.500"
@@ -55,7 +55,7 @@ const Footer = () => {
               </Text>
             </Link>
           </ListItem>
-          <ListItem fontSize="sm">
+          <ListItem fontSize="md">
             <ChakraLink
               href="mailto:support@campusgamingnetwork.com"
               color="brand.500"
@@ -72,10 +72,10 @@ const Footer = () => {
           flexGrow={0}
           pt={{ md: 0, sm: 8 }}
         >
-          <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase">
+          <ListItem fontSize="sm" fontWeight="bold" textTransform="uppercase">
             Community
           </ListItem>
-          <ListItem fontSize="sm">
+          <ListItem fontSize="md">
             Join our{" "}
             <OutsideLink href="https://discord.gg/dpYU6TY">
               Discord
@@ -84,7 +84,7 @@ const Footer = () => {
               </Text>
             </OutsideLink>
           </ListItem>
-          <ListItem fontSize="sm">
+          <ListItem fontSize="md">
             Contribute on{" "}
             <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
               GitHub
@@ -101,7 +101,7 @@ const Footer = () => {
           flexGrow={0}
           pt={{ md: 0, sm: 8 }}
         >
-          <ListItem fontSize="sm">
+          <ListItem fontSize="md">
             Made with{" "}
             <Text d="inline" color="red.500">
               <FontAwesomeIcon icon={faHeart} />
@@ -111,7 +111,7 @@ const Footer = () => {
               Salt Lake City, Utah
             </Text>
           </ListItem>
-          <ListItem fontSize="sm">
+          <ListItem fontSize="md">
             Enjoying the site?{" "}
             <OutsideLink href="https://www.buymeacoffee.com/cgnbrandon">
               Buy me a coffee.

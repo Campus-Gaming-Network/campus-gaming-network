@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { faExternalLinkAlt, faSchool } from "@fortawesome/free-solid-svg-icons";
 import isEmpty from "lodash.isempty";
 import times from "lodash.times";
 
@@ -84,6 +84,17 @@ const School = props => {
             schoolName={school.name}
             h={40}
             w={40}
+            fallback={
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                color="gray.600"
+                h={40}
+                w={40}
+              >
+                <FontAwesomeIcon icon={faSchool} size="4x" />
+              </Flex>
+            }
           />
           <Box pl={12}>
             <Heading

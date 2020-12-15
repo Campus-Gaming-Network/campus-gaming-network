@@ -19,7 +19,8 @@ import {
   faUserCircle,
   faSignOutAlt,
   faBars,
-  faTimes
+  faTimes,
+  faSchool
 } from "@fortawesome/free-solid-svg-icons";
 import { firebaseAuth } from "../firebase";
 import { useAppState } from "../store";
@@ -149,6 +150,18 @@ const AuthenticatedNav = () => {
                 h={6}
                 w={6}
                 mr={2}
+                fallback={
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    color="gray.600"
+                    h={6}
+                    w={6}
+                    mr={2}
+                  >
+                    <FontAwesomeIcon icon={faSchool} />
+                  </Flex>
+                }
               />
               <Text lineHeight="1">School</Text>
             </MenuItem>
