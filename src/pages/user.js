@@ -15,7 +15,8 @@ import {
   Skeleton,
   Avatar,
   Flex,
-  VisuallyHidden
+  VisuallyHidden,
+  Image
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -89,7 +90,16 @@ const User = props => {
   }
 
   return (
-    <Box as="article" pt={10} pb={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+    <Box
+      as="article"
+      pt={10}
+      pb={16}
+      px={8}
+      mx="auto"
+      fontSize="xl"
+      maxW="5xl"
+      pos="relative"
+    >
       {isAuthenticatedUser ? (
         <Box mb={10} textAlign="center" display="flex" justifyContent="center">
           <Link
@@ -141,7 +151,19 @@ const User = props => {
           </Heading>
         </Box>
       </Box>
+      <Image
+        src="../profile_illustration_1st_edition_compressed.png"
+        alt="Controller leaning on stack of books"
+        pos="absolute"
+        top="25%"
+        left="0"
+        right="0"
+        bottom="0"
+        margin="auto"
+        transform="scale(1.25)"
+      />
       <Stack spacing={10}>
+        {/* <Stack spacing={10} bgImage="url('../profile_illustration_1st_edition_compressed.png')" bgRepeat="no-repeat" bgPosition="center" w="100%" h="100%" bgSize="cover"> */}
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Biography</VisuallyHidden>
           {user.bio ? <Text>{user.bio}</Text> : null}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Flex } from "@chakra-ui/react";
+import { Image } from "@chakra-ui/react";
 import startCase from "lodash.startcase";
 import { getSchoolLogoUrl } from "../utilities";
 
