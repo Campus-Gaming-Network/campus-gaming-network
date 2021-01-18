@@ -14,6 +14,10 @@ const SchoolLogo = React.memo(
       return fallback;
     }
 
+    if (hasError && !fallback) {
+      return null;
+    }
+
     return (
       <Image
         src={getSchoolLogoUrl(schoolId, "webp")}

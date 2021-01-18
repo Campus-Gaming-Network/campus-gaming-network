@@ -1,12 +1,15 @@
 import React from "react";
 import startCase from "lodash.startcase";
 import { Text, Spinner, Flex, Image } from "@chakra-ui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import {
   Combobox,
   ComboboxInput,
   ComboboxPopover,
   ComboboxList,
-  ComboboxOption
+  ComboboxOption,
+  ComboboxOptionText
 } from "@reach/combobox";
 import useDebounce from "hooks/useDebounce";
 import { firebase } from "../firebase";
@@ -16,6 +19,7 @@ import keyBy from "lodash.keyby";
 import { useAppDispatch, ACTION_TYPES } from "../store";
 
 import AlgoliaLogo from "../AlgoliaLogo.svg";
+import SchoolLogo from "./SchoolLogo";
 
 const LOCAL_STORAGE_SCHOOLS_KEY = isDev() ? "cgn_dev.schools" : "cgn.schools";
 const LOCAL_STORAGE_SCHOOLS_QUERY_KEY = isDev()
@@ -170,7 +174,22 @@ const SchoolSearch = props => {
                     school.state
                   }`;
 
-                  return <ComboboxOption key={school.objectID} value={value} />;
+                  return (
+                    <ComboboxOption key={school.objectID} value={value}>
+                      <Flex>
+                        <SchoolLogo
+                          schoolId={school.objectID}
+                          schoolName={school.name}
+                          h={6}
+                          w={6}
+                          mr={2}
+                        />
+                        <Text>
+                          <ComboboxOptionText />
+                        </Text>
+                      </Flex>
+                    </ComboboxOption>
+                  );
                 })}
               </ComboboxList>
               <Flex p={2} justifyContent="flex-end">
