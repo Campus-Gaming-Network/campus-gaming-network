@@ -1,6 +1,6 @@
 import React from "react";
 import startCase from "lodash.startcase";
-import { Text, Spinner, Flex } from "@chakra-ui/react";
+import { Text, Spinner, Flex, Image } from "@chakra-ui/react";
 import {
   Combobox,
   ComboboxInput,
@@ -14,6 +14,8 @@ import { isDev, mapSchool } from "../utilities";
 import useLocalStorage from "hooks/useLocalStorage";
 import keyBy from "lodash.keyby";
 import { useAppDispatch, ACTION_TYPES } from "../store";
+
+import AlgoliaLogo from "../AlgoliaLogo.svg";
 
 const LOCAL_STORAGE_SCHOOLS_KEY = isDev() ? "cgn_dev.schools" : "cgn.schools";
 const LOCAL_STORAGE_SCHOOLS_QUERY_KEY = isDev()
@@ -159,15 +161,22 @@ const SchoolSearch = props => {
       {results ? (
         <ComboboxPopover>
           {results.length > 0 ? (
-            <ComboboxList>
-              {results.map(school => {
-                const value = `${startCase(
-                  school.name.toLowerCase()
-                )} – ${startCase(school.city.toLowerCase())}, ${school.state}`;
+            <React.Fragment>
+              <ComboboxList>
+                {results.map(school => {
+                  const value = `${startCase(
+                    school.name.toLowerCase()
+                  )} – ${startCase(school.city.toLowerCase())}, ${
+                    school.state
+                  }`;
 
-                return <ComboboxOption key={school.objectID} value={value} />;
-              })}
-            </ComboboxList>
+                  return <ComboboxOption key={school.objectID} value={value} />;
+                })}
+              </ComboboxList>
+              <Flex p={2} justifyContent="flex-end">
+                <Image src={AlgoliaLogo} />
+              </Flex>
+            </React.Fragment>
           ) : (
             <Text as="span" d="block">
               No results found

@@ -133,7 +133,7 @@ service cloud.firestore {
     }
 
     match /game-queries/{gameQueryId} {
-      allow read: if true;
+      allow read: if isSignedIn();
       allow write, update, create, delete: if false;
     }
 

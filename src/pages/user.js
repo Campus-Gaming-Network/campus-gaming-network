@@ -163,7 +163,6 @@ const User = props => {
         transform="scale(1.25)"
       />
       <Stack spacing={10}>
-        {/* <Stack spacing={10} bgImage="url('../profile_illustration_1st_edition_compressed.png')" bgRepeat="no-repeat" bgPosition="center" w="100%" h="100%" bgSize="cover"> */}
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Biography</VisuallyHidden>
           {user.bio ? <Text>{user.bio}</Text> : null}
