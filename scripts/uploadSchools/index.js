@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "../../.env.local" });
+require("dotenv").config({ path: "../../.env.local  " });
 const admin = require("firebase-admin");
 const chunk = require("lodash.chunk");
 const kebabCase = require("lodash.kebabcase");
@@ -17,6 +17,8 @@ const DATA = require("../../data/schools.json");
 // Each transaction or batch of writes can write to a maximum of 500 documents.
 const MAX_DOCUMENTS = 500;
 
+const MAX_RETRIES = 5;
+
 // Track duplicate names
 let names = {};
 
@@ -25,6 +27,8 @@ const millisToMinutesAndSeconds = (millis) => {
   const seconds = ((millis % 60000) / 1000).toFixed(0);
   return `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
 }
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Map the school data fields for use in the db
 const mapSchool = ({
@@ -89,16 +93,29 @@ const main = async () => {
 
     mappedSchools.forEach(school => {
       const ref = db.collection("schools").doc();
-      batch.set(ref, {
-        ...school,
-        id: ref.id,
-      });
+      const schoolToUpload = { ...school, id: ref.id };
+      batch.set(ref, schoolToUpload);
     });
 
-    try {
-      await batch.commit();
-    } catch (error) {
-      console.log(`Error on batch commit: ${error}`);
+    let tries = 0;
+    let success = false;
+    let hasNotExceededTries = tries < MAX_RETRIES;
+
+    while(!success && hasNotExceededTries) {
+        await sleep(2000);
+
+        try {
+          await batch.commit();
+          success = true;
+        } catch (error) {
+            console.log(`Error on batch commit: ${error}`);
+            tries++;
+            console.count("Trying again...")
+        }
+    }
+
+    if (!hasNotExceededTries) {
+      console.count("EXCEEDED MAX NUMBER OF RETRIES.")
     }
 
     console.count("Finished chunk");
