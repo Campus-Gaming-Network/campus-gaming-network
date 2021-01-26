@@ -47,7 +47,7 @@ import useFetchSchoolUsers from "hooks/useFetchSchoolUsers";
 import { useAppDispatch, useAppState, ACTION_TYPES } from "../store";
 
 // Utilities
-import { isUrl } from "../utilities";
+import { isValidUrl } from "../utilities";
 
 ////////////////////////////////////////////////////////////////////////////////
 // School
@@ -142,7 +142,7 @@ const School = props => {
             </Text>
             {school.website && school.website !== EMPTY_SCHOOL_WEBSITE ? (
               <Text as="dd" w="50%">
-                {isUrl(school.website) ? (
+                {isValidUrl(school.website) ? (
                   <OutsideLink d="inline-block" href={`//${school.website}`}>
                     {school.website}
                     <Text as="span" ml={2}>
