@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // School Utilities
 
-import { googleMapsLink } from "../utilities";
+import { googleMapsLink } from "./other";
 
 export const mapSchool = school => ({
   ...school,

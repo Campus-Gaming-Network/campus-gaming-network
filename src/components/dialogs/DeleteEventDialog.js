@@ -16,7 +16,7 @@ import {
 import { firebaseFirestore } from "../../firebase";
 
 // Constants
-import { COLLECTIONS } from "../../constants";
+import { COLLECTIONS } from "constants/firebase";
 
 const DeleteEventDialog = props => {
   const toast = useToast();

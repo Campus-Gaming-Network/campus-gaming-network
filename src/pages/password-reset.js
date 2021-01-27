@@ -19,8 +19,8 @@ import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Utilities
-import { useFormFields } from "../utilities";
-import { validatePasswordReset } from "../utilities/validation";
+import { useFormFields } from "utilities/other";
+import { validatePasswordReset } from "utilities/validation";
 
 // Other
 import { firebaseAuth } from "../firebase";

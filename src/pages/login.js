@@ -21,8 +21,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 
 // Utilities
-import { useFormFields } from "../utilities";
-import { validateLogIn } from "../utilities/validation";
+import { useFormFields } from "utilities/other";
+import { validateLogIn } from "utilities/validation";
 
 // Other
 import { firebaseAuth } from "../firebase";

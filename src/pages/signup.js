@@ -24,11 +24,12 @@ import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Constants
-import { BASE_USER, STUDENT_STATUS_OPTIONS, COLLECTIONS } from "../constants";
+import { BASE_USER, STUDENT_STATUS_OPTIONS } from "constants/user";
+import { COLLECTIONS } from "constants/firebase";
 
 // Utilities
-import { createGravatarHash } from "../utilities";
-import { validateSignUp } from "../utilities/validation";
+import { createGravatarHash } from "utilities/user";
+import { validateSignUp } from "utilities/validation";
 
 // Components
 import Link from "components/Link";

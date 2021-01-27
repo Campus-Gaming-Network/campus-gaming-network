@@ -40,19 +40,17 @@ import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 // Constants
 import {
   STUDENT_STATUS_OPTIONS,
-  ACCOUNTS,
-  TIMEZONES,
-  COLLECTIONS,
-  DASHED_DATE,
   MAX_BIO_LENGTH,
   MAX_FAVORITE_GAME_LIST,
-  MAX_CURRENTLY_PLAYING_LIST,
-  CURRENT_YEAR
-} from "../constants";
+  MAX_CURRENTLY_PLAYING_LIST
+} from "constants/user";
+import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "constants/dateTime";
+import { COLLECTIONS } from "constants/firebase";
+import { ACCOUNTS } from "constants/other";
 
 // Other
 import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "store";
 
 // Components
 import SchoolSearch from "components/SchoolSearch";
@@ -64,8 +62,9 @@ import YearSelect from "components/YearSelect";
 import DeleteAccountDialog from "components/dialogs/DeleteAccountDialog";
 
 // Utilities
-import { mapUser, move } from "../utilities";
-import { validateEditUser } from "../utilities/validation";
+import { mapUser } from "utilities/user";
+import { move } from "utilities/other";
+import { validateEditUser } from "utilities/validation";
 
 const initialFormState = {
   firstName: "",

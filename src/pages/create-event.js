@@ -48,11 +48,13 @@ import DeleteEventDialog from "components/dialogs/DeleteEventDialog";
 import useFetchEventDetails from "hooks/useFetchEventDetails";
 
 // Utilities
-import { mapEventResponse, mapEvent } from "../utilities";
-import { validateCreateEvent } from "../utilities/validation";
+import { mapEventResponse } from "utilities/eventResponse";
+import { mapEvent } from "utilities/event";
+import { validateCreateEvent } from "utilities/validation";
 
 // Constants
-import { COLLECTIONS, CURRENT_YEAR, DASHED_DATE_TIME } from "../constants";
+import { COLLECTIONS } from "constants/firebase";
+import { CURRENT_YEAR, DASHED_DATE_TIME } from "constants/dateTime";
 
 const initialFormState = {
   name: "",

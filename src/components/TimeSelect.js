@@ -1,10 +1,10 @@
 import React from "react";
 import { Select } from "@chakra-ui/react";
 
-import { DEFAULT_TIME_INCREMENT } from "../constants";
+import { DEFAULT_TIME_INCREMENT } from "constants/dateTime";
 
 // Utilities
-import { getTimes } from "../utilities";
+import { getTimes } from "utilities/dateTime";
 
 const TimeSelect = ({
   children,

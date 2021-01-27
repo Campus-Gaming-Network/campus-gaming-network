@@ -22,13 +22,10 @@ import startCase from "lodash.startcase";
 import { useDropzone } from "react-dropzone";
 
 // Constants
-import {
-  ACCOUNTS,
-  DROPZONE_STYLES,
-  SCHOOL_ACCOUNTS,
-  COLLECTIONS,
-  BASE_SCHOOL
-} from "../constants";
+import { SCHOOL_ACCOUNTS, BASE_SCHOOL } from "constants/school";
+import { DROPZONE_STYLES } from "constants/styles";
+import { COLLECTIONS } from "constants/firebase";
+import { ACCOUNTS } from "constants/other";
 
 // Other
 import { firebase, firebaseFirestore, firebaseStorage } from "../firebase";

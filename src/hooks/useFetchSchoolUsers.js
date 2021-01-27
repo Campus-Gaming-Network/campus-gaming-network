@@ -2,9 +2,10 @@ import React from "react";
 import isEmpty from "lodash.isempty";
 
 import { firebaseFirestore } from "../firebase";
-import { mapUser } from "../utilities";
-import { DEFAULT_USERS_LIST_PAGE_SIZE, COLLECTIONS } from "../constants";
-import { useAppState } from "../store";
+import { mapUser } from "utilities/user";
+import { COLLECTIONS } from "constants/firebase";
+import { DEFAULT_USERS_LIST_PAGE_SIZE } from "constants/other";
+import { useAppState } from "store";
 
 const useFetchSchoolUsers = (
   id,

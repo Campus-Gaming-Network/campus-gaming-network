@@ -1,6 +1,6 @@
 import React from "react";
 import startCase from "lodash.startcase";
-import { Text, Spinner, Flex, Image } from "@chakra-ui/react";
+import { Text, Spinner, Flex, Box } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -13,12 +13,12 @@ import {
 } from "@reach/combobox";
 import useDebounce from "hooks/useDebounce";
 import { firebase } from "../firebase";
-import { isDev, mapSchool } from "../utilities";
+import { mapSchool } from "utilities/school";
+import { isDev } from "utilities/other";
 import useLocalStorage from "hooks/useLocalStorage";
 import keyBy from "lodash.keyby";
-import { useAppDispatch, ACTION_TYPES } from "../store";
+import { useAppDispatch, ACTION_TYPES } from "store";
 
-import AlgoliaLogo from "../AlgoliaLogo.svg";
 import SchoolLogo from "./SchoolLogo";
 
 const LOCAL_STORAGE_SCHOOLS_KEY = isDev() ? "cgn_dev.schools" : "cgn.schools";
@@ -165,37 +165,41 @@ const SchoolSearch = props => {
       {results ? (
         <ComboboxPopover>
           {results.length > 0 ? (
-            <React.Fragment>
-              <ComboboxList>
-                {results.map(school => {
-                  const value = `${startCase(
-                    school.name.toLowerCase()
-                  )} – ${startCase(school.city.toLowerCase())}, ${
-                    school.state
-                  }`;
+            <ComboboxList>
+              {results.map(school => {
+                const value = `${startCase(
+                  school.name.toLowerCase()
+                )} – ${startCase(school.city.toLowerCase())}, ${school.state}`;
 
-                  return (
-                    <ComboboxOption key={school.objectID} value={value}>
-                      <Flex>
+                return (
+                  <ComboboxOption key={school.objectID} value={value}>
+                    <Flex align="center">
+                      <Box h={6} w={6} mr={2} rounded="full" bg="gray.100">
                         <SchoolLogo
                           schoolId={school.objectID}
                           schoolName={school.name}
-                          h={6}
-                          w={6}
-                          mr={2}
+                          fallback={
+                            <Flex
+                              align="center"
+                              justify="center"
+                              color="gray.400"
+                              h={6}
+                              w={6}
+                              mr={2}
+                            >
+                              <FontAwesomeIcon icon={faSchool} />
+                            </Flex>
+                          }
                         />
-                        <Text>
-                          <ComboboxOptionText />
-                        </Text>
-                      </Flex>
-                    </ComboboxOption>
-                  );
-                })}
-              </ComboboxList>
-              <Flex p={2} justifyContent="flex-end">
-                <Image src={AlgoliaLogo} />
-              </Flex>
-            </React.Fragment>
+                      </Box>
+                      <Text>
+                        <ComboboxOptionText />
+                      </Text>
+                    </Flex>
+                  </ComboboxOption>
+                );
+              })}
+            </ComboboxList>
           ) : (
             <Text as="span" d="block">
               No results found

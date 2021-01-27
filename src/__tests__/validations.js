@@ -1,16 +1,17 @@
 import { DateTime } from "luxon";
 import {
   STUDENT_STATUS_OPTIONS,
-  TIMEZONES,
   DELETE_USER_VERIFICATION_TEXT,
   MAX_DESCRIPTION_LENGTH,
   MAX_BIO_LENGTH,
   MAX_CURRENTLY_PLAYING_LIST,
-  MAX_FAVORITE_GAME_LIST,
+  MAX_FAVORITE_GAME_LIST
+} from "constants/user";
+import { TIMEZONES, DEFAULT_TIME_INCREMENT } from "constants/dateTime";
+import {
   MAX_DEFAULT_STRING_LENGTH,
-  MIN_PASSWORD_LENGTH,
-  DEFAULT_TIME_INCREMENT
-} from "../constants";
+  MIN_PASSWORD_LENGTH
+} from "constants/other";
 import {
   validateSignUp,
   validateLogIn,
@@ -19,8 +20,8 @@ import {
   validateCreateEvent,
   validateEditUser,
   validateDeleteAccount
-} from "../utilities/validation";
-import { getClosestTimeByN } from "../utilities";
+} from "utilities/validation";
+import { getClosestTimeByN } from "utilities/dateTime";
 
 const STATUSES = STUDENT_STATUS_OPTIONS.reduce((acc, curr) => ({
   ...acc,

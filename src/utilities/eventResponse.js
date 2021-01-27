@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Event Response Utilities
 
-import { formatCalendarDateTime, hasStarted, hasEnded } from "../utilities";
+import { formatCalendarDateTime, hasStarted, hasEnded } from "./dateTime";
 
 export const mapEventResponse = eventResponse => ({
   ...eventResponse,

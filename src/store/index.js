@@ -1,13 +1,12 @@
 import React from "react";
 import keyBy from "lodash.keyby";
-import {
-  isDev,
-  mapUser,
-  mapSchool,
-  mapEvent,
-  mapEventResponse
-} from "../utilities";
-import { ACTION_TYPES, INITIAL_STORE } from "../constants";
+import { mapUser } from "utilities/user";
+import { mapSchool } from "utilities/school";
+import { mapEvent } from "utilities/event";
+import { mapEventResponse } from "utilities/eventResponse";
+import { isDev } from "utilities/other";
+import { INITIAL_STORE } from "constants/store";
+import { ACTION_TYPES } from "constants/actions";
 
 const AppStateContext = React.createContext();
 const AppDispatchContext = React.createContext();

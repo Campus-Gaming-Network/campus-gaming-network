@@ -30,14 +30,16 @@ import { useAuthState } from "react-firebase-hooks/auth";
 // Constants
 import {
   EVENT_EMPTY_LOCATION_TEXT,
-  DEFAULT_USERS_LIST_PAGE_SIZE,
-  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE,
   EVENT_EMPTY_USERS_TEXT
-} from "../constants";
+} from "constants/event";
+import {
+  DEFAULT_USERS_LIST_PAGE_SIZE,
+  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE
+} from "constants/other";
 
 // Other
 import { firebaseAuth } from "../firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "store";
 
 // Components
 import OutsideLink from "components/OutsideLink";

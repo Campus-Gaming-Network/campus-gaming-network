@@ -4,26 +4,30 @@ import isDate from "lodash.isdate";
 import isString from "lodash.isstring";
 import { DateTime } from "luxon";
 
-import { isDev } from "./";
+import { isDev } from "./other";
 import {
   STUDENT_STATUS_OPTIONS,
+  MAX_FAVORITE_GAME_LIST,
+  MAX_CURRENTLY_PLAYING_LIST,
+  MAX_BIO_LENGTH,
+  DELETE_USER_VERIFICATION_TEXT
+} from "constants/user";
+import { MAX_DESCRIPTION_LENGTH } from "constants/event";
+import {
   DAYS,
   MONTHS,
   LAST_100_YEARS,
   TIMEZONES,
-  MAX_FAVORITE_GAME_LIST,
-  MAX_CURRENTLY_PLAYING_LIST,
-  MAX_BIO_LENGTH,
-  MAX_DESCRIPTION_LENGTH,
-  MIN_PASSWORD_LENGTH,
-  MAX_DEFAULT_STRING_LENGTH,
   DASHED_DATE,
   DASHED_DATE_TIME,
-  DELETE_USER_VERIFICATION_TEXT,
   DEFAULT_TIME_INCREMENT
-} from "../constants";
+} from "constants/dateTime";
+import {
+  MIN_PASSWORD_LENGTH,
+  MAX_DEFAULT_STRING_LENGTH
+} from "constants/other";
 
-import { getTimes } from "../utilities";
+import { getTimes } from "./dateTime";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local Helpers

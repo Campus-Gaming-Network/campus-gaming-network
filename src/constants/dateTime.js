@@ -5,7 +5,7 @@ import { DateTime, Info } from "luxon";
 import range from "lodash.range";
 
 // Utilities
-import { getYears } from "../utilities";
+import { getYears } from "utilities/dateTime";
 
 export const DASHED_DATE = "MMMM-d-y";
 export const DASHED_DATE_TIME = "MMMM-d-y HH:mm";

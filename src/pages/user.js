@@ -24,15 +24,17 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import {
   USER_EMPTY_CURRENTLY_PLAYING_TEXT,
   USER_EMPTY_FAVORITE_GAMES_TEXT,
+  USER_EMPTY_ACCOUNTS_TEXT,
+  USER_EMPTY_UPCOMING_EVENTS_TEXT
+} from "constants/user";
+import {
   ACCOUNTS,
-  DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE,
-  USER_EMPTY_UPCOMING_EVENTS_TEXT,
-  USER_EMPTY_ACCOUNTS_TEXT
-} from "../constants";
+  DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE
+} from "constants/other";
 
 // Utilities
 import { firebaseAuth } from "../firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "store";
 
 // Components
 import Link from "components/Link";

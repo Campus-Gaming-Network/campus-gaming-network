@@ -1,5 +1,5 @@
 import { Integrations } from "@sentry/tracing";
-import { isDev } from "../utilities";
+import { isDev } from "utilities/other";
 
 export const SENTRY_CONFIG = {
   dsn: process.env.REACT_APP_SENTRY_DSN,

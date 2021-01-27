@@ -2,9 +2,9 @@ import React from "react";
 import isEmpty from "lodash.isempty";
 
 import { firebaseFirestore } from "../firebase";
-import { mapUser } from "../utilities";
-import { useAppState } from "../store";
-import { COLLECTIONS } from "../constants";
+import { mapUser } from "utilities/user";
+import { useAppState } from "store";
+import { COLLECTIONS } from "constants/firebase";
 
 const useFetchUserDetails = id => {
   const state = useAppState();

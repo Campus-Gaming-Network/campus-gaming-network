@@ -2,9 +2,9 @@ import React from "react";
 import isEmpty from "lodash.isempty";
 
 import { firebaseFirestore } from "../firebase";
-import { mapEvent } from "../utilities";
-import { useAppState } from "../store";
-import { COLLECTIONS } from "../constants";
+import { mapEvent } from "utilities/event";
+import { useAppState } from "store";
+import { COLLECTIONS } from "constants/firebase";
 
 const useFetchEventDetails = id => {
   const state = useAppState();

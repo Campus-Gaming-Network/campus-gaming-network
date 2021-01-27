@@ -1,7 +1,7 @@
 import React from "react";
 import { Image } from "@chakra-ui/react";
 import startCase from "lodash.startcase";
-import { getSchoolLogoUrl } from "../utilities";
+import { getSchoolLogoUrl } from "utilities/school";
 
 const SchoolLogo = React.memo(
   ({ schoolId, schoolName, fallback, src, ...rest }) => {

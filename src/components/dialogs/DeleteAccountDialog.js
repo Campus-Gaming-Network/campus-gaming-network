@@ -20,10 +20,10 @@ import {
 import { firebaseFirestore, firebaseAuth } from "../../firebase";
 
 // Constants
-import { COLLECTIONS } from "../../constants";
+import { COLLECTIONS } from "constants/firebase";
 
 // Utilities
-import { validateDeleteAccount } from "../../utilities/validation";
+import { validateDeleteAccount } from "utilities/validation";
 
 const DeleteAccountDialog = props => {
   const toast = useToast();

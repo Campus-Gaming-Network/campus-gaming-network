@@ -12,7 +12,8 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "@reach/skip-nav/styles.css";
 import "@reach/combobox/styles.css";
 
-import { SENTRY_CONFIG, CUSTOM_CHAKRA_THEME } from "./constants";
+import { CUSTOM_CHAKRA_THEME } from "constants/styles";
+import { SENTRY_CONFIG } from "constants/sentry";
 
 const CUSTOM_THEME = extendTheme(CUSTOM_CHAKRA_THEME);
 

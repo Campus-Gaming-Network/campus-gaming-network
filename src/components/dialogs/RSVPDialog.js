@@ -14,10 +14,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
 import { firebaseFirestore, firebaseAuth } from "../../firebase";
-import { useAppState } from "../../store";
+import { useAppState } from "store";
 
 // Constants
-import { EVENT_RESPONSES, COLLECTIONS } from "../../constants";
+import { EVENT_RESPONSES } from "constants/eventResponse";
+import { COLLECTIONS } from "constants/firebase";
 
 const RSVPDialog = props => {
   const toast = useToast();

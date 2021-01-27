@@ -2,9 +2,10 @@ import React from "react";
 import isEmpty from "lodash.isempty";
 
 import { firebase, firebaseFirestore } from "../firebase";
-import { mapEventResponse } from "../utilities";
-import { DEFAULT_EVENTS_LIST_PAGE_SIZE, COLLECTIONS } from "../constants";
-import { useAppState } from "../store";
+import { mapEventResponse } from "utilities/eventResponse";
+import { COLLECTIONS } from "constants/firebase";
+import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "constants/other";
+import { useAppState } from "store";
 
 const useFetchUserEvents = (
   id,

@@ -10,13 +10,14 @@ import Link from "components/Link";
 import EventListItem from "components/EventListItem";
 
 // Utilities
-import { mapEvent, mapEventResponse } from "../utilities";
+import { mapEvent } from "utilities/event";
+import { mapEventResponse } from "utilities/eventResponse";
 
 // Other
-import { useAppState } from "../store";
+import { useAppState } from "store";
 
 // Constants
-import { COLLECTIONS } from "../constants";
+import { COLLECTIONS } from "constants/firebase";
 
 // Hooks
 import useFetchUserEvents from "hooks/useFetchUserEvents";

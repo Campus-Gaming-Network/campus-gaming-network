@@ -25,11 +25,13 @@ import times from "lodash.times";
 import {
   EMPTY_SCHOOL_WEBSITE,
   SCHOOL_EMPTY_USERS_TEXT,
+  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT
+} from "constants/school";
+import {
   DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE,
-  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT,
   DEFAULT_USERS_LIST_PAGE_SIZE,
   DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE
-} from "../constants";
+} from "constants/other";
 
 // Components
 import OutsideLink from "components/OutsideLink";
@@ -44,10 +46,10 @@ import useFetchSchoolEvents from "hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "hooks/useFetchSchoolUsers";
 
 // Store
-import { useAppDispatch, useAppState, ACTION_TYPES } from "../store";
+import { useAppDispatch, useAppState, ACTION_TYPES } from "store";
 
 // Utilities
-import { isValidUrl } from "../utilities";
+import { isValidUrl } from "utilities/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // School
