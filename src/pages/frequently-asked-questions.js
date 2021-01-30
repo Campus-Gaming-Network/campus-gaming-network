@@ -27,9 +27,9 @@ const FrequentlyAskedQuestions = () => {
         Frequently Asked Questions
       </Heading>
       <Accordion defaultIndex={[]} allowMultiple>
-        {QUESTIONS.map(item => {
+        {QUESTIONS.map((item, index) => {
           return (
-            <AccordionItem>
+            <AccordionItem key={index}>
               <AccordionButton>
                 {item.question}
                 <AccordionIcon />

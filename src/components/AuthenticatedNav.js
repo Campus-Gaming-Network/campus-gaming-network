@@ -57,8 +57,10 @@ const AuthenticatedNav = () => {
   };
 
   const onSchoolSelect = selectedSchool => {
-    if (selectedSchool && selectedSchool.id) {
-      navigate(`/school/${selectedSchool.id}`);
+    const id = selectedSchool.id || selectedSchool.objectID;
+
+    if (selectedSchool && id) {
+      navigate(`/school/${id}`);
     }
   };
 

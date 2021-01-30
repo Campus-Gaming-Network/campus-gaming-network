@@ -25,17 +25,20 @@ export const getUserDisplayStatus = status =>
   ({ ALUMNI: "Alumni of ", GRAD: "Graduate Student at " }[status] ||
   `${capitalize(status)} at `);
 
-export const mapUser = user => ({
-  ...user,
-  fullName: `${user.firstName} ${user.lastName}`.trim(),
-  hasAccounts: userHasAccounts(user),
-  hasFavoriteGames: !!(user.favoriteGames && user.favoriteGames.length),
-  hasCurrentlyPlaying: !!(
-    user.currentlyPlaying && user.currentlyPlaying.length
-  ),
-  displayStatus: getUserDisplayStatus(user.status),
-  gravatarUrl: createGravatarRequestUrl(user.gravatar)
-});
+export const mapUser = user =>
+  user
+    ? {
+        ...user,
+        fullName: `${user.firstName} ${user.lastName}`.trim(),
+        hasAccounts: userHasAccounts(user),
+        hasFavoriteGames: !!(user.favoriteGames && user.favoriteGames.length),
+        hasCurrentlyPlaying: !!(
+          user.currentlyPlaying && user.currentlyPlaying.length
+        ),
+        displayStatus: getUserDisplayStatus(user.status),
+        gravatarUrl: createGravatarRequestUrl(user.gravatar)
+      }
+    : undefined;
 
 export const userHasAccounts = user => {
   if (!user) {

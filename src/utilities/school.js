@@ -3,12 +3,15 @@
 
 import { googleMapsLink } from "./other";
 
-export const mapSchool = school => ({
-  ...school,
-  googleMapsAddressLink: googleMapsLink(
-    `${school.address} ${school.city}, ${school.state}`
-  )
-});
+export const mapSchool = school =>
+  school
+    ? {
+        ...school,
+        googleMapsAddressLink: googleMapsLink(
+          `${school.address} ${school.city}, ${school.state}`
+        )
+      }
+    : undefined;
 
 export const getSchoolLogoPath = (schoolId, extension = "png") =>
   `schools/${schoolId}/images/logo.${extension}`;
