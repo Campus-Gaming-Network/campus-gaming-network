@@ -1,4 +1,5 @@
-require("dotenv").config({ path: "../../.env.local  " });
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env.local') });
 const admin = require("firebase-admin");
 const chunk = require("lodash.chunk");
 const kebabCase = require("lodash.kebabcase");
