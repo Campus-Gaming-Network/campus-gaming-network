@@ -4,7 +4,7 @@ import { Router } from "@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 import { Box } from "@chakra-ui/react";
-import { Settings } from "luxon";
+import { Settings as LuxonSettings } from "luxon";
 
 // Other
 import { firebaseAuth } from "./firebase";
@@ -80,7 +80,7 @@ const AuthenticatedApp = () => {
 
   React.useEffect(() => {
     if (!!timezone) {
-      Settings.defaultZoneName = timezone;
+      LuxonSettings.defaultZoneName = timezone;
     }
   }, [timezone]);
 

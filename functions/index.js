@@ -5,29 +5,32 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
-const axios = require("axios");
+const rp = require("request-promise");
+const { DateTime } = require("luxon");
 const algoliasearch = require("algoliasearch");
+
+const IGDB_CLIENT_ID = functions.config().igdb.client_id;
+const IGDB_CLIENT_SECRET = functions.config().igdb.client_secret;
+const IGDB_GRANT_TYPE = "client_credentials";
 
 const ALGOLIA_ID = functions.config().algolia.app;
 const ALGOLIA_ADMIN_KEY = functions.config().algolia.key;
 const ALGOLIA_SEARCH_KEY = functions.config().algolia.search;
 const ALGOLIA_SCHOOLS_COLLECTION = "test_SCHOOLS";
 
-const algoliaAdminClient = algoliasearch(
-  ALGOLIA_ID,
-  ALGOLIA_ADMIN_KEY,
+const algoliaAdminClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+const algoliaSearchClient = algoliasearch(ALGOLIA_ID, ALGOLIA_SEARCH_KEY);
+const algoliaAdminIndex = algoliaAdminClient.initIndex(
+  ALGOLIA_SCHOOLS_COLLECTION
 );
-const algoliaSearchClient = algoliasearch(
-  ALGOLIA_ID,
-  ALGOLIA_SEARCH_KEY,
+const algoliaSearchIndex = algoliaSearchClient.initIndex(
+  ALGOLIA_SCHOOLS_COLLECTION
 );
-const algoliaAdminIndex = algoliaAdminClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
-const algoliaSearchIndex = algoliaSearchClient.initIndex(ALGOLIA_SCHOOLS_COLLECTION);
 
 ////////////////////////////////////////////////////////////////////////////////
 // onCall
 
-exports.searchGames = functions.https.onCall((data) => {
+exports.searchGames = functions.https.onCall(async (data) => {
   ////////////////////////////////////////////////////////////////////////////////
   //
   // Searches IGDB for games matching search query.
@@ -48,66 +51,186 @@ exports.searchGames = functions.https.onCall((data) => {
   //
   // By counting how many times a query is made, we can eventually optimize for the top N queries and
   // their results.
+  // 
+  // TODO: Rewrite with new IGDB api process involved
   //
   ////////////////////////////////////////////////////////////////////////////////
 
+  const configsQueryRef = db.collection("configs").doc("igdb");
   const gameQueryRef = db.collection("game-queries").doc(data.query);
 
-  return gameQueryRef.get().then((doc) => {
-    if (doc.exists) {
-      gameQueryRef.set(
+  let tokenStatus = "READY";
+  let accessToken;
+  let expireDateTime;
+  let authResponse;
+  let gameQueryDoc;
+  let igdbConfigDoc;
+  let igdbResponse;
+
+  // See if we've made this same query before
+  try {
+    gameQueryDoc = await gameQueryRef.get();
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error,
+    };
+  }
+
+  // Return what we have stored if weve made the query before
+  if (gameQueryDoc.exists) {
+    try {
+      await gameQueryRef.set(
         { queries: admin.firestore.FieldValue.increment(1) },
         { merge: true }
-      )
-      .catch((err) => {
-        console.log(err);
-        return false;
-      });
-
-      const docData = doc.data();
-
-      return new Promise(function (resolve, reject) {
-        resolve({
-          games: docData.games,
-          query: data.query,
-        });
-      });
-    } else {
-      return new Promise(function (resolve, reject) {
-        axios({
-          url: "https://api-v3.igdb.com/games",
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "user-key": functions.config().igdb.key,
-          },
-          data: `search "${data.query}"; fields name,cover.url,slug; limit 10;`,
-        })
-          .then((response) => {
-            db.collection("game-queries")
-              .doc(data.query)
-              .set(
-                {
-                  games: response.data || [],
-                  queries: admin.firestore.FieldValue.increment(1),
-                },
-                { merge: true }
-              );
-
-            resolve({
-              games: response.data,
-              query: data.query,
-            });
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
+      );
+    } catch (error) {
+      console.log(error);
+      return {
+        success: false,
+        error,
+      };
     }
-  });
+
+    return {
+      success: true,
+      games: gameQueryDoc.data().games,
+      query: data.query,
+    };
+  }
+
+  // Check if we have a token already stored
+  try {
+    igdbConfigDoc = await configsQueryRef.get();
+  } catch (error) {
+    tokenStatus = "ERROR";
+    console.log(error);
+    return {
+      success: false,
+      error,
+    };
+  }
+
+  if (igdbConfigDoc.exists) {
+    accessToken = igdbConfigDoc.data().accessToken;
+    expireDateTime = igdbConfigDoc.data().expireDateTime;
+  } else {
+    tokenStatus = "NOT_EXISTS";
+  }
+
+  // Check if the stored token is expired
+  if (tokenStatus === "READY") {
+    const today = DateTime.local();
+    const expiration = DateTime.fromISO(expireDateTime.toDate().toISOString());
+    const { days } = expiration.diff(today, "days").toObject();
+    const DAYS_WITHIN_EXPIRATION = 14;
+    if (Math.floor(days) <= DAYS_WITHIN_EXPIRATION) {
+      tokenStatus = "EXPIRED";
+    }
+  }
+
+  // Get a new token if its expired or does not exist
+  if (tokenStatus !== "READY") {
+    try {
+      authResponse = await rp({
+        method: "POST",
+        uri: "https://id.twitch.tv/oauth2/token",
+        json: true,
+        body: {
+          client_id: IGDB_CLIENT_ID,
+          client_secret: IGDB_CLIENT_SECRET,
+          grant_type: IGDB_GRANT_TYPE,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return {
+        success: false,
+        error,
+      };
+    }
+
+    if (authResponse) {
+      accessToken = authResponse.access_token;
+
+      try {
+        await db
+          .collection("configs")
+          .doc("igdb")
+          .set(
+            {
+              accessToken: authResponse.access_token,
+              expiresIn: authResponse.expires_in,
+              tokenType: authResponse.token_type,
+              expireDateTime: admin.firestore.Timestamp.fromDate(
+                new Date(
+                  DateTime.local().plus({ seconds: authResponse.expires_in })
+                )
+              ),
+            },
+            { merge: true }
+          );
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          error,
+        };
+      }
+    }
+  }
+
+  try {
+    igdbResponse = await rp({
+      url: "https://api.igdb.com/v4/games",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Client-ID": functions.config().igdb.client_id,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: `fields name, cover.url, slug; search "${data.query}"; limit 10;`,
+    });
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error,
+    };
+  }
+
+  if (igdbResponse) {
+    if (igdbResponse.data && igdbResponse.data.length > 0) {
+      try {
+        await db
+          .collection("game-queries")
+          .doc(data.query)
+          .set(
+            {
+              games: igdbResponse.data || [],
+              queries: admin.firestore.FieldValue.increment(1),
+            },
+            { merge: true }
+          );
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          error,
+        };
+      }
+    }
+
+    return {
+      success: true,
+      games: igdbResponse.data,
+      query: data.query,
+    };
+  }
 });
 
-exports.searchSchools = functions.https.onCall((data) => {
+exports.searchSchools = functions.https.onCall(async (data) => {
   ////////////////////////////////////////////////////////////////////////////////
   //
   // Searches Algolia for schools matching search query.
@@ -118,13 +241,9 @@ exports.searchSchools = functions.https.onCall((data) => {
   //
   ////////////////////////////////////////////////////////////////////////////////
 
-  const limit = data.limit > 100
-    ? 100
-    : data.limit < 0
-    ? 0
-    : data.limit;
+  const limit = data.limit > 100 ? 100 : data.limit < 0 ? 0 : data.limit;
 
-  return algoliaSearchIndex.search(data.query, {
+  return await algoliaSearchIndex.search(data.query, {
     hitsPerPage: limit,
   });
 });
@@ -156,13 +275,17 @@ exports.searchUsers = functions.https.onCall(async (data, context) => {
       }
 
       if (authRecord && authRecord.uid) {
-        record = await admin.firestore().collection("users").doc(authRecord.uid).get();
+        record = await admin
+          .firestore()
+          .collection("users")
+          .doc(authRecord.uid)
+          .get();
       }
     }
 
     return {
-        authUser: authRecord,
-        docUser: record ? record.data() : null,
+      authUser: authRecord,
+      docUser: record.exists ? record.data() : null,
     };
   } catch (error) {
     console.log(error);
@@ -176,15 +299,15 @@ exports.searchUsers = functions.https.onCall(async (data, context) => {
 exports.trackCreatedUpdated = functions.firestore
   .document("{colId}/{docId}")
   .onWrite((change, context) => {
-  ////////////////////////////////////////////////////////////////////////////////
-  //
-  // Source: https://stackoverflow.com/a/60963531
-  //
-  // Updates firestore documents whenever they are updated or created with the current timestamp.
-  //
-  // Only specific collections documents are being tracked.
-  //
-  ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Source: https://stackoverflow.com/a/60963531
+    //
+    // Updates firestore documents whenever they are updated or created with the current timestamp.
+    //
+    // Only specific collections documents are being tracked.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
 
     const setCols = [
       "events",
@@ -192,6 +315,7 @@ exports.trackCreatedUpdated = functions.firestore
       "users",
       "schools",
       "game-queries",
+      "configs",
     ];
 
     if (setCols.indexOf(context.params.colId) === -1) {
@@ -292,23 +416,33 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
     }
 
     if (previousEventData.description !== newEventData.description) {
-      changes.push(changeLog(previousEventData.description, newEventData.description));
+      changes.push(
+        changeLog(previousEventData.description, newEventData.description)
+      );
     }
 
     if (previousEventData.startDateTime !== newEventData.startDateTime) {
-      changes.push(changeLog(previousEventData.startDateTime, newEventData.startDateTime));
+      changes.push(
+        changeLog(previousEventData.startDateTime, newEventData.startDateTime)
+      );
     }
 
     if (previousEventData.endDateTime !== newEventData.endDateTime) {
-      changes.push(changeLog(previousEventData.endDateTime, newEventData.endDateTime));
+      changes.push(
+        changeLog(previousEventData.endDateTime, newEventData.endDateTime)
+      );
     }
 
     if (previousEventData.isOnlineEvent !== newEventData.isOnlineEvent) {
-      changes.push(changeLog(previousEventData.isOnlineEvent, newEventData.isOnlineEvent));
+      changes.push(
+        changeLog(previousEventData.isOnlineEvent, newEventData.isOnlineEvent)
+      );
     }
 
     if (!shallowEqual(previousEventData.responses, newEventData.responses)) {
-      changes.push(changeLog(previousEventData.responses, newEventData.responses));
+      changes.push(
+        changeLog(previousEventData.responses, newEventData.responses)
+      );
     }
 
     if (!shallowEqual(previousEventData.game, newEventData.game)) {
@@ -438,13 +572,14 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
     //
     ////////////////////////////////////////////////////////////////////////////////
 
-
     const previousUserData = change.before.data();
     const newUserData = change.after.data();
     const changes = [];
 
     if (previousUserData.firstName !== newUserData.firstName) {
-      changes.push(changeLog(previousUserData.firstName, newUserData.firstName));
+      changes.push(
+        changeLog(previousUserData.firstName, newUserData.firstName)
+      );
     }
 
     if (previousUserData.lastName !== newUserData.lastName) {
@@ -512,7 +647,12 @@ exports.eventResponsesOnUpdated = functions.firestore
     const changes = [];
 
     if (previousEventResponseData.response !== newEventResponseData.response) {
-      changes.push(changeLog(previousEventResponseData.response, newEventResponseData.response));
+      changes.push(
+        changeLog(
+          previousEventResponseData.response,
+          newEventResponseData.response
+        )
+      );
     }
 
     if (changes.length > 0) {
@@ -568,14 +708,14 @@ exports.eventResponsesOnUpdated = functions.firestore
 exports.addAlgoliaIndex = functions.firestore
   .document("schools/{schoolId}")
   .onCreate((snapshot) => {
-  ////////////////////////////////////////////////////////////////////////////////
-  //
-  // Adds school to the Algolia collection whenever a school document is added to the
-  // schools collection so we can query for it.
-  //
-  // Schools dont get added often, except for when we initially upload all the schools.
-  //
-  ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Adds school to the Algolia collection whenever a school document is added to the
+    // schools collection so we can query for it.
+    //
+    // Schools dont get added often, except for when we initially upload all the schools.
+    //
+    ////////////////////////////////////////////////////////////////////////////////
 
     if (snapshot.exists) {
       const { createdAt, updatedAt, ...data } = snapshot.data();
@@ -658,7 +798,7 @@ exports.eventOnDelete = functions.firestore
       .collection("event-responses")
       .where("event.ref", "==", eventDocRef);
 
-      return eventResponsesQuery
+    return eventResponsesQuery
       .get()
       .then((querySnapshot) => {
         if (!querySnapshot.empty) {
@@ -736,7 +876,6 @@ exports.userOnDelete = functions.firestore
     return admin.auth().deleteUser(context.params.userId);
   });
 
-
 exports.eventResponsesOnDelete = functions.firestore
   .document("event-responses/{eventResponseId}")
   .onDelete((snapshot) => {
@@ -757,7 +896,9 @@ exports.eventResponsesOnDelete = functions.firestore
           if (deletedData.response === "YES") {
             return eventRef
               .set(
-                { responses: { yes: admin.firestore.FieldValue.increment(-1) } },
+                {
+                  responses: { yes: admin.firestore.FieldValue.increment(-1) },
+                },
                 { merge: true }
               )
               .catch((err) => {
@@ -800,8 +941,8 @@ const shallowEqual = (object1, object2) => {
   }
 
   return true;
-}
+};
 
 const changeLog = (prev, curr) => `${prev} -> ${curr}`;
 
-const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
