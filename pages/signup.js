@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Redirect, navigate } from "@reach/router";
 import startCase from "lodash.startcase";
 import {
   Alert,
@@ -24,19 +23,19 @@ import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Constants
-import { BASE_USER, STUDENT_STATUS_OPTIONS } from "constants/user";
-import { COLLECTIONS } from "constants/firebase";
+import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
+import { COLLECTIONS } from "src/constants/firebase";
 
 // Utilities
-import { createGravatarHash } from "utilities/user";
-import { validateSignUp } from "utilities/validation";
+import { createGravatarHash } from "src/utilities/user";
+import { validateSignUp } from "src/utilities/validation";
 
 // Components
-import Link from "components/Link";
-import SchoolSearch from "components/SchoolSearch";
+import Link from "src/components/Link";
+import SchoolSearch from "src/components/SchoolSearch";
 
 // Other
-import { firebaseFirestore, firebaseAuth } from "../firebase";
+import { firestore, auth } from "src/firebase";
 
 const initialFormState = {
   firstName: "",
@@ -59,7 +58,7 @@ const formReducer = (state, { field, value }) => {
 
 const Signup = () => {
   const toast = useToast();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -76,7 +75,7 @@ const Signup = () => {
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   if (authenticatedUser && !isAuthenticating) {
-    return <Redirect to="/" noThrow />;
+    return <Redirect href="/" noThrow />;
   }
 
   const handleSubmit = e => {
@@ -94,10 +93,10 @@ const Signup = () => {
       return;
     }
 
-    firebaseAuth
+    auth
       .createUserWithEmailAndPassword(formState.email, formState.password)
       .then(({ user }) => {
-        firebaseFirestore
+        fireStore
           .collection(COLLECTIONS.USERS)
           .doc(user.uid)
           .set({
@@ -108,13 +107,13 @@ const Signup = () => {
             status: formState.status,
             gravatar: createGravatarHash(formState.email),
             school: {
-              ref: firebaseFirestore
+              ref: fireStore
                 .collection(COLLECTIONS.SCHOOLS)
                 .doc(formState.school),
               id: formState.school
             }
           });
-        firebaseAuth.currentUser.sendEmailVerification().then(
+        auth.currentUser.sendEmailVerification().then(
           () => {
             toast({
               title: "Verification email sent.",
@@ -197,7 +196,7 @@ const Signup = () => {
         </Button>
         <Text>
           Already a member?{" "}
-          <Link to="/login" color="brand.500" fontWeight={600}>
+          <Link href="/login" color="brand.500" fontWeight={600}>
             Log in
           </Link>
         </Text>

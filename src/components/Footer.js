@@ -16,8 +16,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 // Components
-import Link from "./Link";
-import OutsideLink from "./OutsideLink";
+import Link from "src/components/Link";
+import OutsideLink from "src/components/OutsideLink";
 
 const Footer = () => {
   return (
@@ -40,13 +40,13 @@ const Footer = () => {
             Resources
           </ListItem>
           <ListItem fontSize="md">
-            <Link to="/about-us" color="brand.500" fontWeight={600}>
+            <Link href="/about-us" color="brand.500" fontWeight={600}>
               About us
             </Link>
           </ListItem>
           <ListItem fontSize="md">
             <Link
-              to="/frequently-asked-questions"
+              href="/frequently-asked-questions"
               color="brand.500"
               fontWeight={600}
             >

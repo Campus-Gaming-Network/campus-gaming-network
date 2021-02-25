@@ -1,5 +1,4 @@
 import React from "react";
-import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
@@ -31,27 +30,27 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import {
   EVENT_EMPTY_LOCATION_TEXT,
   EVENT_EMPTY_USERS_TEXT
-} from "constants/event";
+} from "src/constants/event";
 import {
   DEFAULT_USERS_LIST_PAGE_SIZE,
   DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE
-} from "constants/other";
+} from "src/constants/other";
 
 // Other
-import { firebaseAuth } from "../firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "store";
+import { auth } from "src/firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Components
-import OutsideLink from "components/OutsideLink";
-import Link from "components/Link";
-import EventSilhouette from "components/silhouettes/EventSilhouette";
-import GameCover from "components/GameCover";
+import OutsideLink from "src/components/OutsideLink";
+import Link from "src/components/Link";
+import EventSilhouette from "src/components/silhouettes/EventSilhouette";
+import GameCover from "src/components/GameCover";
 
 // Hooks
-import useFetchEventDetails from "hooks/useFetchEventDetails";
-import useFetchEventUsers from "hooks/useFetchEventUsers";
-import useFetchUserEventResponse from "hooks/useFetchUserEventResponse";
-import RSVPDialog from "components/dialogs/RSVPDialog";
+import useFetchEventDetails from "src/hooks/useFetchEventDetails";
+import useFetchEventUsers from "src/hooks/useFetchEventUsers";
+import useFetchUserEventResponse from "src/hooks/useFetchUserEventResponse";
+import RSVPDialog from "src/components/dialogs/RSVPDialog";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Event
@@ -59,7 +58,7 @@ import RSVPDialog from "components/dialogs/RSVPDialog";
 const Event = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(auth);
   const [event, isLoadingEvent] = useFetchEventDetails(props.id);
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
@@ -106,7 +105,7 @@ const Event = props => {
 
   if (!event || isEmpty(event)) {
     console.error(`No event found ${props.uri}`);
-    return <Redirect to="/not-found" noThrow />;
+    return <Redirect href="/not-found" noThrow />;
   }
 
   return (
@@ -129,7 +128,7 @@ const Event = props => {
               justifyContent="center"
             >
               <Link
-                to={`/event/${props.id}/edit`}
+                href={`/event/${props.id}/edit`}
                 fontWeight="bold"
                 width="100%"
                 borderRadius="md"
@@ -145,7 +144,7 @@ const Event = props => {
           <Flex alignItems="center">
             <Box pr={2}>
               <Link
-                to={`/school/${event.school.id}`}
+                href={`/school/${event.school.id}`}
                 color="brand.500"
                 fontWeight={600}
                 fontSize="lg"
@@ -485,7 +484,7 @@ const UsersListItem = props => {
       >
         <Avatar name={props.fullName} src={props.gravatarUrl} size="md" />
         <Link
-          to={`/user/${props.id}`}
+          href={`/user/${props.id}`}
           color="brand.500"
           fontWeight="bold"
           mt={4}

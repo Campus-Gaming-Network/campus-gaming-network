@@ -3,7 +3,7 @@
 
 import React from "react";
 
-import { GOOGLE_MAPS_QUERY_URL } from "constants/other";
+import { GOOGLE_MAPS_QUERY_URL } from "src/constants/other";
 
 export const isDev = () => {
   return !process.env.NODE_ENV || process.env.NODE_ENV === "development";

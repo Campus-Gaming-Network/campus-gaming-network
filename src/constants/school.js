@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // School Constants
 
-import { ACCOUNTS } from "./other";
+import { ACCOUNTS } from "src/constants/other";
 
 export const BASE_SCHOOL = {
   description: "",

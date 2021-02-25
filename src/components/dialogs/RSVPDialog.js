@@ -13,19 +13,19 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
-import { firebaseFirestore, firebaseAuth } from "../../firebase";
-import { useAppState } from "store";
+import { firestore, auth } from "src/firebase";
+import { useAppState } from "src/store";
 
 // Constants
-import { EVENT_RESPONSES } from "constants/eventResponse";
-import { COLLECTIONS } from "constants/firebase";
+import { EVENT_RESPONSES } from "src/constants/eventResponse";
+import { COLLECTIONS } from "src/constants/firebase";
 
 const RSVPDialog = props => {
   const toast = useToast();
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
   const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(auth);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const hasResponded = React.useMemo(() => !!props.eventResponse, [
     props.eventResponse
@@ -37,7 +37,7 @@ const RSVPDialog = props => {
     const data = getResponseFormData(response);
 
     if (!hasResponded) {
-      firebaseFirestore
+      firestore
         .collection(COLLECTIONS.EVENT_RESPONSES)
         .add(data)
         .then(() => {
@@ -62,7 +62,7 @@ const RSVPDialog = props => {
           });
         });
     } else {
-      firebaseFirestore
+      firestore
         .collection(COLLECTIONS.EVENT_RESPONSES)
         .doc(props.eventResponse.id)
         .update({ response })
@@ -91,13 +91,13 @@ const RSVPDialog = props => {
   };
 
   const getResponseFormData = response => {
-    const userDocRef = firebaseFirestore
+    const userDocRef = firestore
       .collection(COLLECTIONS.USERS)
       .doc(authenticatedUser.uid);
-    const eventDocRef = firebaseFirestore
+    const eventDocRef = firestore
       .collection(COLLECTIONS.EVENTS)
       .doc(props.event.id);
-    const schoolDocRef = firebaseFirestore
+    const schoolDocRef = firestore
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.event.school.id);
     const user = state.users[authenticatedUser.uid];

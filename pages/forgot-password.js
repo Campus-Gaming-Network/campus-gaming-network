@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Redirect } from "@reach/router";
+import { Redirect } from "src/components/node_modules/@reach/router";
 import {
   Box,
   Alert,
@@ -22,20 +22,20 @@ import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Utilities
-import { useFormFields } from "utilities/other";
-import { validateForgotPassword } from "utilities/validation";
+import { useFormFields } from "src/utilities/other";
+import { validateForgotPassword } from "src/utilities/validation";
 
 // Components
-import Link from "components/Link";
+import Link from "src/components/Link";
 
 // Other
-import { firebaseAuth } from "../firebase";
+import { auth } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ForgotPassword
 
 const ForgotPassword = () => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [fields, handleFieldChange] = useFormFields({
     email: ""
   });
@@ -50,7 +50,7 @@ const ForgotPassword = () => {
   }
 
   if (!!authenticatedUser) {
-    return <Redirect to="/" noThrow />;
+    return <Redirect href="/" noThrow />;
   }
 
   const handleSubmit = async e => {
@@ -75,7 +75,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      await firebaseAuth.sendPasswordResetEmail(fields.email);
+      await auth.sendPasswordResetEmail(fields.email);
       setEmailSent(true);
     } catch (error) {
       handleError(error);
@@ -176,7 +176,7 @@ const ForgotPassword = () => {
         <Flex align="center" justify="between">
           <Text>
             Go back to{" "}
-            <Link to="/login" color="brand.500" fontWeight={600}>
+            <Link href="/login" color="brand.500" fontWeight={600}>
               Login page
             </Link>
             .

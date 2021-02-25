@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Redirect, navigate } from "@reach/router";
 import {
   Alert,
   AlertIcon,
@@ -21,20 +20,20 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 
 // Utilities
-import { useFormFields } from "utilities/other";
-import { validateLogIn } from "utilities/validation";
+import { useFormFields } from "src/utilities/other";
+import { validateLogIn } from "src/utilities/validation";
 
 // Other
-import { firebaseAuth } from "../firebase";
+import { auth } from "src/firebase";
 
 // Components
-import Link from "components/Link";
+import Link from "src/components/Link";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Login
 
 const Login = () => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
     password: ""
@@ -45,7 +44,7 @@ const Login = () => {
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   if (authenticatedUser && !isAuthenticating) {
-    return <Redirect to="/" noThrow />;
+    return <Redirect href="/" noThrow />;
   }
 
   const handleSubmit = e => {
@@ -64,7 +63,7 @@ const Login = () => {
       return;
     }
 
-    firebaseAuth
+    auth
       .signInWithEmailAndPassword(fields.email, fields.password)
       .then(() => {
         navigate("/");
@@ -156,11 +155,11 @@ const Login = () => {
         <Flex alignItems="center" justifyContent="space-between">
           <Text>
             Don’t have an account?{" "}
-            <Link to="/register" color="brand.500" fontWeight={600}>
+            <Link href="/signup" color="brand.500" fontWeight={600}>
               Create one
             </Link>
           </Text>
-          <Link to="/forgot-password" color="brand.500" fontWeight={600}>
+          <Link href="/forgot-password" color="brand.500" fontWeight={600}>
             Forgot your password?
           </Link>
         </Flex>

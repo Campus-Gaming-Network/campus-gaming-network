@@ -3,11 +3,11 @@ import React from "react";
 import queryString from "query-string";
 
 // Components
-import Empty from "components/Empty";
+import Empty from "src/components/Empty";
 
 // Pages
-import PasswordReset from "./password-reset";
-import VerifyEmail from "./verify-email";
+import PasswordReset from "pages/password-reset";
+import VerifyEmail from "pages/verify-email";
 
 const AuthActionComponents = {
   resetPassword: PasswordReset,

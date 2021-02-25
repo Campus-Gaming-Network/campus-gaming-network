@@ -1,11 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase, firebaseFirestore } from "../firebase";
-import { mapEvent } from "utilities/event";
-import { COLLECTIONS } from "constants/firebase";
-import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "constants/other";
-import { useAppState } from "store";
+import { firebase, firestore } from "src/firebase";
+import { mapEvent } from "src/utilities/event";
+import { COLLECTIONS } from "src/constants/firebase";
+import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/other";
+import { useAppState } from "src/store";
 
 const useFetchSchoolEvents = (
   id,
@@ -38,12 +38,10 @@ const useFetchSchoolEvents = (
       } else {
         console.log(`[API] fetchSchoolEvents...${id}`);
 
-        const schoolDocRef = firebaseFirestore
-          .collection(COLLECTIONS.SCHOOLS)
-          .doc(id);
+        const schoolDocRef = firestore.collection(COLLECTIONS.SCHOOLS).doc(id);
         const now = new Date();
 
-        let query = firebaseFirestore
+        let query = firestore
           .collection(COLLECTIONS.EVENTS)
           .where("school.ref", "==", schoolDocRef)
           .where(

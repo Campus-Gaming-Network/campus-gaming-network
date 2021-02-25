@@ -11,15 +11,15 @@ import {
   ComboboxOption,
   ComboboxOptionText
 } from "@reach/combobox";
-import useDebounce from "hooks/useDebounce";
-import { firebase } from "../firebase";
-import { mapSchool } from "utilities/school";
-import { isDev } from "utilities/other";
-import useLocalStorage from "hooks/useLocalStorage";
+import useDebounce from "src/hooks/useDebounce";
+import { firebase } from "src/firebase";
+import { mapSchool } from "src/utilities/school";
+import { isDev } from "src/utilities/other";
+import useLocalStorage from "src/hooks/useLocalStorage";
 import keyBy from "lodash.keyby";
-import { useAppDispatch, ACTION_TYPES } from "store";
+import { useAppDispatch, ACTION_TYPES } from "src/store";
 
-import SchoolLogo from "./SchoolLogo";
+import SchoolLogo from "src/components/SchoolLogo";
 
 const LOCAL_STORAGE_SCHOOLS_KEY = isDev() ? "cgn_dev.schools" : "cgn.schools";
 const LOCAL_STORAGE_SCHOOLS_QUERY_KEY = isDev()

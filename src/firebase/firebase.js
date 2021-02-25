@@ -5,13 +5,18 @@ import "firebase/firestore";
 import "firebase/functions";
 import "firebase/storage";
 
-import { FIREBASE_CONFIG } from "constants/firebase";
+import { FIREBASE_CONFIG } from "src/constants/firebase";
 
-if (typeof window !== "undefined" && !firebase.apps.length) {
+try {
   firebase.initializeApp(FIREBASE_CONFIG);
+} catch (err) {
+  if (!/already exists/.test(err.message)) {
+    console.error("Firebase initialization error", err.stack);
+  }
 }
 
-export const _firebase = firebase;
-export const firebaseAuth = firebase.auth();
-export const firebaseFirestore = firebase.firestore();
-export const firebaseStorage = firebase.storage();
+export default firebase;
+export const firestore = firebase.firestore();
+export const auth = firebase.auth();
+export const storage = firebase.storage();
+export const functions = firebase.functions();

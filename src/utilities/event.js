@@ -1,8 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Event Utilities
 
-import { googleMapsLink } from "./other";
-import { formatCalendarDateTime, hasStarted, hasEnded } from "./dateTime";
+import { googleMapsLink } from "src/utilities/other";
+import {
+  formatCalendarDateTime,
+  hasStarted,
+  hasEnded
+} from "src/utilities/dateTime";
 
 export const mapEvent = event =>
   event

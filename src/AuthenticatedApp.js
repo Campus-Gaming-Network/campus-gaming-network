@@ -1,48 +1,48 @@
 // Libraries
 import React from "react";
-import { Router } from "@reach/router";
+import { Router } from "src/components/node_modules/@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
 import { Box } from "@chakra-ui/react";
 import { Settings as LuxonSettings } from "luxon";
 
 // Other
-import { firebaseAuth } from "./firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "./store";
+import { auth } from "src/firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Hooks
-import useFetchUserDetails from "hooks/useFetchUserDetails";
-import useFetchSchoolDetails from "hooks/useFetchSchoolDetails";
+import useFetchUserDetails from "src/hooks/useFetchUserDetails";
+import useFetchSchoolDetails from "src/hooks/useFetchSchoolDetails";
 
 // Pages
 import Home from "pages";
-import School from "pages/school";
-import User from "pages/user";
-import Event from "pages/event";
+import School from "pages/school/[id]";
+import User from "pages/user/[id]";
+import Event from "pages/event/[id]";
 import EditUser from "pages/edit-user";
-import EditSchool from "pages/edit-school";
+import EditSchool from "pages/school/[id]/edit";
 import CreateEvent from "pages/create-event";
 import AuthAction from "pages/auth-action";
 import AboutUs from "pages/about-us";
 import FrequentlyAskedQuestions from "pages/frequently-asked-questions";
-import NotFound from "pages/not-found";
+import NotFound from "pages/404";
 
 // Components
-import AuthenticatedNav from "components/AuthenticatedNav";
-import ScrollToTop from "components/ScrollToTop";
-import NavSilhouette from "components/silhouettes/NavSilhouette";
-import FormSilhouette from "components/silhouettes/FormSilhouette";
-import UserSilhouette from "components/silhouettes/UserSilhouette";
-import SchoolSilhouette from "components/silhouettes/SchoolSilhouette";
-import EventSilhouette from "components/silhouettes/EventSilhouette";
-import Empty from "components/Empty";
-import Footer from "components/Footer";
-import VerifyEmailReminderBanner from "components/VerifyEmailReminderBanner";
+import AuthenticatedNav from "src/components/AuthenticatedNav";
+import ScrollToTop from "src/components/ScrollToTop";
+import NavSilhouette from "src/components/silhouettes/NavSilhouette";
+import FormSilhouette from "src/components/silhouettes/FormSilhouette";
+import UserSilhouette from "src/components/silhouettes/UserSilhouette";
+import SchoolSilhouette from "src/components/silhouettes/SchoolSilhouette";
+import EventSilhouette from "src/components/silhouettes/EventSilhouette";
+import Empty from "src/components/Empty";
+import Footer from "src/components/Footer";
+import VerifyEmailReminderBanner from "src/components/VerifyEmailReminderBanner";
 
 const AuthenticatedApp = () => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [user, isFetchingUser] = useFetchUserDetails(
     authenticatedUser ? authenticatedUser.uid : null
   );

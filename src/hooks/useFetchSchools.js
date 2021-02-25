@@ -3,12 +3,12 @@ import sortBy from "lodash.sortby";
 import keyBy from "lodash.keyby";
 
 // Other
-import { firebaseFirestore } from "../firebase";
-import { mapSchool } from "../utilities";
-import { COLLECTIONS } from "../constants";
+import { firestore } from "src/firebase";
+import { mapSchool } from "src/utilities/school";
+import { COLLECTIONS } from "src/constants/firebase";
 
 // Hooks
-import useLocalStorage from "./useLocalStorage";
+import useLocalStorage from "src/hooks/useLocalStorage";
 
 const useFetchSchools = () => {
   const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
@@ -35,7 +35,7 @@ const useFetchSchools = () => {
     const fetchSchools = async () => {
       console.log("[API] fetchSchools...");
 
-      firebaseFirestore
+      firestore
         .collection(COLLECTIONS.SCHOOLS)
         .get()
         .then(snapshot => {

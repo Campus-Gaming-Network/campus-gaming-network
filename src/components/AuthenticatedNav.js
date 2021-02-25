@@ -22,16 +22,16 @@ import {
   faTimes,
   faSchool
 } from "@fortawesome/free-solid-svg-icons";
-import { firebaseAuth } from "../firebase";
-import { useAppState } from "../store";
-import Nav from "./Nav";
-import SchoolSearch from "./SchoolSearch";
-import SchoolLogo from "./SchoolLogo";
-import Logo from "./Logo";
+import { auth } from "src/firebase";
+import { useAppState } from "src/store";
+import Nav from "src/components/Nav";
+import SchoolSearch from "src/components/SchoolSearch";
+import SchoolLogo from "src/components/SchoolLogo";
+import Logo from "src/components/Logo";
 
 const AuthenticatedNav = () => {
   const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(auth);
   const user = React.useMemo(
     () =>
       authenticatedUser && state.users[authenticatedUser.uid]
@@ -53,7 +53,7 @@ const AuthenticatedNav = () => {
   };
 
   const handleLogout = () => {
-    firebaseAuth.signOut().then(() => navigate("/"));
+    auth.signOut().then(() => navigate("/"));
   };
 
   const onSchoolSelect = selectedSchool => {
@@ -86,7 +86,7 @@ const AuthenticatedNav = () => {
       >
         <Button
           as={ReachLink}
-          to="/create-event"
+          href="/create-event"
           colorScheme="brand"
           size="sm"
           mr={4}
@@ -128,7 +128,7 @@ const AuthenticatedNav = () => {
           </MenuButton>
 
           <MenuList>
-            <MenuItem as={ReachLink} to={`user/${user.id}`}>
+            <MenuItem as={ReachLink} href={`user/${user.id}`}>
               <Flex alignItems="center">
                 {user.gravatar ? (
                   <Avatar
@@ -145,7 +145,7 @@ const AuthenticatedNav = () => {
                 <Text lineHeight="1">Profile</Text>
               </Flex>
             </MenuItem>
-            <MenuItem as={ReachLink} to={`school/${user.school.id}`}>
+            <MenuItem as={ReachLink} href={`school/${user.school.id}`}>
               <SchoolLogo
                 schoolId={school.id}
                 schoolName={school.name}

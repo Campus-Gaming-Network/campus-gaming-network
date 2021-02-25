@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Flex } from "@chakra-ui/react";
 
 // Components
-import Nav from "../Nav";
-import Logo from "../Logo";
+import Nav from "src/components/Nav";
+import Logo from "src/components/Logo";
 
 const NavSilhouette = () => {
   return (

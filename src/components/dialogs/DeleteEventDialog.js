@@ -13,10 +13,10 @@ import {
 } from "@chakra-ui/react";
 
 // Other
-import { firebaseFirestore } from "../../firebase";
+import { firestore } from "srcfirebase";
 
 // Constants
-import { COLLECTIONS } from "constants/firebase";
+import { COLLECTIONS } from "src/constants/firebase";
 
 const DeleteEventDialog = props => {
   const toast = useToast();
@@ -28,7 +28,7 @@ const DeleteEventDialog = props => {
     setIsSubmitting(true);
 
     try {
-      await firebaseFirestore
+      await firestore
         .collection(COLLECTIONS.EVENTS)
         .doc(props.event.id)
         .delete();

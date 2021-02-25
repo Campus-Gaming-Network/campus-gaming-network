@@ -1,11 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase, firebaseFirestore } from "../firebase";
-import { mapEventResponse } from "utilities/eventResponse";
-import { COLLECTIONS } from "constants/firebase";
-import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "constants/other";
-import { useAppState } from "store";
+import { firebase, firestore } from "src/firebase";
+import { mapEventResponse } from "src/utilities/eventResponse";
+import { COLLECTIONS } from "src/constants/firebase";
+import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/other";
+import { useAppState } from "src/store";
 
 const useFetchUserEvents = (
   id,
@@ -37,12 +37,10 @@ const useFetchUserEvents = (
       } else {
         console.log(`[API] fetchUserEvents...${id}`);
 
-        const userDocRef = firebaseFirestore
-          .collection(COLLECTIONS.USERS)
-          .doc(id);
+        const userDocRef = firestore.collection(COLLECTIONS.USERS).doc(id);
         const now = new Date();
 
-        let query = firebaseFirestore
+        let query = firestore
           .collection(COLLECTIONS.EVENT_RESPONSES)
           .where("user.ref", "==", userDocRef)
           .where("response", "==", "YES")

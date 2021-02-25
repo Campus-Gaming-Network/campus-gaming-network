@@ -4,7 +4,7 @@
 import React from "react";
 
 // Hooks
-import useUnmount from "./useUnmount";
+import useUnmount from "src/hooks/useUnmount";
 
 const useThrottle = (value, ms = 200) => {
   const [state, setState] = React.useState(value);

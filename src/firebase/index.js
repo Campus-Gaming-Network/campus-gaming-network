@@ -1,6 +1,3 @@
-export {
-  _firebase as firebase,
-  firebaseAuth,
-  firebaseFirestore,
-  firebaseStorage
-} from "./firebase";
+import firebase, { firestore, auth, storage, functions } from "./firebase";
+
+export { firebase, firestore, auth, storage, functions };

@@ -8,27 +8,26 @@ import {
   AlertDescription
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Redirect } from "@reach/router";
 
 // Other
-import { firebaseAuth } from "../firebase";
+import { auth } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // VerifyEmail
 
 const VerifyEmail = props => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [verifyState, setVerifyState] = React.useState("");
   const [verificationError, setError] = React.useState("");
 
   const handleVerifyEmail = React.useCallback(() => {
-    firebaseAuth
+    auth
       .applyActionCode(props.oobCode)
       .then(() => {
-        firebaseAuth.currentUser
+        auth.currentUser
           .reload()
           .then(() => {
-            if (firebaseAuth.currentUser.emailVerified) {
+            if (auth.currentUser.emailVerified) {
               setVerifyState("success");
             } else {
               setVerifyState("error");
@@ -58,7 +57,7 @@ const VerifyEmail = props => {
   }
 
   if (!authenticatedUser) {
-    return <Redirect to="/not-found" noThrow />;
+    return <Redirect href="/not-found" noThrow />;
   }
 
   if (!verifyState) {

@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
 // Components
-import OutsideLink from "components/OutsideLink";
+import OutsideLink from "src/components/OutsideLink";
 
 ////////////////////////////////////////////////////////////////////////////////
 // FrequentlyAskedQuestions

@@ -1,0 +1,97 @@
+import { firebase, firestore } from "src/firebase";
+import { mapUser } from "src/utilities/user";
+import { mapEventResponse } from "src/utilities/event-response";
+
+export const getUserDetails = async id => {
+  let user = null;
+
+  try {
+    const userDoc = await firestore
+      .collection("users")
+      .doc(id)
+      .get();
+
+    if (userDoc.exists) {
+      user = { ...mapUser(userDoc.data(), userDoc) };
+    }
+
+    return { user };
+  } catch (error) {
+    return { user, error };
+  }
+};
+
+export const getUserEvents = async (
+  id,
+  limit = 25,
+  next = null,
+  prev = null
+) => {
+  let events = [];
+
+  try {
+    const now = new Date();
+    const userDocRef = firestore.collection("users").doc(id);
+
+    let query = firestore
+      .collection("event-responses")
+      .where("user.ref", "==", userDocRef)
+      .where("response", "==", "YES")
+      .where(
+        "event.endDateTime",
+        ">=",
+        firebase.firestore.Timestamp.fromDate(now)
+      );
+
+    if (next) {
+      query = query.startAfter(next);
+    } else if (prev) {
+      query = query.startAt(prev);
+    }
+
+    const eventsSnapshot = await query.limit(limit).get();
+
+    if (!eventsSnapshot.empty) {
+      snapshot.forEach(doc => {
+        const event = mapEventResponse(doc.data(), doc);
+        events.push(event);
+      });
+    }
+
+    return { events };
+  } catch (error) {
+    return { events, error };
+  }
+};
+
+export const getUserEventResponse = async (eventId, userId) => {
+  let eventResponse = null;
+
+  try {
+    const eventDocRef = firestore.collection("events").doc(eventId);
+    const userDocRef = firestore.collection("users").doc(userId);
+
+    const eventResponseSnapshot = await firestore
+      .collection("event-responses")
+      .where("event.ref", "==", eventDocRef)
+      .where("user.ref", "==", userDocRef)
+      .limit(1)
+      .get();
+
+    if (!eventResponseSnapshot.empty) {
+      const [doc] = snapshot.docs;
+
+      eventResponse = {
+        ...{
+          id: doc.id,
+          ref: doc,
+          ...doc.data()
+        }
+      };
+    }
+
+    return { eventResponse };
+  } catch (error) {
+    return { eventResponse, error };
+  }
+};

@@ -4,7 +4,7 @@ import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { Text } from "@chakra-ui/react";
 
 // Components
-import OutsideLink from "components/OutsideLink";
+import OutsideLink from "src/components/OutsideLink";
 
 // TODO: Move to its own constants file
 const IGDB_GAME_URL = "https://www.igdb.com/games";

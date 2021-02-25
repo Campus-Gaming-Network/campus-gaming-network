@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Redirect } from "@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import isEmpty from "lodash.isempty";
@@ -43,28 +42,28 @@ import {
   MAX_BIO_LENGTH,
   MAX_FAVORITE_GAME_LIST,
   MAX_CURRENTLY_PLAYING_LIST
-} from "constants/user";
-import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "constants/dateTime";
-import { COLLECTIONS } from "constants/firebase";
-import { ACCOUNTS } from "constants/other";
+} from "src/constants/user";
+import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "src/constants/dateTime";
+import { COLLECTIONS } from "src/constants/firebase";
+import { ACCOUNTS } from "src/constants/other";
 
 // Other
-import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "store";
+import { firebase, firestore, auth } from "src/firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Components
-import SchoolSearch from "components/SchoolSearch";
-import GameSearch from "components/GameSearch";
-import GameCover from "components/GameCover";
-import MonthSelect from "components/MonthSelect";
-import DaySelect from "components/DaySelect";
-import YearSelect from "components/YearSelect";
-import DeleteAccountDialog from "components/dialogs/DeleteAccountDialog";
+import SchoolSearch from "src/components/SchoolSearch";
+import GameSearch from "src/components/GameSearch";
+import GameCover from "src/components/GameCover";
+import MonthSelect from "src/components/MonthSelect";
+import DaySelect from "src/components/DaySelect";
+import YearSelect from "src/components/YearSelect";
+import DeleteAccountDialog from "src/components/dialogs/DeleteAccountDialog";
 
 // Utilities
-import { mapUser } from "utilities/user";
-import { move } from "utilities/other";
-import { validateEditUser } from "utilities/validation";
+import { mapUser } from "src/utilities/user";
+import { move } from "src/utilities/other";
+import { validateEditUser } from "src/utilities/validation";
 
 const initialFormState = {
   firstName: "",
@@ -106,7 +105,7 @@ const formReducer = (state, { field, value }) => {
 const EditUser = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(auth);
   const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
@@ -231,7 +230,7 @@ const EditUser = props => {
       return;
     }
 
-    const schoolDocRef = firebaseFirestore
+    const schoolDocRef = firestore
       .collection(COLLECTIONS.SCHOOLS)
       .doc(formState.school);
 
@@ -275,7 +274,7 @@ const EditUser = props => {
       favoriteGames
     };
 
-    firebaseFirestore
+    firestore
       .collection(COLLECTIONS.USERS)
       .doc(user.id)
       .update(data)
@@ -341,12 +340,12 @@ const EditUser = props => {
   };
 
   if (!authenticatedUser) {
-    return <Redirect to="/" noThrow />;
+    return <Redirect href="/" noThrow />;
   }
 
   if (!user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="/not-found" noThrow />;
+    return <Redirect href="/not-found" noThrow />;
   }
 
   if (!hasPrefilledForm) {

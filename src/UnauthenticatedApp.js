@@ -1,18 +1,18 @@
 // Libraries
 import React from "react";
-import { Router } from "@reach/router";
+import { Router } from "src/components/node_modules/@reach/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Box } from "@chakra-ui/react";
 
 // Other
-import { firebaseAuth } from "./firebase";
+import { auth } from "src/firebase";
 
 // Pages
 import Home from "pages";
-import School from "pages/school";
-import User from "pages/user";
-import Event from "pages/event";
-import NotFound from "pages/not-found";
+import School from "pages/school/[id]";
+import User from "pages/user/[id]/[id]";
+import Event from "pages/event/[id]";
+import NotFound from "pages/404";
 import Signup from "pages/signup";
 import Login from "pages/login";
 import AuthAction from "pages/auth-action";
@@ -22,17 +22,17 @@ import AboutUs from "pages/about-us";
 import FrequentlyAskedQuestions from "pages/frequently-asked-questions";
 
 // Components
-import UnauthenticatedNav from "components/UnauthenticatedNav";
-import ScrollToTop from "components/ScrollToTop";
-import NavSilhouette from "components/silhouettes/NavSilhouette";
-import UserSilhouette from "components/silhouettes/UserSilhouette";
-import SchoolSilhouette from "components/silhouettes/SchoolSilhouette";
-import EventSilhouette from "components/silhouettes/EventSilhouette";
-import Empty from "components/Empty";
-import Footer from "components/Footer";
+import UnauthenticatedNav from "src/components/UnauthenticatedNav";
+import ScrollToTop from "src/components/ScrollToTop";
+import NavSilhouette from "src/components/silhouettes/NavSilhouette";
+import UserSilhouette from "src/components/silhouettes/UserSilhouette";
+import SchoolSilhouette from "src/components/silhouettes/SchoolSilhouette";
+import EventSilhouette from "src/components/silhouettes/EventSilhouette";
+import Empty from "src/components/Empty";
+import Footer from "src/components/Footer";
 
 const UnauthenticatedApp = () => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const isReady = React.useMemo(() => !isAuthenticating && !authenticatedUser, [
     isAuthenticating,
     authenticatedUser

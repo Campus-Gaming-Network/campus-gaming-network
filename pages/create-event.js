@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { navigate, Redirect } from "@reach/router";
+import { navigate, Redirect } from "src/components/node_modules/@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
@@ -32,29 +32,29 @@ import { DateTime } from "luxon";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
-import { useAppState, useAppDispatch, ACTION_TYPES } from "../store";
-import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
+import { firebase, firestore, auth } from "src/firebase";
 
 // Components
-import GameSearch from "components/GameSearch";
-import GameCover from "components/GameCover";
-import MonthSelect from "components/MonthSelect";
-import DaySelect from "components/DaySelect";
-import YearSelect from "components/YearSelect";
-import TimeSelect from "components/TimeSelect";
-import DeleteEventDialog from "components/dialogs/DeleteEventDialog";
+import GameSearch from "src/components/GameSearch";
+import GameCover from "src/components/GameCover";
+import MonthSelect from "src/components/MonthSelect";
+import DaySelect from "src/components/DaySelect";
+import YearSelect from "src/components/YearSelect";
+import TimeSelect from "src/components/TimeSelect";
+import DeleteEventDialog from "src/components/dialogs/DeleteEventDialog";
 
 // Hooks
-import useFetchEventDetails from "hooks/useFetchEventDetails";
+import useFetchEventDetails from "src/hooks/useFetchEventDetails";
 
 // Utilities
-import { mapEventResponse } from "utilities/eventResponse";
-import { mapEvent } from "utilities/event";
-import { validateCreateEvent } from "utilities/validation";
+import { mapEventResponse } from "src/utilities/eventResponse";
+import { mapEvent } from "src/utilities/event";
+import { validateCreateEvent } from "src/utilities/validation";
 
 // Constants
-import { COLLECTIONS } from "constants/firebase";
-import { CURRENT_YEAR, DASHED_DATE_TIME } from "constants/dateTime";
+import { COLLECTIONS } from "src/constants/firebase";
+import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
 
 const initialFormState = {
   name: "",
@@ -87,7 +87,7 @@ const CreateEvent = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(auth);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -198,10 +198,10 @@ const CreateEvent = props => {
       );
     }
 
-    const schoolDocRef = firebaseFirestore
+    const schoolDocRef = firestore
       .collection(COLLECTIONS.SCHOOLS)
       .doc(user.school.id);
-    const userDocRef = firebaseFirestore
+    const userDocRef = firestore
       .collection(COLLECTIONS.USERS)
       .doc(user.id);
 
@@ -229,7 +229,7 @@ const CreateEvent = props => {
     }
 
     if (props.edit) {
-      firebaseFirestore
+      firestore
         .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
         .update(eventData)
@@ -334,7 +334,7 @@ const CreateEvent = props => {
     } else {
       let eventId;
 
-      firebaseFirestore
+      firestore
         .collection(COLLECTIONS.EVENTS)
         .add({
           ...eventData,
@@ -346,7 +346,7 @@ const CreateEvent = props => {
         .then(eventDocRef => {
           eventId = eventDocRef.id;
 
-          firebaseFirestore
+          firestore
             .collection(COLLECTIONS.EVENTS)
             .doc(eventId)
             .update({ id: eventId })
@@ -380,7 +380,7 @@ const CreateEvent = props => {
             }
           };
 
-          firebaseFirestore
+          firestore
             .collection(COLLECTIONS.EVENT_RESPONSES)
             .add(eventResponseData)
             .then(() => {
@@ -457,12 +457,12 @@ const CreateEvent = props => {
   };
 
   if (!authenticatedUser) {
-    return <Redirect to="/" noThrow />;
+    return <Redirect href="/" noThrow />;
   }
 
   if (!user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="/not-found" noThrow />;
+    return <Redirect href="/not-found" noThrow />;
   }
 
   if (!hasPrefilledForm && !!event) {

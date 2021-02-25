@@ -17,13 +17,13 @@ import {
 } from "@chakra-ui/react";
 
 // Other
-import { firebaseFirestore, firebaseAuth } from "../../firebase";
+import { firebaseFirestore, auth } from "src/firebase";
 
 // Constants
-import { COLLECTIONS } from "constants/firebase";
+import { COLLECTIONS } from "src/constants/firebase";
 
 // Utilities
-import { validateDeleteAccount } from "utilities/validation";
+import { validateDeleteAccount } from "src/utilities/validation";
 
 const DeleteAccountDialog = props => {
   const toast = useToast();
@@ -59,7 +59,7 @@ const DeleteAccountDialog = props => {
         isClosable: true
       });
       setTimeout(() => {
-        firebaseAuth.signOut().then(() => navigate("/"));
+        auth.signOut().then(() => navigate("/"));
       }, 2000);
     } catch (error) {
       console.error(error);

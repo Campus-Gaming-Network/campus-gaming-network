@@ -1,8 +1,9 @@
 import React from "react";
 
-import { firebase, firebaseFirestore } from "../firebase";
-import { mapEvent } from "../utilities";
-import { DEFAULT_EVENTS_LIST_PAGE_SIZE, COLLECTIONS } from "../constants";
+import { firebase, firestore } from "src/firebase";
+import { mapEvent } from "src/utilities/event";
+import { COLLECTIONS } from "src/constants/firebase";
+import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/event";
 
 const useFetchRecentlyCreatedEvents = (
   limit = DEFAULT_EVENTS_LIST_PAGE_SIZE,
@@ -23,7 +24,7 @@ const useFetchRecentlyCreatedEvents = (
 
       const now = new Date();
 
-      let query = firebaseFirestore
+      let query = firestore
         .collection(COLLECTIONS.EVENTS)
         .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
         .orderBy("endDateTime")

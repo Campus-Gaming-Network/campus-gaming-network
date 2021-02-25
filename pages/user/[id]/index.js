@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Redirect } from "@reach/router";
+import { Redirect } from "src/components/node_modules/@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
@@ -19,6 +19,8 @@ import {
   Image
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import safeJsonStringify from 'safe-json-stringify';
+import { getUserDetails, getUserEvents } from 'src/api/user'
 
 // Constants
 import {
@@ -26,70 +28,82 @@ import {
   USER_EMPTY_FAVORITE_GAMES_TEXT,
   USER_EMPTY_ACCOUNTS_TEXT,
   USER_EMPTY_UPCOMING_EVENTS_TEXT
-} from "constants/user";
+} from "src/constants/user";
 import {
   ACCOUNTS,
   DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE
-} from "constants/other";
+} from "src/constants/other";
 
 // Utilities
-import { firebaseAuth } from "../firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "store";
+import { auth } from "src/firebase";
+import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Components
-import Link from "components/Link";
-import EventListItem from "components/EventListItem";
-import UserSilhouette from "components/silhouettes/UserSilhouette";
-import GameCover from "components/GameCover";
-import GameLink from "components/GameLink";
+import Link from "src/components/Link";
+import EventListItem from "src/components/EventListItem";
+import UserSilhouette from "src/components/silhouettes/UserSilhouette";
+import GameCover from "src/components/GameCover";
+import GameLink from "src/components/GameLink";
 
 // Hooks
-import useFetchUserDetails from "hooks/useFetchUserDetails";
-import useFetchUserEvents from "hooks/useFetchUserEvents";
-import useFetchSchoolDetails from "hooks/useFetchSchoolDetails";
+import useFetchUserDetails from "src/hooks/useFetchUserDetails";
+import useFetchUserEvents from "src/hooks/useFetchUserEvents";
+import useFetchSchoolDetails from "src/hooks/useFetchSchoolDetails";
+
+export const getServerSideProps = async ({ params }) => {
+  // TODO: Prommise.all
+  const userDetails = await getUserDetails(params.id);
+  const userEvents = await getUserEvents(params.id);
+  const user = {
+      ...userDetails,
+      events: [...userEvents],
+  };
+
+  return { props: { user } };
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // User
 
-const User = props => {
-  const dispatch = useAppDispatch();
-  const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
-  const [user, isLoadingUser] = useFetchUserDetails(props.id);
-  const [school, isLoadingSchool] = useFetchSchoolDetails(
-    user ? user.school.id : null
-  );
-  const isAuthenticatedUser = React.useMemo(
-    () => !!authenticatedUser && authenticatedUser.uid === props.id,
-    [authenticatedUser, props.id]
-  );
+const User = ({ user }) => {
+  // const dispatch = useAppDispatch();
+  // const state = useAppState();
+  // const [authenticatedUser] = useAuthState(auth);
+  // const [user, isLoadingUser] = useFetchUserDetails(props.id);
+  // const [school, isLoadingSchool] = useFetchSchoolDetails(
+  //   user ? user.school.id : null
+  // );
+  // const isAuthenticatedUser = React.useMemo(
+  //   () => !!authenticatedUser && authenticatedUser.uid === props.id,
+  //   [authenticatedUser, props.id]
+  // );
 
-  React.useEffect(() => {
-    if (props.id !== state.user.id && !isLoadingUser) {
-      dispatch({
-        type: ACTION_TYPES.SET_USER,
-        payload: user
-      });
-    }
-  }, [props.id, state.user.id, dispatch, user, isLoadingUser]);
+  // React.useEffect(() => {
+  //   if (props.id !== state.user.id && !isLoadingUser) {
+  //     dispatch({
+  //       type: ACTION_TYPES.SET_USER,
+  //       payload: user
+  //     });
+  //   }
+  // }, [props.id, state.user.id, dispatch, user, isLoadingUser]);
 
-  React.useEffect(() => {
-    if (!!school && school.id !== state.school.id && !isLoadingSchool) {
-      dispatch({
-        type: ACTION_TYPES.SET_SCHOOL,
-        payload: school
-      });
-    }
-  }, [state.school.id, dispatch, school, isLoadingSchool]);
+  // React.useEffect(() => {
+  //   if (!!school && school.id !== state.school.id && !isLoadingSchool) {
+  //     dispatch({
+  //       type: ACTION_TYPES.SET_SCHOOL,
+  //       payload: school
+  //     });
+  //   }
+  // }, [state.school.id, dispatch, school, isLoadingSchool]);
 
-  if (isLoadingUser || isLoadingSchool) {
-    return <UserSilhouette />;
-  }
+  // if (isLoadingUser || isLoadingSchool) {
+  //   return <UserSilhouette />;
+  // }
 
-  if (!user || isEmpty(user)) {
-    console.error(`No user found ${props.uri}`);
-    return <Redirect to="/not-found" noThrow />;
-  }
+  // if (!user || isEmpty(user)) {
+  //   console.error(`No user found ${props.uri}`);
+  //   return <Redirect href="/not-found" noThrow />;
+  // }
 
   return (
     <Box
@@ -105,7 +119,7 @@ const User = props => {
       {isAuthenticatedUser ? (
         <Box mb={10} textAlign="center" display="flex" justifyContent="center">
           <Link
-            to="/edit-user"
+            href="/edit-user"
             fontWeight="bold"
             width="100%"
             borderRadius="md"
@@ -142,7 +156,7 @@ const User = props => {
             {user.displayStatus}
             {school ? (
               <Link
-                to={`/school/${school.id}`}
+                href={`/school/${school.id}`}
                 color="brand.500"
                 fontWeight={600}
                 ml={2}
@@ -265,7 +279,7 @@ const User = props => {
           >
             Events Attending
           </Heading>
-          <EventsList user={user} id={props.id} />
+          <EventsList events={user.events} />
         </Stack>
       </Stack>
     </Box>
@@ -373,45 +387,45 @@ const GameListItem = React.memo(props => {
 ////////////////////////////////////////////////////////////////////////////////
 // EventsList
 
-const EventsList = props => {
-  const dispatch = useAppDispatch();
-  const state = useAppState();
-  const [events, isLoadingEvents] = useFetchUserEvents(props.id);
+const EventsList = ({ events }) => {
+  // const dispatch = useAppDispatch();
+  // const state = useAppState();
+  // const [events, isLoadingEvents] = useFetchUserEvents(props.id);
   const hasEvents = React.useMemo(
     () => events && events.length && events.length > 0,
     [events]
   );
 
-  React.useEffect(() => {
-    if (isLoadingEvents && hasEvents) {
-      dispatch({
-        type: ACTION_TYPES.SET_USER_EVENTS,
-        payload: {
-          id: props.id,
-          events: events
-        }
-      });
-    }
-  }, [props.id, state.user.id, events, hasEvents, dispatch, isLoadingEvents]);
+  // React.useEffect(() => {
+  //   if (isLoadingEvents && hasEvents) {
+  //     dispatch({
+  //       type: ACTION_TYPES.SET_USER_EVENTS,
+  //       payload: {
+  //         id: props.id,
+  //         events: events
+  //       }
+  //     });
+  //   }
+  // }, [props.id, state.user.id, events, hasEvents, dispatch, isLoadingEvents]);
 
-  if (isLoadingEvents) {
-    return (
-      <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
-          <Box key={index} w={{ md: "33%", sm: "50%" }}>
-            <Skeleton
-              pos="relative"
-              d="flex"
-              m={2}
-              p={4}
-              h={151}
-              rounded="lg"
-            />
-          </Box>
-        ))}
-      </List>
-    );
-  }
+  // if (isLoadingEvents) {
+  //   return (
+  //     <List d="flex" flexWrap="wrap" m={-2} p={0}>
+  //       {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
+  //         <Box key={index} w={{ md: "33%", sm: "50%" }}>
+  //           <Skeleton
+  //             pos="relative"
+  //             d="flex"
+  //             m={2}
+  //             p={4}
+  //             h={151}
+  //             rounded="lg"
+  //           />
+  //         </Box>
+  //       ))}
+  //     </List>
+  //   );
+  // }
 
   if (hasEvents) {
     return (

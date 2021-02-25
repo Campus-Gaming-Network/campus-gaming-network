@@ -1,11 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebaseFirestore } from "../firebase";
-import { mapUser } from "utilities/user";
-import { COLLECTIONS } from "constants/firebase";
-import { DEFAULT_USERS_LIST_PAGE_SIZE } from "constants/other";
-import { useAppState } from "store";
+import { firestore } from "src/firebase";
+import { mapUser } from "src/utilities/user";
+import { COLLECTIONS } from "src/constants/firebase";
+import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
+import { useAppState } from "src/store";
 
 const useFetchSchoolUsers = (
   id,
@@ -38,11 +38,9 @@ const useFetchSchoolUsers = (
       } else {
         console.log(`[API] fetchSchoolUsers...${id}`);
 
-        const schoolDocRef = firebaseFirestore
-          .collection(COLLECTIONS.SCHOOLS)
-          .doc(id);
+        const schoolDocRef = firestore.collection(COLLECTIONS.SCHOOLS).doc(id);
 
-        let query = firebaseFirestore
+        let query = firestore
           .collection(COLLECTIONS.USERS)
           .where("school.ref", "==", schoolDocRef);
 

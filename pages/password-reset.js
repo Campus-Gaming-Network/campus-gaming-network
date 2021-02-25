@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Redirect, navigate } from "@reach/router";
 import {
   Box,
   Alert,
@@ -19,17 +18,17 @@ import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Utilities
-import { useFormFields } from "utilities/other";
-import { validatePasswordReset } from "utilities/validation";
+import { useFormFields } from "src/utilities/other";
+import { validatePasswordReset } from "src/utilities/validation";
 
 // Other
-import { firebaseAuth } from "../firebase";
+import { auth } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset
 
 const PasswordReset = props => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [fields, handleFieldChange] = useFormFields({
     password: ""
   });
@@ -44,7 +43,7 @@ const PasswordReset = props => {
   }
 
   if (!!authenticatedUser) {
-    return <Redirect to="/" noThrow />;
+    return <Redirect href="/" noThrow />;
   }
 
   const handleSubmit = async e => {
@@ -68,13 +67,13 @@ const PasswordReset = props => {
       return;
     }
 
-    firebaseAuth
+    auth
       .verifyPasswordResetCode(props.oobCode)
       .then(email => {
-        firebaseAuth
+        auth
           .confirmPasswordReset(props.oobCode, fields.password)
           .then(() => {
-            firebaseAuth
+            auth
               .signInWithEmailAndPassword(email, fields.password)
               .then(() => {
                 navigate("/");

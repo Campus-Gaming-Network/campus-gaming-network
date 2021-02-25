@@ -9,14 +9,14 @@ import {
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import { firebaseAuth } from "../firebase";
+import { auth } from "src/firebase";
 
 const VerifyEmailReminderBanner = () => {
   const toast = useToast();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
+  const [authenticatedUser] = useAuthState(auth);
 
   const sendEmailVerification = () => {
-    firebaseAuth.currentUser.sendEmailVerification().then(
+    auth.currentUser.sendEmailVerification().then(
       () => {
         toast({
           title: "Verification email sent.",
@@ -37,7 +37,7 @@ const VerifyEmailReminderBanner = () => {
     );
   };
 
-  if (firebaseAuth.currentUser.emailVerified) {
+  if (auth.currentUser.emailVerified) {
     return null;
   }
 

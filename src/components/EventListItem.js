@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text, Flex, Stack } from "@chakra-ui/react";
 import startCase from "lodash.startcase";
-import Link from "./Link";
+import Link from "src/components/Link";
 
 const EventListItem = props => {
   if (!props.event || !props.school) {
@@ -68,7 +68,7 @@ const EventListItem = props => {
             )}
           </Box>
           <Link
-            to={`/event/${props.event.id}`}
+            href={`/event/${props.event.id}`}
             color="brand.500"
             fontWeight="bold"
             fontSize="3xl"
@@ -80,7 +80,7 @@ const EventListItem = props => {
             {props.event.name}
           </Link>
           <Link
-            to={`/school/${props.school.id}`}
+            href={`/school/${props.school.id}`}
             color="brand.500"
             fontWeight={600}
             isTruncated

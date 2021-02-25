@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Style Utilities
 
-import { isDev } from "./other";
+import { isDev } from "src/utilities/other";
 
 export const classNames = (_classNames = []) => {
   if (isDev()) {

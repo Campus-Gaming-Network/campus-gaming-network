@@ -7,11 +7,11 @@ import {
   ComboboxList,
   ComboboxOption
 } from "@reach/combobox";
-import { firebase } from "../firebase";
+import { functions } from "src/firebase";
 import uniqBy from "lodash.uniqby";
 
 // Hooks
-import useDebounce from "hooks/useDebounce";
+import useDebounce from "src/hooks/useDebounce";
 
 const CACHED_GAMES = {};
 
@@ -48,7 +48,7 @@ const GameSearch = props => {
       return Promise.resolve(CACHED_GAMES[value]);
     }
 
-    const searchGames = firebase.functions().httpsCallable("searchGames");
+    const searchGames = functions.httpsCallable("searchGames");
 
     return searchGames({ query: value }).then(result => {
       CACHED_GAMES[value] = result.data.games;

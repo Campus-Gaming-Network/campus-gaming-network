@@ -1,26 +1,26 @@
 import React from "react";
-import { firebase, firebaseFirestore, firebaseAuth } from "../firebase";
+import { firebase, auth, firestore } from "src/firebase";
 import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
 
 // Components
-import Link from "components/Link";
-import EventListItem from "components/EventListItem";
+import Link from "src/components/Link";
+import EventListItem from "src/components/EventListItem";
 
 // Utilities
-import { mapEvent } from "utilities/event";
-import { mapEventResponse } from "utilities/eventResponse";
+import { mapEvent } from "src/utilities/event";
+import { mapEventResponse } from "src/utilities/eventResponse";
 
 // Other
-import { useAppState } from "store";
+import { useAppState } from "src/store";
 
 // Constants
-import { COLLECTIONS } from "constants/firebase";
+import { COLLECTIONS } from "src/constants/firebase";
 
 // Hooks
-import useFetchUserEvents from "hooks/useFetchUserEvents";
+import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
 const now = new Date();
 
@@ -29,7 +29,7 @@ const now = new Date();
 
 const Home = () => {
   const state = useAppState();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebaseAuth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const isAuthenticated = React.useMemo(
     () => !isAuthenticating && !!authenticatedUser,
     [isAuthenticating, authenticatedUser]
@@ -75,10 +75,10 @@ const Home = () => {
 
 const UserCreatedEvents = props => {
   const userDocRef = props.user
-    ? firebaseFirestore.collection(COLLECTIONS.USERS).doc(props.user.id)
+    ? firestore.collection(COLLECTIONS.USERS).doc(props.user.id)
     : null;
   const [userCreatedEvents, isLoading] = useCollectionDataOnce(
-    firebaseFirestore
+    firestore
       .collection(COLLECTIONS.EVENTS)
       .where("creator", "==", userDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
@@ -149,10 +149,10 @@ const AttendingEvents = props => {
 
 const UpcomingSchoolEvents = props => {
   const schoolDocRef = props.school
-    ? firebaseFirestore.collection(COLLECTIONS.SCHOOLS).doc(props.school.id)
+    ? firestore.collection(COLLECTIONS.SCHOOLS).doc(props.school.id)
     : null;
   const [schoolEvents, isLoading] = useCollectionDataOnce(
-    firebaseFirestore
+    firestore
       .collection(COLLECTIONS.EVENTS)
       .where("school.ref", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
@@ -172,7 +172,7 @@ const UpcomingSchoolEvents = props => {
       <Heading as="h3" fontSize="xl" pb={4}>
         Upcoming events at{" "}
         <Link
-          to={`/school/${props.school.id}`}
+          href={`/school/${props.school.id}`}
           color="brand.500"
           fontWeight="bold"
           isTruncated
@@ -207,7 +207,7 @@ const UpcomingSchoolEvents = props => {
 
 const RecentlyCreatedEvents = () => {
   const [recentlyCreatedEvents, isLoading] = useCollectionDataOnce(
-    firebaseFirestore
+    firestore
       .collection(COLLECTIONS.EVENTS)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .orderBy("endDateTime")

@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Redirect } from "@reach/router";
+import { Redirect } from "src/components/node_modules/@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Input as ChakraInput,
@@ -22,13 +22,13 @@ import startCase from "lodash.startcase";
 import { useDropzone } from "react-dropzone";
 
 // Constants
-import { SCHOOL_ACCOUNTS, BASE_SCHOOL } from "constants/school";
-import { DROPZONE_STYLES } from "constants/styles";
-import { COLLECTIONS } from "constants/firebase";
-import { ACCOUNTS } from "constants/other";
+import { SCHOOL_ACCOUNTS, BASE_SCHOOL } from "src/constants/school";
+import { DROPZONE_STYLES } from "src/constants/styles";
+import { COLLECTIONS } from "src/constants/firebase";
+import { ACCOUNTS } from "src/constants/other";
 
 // Other
-import { firebase, firebaseFirestore, firebaseStorage } from "../firebase";
+import { firebase, firestore, storage } from "src/firebase";
 
 const initialFormState = {
   ...BASE_SCHOOL,
@@ -81,7 +81,7 @@ const EditSchool = props => {
     };
 
     if (state.file) {
-      const storageRef = firebaseStorage.ref();
+      const storageRef = storage.ref();
       const uploadTask = storageRef
         .child(`schools/${props.school.id}/images/logo.jpg`)
         .put(state.file);
@@ -115,7 +115,7 @@ const EditSchool = props => {
         },
         () => {
           // Handle successful uploads on complete
-          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          // For instance, get the download URL: https://storage.googleapis.com/...
           uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
             console.log("File available at", downloadURL);
           });
@@ -129,7 +129,7 @@ const EditSchool = props => {
       );
     }
 
-    firebaseFirestore
+    firestore
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.school.id)
       .update(data)
@@ -156,12 +156,12 @@ const EditSchool = props => {
   };
 
   if (!props.isAuthenticated) {
-    return <Redirect to="/" noThrow />;
+    return <Redirect href="/" noThrow />;
   }
 
   if (!props.user) {
     console.error(`No user found ${props.uri}`);
-    return <Redirect to="/not-found" noThrow />;
+    return <Redirect href="/not-found" noThrow />;
   }
 
   if (!hasPrefilledForm) {

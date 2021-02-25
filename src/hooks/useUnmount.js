@@ -4,7 +4,7 @@
 import React from "react";
 
 //Hooks
-import useEffectOnce from "./useEffectOnce";
+import useEffectOnce from "src/hooks/useEffectOnce";
 
 const useUnmount = fn => {
   const fnRef = React.useRef(fn);

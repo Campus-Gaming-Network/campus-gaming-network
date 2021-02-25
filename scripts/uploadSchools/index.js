@@ -7,8 +7,8 @@ const geohash = require("ngeohash");
 const { performance } = require("perf_hooks");
 
 admin.initializeApp({
-  credential: admin.credential.cert(process.env.REACT_APP_FIREBASE_SERVICE_ACCOUNT_KEY_PATH),
-  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  credential: admin.credential.cert(process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT_KEY_PATH),
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
 });
 
 // Source:

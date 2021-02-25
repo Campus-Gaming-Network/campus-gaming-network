@@ -5,7 +5,7 @@ import intersection from "lodash.intersection";
 import capitalize from "lodash.capitalize";
 import md5 from "md5";
 
-import { GRAVATAR, ACCOUNTS } from "constants/other";
+import { GRAVATAR, ACCOUNTS } from "src/constants/other";
 
 export const createGravatarHash = (email = "") => {
   const trimmedEmail = email.trim();
