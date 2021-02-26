@@ -1,9 +1,11 @@
 import React from "react";
-import { firebase, auth, firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
 
 // Components
 import Link from "src/components/Link";
@@ -24,30 +26,58 @@ import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
 const now = new Date();
 
+export const getServerSideProps = async (ctx) => {
+if (!firebaseAdmin.apps.length) {
+  firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert({
+      privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
+      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+    }),
+    databaseURL: `https://${process.env.FIREBASE_ADMIN_PROJECT_ID}.firebaseio.com`,
+  });
+}
+
+  try {
+    const cookies = nookies.get(ctx);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const { uid, email } = token;
+
+    return {
+      props: { uid, email },
+    };
+  } catch (err) {
+    return {
+      props: {},
+    };
+  }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // Home
 
-const Home = () => {
-  const state = useAppState();
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
-  const isAuthenticated = React.useMemo(
-    () => !isAuthenticating && !!authenticatedUser,
-    [isAuthenticating, authenticatedUser]
-  );
-  const user = React.useMemo(
-    () => (authenticatedUser ? state.users[authenticatedUser.uid] : null),
-    [authenticatedUser, state.users]
-  );
-  const school = React.useMemo(
-    () =>
-      user && user.school && user.school.id
-        ? state.schools[user.school.id]
-        : null,
-    [user, state.schools]
-  );
+const Home = (props) => {
+  // const state = useAppState();
+  // const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
+  // const isAuthenticated = React.useMemo(
+  //   () => !isAuthenticating && !!authenticatedUser,
+  //   [isAuthenticating, authenticatedUser]
+  // );
+  // const user = React.useMemo(
+  //   () => (authenticatedUser ? state.users[authenticatedUser.uid] : null),
+  //   [authenticatedUser, state.users]
+  // );
+  // const school = React.useMemo(
+  //   () =>
+  //     user && user.school && user.school.id
+  //       ? state.schools[user.school.id]
+  //       : null,
+  //   [user, state.schools]
+  // );
 
   return (
     <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
+      <p>{`User ID: ${props.email ? props.email : 'no user signed in'}`}</p>
       <Box>
         <Heading size="2xl" mb={8}>
           Campus Gaming Network
@@ -57,7 +87,7 @@ const Home = () => {
           at your school or nearby.
         </Text>
         <Stack pt={8} spacing={8}>
-          <UserCreatedEvents isAuthenticated={isAuthenticated} user={user} />
+          {/* <UserCreatedEvents isAuthenticated={isAuthenticated} user={user} />
           <AttendingEvents
             isAuthenticated={isAuthenticated}
             authenticatedUser={authenticatedUser}
@@ -66,7 +96,7 @@ const Home = () => {
             isAuthenticated={isAuthenticated}
             school={school}
           />
-          <RecentlyCreatedEvents />
+          <RecentlyCreatedEvents /> */}
         </Stack>
       </Box>
     </Box>
@@ -75,10 +105,10 @@ const Home = () => {
 
 const UserCreatedEvents = props => {
   const userDocRef = props.user
-    ? firestore.collection(COLLECTIONS.USERS).doc(props.user.id)
+    ? firebase.firestore().collection(COLLECTIONS.USERS).doc(props.user.id)
     : null;
   const [userCreatedEvents, isLoading] = useCollectionDataOnce(
-    firestore
+    firebase.firestore()
       .collection(COLLECTIONS.EVENTS)
       .where("creator", "==", userDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
@@ -149,10 +179,10 @@ const AttendingEvents = props => {
 
 const UpcomingSchoolEvents = props => {
   const schoolDocRef = props.school
-    ? firestore.collection(COLLECTIONS.SCHOOLS).doc(props.school.id)
+    ? firebase.firestore().collection(COLLECTIONS.SCHOOLS).doc(props.school.id)
     : null;
   const [schoolEvents, isLoading] = useCollectionDataOnce(
-    firestore
+    firebase.firestore()
       .collection(COLLECTIONS.EVENTS)
       .where("school.ref", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
@@ -207,7 +237,7 @@ const UpcomingSchoolEvents = props => {
 
 const RecentlyCreatedEvents = () => {
   const [recentlyCreatedEvents, isLoading] = useCollectionDataOnce(
-    firestore
+    firebase.firestore()
       .collection(COLLECTIONS.EVENTS)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .orderBy("endDateTime")

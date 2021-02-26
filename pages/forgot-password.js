@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Redirect } from "src/components/node_modules/@reach/router";
+import { useRouter } from 'next/router'
 import {
   Box,
   Alert,
@@ -35,6 +35,7 @@ import { auth } from "src/firebase";
 // ForgotPassword
 
 const ForgotPassword = () => {
+  const router = useRouter()
   const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [fields, handleFieldChange] = useFormFields({
     email: ""
@@ -50,7 +51,8 @@ const ForgotPassword = () => {
   }
 
   if (!!authenticatedUser) {
-    return <Redirect href="/" noThrow />;
+    router.push("/");
+    return null;
   }
 
   const handleSubmit = async e => {

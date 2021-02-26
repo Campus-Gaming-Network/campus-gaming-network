@@ -18,13 +18,14 @@ import {
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
+import { useRouter } from 'next/router'
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
 import { validateLogIn } from "src/utilities/validation";
 
 // Other
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 // Components
 import Link from "src/components/Link";
@@ -33,7 +34,8 @@ import Link from "src/components/Link";
 // Login
 
 const Login = () => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const router = useRouter()
+  // const [authenticatedUser, isAuthenticating] = useAuthState(auth);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
     password: ""
@@ -43,9 +45,10 @@ const Login = () => {
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  if (authenticatedUser && !isAuthenticating) {
-    return <Redirect href="/" noThrow />;
-  }
+  // if (authenticatedUser && !isAuthenticating) {
+  //   router.push("/");
+  //   return null;
+  // }
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -63,10 +66,10 @@ const Login = () => {
       return;
     }
 
-    auth
+    firebase.auth()
       .signInWithEmailAndPassword(fields.email, fields.password)
       .then(() => {
-        navigate("/");
+        router.push("/")
       })
       .catch(error => {
         console.error(error);

@@ -1,11 +1,12 @@
 import 'src/styles/globals.css';
 import { SkipNavLink } from "@reach/skip-nav";
 import { AppProvider } from "src/store";
-import { firebase, auth } from "src/firebase";
+import { firebase } from "src/firebase";
 import * as Sentry from "@sentry/react";
 import { ChakraProvider, extendTheme, Box } from "@chakra-ui/react";
 import "@reach/skip-nav/styles.css";
 import "@reach/combobox/styles.css";
+import { AuthProvider } from 'src/providers/auth';
 
 import { CUSTOM_CHAKRA_THEME } from "src/constants/styles";
 import { SENTRY_CONFIG } from "src/constants/sentry";
@@ -16,10 +17,9 @@ const CUSTOM_THEME = extendTheme(CUSTOM_CHAKRA_THEME);
 
 Sentry.init(SENTRY_CONFIG);
 
-auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
-
-function App({ Component, pageProps }) {
+const App = ({ Component, pageProps }) => {
   return (
+    <AuthProvider>
     <AppProvider>
     <ChakraProvider theme={CUSTOM_THEME}>
       <SkipNavLink />
@@ -29,6 +29,7 @@ function App({ Component, pageProps }) {
       </Box>
     </ChakraProvider>
   </AppProvider>
+  </AuthProvider>
   )
 }
 

@@ -14,6 +14,7 @@ import {
   faPlaystation
 } from "@fortawesome/free-brands-svg-icons";
 
+export const PRODUCTION_URL = "https://campusgamingnetwork.com/";
 export const ACCOUNTS = {
   website: {
     label: "Website",

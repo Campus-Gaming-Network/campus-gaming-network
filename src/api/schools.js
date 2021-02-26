@@ -1,4 +1,4 @@
-import { firestore } from "./firebase";
+import { firestore } from "src/firebase";
 
 export const getSchools = async (limit = 25) => {
   let schools = [];

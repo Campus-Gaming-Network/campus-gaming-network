@@ -3,13 +3,13 @@ import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
 
 export const getEventDetails = async id => {
+  let event = null;
+
   try {
     const eventDoc = await firestore
       .collection("events")
       .doc(id)
       .get();
-
-    let event = null;
 
     if (eventDoc.exists) {
       event = { ...mapEvent(eventDoc.data(), eventDoc) };
@@ -17,7 +17,7 @@ export const getEventDetails = async id => {
 
     return { event };
   } catch (error) {
-    return { error };
+    return { event, error };
   }
 };
 
@@ -26,6 +26,8 @@ export const getEventUsers = async (
   limit = DEFAULT_USERS_LIST_PAGE_SIZE,
   page = 0
 ) => {
+  let users = [];
+
   try {
     const eventDocRef = firestore.collection("events").doc(id);
 
@@ -44,8 +46,6 @@ export const getEventUsers = async (
 
     const eventUsersSnapshot = await query.limit(limit).get();
 
-    let users = [];
-
     if (!eventUsersSnapshot.empty) {
       snapshot.forEach(doc => {
         const data = doc.data();
@@ -56,6 +56,6 @@ export const getEventUsers = async (
 
     return { users };
   } catch (error) {
-    return { error };
+    return { users, error };
   }
 };

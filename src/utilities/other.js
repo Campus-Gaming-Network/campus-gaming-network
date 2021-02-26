@@ -3,10 +3,18 @@
 
 import React from "react";
 
-import { GOOGLE_MAPS_QUERY_URL } from "src/constants/other";
+import { GOOGLE_MAPS_QUERY_URL, PRODUCTION_URL } from "src/constants/other";
 
 export const isDev = () => {
-  return !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+  if (
+    typeof window !== "undefined" &&
+    Boolean(window) &&
+    window.location &&
+    window.location.href
+  ) {
+    return window.location.href === PRODUCTION_URL;
+  }
+  return false;
 };
 
 export const useFormFields = initialState => {
