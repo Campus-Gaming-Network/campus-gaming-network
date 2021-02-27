@@ -1,4 +1,4 @@
-import { firebase } from "src/firebase";
+import * as firebase from "firebase-admin";
 import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
 

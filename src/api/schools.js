@@ -1,4 +1,4 @@
-import { firebase } from "src/firebase";
+import * as firebase from "firebase-admin";
 
 export const getSchools = async (limit = 25) => {
   let schools = [];

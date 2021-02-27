@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Redirect } from "src/components/node_modules/@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
@@ -21,6 +20,9 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import safeJsonStringify from 'safe-json-stringify';
 import { getUserDetails, getUserEvents } from 'src/api/user'
+import Head from 'next/head'
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
 
 // Constants
 import {
@@ -33,10 +35,12 @@ import {
   ACCOUNTS,
   DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE
 } from "src/constants/other";
+import { AUTH_STATUS } from "src/constants/auth";
 
 // Utilities
 import { firebase } from "src/firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
+import { noop } from "src/utilities/other";
 
 // Components
 import Link from "src/components/Link";
@@ -46,66 +50,48 @@ import GameCover from "src/components/GameCover";
 import GameLink from "src/components/GameLink";
 
 // Hooks
-import useFetchUserDetails from "src/hooks/useFetchUserDetails";
-import useFetchUserEvents from "src/hooks/useFetchUserEvents";
-import useFetchSchoolDetails from "src/hooks/useFetchSchoolDetails";
+import { getSchoolDetails } from "src/api/school";
 
-export const getServerSideProps = async ({ params }) => {
-  // TODO: Prommise.all
-  const userDetails = await getUserDetails(params.id);
-  const userEvents = await getUserEvents(params.id);
-  const user = {
-      ...userDetails,
-      events: [...userEvents],
+export const getServerSideProps = async (context) => {
+  const { user } = await getUserDetails(context.params.id);
+  const { events } = await getUserEvents(context.params.id);
+
+  if (!user) {
+    return { notFound: true };
+  }
+
+  const { school } = await getSchoolDetails(user.school.id);
+  const data = {
+      user: {...user},
+      school: {...school},
+      events: [...events],
+      authStatus: AUTH_STATUS.UNAUTHENTICATED,
+      isAuthenticatedUser: false,
   };
 
-  return { props: { user } };
+  try {
+    const cookies = nookies.get(context);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const authStatus = Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
+    const isAuthenticatedUser = params.id === token.uid;
+    data.authStatus = authStatus;
+    data.isAuthenticatedUser = isAuthenticatedUser;
+  } catch (error) {
+    noop();
+  }
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // User
 
-const User = ({ user }) => {
-  // const dispatch = useAppDispatch();
-  // const state = useAppState();
-  // const [authenticatedUser] = useAuthState(firebase.auth());
-  // const [user, isLoadingUser] = useFetchUserDetails(props.id);
-  // const [school, isLoadingSchool] = useFetchSchoolDetails(
-  //   user ? user.school.id : null
-  // );
-  // const isAuthenticatedUser = React.useMemo(
-  //   () => !!authenticatedUser && authenticatedUser.uid === props.id,
-  //   [authenticatedUser, props.id]
-  // );
-
-  // React.useEffect(() => {
-  //   if (props.id !== state.user.id && !isLoadingUser) {
-  //     dispatch({
-  //       type: ACTION_TYPES.SET_USER,
-  //       payload: user
-  //     });
-  //   }
-  // }, [props.id, state.user.id, dispatch, user, isLoadingUser]);
-
-  // React.useEffect(() => {
-  //   if (!!school && school.id !== state.school.id && !isLoadingSchool) {
-  //     dispatch({
-  //       type: ACTION_TYPES.SET_SCHOOL,
-  //       payload: school
-  //     });
-  //   }
-  // }, [state.school.id, dispatch, school, isLoadingSchool]);
-
-  // if (isLoadingUser || isLoadingSchool) {
-  //   return <UserSilhouette />;
-  // }
-
-  // if (!user || isEmpty(user)) {
-  //   console.error(`No user found ${props.uri}`);
-  //   return <Redirect href="/not-found" noThrow />;
-  // }
-
+const User = (props) => {
   return (
+    <React.Fragment>
+    <Head>
+  <title>{props.user.fullName} | CGN</title>
+</Head>
     <Box
       as="article"
       pt={10}
@@ -116,7 +102,7 @@ const User = ({ user }) => {
       maxW="5xl"
       pos="relative"
     >
-      {isAuthenticatedUser ? (
+      {props.isAuthenticatedUser ? (
         <Box mb={10} textAlign="center" display="flex" justifyContent="center">
           <Link
             href="/edit-user"
@@ -133,7 +119,7 @@ const User = ({ user }) => {
         </Box>
       ) : null}
       <Box as="header" display="flex" alignItems="center">
-        <Avatar name={user.fullName} src={user.gravatarUrl} mr={2} size="2xl" />
+        <Avatar name={props.user.fullName} src={props.user.gravatarUrl} mr={2} size="2xl" />
         <Box pl={12}>
           <Heading
             as="h2"
@@ -143,7 +129,7 @@ const User = ({ user }) => {
             display="flex"
             alignItems="center"
           >
-            {user.fullName}
+            {props.user.fullName}
           </Heading>
           <Heading
             as="h2"
@@ -153,15 +139,15 @@ const User = ({ user }) => {
             display="flex"
             alignItems="center"
           >
-            {user.displayStatus}
-            {school ? (
+            {props.user.displayStatus}
+            {Boolean(props.school) ? (
               <Link
-                href={`/school/${school.id}`}
+                href={`/school/${props.school.id}`}
                 color="brand.500"
                 fontWeight={600}
                 ml={2}
               >
-                {startCase(school.name.toLowerCase())}
+                {props.school.formattedName}
               </Link>
             ) : null}
           </Heading>
@@ -181,7 +167,7 @@ const User = ({ user }) => {
       <Stack spacing={10}>
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Biography</VisuallyHidden>
-          {user.bio ? <Text>{user.bio}</Text> : null}
+          {Boolean(props.user.bio) ? <Text>{props.user.bio}</Text> : null}
         </Box>
         <Stack as="section" spacing={4}>
           <Heading
@@ -196,9 +182,9 @@ const User = ({ user }) => {
             <Text as="dt" w="50%" fontWeight="bold">
               Hometown
             </Text>
-            {user.hometown ? (
+            {Boolean(props.user.hometown) ? (
               <Text as="dd" w="50%">
-                {user.hometown}
+                {props.user.hometown}
               </Text>
             ) : (
               <Text as="dd" w="50%" color="gray.400">
@@ -208,9 +194,9 @@ const User = ({ user }) => {
             <Text as="dt" w="50%" fontWeight="bold">
               Major
             </Text>
-            {user.major ? (
+            {Boolean(props.user.major) ? (
               <Text as="dd" w="50%">
-                {user.major}
+                {props.user.major}
               </Text>
             ) : (
               <Text as="dd" w="50%" color="gray.400">
@@ -220,9 +206,9 @@ const User = ({ user }) => {
             <Text as="dt" w="50%" fontWeight="bold">
               Minor
             </Text>
-            {user.minor ? (
+            {Boolean(props.user.minor) ? (
               <Text as="dd" w="50%">
-                {user.minor}
+                {props.user.minor}
               </Text>
             ) : (
               <Text as="dd" w="50%" color="gray.400">
@@ -240,7 +226,7 @@ const User = ({ user }) => {
           >
             Accounts
           </Heading>
-          <AccountsList user={user} />
+          <AccountsList user={props.user} />
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -252,7 +238,7 @@ const User = ({ user }) => {
             Currently Playing
           </Heading>
           <GameList
-            games={user.currentlyPlaying}
+            games={props.user.currentlyPlaying}
             emptyText={USER_EMPTY_CURRENTLY_PLAYING_TEXT}
           />
         </Stack>
@@ -266,7 +252,7 @@ const User = ({ user }) => {
             Favorite Games
           </Heading>
           <GameList
-            games={user.favoriteGames}
+            games={props.user.favoriteGames}
             emptyText={USER_EMPTY_FAVORITE_GAMES_TEXT}
           />
         </Stack>
@@ -279,10 +265,11 @@ const User = ({ user }) => {
           >
             Events Attending
           </Heading>
-          <EventsList events={user.events} />
+          <EventsList events={props.events} />
         </Stack>
       </Stack>
     </Box>
+    </React.Fragment>
   );
 };
 

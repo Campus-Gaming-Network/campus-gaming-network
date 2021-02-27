@@ -1,6 +1,6 @@
-import { firebase } from "src/firebase";
+import * as firebase from "firebase-admin";
 import { mapUser } from "src/utilities/user";
-import { mapEventResponse } from "src/utilities/event-response";
+import { mapEventResponse } from "src/utilities/eventResponse";
 
 export const getUserDetails = async id => {
   let user = null;

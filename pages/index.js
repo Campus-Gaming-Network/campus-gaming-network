@@ -26,7 +26,7 @@ import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
 const now = new Date();
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps = async (context) => {
 if (!firebaseAdmin.apps.length) {
   firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert({
@@ -39,12 +39,11 @@ if (!firebaseAdmin.apps.length) {
 }
 
   try {
-    const cookies = nookies.get(ctx);
+    const cookies = nookies.get(context);
     const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    const { uid, email } = token;
 
     return {
-      props: { uid, email },
+      props: { uid: token.uid, email: token.email },
     };
   } catch (err) {
     return {
@@ -57,27 +56,8 @@ if (!firebaseAdmin.apps.length) {
 // Home
 
 const Home = (props) => {
-  // const state = useAppState();
-  // const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
-  // const isAuthenticated = React.useMemo(
-  //   () => !isAuthenticating && !!authenticatedUser,
-  //   [isAuthenticating, authenticatedUser]
-  // );
-  // const user = React.useMemo(
-  //   () => (authenticatedUser ? state.users[authenticatedUser.uid] : null),
-  //   [authenticatedUser, state.users]
-  // );
-  // const school = React.useMemo(
-  //   () =>
-  //     user && user.school && user.school.id
-  //       ? state.schools[user.school.id]
-  //       : null,
-  //   [user, state.schools]
-  // );
-
   return (
     <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
-      <p>{`User ID: ${props.email ? props.email : 'no user signed in'}`}</p>
       <Box>
         <Heading size="2xl" mb={8}>
           Campus Gaming Network

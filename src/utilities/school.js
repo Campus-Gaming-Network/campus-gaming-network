@@ -1,12 +1,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 // School Utilities
 
-import { googleMapsLink } from "src/utilities/other";
+import { googleMapsLink, isValidUrl } from "src/utilities/other";
+import startCase from "lodash.startcase";
 
 export const mapSchool = school =>
   school
     ? {
         ...school,
+        formattedName: startCase(school.name.toLowerCase()),
+        formattedAddress: startCase(school.address.toLowerCase()),
+        isValidWebsiteUrl: isValidUrl(school.website),
         googleMapsAddressLink: googleMapsLink(
           `${school.address} ${school.city}, ${school.state}`
         )

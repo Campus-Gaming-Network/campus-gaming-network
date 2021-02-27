@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import startCase from "lodash.startcase";
 import {
   Stack,
   Box,
@@ -21,6 +20,7 @@ import isEmpty from "lodash.isempty";
 import times from "lodash.times";
 import safeJsonStringify from 'safe-json-stringify';
 import { getSchoolDetails, getSchoolEvents, getSchoolUsers } from 'src/api/school';
+import Head from 'next/head'
 
 // Constants
 import {
@@ -53,10 +53,14 @@ import { useAppDispatch, useAppState, ACTION_TYPES } from "src/store";
 import { isValidUrl } from "src/utilities/other";
 
 export const getServerSideProps = async ({ params }) => {
-  // TODO: Prommise.all
-  const { school, } = await getSchoolDetails(params.id);
+  const { school } = await getSchoolDetails(params.id);
   const { users } = await getSchoolUsers(params.id);
   const { events } = await getSchoolEvents(params.id);
+
+  if (!school) {
+    return { notFound: true };
+  }
+
   const data = {
       school: {...school},
       users: [...users],
@@ -69,37 +73,18 @@ export const getServerSideProps = async ({ params }) => {
 ////////////////////////////////////////////////////////////////////////////////
 // School
 
-const School = ({ school, users, events }) => {
-
-  // const dispatch = useAppDispatch();
-  // const state = useAppState();
-  // const [school, isLoadingSchool] = useFetchSchoolDetails(props.id);
-
-  // React.useEffect(() => {
-  //   if (props.id !== state.school.id && !isLoadingSchool) {
-  //     dispatch({
-  //       type: ACTION_TYPES.SET_SCHOOL,
-  //       payload: school
-  //     });
-  //   }
-  // }, [props.id, state.school.id, dispatch, school, isLoadingSchool]);
-
-  // if (isLoadingSchool) {
-  //   return <SchoolSilhouette />;
-  // }
-
-  // if (!school || isEmpty(school)) {
-  //   console.error(`No school found ${props.uri}`);
-  //   return <Redirect href="/not-found" noThrow />;
-  // }
-
+const School = (props) => {
   return (
+    <React.Fragment>
+          <Head>
+        <title>{props.school.formattedName} | CGN</title>
+      </Head>
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
           <SchoolLogo
-            schoolId={school.id}
-            schoolName={school.name}
+            schoolId={props.school.id}
+            schoolName={props.school.name}
             h={40}
             w={40}
             fallback={
@@ -123,13 +108,13 @@ const School = ({ school, users, events }) => {
               display="flex"
               alignItems="center"
             >
-              {startCase(school.name.toLowerCase())}
+              {props.school.formattedName}
             </Heading>
           </Box>
         </Box>
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Description</VisuallyHidden>
-          <Text>{school.description}</Text>
+          <Text>{props.school.description}</Text>
         </Box>
         <Stack as="section" spacing={4}>
           <Heading
@@ -144,10 +129,10 @@ const School = ({ school, users, events }) => {
             <Text as="dt" w="50%" fontWeight="bold">
               Contact Email
             </Text>
-            {school.contactEmail ? (
+            {Boolean(props.school.contactEmail) ? (
               <Text as="dd" w="50%">
-                <OutsideLink href={`mailto:${school.contactEmail}`}>
-                  {school.contactEmail}
+                <OutsideLink href={`mailto:${props.school.contactEmail}`}>
+                  {props.school.contactEmail}
                 </OutsideLink>
               </Text>
             ) : (
@@ -158,17 +143,17 @@ const School = ({ school, users, events }) => {
             <Text as="dt" w="50%" fontWeight="bold">
               Website
             </Text>
-            {school.website && school.website !== EMPTY_SCHOOL_WEBSITE ? (
+            {props.school.website && props.school.website !== EMPTY_SCHOOL_WEBSITE ? (
               <Text as="dd" w="50%">
-                {isValidUrl(school.website) ? (
-                  <OutsideLink d="inline-block" href={`//${school.website}`}>
-                    {school.website}
+                {props.school.isValidWebsiteUrl ? (
+                  <OutsideLink d="inline-block" href={`//${props.school.website}`}>
+                    {props.school.website}
                     <Text as="span" ml={2}>
                       <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
                     </Text>
                   </OutsideLink>
                 ) : (
-                  <Text>{school.website}</Text>
+                  <Text>{props.school.website}</Text>
                 )}
               </Text>
             ) : (
@@ -179,13 +164,13 @@ const School = ({ school, users, events }) => {
             <Text as="dt" w="50%" fontWeight="bold">
               Address
             </Text>
-            {school.address ? (
+            {Boolean(props.school.address) ? (
               <Text as="dd" w="50%">
                 <OutsideLink
                   d="inline-block"
-                  href={school.googleMapsAddressLink}
+                  href={props.school.googleMapsAddressLink}
                 >
-                  {startCase(school.address.toLowerCase())}
+                  {props.school.formattedAddress}
                   <Text as="span" ml={2}>
                     <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
                   </Text>
@@ -207,7 +192,7 @@ const School = ({ school, users, events }) => {
           >
             Upcoming Events
           </Heading>
-          <EventsList events={events} />
+          <EventsList events={props.events} />
         </Stack>
         <Stack as="section" spacing={4}>
           <Heading
@@ -218,10 +203,11 @@ const School = ({ school, users, events }) => {
           >
             Members
           </Heading>
-          <UsersList users={users} />
+          <UsersList users={props.users} />
         </Stack>
       </Stack>
     </Box>
+    </React.Fragment>
   );
 };
 
