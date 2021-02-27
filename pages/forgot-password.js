@@ -33,6 +33,8 @@ import Link from "src/components/Link";
 // Other
 import { firebase } from "src/firebase";
 
+import { AUTH_STATUS } from "src/constants/auth";
+
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 

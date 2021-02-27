@@ -8,9 +8,44 @@ import {
   AlertDescription
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
 
 // Other
 import { firebase } from "src/firebase";
+
+import { AUTH_STATUS } from "src/constants/auth";
+
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  try {
+    const cookies = nookies.get(context);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/"
+        }
+      };
+    }
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/"
+      }
+    };
+  }
+
+  return { props: {} };
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // VerifyEmail
@@ -21,11 +56,13 @@ const VerifyEmail = props => {
   const [verificationError, setError] = React.useState("");
 
   const handleVerifyEmail = React.useCallback(() => {
-    firebase.auth()
+    firebase
+      .auth()
       .applyActionCode(props.oobCode)
       .then(() => {
-        firebase.auth().currentUser
-          .reload()
+        firebase
+          .auth()
+          .currentUser.reload()
           .then(() => {
             if (firebase.auth().currentUser.emailVerified) {
               setVerifyState("success");
@@ -51,14 +88,6 @@ const VerifyEmail = props => {
       handleVerifyEmail();
     }
   }, [isAuthenticating, authenticatedUser, handleVerifyEmail]);
-
-  if (isAuthenticating) {
-    return null;
-  }
-
-  // if (!authenticatedUser) {
-  //   return <Redirect href="/not-found" noThrow />;
-  // }
 
   if (!verifyState) {
     return null;

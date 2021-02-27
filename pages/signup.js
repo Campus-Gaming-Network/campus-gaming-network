@@ -28,6 +28,7 @@ import nookies from "nookies";
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
 import { COLLECTIONS } from "src/constants/firebase";
+import { AUTH_STATUS } from "src/constants/auth";
 
 // Utilities
 import { createGravatarHash } from "src/utilities/user";
