@@ -24,6 +24,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
+import Head from "next/head";
 
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
@@ -179,70 +180,75 @@ const Signup = () => {
   };
 
   return (
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
-      {hasErrors ? (
-        <Alert status="error" mb={4} rounded="lg">
-          <AlertIcon />
-          <AlertDescription>
-            There are errors in the form below. Please review and correct before
-            submitting again.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-      <Box
-        as="form"
-        borderWidth={1}
-        boxShadow="lg"
-        rounded="lg"
-        bg="white"
-        pos="relative"
-        p={12}
-        onSubmit={handleSubmit}
-      >
-        <Heading as="h2" size="2xl">
-          Create an account
-        </Heading>
-        <Divider borderColor="gray.300" mt={12} mb={10} />
-        {error ? (
-          <Alert status="error" mb={12} rounded="lg">
+    <React.Fragment>
+      <Head>
+        <title>Signup | CGN</title>
+      </Head>
+      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+        {hasErrors ? (
+          <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              There are errors in the form below. Please review and correct
+              before submitting again.
+            </AlertDescription>
           </Alert>
         ) : null}
-        <DetailSection
-          handleFieldChange={handleFieldChange}
-          errors={errors}
-          firstName={formState.firstName}
-          lastName={formState.lastName}
-          email={formState.email}
-          password={formState.password}
-        />
-        <SchoolSection
-          handleFieldChange={handleFieldChange}
-          errors={errors}
-          status={formState.status}
-          onSchoolSelect={onSchoolSelect}
-        />
-        <Button
-          colorScheme="brand"
-          type="submit"
-          size="lg"
-          w="full"
-          isDisabled={isSubmitting}
-          isLoading={isSubmitting}
-          loadingText="Submitting..."
-          my={12}
+        <Box
+          as="form"
+          borderWidth={1}
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+          p={12}
+          onSubmit={handleSubmit}
         >
-          Sign Up
-        </Button>
-        <Text>
-          Already a member?{" "}
-          <Link href="/login" color="brand.500" fontWeight={600}>
-            Log in
-          </Link>
-        </Text>
+          <Heading as="h2" size="2xl">
+            Create an account
+          </Heading>
+          <Divider borderColor="gray.300" mt={12} mb={10} />
+          {error ? (
+            <Alert status="error" mb={12} rounded="lg">
+              <AlertIcon />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          ) : null}
+          <DetailSection
+            handleFieldChange={handleFieldChange}
+            errors={errors}
+            firstName={formState.firstName}
+            lastName={formState.lastName}
+            email={formState.email}
+            password={formState.password}
+          />
+          <SchoolSection
+            handleFieldChange={handleFieldChange}
+            errors={errors}
+            status={formState.status}
+            onSchoolSelect={onSchoolSelect}
+          />
+          <Button
+            colorScheme="brand"
+            type="submit"
+            size="lg"
+            w="full"
+            isDisabled={isSubmitting}
+            isLoading={isSubmitting}
+            loadingText="Submitting..."
+            my={12}
+          >
+            Sign Up
+          </Button>
+          <Text>
+            Already a member?{" "}
+            <Link href="/login" color="brand.500" fontWeight={600}>
+              Log in
+            </Link>
+          </Text>
+        </Box>
       </Box>
-    </Box>
+    </React.Fragment>
   );
 };
 

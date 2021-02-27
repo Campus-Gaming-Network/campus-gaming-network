@@ -10,6 +10,7 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
+import Head from "next/head";
 
 // Other
 import { firebase } from "src/firebase";
@@ -94,28 +95,33 @@ const VerifyEmail = props => {
   }
 
   return (
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
-      <Alert
-        status={verifyState}
-        variant="subtle"
-        flexDirection="column"
-        justifyContent="center"
-        textAlign="center"
-        height="200px"
-      >
-        <AlertIcon height="40px" width="40px" mr={0} />
-        <AlertTitle mt={4} mb={1} fontSize="lg">
-          {verifyState === "success"
-            ? "Email verified!"
-            : "Email verification unsuccessful."}
-        </AlertTitle>
-        <AlertDescription maxWidth="sm">
-          {verifyState === "success"
-            ? "Thank you for verifying your email address."
-            : verificationError}
-        </AlertDescription>
-      </Alert>
-    </Box>
+    <React.Fragment>
+      <Head>
+        <title>Verify Email | CGN</title>
+      </Head>
+      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+        <Alert
+          status={verifyState}
+          variant="subtle"
+          flexDirection="column"
+          justifyContent="center"
+          textAlign="center"
+          height="200px"
+        >
+          <AlertIcon height="40px" width="40px" mr={0} />
+          <AlertTitle mt={4} mb={1} fontSize="lg">
+            {verifyState === "success"
+              ? "Email verified!"
+              : "Email verification unsuccessful."}
+          </AlertTitle>
+          <AlertDescription maxWidth="sm">
+            {verifyState === "success"
+              ? "Thank you for verifying your email address."
+              : verificationError}
+          </AlertDescription>
+        </Alert>
+      </Box>
+    </React.Fragment>
   );
 };
 

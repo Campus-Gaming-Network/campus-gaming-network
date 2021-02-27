@@ -30,6 +30,7 @@ import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from 'next/router'
+import Head from 'next/head';
 
 // Other
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
@@ -472,6 +473,9 @@ const CreateEvent = props => {
 
   return (
     <React.Fragment>
+        <Head>
+      <title>{props.edit ? `Edit ${even.name}` : 'Create Event'} | CGN</title>
+    </Head>
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

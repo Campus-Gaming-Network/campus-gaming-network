@@ -19,6 +19,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
+import Head from "next/head";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -135,76 +136,81 @@ const PasswordReset = props => {
   };
 
   return (
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
-      {hasErrors ? (
-        <Alert status="error" mb={4} rounded="lg">
-          <AlertIcon />
-          <AlertDescription>
-            There are errors in the form below. Please review and correct before
-            submitting again.
-          </AlertDescription>
-        </Alert>
-      ) : null}
-      <Box
-        as="form"
-        borderWidth={1}
-        boxShadow="lg"
-        rounded="lg"
-        bg="white"
-        pos="relative"
-        p={12}
-        onSubmit={handleSubmit}
-      >
-        <Heading as="h2" size="2xl" mb={4}>
-          Change Your Password
-        </Heading>
-        <Divider borderColor="gray.300" mt={12} mb={10} />
-        {error ? (
-          <Alert status="error" mb={12} rounded="lg">
+    <React.Fragment>
+      <Head>
+        <title>Password Reset | CGN</title>
+      </Head>
+      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+        {hasErrors ? (
+          <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              There are errors in the form below. Please review and correct
+              before submitting again.
+            </AlertDescription>
           </Alert>
         ) : null}
-        <Stack spacing={6}>
-          <FormControl isRequired isInvalid={errors.password}>
-            <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
-              New Password
-            </FormLabel>
-            <Input
-              id="password"
-              name="password"
-              type={isShowingPassword ? "text" : "password"}
-              placeholder="******************"
-              onChange={handleFieldChange}
-              value={fields.password}
-              size="lg"
-            />
-            <Button
-              onClick={togglePasswordVisibility}
-              fontSize="sm"
-              fontStyle="italic"
-              variant="link"
-              fontWeight="normal"
-            >
-              {isShowingPassword ? "Hide" : "Show"} password
-            </Button>
-            <FormErrorMessage>{errors.password}</FormErrorMessage>
-          </FormControl>
-        </Stack>
-        <Button
-          colorScheme="brand"
-          type="submit"
-          size="lg"
-          w="full"
-          isDisabled={isChangingPassword}
-          isLoading={isChangingPassword}
-          loadingText="Changing..."
-          my={12}
+        <Box
+          as="form"
+          borderWidth={1}
+          boxShadow="lg"
+          rounded="lg"
+          bg="white"
+          pos="relative"
+          p={12}
+          onSubmit={handleSubmit}
         >
-          Change Password
-        </Button>
+          <Heading as="h2" size="2xl" mb={4}>
+            Change Your Password
+          </Heading>
+          <Divider borderColor="gray.300" mt={12} mb={10} />
+          {error ? (
+            <Alert status="error" mb={12} rounded="lg">
+              <AlertIcon />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          ) : null}
+          <Stack spacing={6}>
+            <FormControl isRequired isInvalid={errors.password}>
+              <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
+                New Password
+              </FormLabel>
+              <Input
+                id="password"
+                name="password"
+                type={isShowingPassword ? "text" : "password"}
+                placeholder="******************"
+                onChange={handleFieldChange}
+                value={fields.password}
+                size="lg"
+              />
+              <Button
+                onClick={togglePasswordVisibility}
+                fontSize="sm"
+                fontStyle="italic"
+                variant="link"
+                fontWeight="normal"
+              >
+                {isShowingPassword ? "Hide" : "Show"} password
+              </Button>
+              <FormErrorMessage>{errors.password}</FormErrorMessage>
+            </FormControl>
+          </Stack>
+          <Button
+            colorScheme="brand"
+            type="submit"
+            size="lg"
+            w="full"
+            isDisabled={isChangingPassword}
+            isLoading={isChangingPassword}
+            loadingText="Changing..."
+            my={12}
+          >
+            Change Password
+          </Button>
+        </Box>
       </Box>
-    </Box>
+    </React.Fragment>
   );
 };
 

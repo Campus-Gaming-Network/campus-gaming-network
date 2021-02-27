@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import Head from "next/head";
 
 // Components
 import OutsideLink from "src/components/OutsideLink";
@@ -22,24 +23,29 @@ import OutsideLink from "src/components/OutsideLink";
 
 const FrequentlyAskedQuestions = () => {
   return (
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
-      <Heading as="h2" size="2xl" pb={12}>
-        Frequently Asked Questions
-      </Heading>
-      <Accordion defaultIndex={[]} allowMultiple>
-        {QUESTIONS.map((item, index) => {
-          return (
-            <AccordionItem key={index}>
-              <AccordionButton>
-                {item.question}
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel pb={4}>{item.answer}</AccordionPanel>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
-    </Box>
+    <React.Fragment>
+      <Head>
+        <title>Frequently Asked Questions | CGN</title>
+      </Head>
+      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+        <Heading as="h2" size="2xl" pb={12}>
+          Frequently Asked Questions
+        </Heading>
+        <Accordion defaultIndex={[]} allowMultiple>
+          {QUESTIONS.map((item, index) => {
+            return (
+              <AccordionItem key={index}>
+                <AccordionButton>
+                  {item.question}
+                  <AccordionIcon />
+                </AccordionButton>
+                <AccordionPanel pb={4}>{item.answer}</AccordionPanel>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
+      </Box>
+    </React.Fragment>
   );
 };
 

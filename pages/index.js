@@ -6,6 +6,7 @@ import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
+import Head from "next/head";
 
 // Components
 import Link from "src/components/Link";
@@ -26,28 +27,28 @@ import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
 const now = new Date();
 
-export const getServerSideProps = async (context) => {
-if (!firebaseAdmin.apps.length) {
-  firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert({
-      privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-    }),
-    databaseURL: `https://${process.env.FIREBASE_ADMIN_PROJECT_ID}.firebaseio.com`,
-  });
-}
+export const getServerSideProps = async context => {
+  if (!firebaseAdmin.apps.length) {
+    firebaseAdmin.initializeApp({
+      credential: firebaseAdmin.credential.cert({
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID
+      }),
+      databaseURL: `https://${process.env.FIREBASE_ADMIN_PROJECT_ID}.firebaseio.com`
+    });
+  }
 
   try {
     const cookies = nookies.get(context);
     const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
 
     return {
-      props: { uid: token.uid, email: token.email },
+      props: { uid: token.uid, email: token.email }
     };
   } catch (err) {
     return {
-      props: {},
+      props: {}
     };
   }
 };
@@ -55,19 +56,23 @@ if (!firebaseAdmin.apps.length) {
 ////////////////////////////////////////////////////////////////////////////////
 // Home
 
-const Home = (props) => {
+const Home = props => {
   return (
-    <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
-      <Box>
-        <Heading size="2xl" mb={8}>
-          Campus Gaming Network
-        </Heading>
-        <Text fontSize="3xl" color="gray.60">
-          Connect with other collegiate gamers for casual or competitive gaming
-          at your school or nearby.
-        </Text>
-        <Stack pt={8} spacing={8}>
-          {/* <UserCreatedEvents isAuthenticated={isAuthenticated} user={user} />
+    <React.Fragment>
+      <Head>
+        <title>Campus Gaming Network | CGN</title>
+      </Head>
+      <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
+        <Box>
+          <Heading size="2xl" mb={8}>
+            Campus Gaming Network
+          </Heading>
+          <Text fontSize="3xl" color="gray.60">
+            Connect with other collegiate gamers for casual or competitive
+            gaming at your school or nearby.
+          </Text>
+          <Stack pt={8} spacing={8}>
+            {/* <UserCreatedEvents isAuthenticated={isAuthenticated} user={user} />
           <AttendingEvents
             isAuthenticated={isAuthenticated}
             authenticatedUser={authenticatedUser}
@@ -77,18 +82,23 @@ const Home = (props) => {
             school={school}
           />
           <RecentlyCreatedEvents /> */}
-        </Stack>
+          </Stack>
+        </Box>
       </Box>
-    </Box>
+    </React.Fragment>
   );
 };
 
 const UserCreatedEvents = props => {
   const userDocRef = props.user
-    ? firebase.firestore().collection(COLLECTIONS.USERS).doc(props.user.id)
+    ? firebase
+        .firestore()
+        .collection(COLLECTIONS.USERS)
+        .doc(props.user.id)
     : null;
   const [userCreatedEvents, isLoading] = useCollectionDataOnce(
-    firebase.firestore()
+    firebase
+      .firestore()
       .collection(COLLECTIONS.EVENTS)
       .where("creator", "==", userDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
@@ -159,10 +169,14 @@ const AttendingEvents = props => {
 
 const UpcomingSchoolEvents = props => {
   const schoolDocRef = props.school
-    ? firebase.firestore().collection(COLLECTIONS.SCHOOLS).doc(props.school.id)
+    ? firebase
+        .firestore()
+        .collection(COLLECTIONS.SCHOOLS)
+        .doc(props.school.id)
     : null;
   const [schoolEvents, isLoading] = useCollectionDataOnce(
-    firebase.firestore()
+    firebase
+      .firestore()
       .collection(COLLECTIONS.EVENTS)
       .where("school.ref", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
@@ -217,7 +231,8 @@ const UpcomingSchoolEvents = props => {
 
 const RecentlyCreatedEvents = () => {
   const [recentlyCreatedEvents, isLoading] = useCollectionDataOnce(
-    firebase.firestore()
+    firebase
+      .firestore()
       .collection(COLLECTIONS.EVENTS)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .orderBy("endDateTime")
