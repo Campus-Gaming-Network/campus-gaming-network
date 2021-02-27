@@ -27,7 +27,7 @@ export const getServerSideProps = async context => {
       ? AUTH_STATUS.AUTHENTICATED
       : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return {
         redirect: {
           permanent: false,
