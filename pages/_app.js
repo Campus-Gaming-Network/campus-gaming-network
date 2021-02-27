@@ -11,22 +11,27 @@ import { AuthProvider } from 'src/providers/auth';
 import { CUSTOM_CHAKRA_THEME } from "src/constants/styles";
 import { SENTRY_CONFIG } from "src/constants/sentry";
 
+import AuthenticatedNav from "src/components/AuthenticatedNav";
 import UnauthenticatedNav from "src/components/UnauthenticatedNav";
+import Footer from "src/components/Footer";
 
 const CUSTOM_THEME = extendTheme(CUSTOM_CHAKRA_THEME);
 
 Sentry.init(SENTRY_CONFIG);
 
 const App = ({ Component, pageProps }) => {
+  const authStatus = Boolean(pageProps.uid) ? "authenticated" : "unauthenticated";
+
   return (
     <AuthProvider>
     <AppProvider>
     <ChakraProvider theme={CUSTOM_THEME}>
       <SkipNavLink />
-      <UnauthenticatedNav />
+      {authStatus === "authenticated" ? <AuthenticatedNav /> : <UnauthenticatedNav />}
       <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%">
         <Component {...pageProps} />
       </Box>
+      <Footer />
     </ChakraProvider>
   </AppProvider>
   </AuthProvider>

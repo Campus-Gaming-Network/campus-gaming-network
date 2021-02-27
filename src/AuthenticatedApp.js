@@ -7,7 +7,7 @@ import { Box } from "@chakra-ui/react";
 import { Settings as LuxonSettings } from "luxon";
 
 // Other
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Hooks
@@ -42,7 +42,7 @@ import VerifyEmailReminderBanner from "src/components/VerifyEmailReminderBanner"
 const AuthenticatedApp = () => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [user, isFetchingUser] = useFetchUserDetails(
     authenticatedUser ? authenticatedUser.uid : null
   );

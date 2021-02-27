@@ -35,7 +35,7 @@ import Link from "src/components/Link";
 import SchoolSearch from "src/components/SchoolSearch";
 
 // Other
-import { firestore, auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 const initialFormState = {
   firstName: "",
@@ -58,7 +58,7 @@ const formReducer = (state, { field, value }) => {
 
 const Signup = () => {
   const toast = useToast();
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -93,10 +93,10 @@ const Signup = () => {
       return;
     }
 
-    auth
+    firebase.auth()
       .createUserWithEmailAndPassword(formState.email, formState.password)
       .then(({ user }) => {
-        fireStore
+        firebase.firestore()
           .collection(COLLECTIONS.USERS)
           .doc(user.uid)
           .set({
@@ -107,13 +107,13 @@ const Signup = () => {
             status: formState.status,
             gravatar: createGravatarHash(formState.email),
             school: {
-              ref: fireStore
+              ref: firebase.firestore()
                 .collection(COLLECTIONS.SCHOOLS)
                 .doc(formState.school),
               id: formState.school
             }
           });
-        auth.currentUser.sendEmailVerification().then(
+        firebase.auth().currentUser.sendEmailVerification().then(
           () => {
             toast({
               title: "Verification email sent.",

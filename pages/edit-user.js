@@ -48,7 +48,7 @@ import { COLLECTIONS } from "src/constants/firebase";
 import { ACCOUNTS } from "src/constants/other";
 
 // Other
-import { firebase, firestore, auth } from "src/firebase";
+import { firebase } from "src/firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Components
@@ -105,7 +105,7 @@ const formReducer = (state, { field, value }) => {
 const EditUser = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
-  const [authenticatedUser] = useAuthState(auth);
+  const [authenticatedUser] = useAuthState(firebase.auth());
   const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
@@ -230,7 +230,7 @@ const EditUser = props => {
       return;
     }
 
-    const schoolDocRef = firestore
+    const schoolDocRef = firebase.firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(formState.school);
 
@@ -274,7 +274,7 @@ const EditUser = props => {
       favoriteGames
     };
 
-    firestore
+    firebase.firestore()
       .collection(COLLECTIONS.USERS)
       .doc(user.id)
       .update(data)

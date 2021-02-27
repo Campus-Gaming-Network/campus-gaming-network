@@ -1,8 +1,9 @@
+////////////////////////////////////////////////////////////////////////////////
+// Source: https://colinhacks.com/essays/nextjs-firebase-authentication
+
 import React from "react";
 import nookies from "nookies";
 import { firebase } from "src/firebase";
-
-// Source: https://colinhacks.com/essays/nextjs-firebase-authentication
 
 const AuthContext = React.createContext({ user: null });
 

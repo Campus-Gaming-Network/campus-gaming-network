@@ -22,13 +22,13 @@ import { useFormFields } from "src/utilities/other";
 import { validatePasswordReset } from "src/utilities/validation";
 
 // Other
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset
 
 const PasswordReset = props => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     password: ""
   });
@@ -67,13 +67,13 @@ const PasswordReset = props => {
       return;
     }
 
-    auth
+    firebase.auth()
       .verifyPasswordResetCode(props.oobCode)
       .then(email => {
-        auth
+        firebase.auth()
           .confirmPasswordReset(props.oobCode, fields.password)
           .then(() => {
-            auth
+            firebase.auth()
               .signInWithEmailAndPassword(email, fields.password)
               .then(() => {
                 navigate("/");

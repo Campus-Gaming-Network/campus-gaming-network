@@ -1,5 +1,4 @@
 import React from "react";
-import { navigate } from "@reach/router";
 import {
   Button,
   Text,
@@ -17,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 // Other
-import { firebaseFirestore, auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
@@ -45,7 +44,8 @@ const DeleteAccountDialog = props => {
     setIsSubmitting(true);
 
     try {
-      await firebaseFirestore
+      await firebase
+        .firestore()
         .collection(COLLECTIONS.USERS)
         .doc(props.user.id)
         .delete();
@@ -59,7 +59,10 @@ const DeleteAccountDialog = props => {
         isClosable: true
       });
       setTimeout(() => {
-        auth.signOut().then(() => navigate("/"));
+        firebaes
+          .auth()
+          .signOut()
+          .then(() => navigate("/"));
       }, 2000);
     } catch (error) {
       console.error(error);

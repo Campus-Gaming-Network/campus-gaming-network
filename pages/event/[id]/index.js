@@ -37,7 +37,7 @@ import {
 } from "src/constants/other";
 
 // Other
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Components
@@ -58,7 +58,7 @@ import RSVPDialog from "src/components/dialogs/RSVPDialog";
 const Event = props => {
   const dispatch = useAppDispatch();
   const state = useAppState();
-  const [authenticatedUser] = useAuthState(auth);
+  const [authenticatedUser] = useAuthState(firebase.auth());
   const [event, isLoadingEvent] = useFetchEventDetails(props.id);
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);

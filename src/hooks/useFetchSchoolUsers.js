@@ -1,7 +1,7 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 import { mapUser } from "src/utilities/user";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
@@ -38,9 +38,13 @@ const useFetchSchoolUsers = (
       } else {
         console.log(`[API] fetchSchoolUsers...${id}`);
 
-        const schoolDocRef = firestore.collection(COLLECTIONS.SCHOOLS).doc(id);
+        const schoolDocRef = firebase
+          .firestore()
+          .collection(COLLECTIONS.SCHOOLS)
+          .doc(id);
 
-        let query = firestore
+        let query = firebase
+          .firestore()
           .collection(COLLECTIONS.USERS)
           .where("school.ref", "==", schoolDocRef);
 

@@ -28,7 +28,7 @@ import { COLLECTIONS } from "src/constants/firebase";
 import { ACCOUNTS } from "src/constants/other";
 
 // Other
-import { firebase, firestore, storage } from "src/firebase";
+import { firebase } from "src/firebase";
 
 const initialFormState = {
   ...BASE_SCHOOL,
@@ -81,7 +81,7 @@ const EditSchool = props => {
     };
 
     if (state.file) {
-      const storageRef = storage.ref();
+      const storageRef = firebase.storage().ref();
       const uploadTask = storageRef
         .child(`schools/${props.school.id}/images/logo.jpg`)
         .put(state.file);
@@ -129,7 +129,7 @@ const EditSchool = props => {
       );
     }
 
-    firestore
+    firebase.firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.school.id)
       .update(data)

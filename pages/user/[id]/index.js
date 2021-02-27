@@ -35,7 +35,7 @@ import {
 } from "src/constants/other";
 
 // Utilities
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Components
@@ -68,7 +68,7 @@ export const getServerSideProps = async ({ params }) => {
 const User = ({ user }) => {
   // const dispatch = useAppDispatch();
   // const state = useAppState();
-  // const [authenticatedUser] = useAuthState(auth);
+  // const [authenticatedUser] = useAuthState(firebase.auth());
   // const [user, isLoadingUser] = useFetchUserDetails(props.id);
   // const [school, isLoadingSchool] = useFetchSchoolDetails(
   //   user ? user.school.id : null

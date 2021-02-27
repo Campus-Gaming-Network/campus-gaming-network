@@ -2,7 +2,7 @@ import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 // Components
 import AuthenticatedApp from "src/components/AuthenticatedApp";
@@ -12,7 +12,7 @@ import UnauthenticatedApp from "src/components/UnauthenticatedApp";
 // App
 
 const App = () => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [app, setApp] = React.useState(<UnauthenticatedApp />);
   const isAuthenticated = React.useMemo(
     () => !isAuthenticating && !!authenticatedUser,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link as ReachLink, navigate } from "@reach/router";
+import { useRouter } from "next/router";
 import {
   Button,
   Flex,
@@ -22,30 +22,38 @@ import {
   faTimes,
   faSchool
 } from "@fortawesome/free-solid-svg-icons";
-import { auth } from "src/firebase";
 import { useAppState } from "src/store";
 import Nav from "src/components/Nav";
 import SchoolSearch from "src/components/SchoolSearch";
 import SchoolLogo from "src/components/SchoolLogo";
 import Logo from "src/components/Logo";
+import Link from "src/components/Link";
 
 const AuthenticatedNav = () => {
+  const router = useRouter();
   const state = useAppState();
-  const [authenticatedUser] = useAuthState(auth);
-  const user = React.useMemo(
-    () =>
-      authenticatedUser && state.users[authenticatedUser.uid]
-        ? state.users[authenticatedUser.uid]
-        : {},
-    [authenticatedUser, state.users]
-  );
-  const school = React.useMemo(
-    () =>
-      user && user.school && user.school.id
-        ? state.schools[user.school.id]
-        : {},
-    [user, state.schools]
-  );
+  // const user = React.useMemo(
+  //   () =>
+  //     authenticatedUser && state.users[authenticatedUser.uid]
+  //       ? state.users[authenticatedUser.uid]
+  //       : {},
+  //   [authenticatedUser, state.users]
+  // );
+  // const school = React.useMemo(
+  //   () =>
+  //     user && user.school && user.school.id
+  //       ? state.schools[user.school.id]
+  //       : {},
+  //   [user, state.schools]
+  // );
+  const user = {
+    school: {
+      name: "a"
+    }
+  };
+  const school = {
+    name: "a"
+  };
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {
@@ -53,14 +61,14 @@ const AuthenticatedNav = () => {
   };
 
   const handleLogout = () => {
-    auth.signOut().then(() => navigate("/"));
+    auth.signOut().then(() => router.push("/"));
   };
 
   const onSchoolSelect = selectedSchool => {
     const id = selectedSchool.id || selectedSchool.objectID;
 
     if (selectedSchool && id) {
-      navigate(`/school/${id}`);
+      router.push(`/school/${id}`);
     }
   };
 
@@ -85,7 +93,7 @@ const AuthenticatedNav = () => {
         justifyContent="flex-end"
       >
         <Button
-          as={ReachLink}
+          as={Link}
           href="/create-event"
           colorScheme="brand"
           size="sm"
@@ -128,7 +136,7 @@ const AuthenticatedNav = () => {
           </MenuButton>
 
           <MenuList>
-            <MenuItem as={ReachLink} href={`user/${user.id}`}>
+            <MenuItem as={Link} href={`user/${user.id}`}>
               <Flex alignItems="center">
                 {user.gravatar ? (
                   <Avatar
@@ -145,7 +153,7 @@ const AuthenticatedNav = () => {
                 <Text lineHeight="1">Profile</Text>
               </Flex>
             </MenuItem>
-            <MenuItem as={ReachLink} href={`school/${user.school.id}`}>
+            <MenuItem as={Link} href={`school/${user.school.id}`}>
               <SchoolLogo
                 schoolId={school.id}
                 schoolName={school.name}

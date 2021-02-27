@@ -1,10 +1,11 @@
-import { firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 
 export const getSchools = async (limit = 25) => {
   let schools = [];
 
   try {
-    const schoolsSnapshot = await firestore
+    const schoolsSnapshot = await firebase
+      .firestore()
       .collection("schools")
       .limit(limit)
       .get();

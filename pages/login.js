@@ -35,7 +35,7 @@ import Link from "src/components/Link";
 
 const Login = () => {
   const router = useRouter()
-  // const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  // const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     email: "",
     password: ""

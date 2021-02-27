@@ -1,5 +1,5 @@
 import React from "react";
-import { firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
@@ -15,10 +15,17 @@ const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
 
       console.log("[API] fetchUserEventResponse...");
 
-      const eventDocRef = firestore.collection(COLLECTIONS.EVENTS).doc(eventId);
-      const userDocRef = firestore.collection(COLLECTIONS.USERS).doc(userId);
+      const eventDocRef = firebase
+        .firestore()
+        .collection(COLLECTIONS.EVENTS)
+        .doc(eventId);
+      const userDocRef = firebase
+        .firestore()
+        .collection(COLLECTIONS.USERS)
+        .doc(userId);
 
-      firestore
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENT_RESPONSES)
         .where("event.ref", "==", eventDocRef)
         .where("user.ref", "==", userDocRef)

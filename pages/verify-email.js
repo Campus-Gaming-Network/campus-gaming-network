@@ -10,24 +10,24 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // VerifyEmail
 
 const VerifyEmail = props => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [verifyState, setVerifyState] = React.useState("");
   const [verificationError, setError] = React.useState("");
 
   const handleVerifyEmail = React.useCallback(() => {
-    auth
+    firebase.auth()
       .applyActionCode(props.oobCode)
       .then(() => {
-        auth.currentUser
+        firebase.auth().currentUser
           .reload()
           .then(() => {
-            if (auth.currentUser.emailVerified) {
+            if (firebase.auth().currentUser.emailVerified) {
               setVerifyState("success");
             } else {
               setVerifyState("error");

@@ -5,7 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { Box } from "@chakra-ui/react";
 
 // Other
-import { auth } from "src/firebase";
+import { firebae } from "src/firebase";
 
 // Pages
 import Home from "pages";
@@ -32,7 +32,7 @@ import Empty from "src/components/Empty";
 import Footer from "src/components/Footer";
 
 const UnauthenticatedApp = () => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const isReady = React.useMemo(() => !isAuthenticating && !authenticatedUser, [
     isAuthenticating,
     authenticatedUser

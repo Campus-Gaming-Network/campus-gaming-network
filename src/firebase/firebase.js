@@ -19,7 +19,3 @@ if (typeof window !== "undefined" && !firebase.apps.length) {
 }
 
 export default firebase;
-// export const firestore = firebase.firestore();
-// export const auth = firebase.auth();
-// export const storage = firebase.storage();
-// export const functions = firebase.functions();

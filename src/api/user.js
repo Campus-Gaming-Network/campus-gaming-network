@@ -1,4 +1,4 @@
-import { firebase, firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 import { mapUser } from "src/utilities/user";
 import { mapEventResponse } from "src/utilities/event-response";
 
@@ -6,7 +6,8 @@ export const getUserDetails = async id => {
   let user = null;
 
   try {
-    const userDoc = await firestore
+    const userDoc = await firebase
+      .firestore()
       .collection("users")
       .doc(id)
       .get();
@@ -31,9 +32,13 @@ export const getUserEvents = async (
 
   try {
     const now = new Date();
-    const userDocRef = firestore.collection("users").doc(id);
+    const userDocRef = firebase
+      .firestore()
+      .collection("users")
+      .doc(id);
 
-    let query = firestore
+    let query = firebase
+      .firestore()
       .collection("event-responses")
       .where("user.ref", "==", userDocRef)
       .where("response", "==", "YES")
@@ -68,10 +73,17 @@ export const getUserEventResponse = async (eventId, userId) => {
   let eventResponse = null;
 
   try {
-    const eventDocRef = firestore.collection("events").doc(eventId);
-    const userDocRef = firestore.collection("users").doc(userId);
+    const eventDocRef = firebase
+      .firestore()
+      .collection("events")
+      .doc(eventId);
+    const userDocRef = firebase
+      .firestore()
+      .collection("users")
+      .doc(userId);
 
-    const eventResponseSnapshot = await firestore
+    const eventResponseSnapshot = await firebase
+      .firestore()
       .collection("event-responses")
       .where("event.ref", "==", eventDocRef)
       .where("user.ref", "==", userDocRef)

@@ -9,35 +9,38 @@ import {
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 const VerifyEmailReminderBanner = () => {
   const toast = useToast();
-  const [authenticatedUser] = useAuthState(auth);
+  const [authenticatedUser] = useAuthState(firebase.auth());
 
   const sendEmailVerification = () => {
-    auth.currentUser.sendEmailVerification().then(
-      () => {
-        toast({
-          title: "Verification email sent.",
-          description: `A verification email has been sent to ${authenticatedUser.email}. Please check your inbox and follow the instructions in the email.`,
-          status: "success",
-          isClosable: true
-        });
-      },
-      error => {
-        console.error(error);
-        toast({
-          title: "Error sending verification email.",
-          description: `There was an error sending the verification email to ${authenticatedUser.email}. Please contact support.`,
-          status: "error",
-          isClosable: true
-        });
-      }
-    );
+    firebase
+      .auth()
+      .currentUser.sendEmailVerification()
+      .then(
+        () => {
+          toast({
+            title: "Verification email sent.",
+            description: `A verification email has been sent to ${authenticatedUser.email}. Please check your inbox and follow the instructions in the email.`,
+            status: "success",
+            isClosable: true
+          });
+        },
+        error => {
+          console.error(error);
+          toast({
+            title: "Error sending verification email.",
+            description: `There was an error sending the verification email to ${authenticatedUser.email}. Please contact support.`,
+            status: "error",
+            isClosable: true
+          });
+        }
+      );
   };
 
-  if (auth.currentUser.emailVerified) {
+  if (firebase.auth().currentUser.emailVerified) {
     return null;
   }
 

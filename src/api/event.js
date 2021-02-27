@@ -1,4 +1,4 @@
-import { firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
 
@@ -6,7 +6,8 @@ export const getEventDetails = async id => {
   let event = null;
 
   try {
-    const eventDoc = await firestore
+    const eventDoc = await firebase
+      .firestore()
       .collection("events")
       .doc(id)
       .get();
@@ -29,9 +30,13 @@ export const getEventUsers = async (
   let users = [];
 
   try {
-    const eventDocRef = firestore.collection("events").doc(id);
+    const eventDocRef = firebase
+      .firestore()
+      .collection("events")
+      .doc(id);
 
-    let query = firestore
+    let query = firebase
+      .firestore()
       .collection("event-responses")
       .where("event.ref", "==", eventDocRef)
       .where("response", "==", "YES");

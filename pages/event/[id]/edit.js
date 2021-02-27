@@ -32,7 +32,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
-import { firebase, firestore, auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 // Components
 import GameSearch from "src/components/GameSearch";
@@ -86,7 +86,7 @@ const CreateEvent = props => {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
-  const [authenticatedUser] = useAuthState(auth);
+  const [authenticatedUser] = useAuthState(firebase.auth());
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -197,10 +197,10 @@ const CreateEvent = props => {
       );
     }
 
-    const schoolDocRef = firestore
+    const schoolDocRef = firebase.firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(user.school.id);
-    const userDocRef = firestore
+    const userDocRef = firebase.firestore()
       .collection(COLLECTIONS.USERS)
       .doc(user.id);
 
@@ -228,7 +228,7 @@ const CreateEvent = props => {
     }
 
     if (props.edit) {
-      firestore
+      firebase.firestore()
         .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
         .update(eventData)
@@ -333,7 +333,7 @@ const CreateEvent = props => {
     } else {
       let eventId;
 
-      firestore
+      firebase.firestore()
         .collection(COLLECTIONS.EVENTS)
         .add({
           ...eventData,
@@ -345,7 +345,7 @@ const CreateEvent = props => {
         .then(eventDocRef => {
           eventId = eventDocRef.id;
 
-          firestore
+          firebase.firestore()
             .collection(COLLECTIONS.EVENTS)
             .doc(eventId)
             .update({ id: eventId })
@@ -379,7 +379,7 @@ const CreateEvent = props => {
             }
           };
 
-          firestore
+          firebase.firestore()
             .collection(COLLECTIONS.EVENT_RESPONSES)
             .add(eventResponseData)
             .then(() => {

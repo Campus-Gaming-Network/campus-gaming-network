@@ -13,7 +13,7 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
-import { firestore, auth } from "src/firebase";
+import { firebase } from "src/firebase";
 import { useAppState } from "src/store";
 
 // Constants
@@ -25,7 +25,7 @@ const RSVPDialog = props => {
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
   const state = useAppState();
-  const [authenticatedUser] = useAuthState(auth);
+  const [authenticatedUser] = useAuthState(firebase.auth());
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const hasResponded = React.useMemo(() => !!props.eventResponse, [
     props.eventResponse
@@ -37,7 +37,8 @@ const RSVPDialog = props => {
     const data = getResponseFormData(response);
 
     if (!hasResponded) {
-      firestore
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENT_RESPONSES)
         .add(data)
         .then(() => {
@@ -62,7 +63,8 @@ const RSVPDialog = props => {
           });
         });
     } else {
-      firestore
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENT_RESPONSES)
         .doc(props.eventResponse.id)
         .update({ response })
@@ -91,13 +93,16 @@ const RSVPDialog = props => {
   };
 
   const getResponseFormData = response => {
-    const userDocRef = firestore
+    const userDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.USERS)
       .doc(authenticatedUser.uid);
-    const eventDocRef = firestore
+    const eventDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.EVENTS)
       .doc(props.event.id);
-    const schoolDocRef = firestore
+    const schoolDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.event.school.id);
     const user = state.users[authenticatedUser.uid];

@@ -1,7 +1,7 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase, firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 import { mapEvent } from "src/utilities/event";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/other";
@@ -38,10 +38,14 @@ const useFetchSchoolEvents = (
       } else {
         console.log(`[API] fetchSchoolEvents...${id}`);
 
-        const schoolDocRef = firestore.collection(COLLECTIONS.SCHOOLS).doc(id);
+        const schoolDocRef = firebase
+          .firestore()
+          .collection(COLLECTIONS.SCHOOLS)
+          .doc(id);
         const now = new Date();
 
-        let query = firestore
+        let query = firebase
+          .firestore()
           .collection(COLLECTIONS.EVENTS)
           .where("school.ref", "==", schoolDocRef)
           .where(

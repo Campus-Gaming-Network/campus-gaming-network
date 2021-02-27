@@ -1,4 +1,4 @@
-import { firebase, firestore } from "src/firebase";
+import { firebase } from "src/firebase";
 import { mapSchool } from "src/utilities/school";
 import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
@@ -7,7 +7,8 @@ export const getSchoolDetails = async id => {
   let school = null;
 
   try {
-    const schoolDoc = await firestore
+    const schoolDoc = await firebase
+      .firestore()
       .collection("schools")
       .doc(id)
       .get();
@@ -27,9 +28,13 @@ export const getSchoolEvents = async (id, limit = 25, page = 0) => {
   let events = [];
 
   try {
-    const schoolDocRef = firestore.collection("schools").doc(id);
+    const schoolDocRef = firebase
+      .firestore()
+      .collection("schools")
+      .doc(id);
 
-    let query = firestore
+    let query = firebase
+      .firestore()
       .collection("events")
       .where("school.ref", "==", schoolDocRef)
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now));
@@ -62,9 +67,13 @@ export const getSchoolUsers = async (id, limit = 25, page = 0) => {
   let users = [];
 
   try {
-    const schoolDocRef = firestore.collection("schools").doc(id);
+    const schoolDocRef = firebase
+      .firestore()
+      .collection("schools")
+      .doc(id);
 
-    let query = firestore
+    let query = firebase
+      .firestore()
       .collection("users")
       .where("school.ref", "==", schoolDocRef);
 

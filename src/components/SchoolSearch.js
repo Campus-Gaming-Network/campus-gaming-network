@@ -151,6 +151,7 @@ const SchoolSearch = props => {
           placeholder={props.inputPlaceholder || "Search schools"}
           onChange={handleChange}
           value={searchTerm}
+          autocomplete={false}
         />
         {isFetching ? (
           <Spinner

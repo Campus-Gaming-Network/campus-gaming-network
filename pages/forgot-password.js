@@ -29,14 +29,14 @@ import { validateForgotPassword } from "src/utilities/validation";
 import Link from "src/components/Link";
 
 // Other
-import { auth } from "src/firebase";
+import { firebase } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ForgotPassword
 
 const ForgotPassword = () => {
   const router = useRouter()
-  const [authenticatedUser, isAuthenticating] = useAuthState(auth);
+  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     email: ""
   });
@@ -77,7 +77,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      await auth.sendPasswordResetEmail(fields.email);
+      await firebase.auth().sendPasswordResetEmail(fields.email);
       setEmailSent(true);
     } catch (error) {
       handleError(error);
