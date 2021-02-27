@@ -17,7 +17,6 @@ import {
   VisuallyHidden,
   Image
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import safeJsonStringify from 'safe-json-stringify';
 import { getUserDetails, getUserEvents } from 'src/api/user'
 import Head from 'next/head'

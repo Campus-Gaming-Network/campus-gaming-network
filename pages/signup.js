@@ -21,7 +21,9 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
 
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
@@ -37,6 +39,40 @@ import SchoolSearch from "src/components/SchoolSearch";
 
 // Other
 import { firebase } from "src/firebase";
+
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  try {
+    const cookies = nookies.get(context);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/"
+        }
+      };
+    }
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/"
+      }
+    };
+  }
+
+  return { props: {} };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Form Reducer
 
 const initialFormState = {
   firstName: "",
@@ -76,10 +112,6 @@ const Signup = () => {
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  // if (authenticatedUser && !isAuthenticating) {
-  //   return <Redirect href="/" noThrow />;
-  // }
-
   const handleSubmit = e => {
     e.preventDefault();
 
@@ -95,10 +127,12 @@ const Signup = () => {
       return;
     }
 
-    firebase.auth()
+    firebase
+      .auth()
       .createUserWithEmailAndPassword(formState.email, formState.password)
       .then(({ user }) => {
-        firebase.firestore()
+        firebase
+          .firestore()
           .collection(COLLECTIONS.USERS)
           .doc(user.uid)
           .set({
@@ -109,25 +143,29 @@ const Signup = () => {
             status: formState.status,
             gravatar: createGravatarHash(formState.email),
             school: {
-              ref: firebase.firestore()
+              ref: firebase
+                .firestore()
                 .collection(COLLECTIONS.SCHOOLS)
                 .doc(formState.school),
               id: formState.school
             }
           });
-        firebase.auth().currentUser.sendEmailVerification().then(
-          () => {
-            toast({
-              title: "Verification email sent.",
-              description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
-              status: "success",
-              isClosable: true
-            });
-          },
-          error => {
-            console.error(error);
-          }
-        );
+        firebase
+          .auth()
+          .currentUser.sendEmailVerification()
+          .then(
+            () => {
+              toast({
+                title: "Verification email sent.",
+                description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
+                status: "success",
+                isClosable: true
+              });
+            },
+            error => {
+              console.error(error);
+            }
+          );
         setIsSubmitting(false);
         router.push("/");
       })

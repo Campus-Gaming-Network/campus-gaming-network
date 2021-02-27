@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 import {
   Box,
   Alert,
@@ -20,6 +20,8 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -32,10 +34,41 @@ import Link from "src/components/Link";
 import { firebase } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  try {
+    const cookies = nookies.get(context);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/"
+        }
+      };
+    }
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/"
+      }
+    };
+  }
+
+  return { props: {} };
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // ForgotPassword
 
 const ForgotPassword = () => {
-  const router = useRouter()
+  const router = useRouter();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     email: ""
@@ -45,15 +78,6 @@ const ForgotPassword = () => {
   const [error, setError] = React.useState(null);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
-
-  if (isAuthenticating) {
-    return null;
-  }
-
-  if (!!authenticatedUser) {
-    router.push("/");
-    return null;
-  }
 
   const handleSubmit = async e => {
     e.preventDefault();

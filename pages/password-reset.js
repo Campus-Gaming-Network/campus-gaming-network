@@ -16,7 +16,9 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -24,6 +26,37 @@ import { validatePasswordReset } from "src/utilities/validation";
 
 // Other
 import { firebase } from "src/firebase";
+
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  try {
+    const cookies = nookies.get(context);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/"
+        }
+      };
+    }
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/"
+      }
+    };
+  }
+
+  return { props: {} };
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset
@@ -39,14 +72,6 @@ const PasswordReset = props => {
   const [error, setError] = React.useState(null);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
-
-  if (isAuthenticating) {
-    return null;
-  }
-
-  // if (!!authenticatedUser) {
-  //   return <Redirect href="/" noThrow />;
-  // }
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -69,13 +94,16 @@ const PasswordReset = props => {
       return;
     }
 
-    firebase.auth()
+    firebase
+      .auth()
       .verifyPasswordResetCode(props.oobCode)
       .then(email => {
-        firebase.auth()
+        firebase
+          .auth()
           .confirmPasswordReset(props.oobCode, fields.password)
           .then(() => {
-            firebase.auth()
+            firebase
+              .auth()
               .signInWithEmailAndPassword(email, fields.password)
               .then(() => {
                 router.push("/");

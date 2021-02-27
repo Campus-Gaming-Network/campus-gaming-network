@@ -64,7 +64,6 @@ import YearSelect from "src/components/YearSelect";
 import DeleteAccountDialog from "src/components/dialogs/DeleteAccountDialog";
 
 // Utilities
-import { mapUser } from "src/utilities/user";
 import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
 
@@ -151,7 +150,6 @@ const formReducer = (state, { field, value }) => {
 // EditUser
 
 const EditUser = props => {
-  console.log({ props });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [

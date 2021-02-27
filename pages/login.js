@@ -16,9 +16,10 @@ import {
   Flex,
   FormErrorMessage
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import isEmpty from "lodash.isempty";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -31,10 +32,41 @@ import { firebase } from "src/firebase";
 import Link from "src/components/Link";
 
 ////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  try {
+    const cookies = nookies.get(context);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/"
+        }
+      };
+    }
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/"
+      }
+    };
+  }
+
+  return { props: {} };
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // Login
 
 const Login = () => {
-  const router = useRouter()
+  const router = useRouter();
   // const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     email: "",
@@ -66,10 +98,11 @@ const Login = () => {
       return;
     }
 
-    firebase.auth()
+    firebase
+      .auth()
       .signInWithEmailAndPassword(fields.email, fields.password)
       .then(() => {
-        router.push("/")
+        router.push("/");
       })
       .catch(error => {
         console.error(error);
