@@ -65,9 +65,9 @@ export const getServerSideProps = async (context) => {
 
   const { school } = await getSchoolDetails(user.school.id);
   const data = {
-      user: {...user},
-      school: {...school},
-      events: [...events],
+      user,
+      school,
+      events,
       authStatus: AUTH_STATUS.UNAUTHENTICATED,
       isAuthenticatedUser: false,
   };
@@ -76,7 +76,7 @@ export const getServerSideProps = async (context) => {
     const cookies = nookies.get(context);
     const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
     const authStatus = Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
-    const isAuthenticatedUser = params.id === token.uid;
+    const isAuthenticatedUser = context.params.id === token.uid;
     data.authStatus = authStatus;
     data.isAuthenticatedUser = isAuthenticatedUser;
   } catch (error) {

@@ -3,7 +3,6 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import isEmpty from "lodash.isempty";
-import startCase from "lodash.startcase";
 import { DateTime } from "luxon";
 import {
   Flex,
@@ -33,8 +32,10 @@ import {
   Spacer
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
+import safeJsonStringify from "safe-json-stringify";
 
 // Constants
 import {
@@ -46,10 +47,12 @@ import {
 import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "src/constants/dateTime";
 import { COLLECTIONS } from "src/constants/firebase";
 import { ACCOUNTS } from "src/constants/other";
+import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
 import { firebase } from "src/firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
+import { getUserDetails } from "src/api/user";
+import { getSchoolDetails } from "src/api/school";
 
 // Components
 import SchoolSearch from "src/components/SchoolSearch";
@@ -64,6 +67,54 @@ import DeleteAccountDialog from "src/components/dialogs/DeleteAccountDialog";
 import { mapUser } from "src/utilities/user";
 import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
+
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  let cookies;
+  let token;
+  let authStatus;
+
+  try {
+    cookies = nookies.get(context);
+    token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    console.log({ token });
+    authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+    console.log({ authStatus });
+
+    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
+      return { notFound: true };
+    }
+  } catch (error) {
+    console.log("err", error);
+    return { notFound: true };
+  }
+
+  const { user } = await getUserDetails(token.uid);
+
+  if (!user) {
+    return { notFound: true };
+  }
+
+  const { school } = await getSchoolDetails(user.school.id);
+
+  const data = {
+    user,
+    authUser: {
+      email: token.email,
+      uid: token.uid
+    },
+    school
+  };
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Form Reducer
 
 const initialFormState = {
   firstName: "",
@@ -103,10 +154,7 @@ const formReducer = (state, { field, value }) => {
 // EditUser
 
 const EditUser = props => {
-  const state = useAppState();
-  const dispatch = useAppDispatch();
-  const [authenticatedUser] = useAuthState(firebase.auth());
-  const user = authenticatedUser ? state.users[authenticatedUser.uid] : null;
+  console.log({ props });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [
@@ -123,10 +171,6 @@ const EditUser = props => {
   }, []);
   const [favoriteGames, setFavoriteGames] = React.useState([]);
   const [currentlyPlaying, setCurrentGames] = React.useState([]);
-  const schoolName = React.useMemo(
-    () => startCase(state.schools[user.school.id].name.toLowerCase()),
-    [user.school.id, state.schools]
-  );
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
@@ -139,19 +183,46 @@ const EditUser = props => {
   };
 
   const prefillForm = () => {
-    formDispatch({ field: "firstName", value: user.firstName || "" });
-    formDispatch({ field: "lastName", value: user.lastName || "" });
-    formDispatch({ field: "school", value: user.school.id || "" });
-    formDispatch({ field: "status", value: user.status || "" });
-    formDispatch({ field: "major", value: user.major || "" });
-    formDispatch({ field: "minor", value: user.minor || "" });
-    formDispatch({ field: "bio", value: user.bio || "" });
-    formDispatch({ field: "timezone", value: user.timezone || "" });
-    formDispatch({ field: "hometown", value: user.hometown || "" });
+    formDispatch({
+      field: "firstName",
+      value: props.user.firstName || initialFormState.firstName
+    });
+    formDispatch({
+      field: "lastName",
+      value: props.user.lastName || initialFormState.lastName
+    });
+    formDispatch({
+      field: "school",
+      value: props.user.school.id || initialFormState.school
+    });
+    formDispatch({
+      field: "status",
+      value: props.user.status || initialFormState.status
+    });
+    formDispatch({
+      field: "major",
+      value: props.user.major || initialFormState.major
+    });
+    formDispatch({
+      field: "minor",
+      value: props.user.minor || initialFormState.minor
+    });
+    formDispatch({
+      field: "bio",
+      value: props.user.bio || initialFormState.bio
+    });
+    formDispatch({
+      field: "timezone",
+      value: props.user.timezone || initialFormState.timezone
+    });
+    formDispatch({
+      field: "hometown",
+      value: props.user.hometown || initialFormState.hometown
+    });
 
-    if (user.birthdate) {
+    if (props.user.birthdate) {
       const [birthMonth, birthDay, birthYear] = DateTime.fromISO(
-        user.birthdate.toDate().toISOString()
+        props.user.birthdate.toDate().toISOString()
       )
         .toFormat(DASHED_DATE)
         .split("-");
@@ -159,23 +230,53 @@ const EditUser = props => {
       formDispatch({ field: "birthDay", value: birthDay });
       formDispatch({ field: "birthYear", value: birthYear });
     } else {
-      formDispatch({ field: "birthMonth", value: "" });
-      formDispatch({ field: "birthDay", value: "" });
-      formDispatch({ field: "birthYear", value: "" });
+      formDispatch({ field: "birthMonth", value: initialFormState.birthMonth });
+      formDispatch({ field: "birthDay", value: initialFormState.birthDay });
+      formDispatch({ field: "birthYear", value: initialFormState.birthYear });
     }
 
-    formDispatch({ field: "website", value: user.website || "" });
-    formDispatch({ field: "twitter", value: user.twitter || "" });
-    formDispatch({ field: "twitch", value: user.twitch || "" });
-    formDispatch({ field: "youtube", value: user.youtube || "" });
-    formDispatch({ field: "skype", value: user.skype || "" });
-    formDispatch({ field: "discord", value: user.discord || "" });
-    formDispatch({ field: "battlenet", value: user.battlenet || "" });
-    formDispatch({ field: "steam", value: user.steam || "" });
-    formDispatch({ field: "xbox", value: user.xbox || "" });
-    formDispatch({ field: "psn", value: user.psn || "" });
-    setCurrentGames(user.currentlyPlaying || []);
-    setFavoriteGames(user.favoriteGames || []);
+    formDispatch({
+      field: "website",
+      value: props.user.website || initialFormState.website
+    });
+    formDispatch({
+      field: "twitter",
+      value: props.user.twitter || initialFormState.twitter
+    });
+    formDispatch({
+      field: "twitch",
+      value: props.user.twitch || initialFormState.twitch
+    });
+    formDispatch({
+      field: "youtube",
+      value: props.user.youtube || initialFormState.youtube
+    });
+    formDispatch({
+      field: "skype",
+      value: props.user.skype || initialFormState.skype
+    });
+    formDispatch({
+      field: "discord",
+      value: props.user.discord || initialFormState.discord
+    });
+    formDispatch({
+      field: "battlenet",
+      value: props.user.battlenet || initialFormState.battlenet
+    });
+    formDispatch({
+      field: "steam",
+      value: props.user.steam || initialFormState.steam
+    });
+    formDispatch({
+      field: "xbox",
+      value: props.user.xbox || initialFormState.xbox
+    });
+    formDispatch({
+      field: "psn",
+      value: props.user.psn || initialFormState.psn
+    });
+    setCurrentGames(props.user.currentlyPlaying || []);
+    setFavoriteGames(props.user.favoriteGames || []);
     setHasPrefilledForm(true);
   };
 
@@ -210,10 +311,6 @@ const EditUser = props => {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!authenticatedUser) {
-      return;
-    }
-
     setIsSubmitting(true);
 
     const { isValid, errors } = validateEditUser({
@@ -230,7 +327,8 @@ const EditUser = props => {
       return;
     }
 
-    const schoolDocRef = firebase.firestore()
+    const schoolDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(formState.school);
 
@@ -274,52 +372,12 @@ const EditUser = props => {
       favoriteGames
     };
 
-    firebase.firestore()
+    firebase
+      .firestore()
       .collection(COLLECTIONS.USERS)
       .doc(user.id)
       .update(data)
       .then(() => {
-        dispatch({
-          type: ACTION_TYPES.SET_USER,
-          payload: {
-            ...user,
-            ...data
-          }
-        });
-
-        const schoolToUpdate = { ...state.schools[user.school.id] };
-
-        if (schoolToUpdate.users) {
-          Object.keys(schoolToUpdate.users).forEach(page => {
-            const updatedUsers = schoolToUpdate.users[page]
-              .map(_user => ({
-                ..._user,
-                firstName:
-                  _user.id === user.id ? data.firstName : _user.firstName,
-                lastName: _user.id === user.id ? data.lastName : _user.lastName
-              }))
-              .map(mapUser);
-
-            schoolToUpdate.users[page] = updatedUsers;
-
-            dispatch({
-              type: ACTION_TYPES.SET_SCHOOL_USERS,
-              payload: {
-                id: user.school.id,
-                users: updatedUsers,
-                page
-              }
-            });
-          });
-
-          if (state.school.id === user.school.id) {
-            dispatch({
-              type: ACTION_TYPES.SET_SCHOOL,
-              payload: schoolToUpdate
-            });
-          }
-        }
-
         setIsSubmitting(false);
         toast({
           title: "Profile updated.",
@@ -338,15 +396,6 @@ const EditUser = props => {
         });
       });
   };
-
-  // if (!authenticatedUser) {
-  //   return <Redirect href="/" noThrow />;
-  // }
-
-  // if (!user) {
-  //   console.error(`No user found ${props.uri}`);
-  //   return <Redirect href="/not-found" noThrow />;
-  // }
 
   if (!hasPrefilledForm) {
     prefillForm();
@@ -396,7 +445,7 @@ const EditUser = props => {
             errors={errors}
             firstName={formState.firstName}
             lastName={formState.lastName}
-            email={authenticatedUser.email}
+            email={props.authUser.email}
             hometown={formState.hometown}
             birthYear={formState.birthYear}
             birthMonth={formState.birthMonth}
@@ -408,7 +457,7 @@ const EditUser = props => {
             handleFieldChange={handleFieldChange}
             errors={errors}
             onSchoolSelect={onSchoolSelect}
-            schoolName={schoolName}
+            schoolName={props.school.formattedName}
             status={formState.status}
             major={formState.major}
             minor={formState.minor}
@@ -457,7 +506,7 @@ const EditUser = props => {
       </Box>
 
       <DeleteAccountDialog
-        user={user}
+        user={props.user}
         isOpen={isDeletingAccountAlertOpen}
         onClose={closeDeleteAccountDialog}
       />

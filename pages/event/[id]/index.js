@@ -67,8 +67,8 @@ export const getServerSideProps = async ({ params }) => {
   }
 
   const data = {
-    event: {...event},
-    users: [...users],
+    event,
+    users,
     eventResponse: null,
     authStatus: AUTH_STATUS.UNAUTHENTICATED,
     isEventCreator: false,
@@ -90,7 +90,7 @@ export const getServerSideProps = async ({ params }) => {
 
     data.authStatus = authStatus;
     data.isEventCreator = isEventCreator;
-    data.eventResponse = {...eventResponse};
+    data.eventResponse = eventResponse;
     data.hasResponded = Boolean(eventResponse);
     data.canChangeEventResponse = canChangeEventResponse;
   } catch (error) {

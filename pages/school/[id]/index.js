@@ -64,11 +64,7 @@ export const getServerSideProps = async ({ params }) => {
     return { notFound: true };
   }
 
-  const data = {
-      school: {...school},
-      users: [...users],
-      events: [...events],
-  };
+  const data = { school, users, events };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
 }
