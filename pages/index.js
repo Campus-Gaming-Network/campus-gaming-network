@@ -1,12 +1,12 @@
 import React from "react";
 import { firebase } from "src/firebase";
 import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
 import Head from "next/head";
+import safeJsonStringify from "safe-json-stringify";
 
 // Components
 import Link from "src/components/Link";
@@ -15,12 +15,11 @@ import EventListItem from "src/components/EventListItem";
 // Utilities
 import { mapEvent } from "src/utilities/event";
 import { mapEventResponse } from "src/utilities/eventResponse";
-
-// Other
-import { useAppState } from "src/store";
+import { noop } from "src/utilities/other";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
+import { AUTH_STATUS } from "src/constants/auth";
 
 // Hooks
 import useFetchUserEvents from "src/hooks/useFetchUserEvents";
@@ -28,6 +27,7 @@ import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 const now = new Date();
 
 export const getServerSideProps = async context => {
+  // TODO: Move this and all auth related to stuff into shared component that wraps page
   if (!firebaseAdmin.apps.length) {
     firebaseAdmin.initializeApp({
       credential: firebaseAdmin.credential.cert({
@@ -39,18 +39,35 @@ export const getServerSideProps = async context => {
     });
   }
 
-  try {
-    const cookies = nookies.get(context);
-    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+  let cookies;
+  let token;
+  let authStatus;
 
-    return {
-      props: { uid: token.uid, email: token.email }
-    };
+  try {
+    cookies = nookies.get(context);
+    token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
   } catch (err) {
-    return {
-      props: {}
-    };
+    noop();
   }
+
+  const data = {};
+
+  if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    const { user } = await getUserDetails(token.uid);
+    const { school } = await getSchoolDetails(user.school.id);
+
+    data.authUser = {
+      email: token.email,
+      uid: token.uid
+    };
+    data.user = user;
+    data.school = school;
+  }
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
