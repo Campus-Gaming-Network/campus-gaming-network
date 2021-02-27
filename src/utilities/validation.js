@@ -102,7 +102,7 @@ export const validateSignUp = form => {
   }
 
   if (isNilOrEmpty(school)) {
-    // TODO: Check for actual selected school?
+    // TODO: Check for actual selected school??
     errors.school = "School is required.";
   }
 
