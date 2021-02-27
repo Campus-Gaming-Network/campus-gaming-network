@@ -52,6 +52,9 @@ import { useAppDispatch, useAppState, ACTION_TYPES } from "src/store";
 // Utilities
 import { isValidUrl } from "src/utilities/other";
 
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
 export const getServerSideProps = async ({ params }) => {
   const { school } = await getSchoolDetails(params.id);
   const { users } = await getSchoolUsers(params.id);

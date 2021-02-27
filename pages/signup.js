@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from 'next/router'
 
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
@@ -57,6 +58,7 @@ const formReducer = (state, { field, value }) => {
 // Signup
 
 const Signup = () => {
+  const router = useRouter();
   const toast = useToast();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [formState, formDispatch] = React.useReducer(
@@ -74,9 +76,9 @@ const Signup = () => {
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  if (authenticatedUser && !isAuthenticating) {
-    return <Redirect href="/" noThrow />;
-  }
+  // if (authenticatedUser && !isAuthenticating) {
+  //   return <Redirect href="/" noThrow />;
+  // }
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -127,7 +129,7 @@ const Signup = () => {
           }
         );
         setIsSubmitting(false);
-        navigate("/");
+        router.push("/");
       })
       .catch(error => {
         console.error(error);

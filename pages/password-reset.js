@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from 'next/router'
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -28,6 +29,7 @@ import { firebase } from "src/firebase";
 // PasswordReset
 
 const PasswordReset = props => {
+  const router = useRouter();
   const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     password: ""
@@ -42,9 +44,9 @@ const PasswordReset = props => {
     return null;
   }
 
-  if (!!authenticatedUser) {
-    return <Redirect href="/" noThrow />;
-  }
+  // if (!!authenticatedUser) {
+  //   return <Redirect href="/" noThrow />;
+  // }
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -76,7 +78,7 @@ const PasswordReset = props => {
             firebase.auth()
               .signInWithEmailAndPassword(email, fields.password)
               .then(() => {
-                navigate("/");
+                router.push("/");
               })
               .catch(error => {
                 handleError(error);

@@ -52,6 +52,9 @@ import GameLink from "src/components/GameLink";
 // Hooks
 import { getSchoolDetails } from "src/api/school";
 
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
 export const getServerSideProps = async (context) => {
   const { user } = await getUserDetails(context.params.id);
   const { events } = await getUserEvents(context.params.id);

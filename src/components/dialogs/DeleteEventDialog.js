@@ -1,5 +1,4 @@
 import React from "react";
-import { navigate } from "@reach/router";
 import {
   Button,
   Text,
@@ -11,14 +10,16 @@ import {
   AlertDialogContent,
   AlertDialogOverlay
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 // Other
-import { firebase } from "srcfirebase";
+import { firebase } from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 
 const DeleteEventDialog = props => {
+  const router = useRouter();
   const toast = useToast();
   const cancelRef = React.useRef();
   const deleteEventRef = React.useRef();
@@ -43,7 +44,7 @@ const DeleteEventDialog = props => {
         isClosable: true
       });
       setTimeout(() => {
-        navigate("/");
+        router.push("/");
       }, 2000);
     } catch (error) {
       console.error(error);

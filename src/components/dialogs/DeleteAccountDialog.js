@@ -14,6 +14,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 // Other
 import { firebase } from "src/firebase";
@@ -25,6 +26,7 @@ import { COLLECTIONS } from "src/constants/firebase";
 import { validateDeleteAccount } from "src/utilities/validation";
 
 const DeleteAccountDialog = props => {
+  const router = useRouter();
   const toast = useToast();
   const cancelRef = React.useRef();
   const deleteAccountRef = React.useRef();
@@ -62,7 +64,7 @@ const DeleteAccountDialog = props => {
         firebaes
           .auth()
           .signOut()
-          .then(() => navigate("/"));
+          .then(() => router.push("/"));
       }, 2000);
     } catch (error) {
       console.error(error);

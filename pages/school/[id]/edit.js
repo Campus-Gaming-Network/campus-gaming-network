@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Redirect } from "src/components/node_modules/@reach/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Input as ChakraInput,
@@ -155,14 +154,14 @@ const EditSchool = props => {
     setIsSubmitting(false);
   };
 
-  if (!props.isAuthenticated) {
-    return <Redirect href="/" noThrow />;
-  }
+  // if (!props.isAuthenticated) {
+  //   return <Redirect href="/" noThrow />;
+  // }
 
-  if (!props.user) {
-    console.error(`No user found ${props.uri}`);
-    return <Redirect href="/not-found" noThrow />;
-  }
+  // if (!props.user) {
+  //   console.error(`No user found ${props.uri}`);
+  //   return <Redirect href="/not-found" noThrow />;
+  // }
 
   if (!hasPrefilledForm) {
     prefillForm();

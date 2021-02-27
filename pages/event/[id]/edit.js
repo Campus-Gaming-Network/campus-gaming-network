@@ -29,6 +29,7 @@ import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from 'next/router'
 
 // Other
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
@@ -83,6 +84,7 @@ const formReducer = (state, { field, value }) => {
 // CreateEvent
 
 const CreateEvent = props => {
+  const router = useRouter();
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
@@ -318,7 +320,7 @@ const CreateEvent = props => {
             isClosable: true
           });
           setTimeout(() => {
-            navigate(`/event/${props.id}`);
+            router.push(`/event/${props.id}`);
           }, 2000);
         })
         .catch(error => {
@@ -391,7 +393,7 @@ const CreateEvent = props => {
                 isClosable: true
               });
               setTimeout(() => {
-                navigate(`/event/${eventId}`);
+                router.push(`/event/${eventId}`);
               }, 2000);
             })
             .catch(() => {
@@ -455,14 +457,14 @@ const CreateEvent = props => {
     setHasPrefilledForm(true);
   };
 
-  if (!authenticatedUser) {
-    return <Redirect href="/" noThrow />;
-  }
+  // if (!authenticatedUser) {
+  //   return <Redirect href="/" noThrow />;
+  // }
 
-  if (!user) {
-    console.error(`No user found ${props.uri}`);
-    return <Redirect href="/not-found" noThrow />;
-  }
+  // if (!user) {
+  //   console.error(`No user found ${props.uri}`);
+  //   return <Redirect href="/not-found" noThrow />;
+  // }
 
   if (!hasPrefilledForm && !!event) {
     prefillForm();

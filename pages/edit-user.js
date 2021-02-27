@@ -339,14 +339,14 @@ const EditUser = props => {
       });
   };
 
-  if (!authenticatedUser) {
-    return <Redirect href="/" noThrow />;
-  }
+  // if (!authenticatedUser) {
+  //   return <Redirect href="/" noThrow />;
+  // }
 
-  if (!user) {
-    console.error(`No user found ${props.uri}`);
-    return <Redirect href="/not-found" noThrow />;
-  }
+  // if (!user) {
+  //   console.error(`No user found ${props.uri}`);
+  //   return <Redirect href="/not-found" noThrow />;
+  // }
 
   if (!hasPrefilledForm) {
     prefillForm();

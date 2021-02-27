@@ -56,9 +56,9 @@ const VerifyEmail = props => {
     return null;
   }
 
-  if (!authenticatedUser) {
-    return <Redirect href="/not-found" noThrow />;
-  }
+  // if (!authenticatedUser) {
+  //   return <Redirect href="/not-found" noThrow />;
+  // }
 
   if (!verifyState) {
     return null;

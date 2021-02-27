@@ -25,6 +25,8 @@ import {
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { getEventDetails, getEventUsers } from 'src/api/event';
+import { getUserEventResponse } from "src/api/user";
 
 // Constants
 import {
@@ -35,6 +37,7 @@ import {
   DEFAULT_USERS_LIST_PAGE_SIZE,
   DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE
 } from "src/constants/other";
+import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
 import { firebase } from "src/firebase";
@@ -51,6 +54,51 @@ import useFetchEventDetails from "src/hooks/useFetchEventDetails";
 import useFetchEventUsers from "src/hooks/useFetchEventUsers";
 import useFetchUserEventResponse from "src/hooks/useFetchUserEventResponse";
 import RSVPDialog from "src/components/dialogs/RSVPDialog";
+
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async ({ params }) => {
+  const { event } = await getEventDetails(params.id);
+  const { users } = await getEventUsers(params.id);
+
+  if (!event) {
+    return { notFound: true };
+  }
+
+  const data = {
+    event: {...event},
+    users: [...users],
+    eventResponse: null,
+    authStatus: AUTH_STATUS.UNAUTHENTICATED,
+    isEventCreator: false,
+    hasResponded: false,
+    canChangeEventResponse: false,
+  };
+
+  try {
+    const cookies = nookies.get(context);
+    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    const authStatus = Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
+    const isEventCreator = event.creator.id === token.uid;
+    const { eventResponse } = await getUserEventResponse(params.id, token.uid);
+    const canChangeEventResponse = (
+      authStatus === AUTH_STATUS.AUTHENTICATED &&
+      !isEventCreator &&
+      !event.hasEnded
+    );
+
+    data.authStatus = authStatus;
+    data.isEventCreator = isEventCreator;
+    data.eventResponse = {...eventResponse};
+    data.hasResponded = Boolean(eventResponse);
+    data.canChangeEventResponse = canChangeEventResponse;
+  } catch (error) {
+    noop();
+  }
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Event
@@ -103,10 +151,10 @@ const Event = props => {
     return <EventSilhouette />;
   }
 
-  if (!event || isEmpty(event)) {
-    console.error(`No event found ${props.uri}`);
-    return <Redirect href="/not-found" noThrow />;
-  }
+  // if (!event || isEmpty(event)) {
+  //   console.error(`No event found ${props.uri}`);
+  //   return <Redirect href="/not-found" noThrow />;
+  // }
 
   return (
     <React.Fragment>
