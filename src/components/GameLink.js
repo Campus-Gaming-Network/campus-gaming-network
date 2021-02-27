@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { Text } from "@chakra-ui/react";
 
+// Constants
+import { IGDB_GAME_URL } from "src/constants/igdb";
+
 // Components
 import OutsideLink from "src/components/OutsideLink";
-
-// TODO: Move to its own constants file
-const IGDB_GAME_URL = "https://www.igdb.com/games";
 
 const GameLink = React.memo(props => {
   if (!props.slug || !props.name) {
