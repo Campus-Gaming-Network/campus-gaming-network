@@ -29,7 +29,7 @@ import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 
 // Other
 import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
@@ -84,7 +84,7 @@ const formReducer = (state, { field, value }) => {
 // CreateEvent
 
 const CreateEvent = props => {
-  const router = userRouter();
+  const router = useRouter();
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
@@ -199,10 +199,12 @@ const CreateEvent = props => {
       );
     }
 
-    const schoolDocRef = firebase.firestore()
+    const schoolDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(user.school.id);
-    const userDocRef = firebase.firestore()
+    const userDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.USERS)
       .doc(user.id);
 
@@ -230,7 +232,8 @@ const CreateEvent = props => {
     }
 
     if (props.edit) {
-      firebase.firestore()
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
         .update(eventData)
@@ -335,7 +338,8 @@ const CreateEvent = props => {
     } else {
       let eventId;
 
-      firebase.firestore()
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENTS)
         .add({
           ...eventData,
@@ -347,7 +351,8 @@ const CreateEvent = props => {
         .then(eventDocRef => {
           eventId = eventDocRef.id;
 
-          firebase.firestore()
+          firebase
+            .firestore()
             .collection(COLLECTIONS.EVENTS)
             .doc(eventId)
             .update({ id: eventId })
@@ -381,7 +386,8 @@ const CreateEvent = props => {
             }
           };
 
-          firebase.firestore()
+          firebase
+            .firestore()
             .collection(COLLECTIONS.EVENT_RESPONSES)
             .add(eventResponseData)
             .then(() => {

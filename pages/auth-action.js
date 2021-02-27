@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import queryString from "query-string";
+import { useRouter } from "next/router";
 
 // Components
 import Empty from "src/components/Empty";
@@ -18,10 +18,8 @@ const AuthActionComponents = {
 // AuthAction
 
 const AuthAction = props => {
-  const { mode, oobCode } = React.useMemo(
-    () => queryString.parse(props.location.search),
-    [props.location.search]
-  );
+  const router = useRouter();
+  const { mode, oobCode } = router.query;
   const AuthActionComponent = React.useMemo(
     () =>
       mode && !!AuthActionComponents[mode] ? AuthActionComponents[mode] : Empty,

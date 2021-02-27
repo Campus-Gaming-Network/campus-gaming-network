@@ -46,7 +46,6 @@
     "next": "latest",
     "nookies": "^2.5.2",
     "prettier": "^1.19.1",
-    "query-string": "^6.12.1",
     "react": "latest",
     "react-dom": "latest",
     "react-dropzone": "^11.0.1",

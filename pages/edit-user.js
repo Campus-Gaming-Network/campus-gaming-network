@@ -79,17 +79,14 @@ export const getServerSideProps = async context => {
   try {
     cookies = nookies.get(context);
     token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    console.log({ token });
     authStatus = Boolean(token.uid)
       ? AUTH_STATUS.AUTHENTICATED
       : AUTH_STATUS.UNAUTHENTICATED;
-    console.log({ authStatus });
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };
     }
   } catch (error) {
-    console.log("err", error);
     return { notFound: true };
   }
 
@@ -375,7 +372,7 @@ const EditUser = props => {
     firebase
       .firestore()
       .collection(COLLECTIONS.USERS)
-      .doc(user.id)
+      .doc(props.user.id)
       .update(data)
       .then(() => {
         setIsSubmitting(false);
