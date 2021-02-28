@@ -37,6 +37,7 @@ import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
 import Head from "next/head";
+import dynamic from "next/dynamic";
 
 // Constants
 import {
@@ -62,11 +63,15 @@ import GameCover from "src/components/GameCover";
 import MonthSelect from "src/components/MonthSelect";
 import DaySelect from "src/components/DaySelect";
 import YearSelect from "src/components/YearSelect";
-import DeleteAccountDialog from "src/components/dialogs/DeleteAccountDialog";
 
 // Utilities
 import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
+
+const DeleteAccountDialog = dynamic(
+  () => import("src/components/dialogs/DeleteAccountDialog"),
+  { ssr: false }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps

@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { useRouter } from "next/router";
 import {
   Box,
   Alert,
@@ -19,7 +18,6 @@ import {
   FormErrorMessage
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
-import { useAuthState } from "react-firebase-hooks/auth";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
 import Head from "next/head";
@@ -34,6 +32,7 @@ import Link from "src/components/Link";
 // Other
 import { firebase } from "src/firebase";
 
+// Constants
 import { AUTH_STATUS } from "src/constants/auth";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,8 +70,6 @@ export const getServerSideProps = async context => {
 // ForgotPassword
 
 const ForgotPassword = () => {
-  const router = useRouter();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     email: ""
   });
@@ -86,10 +83,6 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     setError(null);
-
-    if (!!authenticatedUser) {
-      return;
-    }
 
     setIsSendingEmail(true);
 

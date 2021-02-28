@@ -1,7 +1,6 @@
 // Libraries
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
 import times from "lodash.times";
 import {
@@ -38,7 +37,6 @@ import { AUTH_STATUS } from "src/constants/auth";
 
 // Utilities
 import { firebase } from "src/firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 import { noop } from "src/utilities/other";
 
 // Components

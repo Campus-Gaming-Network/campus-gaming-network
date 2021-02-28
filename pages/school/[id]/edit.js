@@ -2,8 +2,8 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Input as ChakraInput,
-  InputGroup as ChakraInputGroup,
+  Input,
+  InputGroup,
   InputLeftAddon,
   Stack,
   FormControl,
@@ -17,20 +17,69 @@ import {
   FormHelperText,
   Image
 } from "@chakra-ui/react";
-import startCase from "lodash.startcase";
 import { useDropzone } from "react-dropzone";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
+import safeJsonStringify from "safe-json-stringify";
+import Head from "next/head";
 
 // Constants
-import { SCHOOL_ACCOUNTS, BASE_SCHOOL } from "src/constants/school";
+import { SCHOOL_ACCOUNTS } from "src/constants/school";
 import { DROPZONE_STYLES } from "src/constants/styles";
 import { COLLECTIONS } from "src/constants/firebase";
 import { ACCOUNTS } from "src/constants/other";
+import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
 import { firebase } from "src/firebase";
 
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  let cookies;
+  let token;
+  let authStatus;
+
+  try {
+    cookies = nookies.get(context);
+    token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
+      return { notFound: true };
+    }
+  } catch (error) {
+    return { notFound: true };
+  }
+
+  const { school } = await getSchoolDetails(context.params.id);
+
+  if (!school) {
+    return { notFound: true };
+  }
+
+  const data = {
+    school,
+    authUser: {
+      email: token.email,
+      uid: token.uid
+    },
+  };
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Form Reducer
+
 const initialFormState = {
-  ...BASE_SCHOOL,
+  description: "",
+  email: "",
+  website: "",
+  phone: "",
   logo: "",
   file: null
 };
@@ -55,24 +104,19 @@ const EditSchool = props => {
   }, []);
 
   const prefillForm = () => {
-    dispatch({ field: "description", value: props.school.description || "" });
-    dispatch({ field: "website", value: props.school.website || "" });
-    dispatch({ field: "email", value: props.school.email || "" });
-    dispatch({ field: "phone", value: props.school.phone || "" });
+    dispatch({ field: "description", value: props.school.description || initialFormState.description });
+    dispatch({ field: "website", value: props.school.website || initialFormState.website });
+    dispatch({ field: "email", value: props.school.email || initialFormState.email });
+    dispatch({ field: "phone", value: props.school.phone || initialFormState.phone });
     setHasPrefilledForm(true);
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!props.isAuthenticated) {
-      return;
-    }
-
     setIsSubmitting(true);
 
     const data = {
-      ...BASE_SCHOOL,
       description: state.description,
       website: state.website,
       email: state.email,
@@ -154,22 +198,15 @@ const EditSchool = props => {
     setIsSubmitting(false);
   };
 
-  // if (!props.isAuthenticated) {
-  //   return <Redirect href="/" noThrow />;
-  // }
-
-  // if (!props.user) {
-  //   console.error(`No user found ${props.uri}`);
-  //   return <Redirect href="/not-found" noThrow />;
-  // }
-
   if (!hasPrefilledForm) {
     prefillForm();
   }
 
-  const schoolName = startCase(props.school.name.toLowerCase());
-
   return (
+    <React.Fragment>
+    <Head>
+      <title>Edit {props.school.formattedName} | CGN</title>
+    </Head>
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h2" size="2xl">
@@ -187,7 +224,7 @@ const EditSchool = props => {
         </Button>
         <DetailSection
           dispatch={dispatch}
-          schoolName={schoolName}
+          schoolName={props.school.formattedName}
           handleFieldChange={handleFieldChange}
           description={state.description}
           phone={state.phone}
@@ -196,7 +233,7 @@ const EditSchool = props => {
           logo={state.logo}
         />
         <SocialAccountsSection
-          schoolName={schoolName}
+          schoolName={props.school.formattedName}
           handleFieldChange={handleFieldChange}
           {...Object.keys(ACCOUNTS).reduce(
             (acc, cur) => ({
@@ -218,6 +255,7 @@ const EditSchool = props => {
         </Button>
       </Stack>
     </Box>
+    </React.Fragment>
   );
 };
 
@@ -328,7 +366,7 @@ const DetailSection = React.memo(props => {
           <FormLabel htmlFor="logoDescription" fontSize="lg" fontWeight="bold">
             Logo Description
           </FormLabel>
-          <ChakraInput
+          <Input
             id="logoDescription"
             name="logoDescription"
             type="text"
@@ -342,7 +380,7 @@ const DetailSection = React.memo(props => {
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
             Email
           </FormLabel>
-          <ChakraInput
+          <Input
             id="email"
             name="email"
             type="email"
@@ -356,7 +394,7 @@ const DetailSection = React.memo(props => {
           <FormLabel htmlFor="phone" fontSize="lg" fontWeight="bold">
             Phone
           </FormLabel>
-          <ChakraInput
+          <Input
             id="phone"
             name="phone"
             type="phone"
@@ -419,7 +457,7 @@ const SocialAccountsSection = React.memo(props => {
               <FormLabel htmlFor={id} fontSize="lg" fontWeight="bold">
                 {account.label}
               </FormLabel>
-              <ChakraInputGroup size="lg">
+              <InputGroup size="lg">
                 {account.icon || !!account.url ? (
                   <InputLeftAddon
                     children={
@@ -432,7 +470,7 @@ const SocialAccountsSection = React.memo(props => {
                     }
                   />
                 ) : null}
-                <ChakraInput
+                <Input
                   id={id}
                   name={id}
                   type="text"
@@ -441,7 +479,7 @@ const SocialAccountsSection = React.memo(props => {
                   value={props[id]}
                   roundedLeft="0"
                 />
-              </ChakraInputGroup>
+              </InputGroup>
             </FormControl>
           );
         })}

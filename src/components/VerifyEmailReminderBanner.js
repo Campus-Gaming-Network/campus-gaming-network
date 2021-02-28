@@ -7,13 +7,11 @@ import {
   Button,
   useToast
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 import { firebase } from "src/firebase";
 
 const VerifyEmailReminderBanner = () => {
   const toast = useToast();
-  const [authenticatedUser] = useAuthState(firebase.auth());
 
   const sendEmailVerification = () => {
     firebase

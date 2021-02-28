@@ -13,10 +13,12 @@
     "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "@next/bundle-analyzer": "^10.0.7",
     "@reach/combobox": "^0.10.1",
     "@reach/skip-nav": "^0.6.2",
     "@sentry/react": "^5.29.0",
     "@sentry/tracing": "^5.29.0",
+    "cross-env": "^7.0.3",
     "firebase": "^7.13.1",
     "firebase-admin": "^9.2.0",
     "framer-motion": "^2.9.4",
@@ -52,14 +54,15 @@
     "react-firebase-hooks": "^2.1.1",
     "react-gravatar": "^2.6.3",
     "react-places-autocomplete": "^7.2.1",
-    "safe-json-stringify": "^1.2.0",
-    "source-map-explorer": "^2.5.0"
+    "safe-json-stringify": "^1.2.0"
   },
   "scripts": {
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
     "test-firestore": "mocha --timeout 10000 --exit tests/collections.spec.js"
   },
   "eslintConfig": {

@@ -15,7 +15,6 @@ import {
   AlertDescription
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
@@ -28,6 +27,7 @@ import { validatePasswordReset } from "src/utilities/validation";
 // Other
 import { firebase } from "src/firebase";
 
+// Constants
 import { AUTH_STATUS } from "src/constants/auth";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,6 @@ export const getServerSideProps = async context => {
 
 const PasswordReset = props => {
   const router = useRouter();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [fields, handleFieldChange] = useFormFields({
     password: ""
   });
@@ -81,7 +80,7 @@ const PasswordReset = props => {
 
     setError(null);
 
-    if (!props.oobCode || !!authenticatedUser) {
+    if (!props.oobCode) {
       return;
     }
 

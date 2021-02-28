@@ -32,6 +32,7 @@ import { firebase } from "src/firebase";
 // Components
 import Link from "src/components/Link";
 
+// Constants
 import { AUTH_STATUS } from "src/constants/auth";
 
 ////////////////////////////////////////////////////////////////////////////////

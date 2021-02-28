@@ -13,7 +13,6 @@ import {
   Avatar
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserCircle,
@@ -22,7 +21,6 @@ import {
   faTimes,
   faSchool
 } from "@fortawesome/free-solid-svg-icons";
-import { useAppState } from "src/store";
 import Nav from "src/components/Nav";
 import SchoolSearch from "src/components/SchoolSearch";
 import SchoolLogo from "src/components/SchoolLogo";
@@ -31,29 +29,6 @@ import Link from "src/components/Link";
 
 const AuthenticatedNav = () => {
   const router = useRouter();
-  const state = useAppState();
-  // const user = React.useMemo(
-  //   () =>
-  //     authenticatedUser && state.users[authenticatedUser.uid]
-  //       ? state.users[authenticatedUser.uid]
-  //       : {},
-  //   [authenticatedUser, state.users]
-  // );
-  // const school = React.useMemo(
-  //   () =>
-  //     user && user.school && user.school.id
-  //       ? state.schools[user.school.id]
-  //       : {},
-  //   [user, state.schools]
-  // );
-  const user = {
-    school: {
-      name: "a"
-    }
-  };
-  const school = {
-    name: "a"
-  };
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {

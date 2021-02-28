@@ -20,7 +20,6 @@ import {
   FormErrorMessage
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
@@ -98,7 +97,6 @@ const formReducer = (state, { field, value }) => {
 const Signup = () => {
   const router = useRouter();
   const toast = useToast();
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState

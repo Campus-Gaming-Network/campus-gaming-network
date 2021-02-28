@@ -10,7 +10,6 @@ import {
   AlertDialogContent,
   AlertDialogOverlay
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
 import { firebase } from "src/firebase";
@@ -25,7 +24,6 @@ const RSVPDialog = props => {
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
   const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebase.auth());
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const hasResponded = React.useMemo(() => !!props.eventResponse, [
     props.eventResponse
@@ -96,7 +94,7 @@ const RSVPDialog = props => {
     const userDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.USERS)
-      .doc(authenticatedUser.uid);
+      .doc(props.authUser.uid);
     const eventDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.EVENTS)
@@ -105,7 +103,7 @@ const RSVPDialog = props => {
       .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.event.school.id);
-    const user = state.users[authenticatedUser.uid];
+    const user = state.users[props.authUser.uid];
 
     const data = {
       response,

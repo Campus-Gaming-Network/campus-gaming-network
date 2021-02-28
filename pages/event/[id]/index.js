@@ -8,7 +8,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import startCase from "lodash.startcase";
-import isEmpty from "lodash.isempty";
 import times from "lodash.times";
 import {
   Stack,
@@ -24,9 +23,9 @@ import {
   Skeleton
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { getEventDetails, getEventUsers } from 'src/api/event';
 import { getUserEventResponse } from "src/api/user";
+import dynamic from 'next/dynamic';
 
 // Constants
 import {
@@ -41,19 +40,16 @@ import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
 import { firebase } from "src/firebase";
-import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 
 // Components
 import OutsideLink from "src/components/OutsideLink";
 import Link from "src/components/Link";
-import EventSilhouette from "src/components/silhouettes/EventSilhouette";
 import GameCover from "src/components/GameCover";
 
 // Hooks
-import useFetchEventDetails from "src/hooks/useFetchEventDetails";
 import useFetchEventUsers from "src/hooks/useFetchEventUsers";
-import useFetchUserEventResponse from "src/hooks/useFetchUserEventResponse";
-import RSVPDialog from "src/components/dialogs/RSVPDialog";
+
+const RSVPDialog = dynamic(() => import('src/components/dialogs/RSVPDialog'), { ssr: false });
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -70,6 +66,7 @@ export const getServerSideProps = async ({ params }) => {
     event,
     users,
     eventResponse: null,
+    authUser: {},
     authStatus: AUTH_STATUS.UNAUTHENTICATED,
     isEventCreator: false,
     hasResponded: false,
@@ -88,6 +85,10 @@ export const getServerSideProps = async ({ params }) => {
       !event.hasEnded
     );
 
+    data.authUser = {
+      email: token.email,
+      uid: token.uid
+    };
     data.authStatus = authStatus;
     data.isEventCreator = isEventCreator;
     data.eventResponse = eventResponse;
@@ -104,32 +105,8 @@ export const getServerSideProps = async ({ params }) => {
 // Event
 
 const Event = props => {
-  const dispatch = useAppDispatch();
-  const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebase.auth());
-  const [event, isLoadingEvent] = useFetchEventDetails(props.id);
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
-  const isEventCreator = React.useMemo(
-    () =>
-      authenticatedUser && event && event.creator.id === authenticatedUser.uid,
-    [authenticatedUser, event]
-  );
-  const [eventResponse, isLoadingUserEventResponse] = useFetchUserEventResponse(
-    props.id,
-    authenticatedUser && !isEventCreator ? authenticatedUser.uid : null,
-    refreshEventResponse
-  );
-  const hasResponded = React.useMemo(() => !!eventResponse, [eventResponse]);
-  const canChangeEventResponse = React.useMemo(
-    () =>
-      !!authenticatedUser &&
-      !isLoadingUserEventResponse &&
-      !isEventCreator &&
-      !!event &&
-      !event.hasEnded,
-    [authenticatedUser, isLoadingUserEventResponse, isEventCreator, event]
-  );
 
   const openRSVPDialog = () => {
     setIsRSVPAlertOpen(canChangeEventResponse);
@@ -137,24 +114,6 @@ const Event = props => {
   const closeRSVPDialog = () => {
     setIsRSVPAlertOpen(false);
   };
-
-  React.useEffect(() => {
-    if (props.id !== state.event.id && !isLoadingEvent) {
-      dispatch({
-        type: ACTION_TYPES.SET_EVENT,
-        payload: event
-      });
-    }
-  }, [props.id, state.event.id, dispatch, event, isLoadingEvent]);
-
-  if (isLoadingEvent) {
-    return <EventSilhouette />;
-  }
-
-  // if (!event || isEmpty(event)) {
-  //   console.error(`No event found ${props.uri}`);
-  //   return <Redirect href="/not-found" noThrow />;
-  // }
 
   return (
     <React.Fragment>
@@ -385,6 +344,7 @@ const Event = props => {
 
       {canChangeEventResponse ? (
         <RSVPDialog
+          authUser={props.authUser}
           event={event}
           eventResponse={eventResponse}
           isOpen={isRSVPAlertOpen}
@@ -401,7 +361,6 @@ const Event = props => {
 // UsersList
 
 const UsersList = props => {
-  const dispatch = useAppDispatch();
   const [page, setPage] = React.useState(0);
   const [users, isLoadingUsers] = useFetchEventUsers(props.id, undefined, page);
   const hasUsers = React.useMemo(
@@ -426,19 +385,6 @@ const UsersList = props => {
       setPage(page - 1);
     }
   };
-
-  React.useEffect(() => {
-    if (isLoadingUsers && hasUsers && isValidPage) {
-      dispatch({
-        type: ACTION_TYPES.SET_EVENT_USERS,
-        payload: {
-          id: props.id,
-          users,
-          page
-        }
-      });
-    }
-  }, [isLoadingUsers, users, hasUsers, dispatch, props.id, page, isValidPage]);
 
   if (isLoadingUsers) {
     return (

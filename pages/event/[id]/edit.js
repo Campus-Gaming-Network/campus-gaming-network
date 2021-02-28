@@ -2,7 +2,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-import startCase from "lodash.startcase";
 import isEmpty from "lodash.isempty";
 import {
   Input,
@@ -28,12 +27,14 @@ import {
 import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from 'next/router'
-import Head from 'next/head';
+import { useRouter } from "next/router";
+import Head from "next/head";
+import * as firebaseAdmin from "firebase-admin";
+import nookies from "nookies";
+import safeJsonStringify from "safe-json-stringify";
+import dynamic from 'next/dynamic';
 
 // Other
-import { useAppState, useAppDispatch, ACTION_TYPES } from "src/store";
 import { firebase } from "src/firebase";
 
 // Components
@@ -43,19 +44,71 @@ import MonthSelect from "src/components/MonthSelect";
 import DaySelect from "src/components/DaySelect";
 import YearSelect from "src/components/YearSelect";
 import TimeSelect from "src/components/TimeSelect";
-import DeleteEventDialog from "src/components/dialogs/DeleteEventDialog";
 
 // Hooks
 import useFetchEventDetails from "src/hooks/useFetchEventDetails";
 
 // Utilities
-import { mapEventResponse } from "src/utilities/eventResponse";
-import { mapEvent } from "src/utilities/event";
 import { validateCreateEvent } from "src/utilities/validation";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
+import { AUTH_STATUS } from "src/constants/auth";
+import { getEventDetails } from "src/api/event";
+
+const DeleteEventDialog = dynamic(() => import('src/components/dialogs/DeleteEventDialog'), { ssr: false });
+
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  let cookies;
+  let token;
+  let authStatus;
+
+  try {
+    cookies = nookies.get(context);
+    token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
+    authStatus = Boolean(token.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
+      return { notFound: true };
+    }
+  } catch (error) {
+    return { notFound: true };
+  }
+
+  const { event } = await getEventDetails(context.params.id);
+
+  if (!event) {
+    return { notFound: true };
+  }
+
+  const { user } = await getUserDetails(token.uid);
+
+  if (!user) {
+    return { notFound: true };
+  }
+
+  const { school } = await getSchoolDetails(user.school.id);
+
+  const data = {
+    user,
+    authUser: {
+      email: token.email,
+      uid: token.uid
+    },
+    school
+  };
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Form Reducer
 
 const initialFormState = {
   name: "",
@@ -86,21 +139,10 @@ const formReducer = (state, { field, value }) => {
 
 const CreateEvent = props => {
   const router = useRouter();
-  const state = useAppState();
-  const dispatch = useAppDispatch();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
-  const [authenticatedUser] = useAuthState(firebase.auth());
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
-  );
-  const user = React.useMemo(
-    () => (!!authenticatedUser ? state.users[authenticatedUser.uid] : null),
-    [state.users, authenticatedUser]
-  );
-  const school = React.useMemo(
-    () => (!!authenticatedUser && user ? state.schools[user.school.id] : null),
-    [state.schools, authenticatedUser, user]
   );
   const [event, setEvent] = React.useState(null);
   const [errors, setErrors] = React.useState({});
@@ -200,12 +242,14 @@ const CreateEvent = props => {
       );
     }
 
-    const schoolDocRef = firebase.firestore()
+    const schoolDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.SCHOOLS)
-      .doc(user.school.id);
-    const userDocRef = firebase.firestore()
+      .doc(props.user.school.id);
+    const userDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.USERS)
-      .doc(user.id);
+      .doc(props.user.id);
 
     const eventData = {
       creator: userDocRef,
@@ -231,88 +275,12 @@ const CreateEvent = props => {
     }
 
     if (props.edit) {
-      firebase.firestore()
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENTS)
         .doc(props.id)
         .update(eventData)
         .then(() => {
-          dispatch({
-            type: ACTION_TYPES.SET_EVENT,
-            payload: {
-              ...event,
-              ...eventData
-            }
-          });
-
-          Object.keys(state.users).forEach(id => {
-            const userToUpdate = { ...state.users[id] };
-
-            if (userToUpdate.events) {
-              const updatedEvents = userToUpdate.events
-                .map(eventResponse =>
-                  eventResponse.event.id === props.id
-                    ? {
-                        ...eventResponse,
-                        event: {
-                          ...eventResponse.event,
-                          ...eventData
-                        }
-                      }
-                    : eventResponse
-                )
-                .map(mapEventResponse);
-
-              userToUpdate.events = updatedEvents;
-
-              dispatch({
-                type: ACTION_TYPES.SET_USER_EVENTS,
-                payload: {
-                  id,
-                  events: updatedEvents
-                }
-              });
-
-              if (state.user.id === id) {
-                dispatch({
-                  type: ACTION_TYPES.SET_USER,
-                  payload: userToUpdate
-                });
-              }
-            }
-          });
-
-          // TODO:
-          // Object.keys(state.schools).forEach((id) => {
-          //   const schoolToUpdate = {...state.users[id]};
-
-          //   if (schoolToUpdate.events) {
-          //     const updatedEvents = schoolToUpdate.events.map((eventResponse) => eventResponse.event.id === props.id ? ({
-          //       ...eventResponse,
-          //       event: {
-          //         ...eventResponse.event,
-          //         ...eventData
-          //       },
-          //     }) : eventResponse).map(mapEvent);
-
-          //     schoolToUpdate.events = updatedEvents;
-
-          //     dispatch({
-          //       type: ACTION_TYPES.SET_USER_EVENTS,
-          //       payload: {
-          //         id,
-          //         events: updatedEvents
-          //       }
-          //     });
-
-          //     if (state.user.id === id) {
-          //       dispatch({
-          //         type: ACTION_TYPES.SET_USER,
-          //         payload: schoolToUpdate
-          //       });
-          //     }
-          //   }
-          // });
-
           toast({
             title: "Event updated.",
             description:
@@ -336,7 +304,8 @@ const CreateEvent = props => {
     } else {
       let eventId;
 
-      firebase.firestore()
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENTS)
         .add({
           ...eventData,
@@ -348,7 +317,8 @@ const CreateEvent = props => {
         .then(eventDocRef => {
           eventId = eventDocRef.id;
 
-          firebase.firestore()
+          firebase
+            .firestore()
             .collection(COLLECTIONS.EVENTS)
             .doc(eventId)
             .update({ id: eventId })
@@ -361,9 +331,9 @@ const CreateEvent = props => {
             user: {
               ref: userDocRef,
               id: userDocRef.id,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              gravatar: user.gravatar
+              firstName: props.user.firstName,
+              lastName: props.user.lastName,
+              gravatar: props.user.gravatar
             },
             event: {
               ref: eventDocRef,
@@ -382,7 +352,8 @@ const CreateEvent = props => {
             }
           };
 
-          firebase.firestore()
+          firebase
+            .firestore()
             .collection(COLLECTIONS.EVENT_RESPONSES)
             .add(eventResponseData)
             .then(() => {
@@ -458,16 +429,7 @@ const CreateEvent = props => {
     setHasPrefilledForm(true);
   };
 
-  // if (!authenticatedUser) {
-  //   return <Redirect href="/" noThrow />;
-  // }
-
-  // if (!user) {
-  //   console.error(`No user found ${props.uri}`);
-  //   return <Redirect href="/not-found" noThrow />;
-  // }
-
-  if (!hasPrefilledForm && !!event) {
+  if (!hasPrefilledForm) {
     prefillForm();
   }
 
@@ -523,15 +485,15 @@ const CreateEvent = props => {
                   Event Creator
                 </Text>
                 <Flex>
-                  {user.gravatar ? (
+                  {props.user.gravatar ? (
                     <Avatar
-                      name={user.fullName}
-                      src={user.gravatarUrl}
+                      name={props.user.fullName}
+                      src={props.user.gravatarUrl}
                       size="sm"
                     />
                   ) : null}
                   <Text ml={4} as="span" alignSelf="center">
-                    {user.fullName}
+                    {props.user.fullName}
                   </Text>
                 </Flex>
               </Box>

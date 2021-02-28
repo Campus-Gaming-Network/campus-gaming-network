@@ -7,7 +7,6 @@ import {
   AlertTitle,
   AlertDescription
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import * as firebaseAdmin from "firebase-admin";
 import nookies from "nookies";
 import Head from "next/head";
@@ -52,7 +51,6 @@ export const getServerSideProps = async context => {
 // VerifyEmail
 
 const VerifyEmail = props => {
-  const [authenticatedUser, isAuthenticating] = useAuthState(firebase.auth());
   const [verifyState, setVerifyState] = React.useState("");
   const [verificationError, setError] = React.useState("");
 
@@ -83,12 +81,6 @@ const VerifyEmail = props => {
         setVerifyState("error");
       });
   }, [props.oobCode]);
-
-  React.useEffect(() => {
-    if (!isAuthenticating && !!authenticatedUser) {
-      handleVerifyEmail();
-    }
-  }, [isAuthenticating, authenticatedUser, handleVerifyEmail]);
 
   if (!verifyState) {
     return null;
