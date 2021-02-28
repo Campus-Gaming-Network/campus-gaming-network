@@ -74,3 +74,6 @@ export const GRAVATAR = {
 };
 export const MAX_DEFAULT_STRING_LENGTH = 255;
 export const MIN_PASSWORD_LENGTH = 6;
+export const COOKIES = {
+  AUTH_TOKEN: "cgn_auth_token"
+};

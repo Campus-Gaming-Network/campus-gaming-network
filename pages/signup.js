@@ -33,6 +33,7 @@ import { AUTH_STATUS } from "src/constants/auth";
 // Utilities
 import { createGravatarHash } from "src/utilities/user";
 import { validateSignUp } from "src/utilities/validation";
+import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Components
 import Link from "src/components/Link";
@@ -47,10 +48,10 @@ import { firebase } from "src/firebase";
 export const getServerSideProps = async context => {
   try {
     const cookies = nookies.get(context);
-    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    const authStatus = Boolean(token.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
+    const token = hasToken(cookies)
+      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
+      : null;
+    const authStatus = getAuthStatus(token);
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
       return {

@@ -14,6 +14,10 @@ import Head from "next/head";
 // Other
 import { firebase } from "src/firebase";
 
+// Utilities
+import { hasToken, getAuthStatus } from "src/utilities/auth";
+
+// Constants
 import { AUTH_STATUS } from "src/constants/auth";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,10 +26,10 @@ import { AUTH_STATUS } from "src/constants/auth";
 export const getServerSideProps = async context => {
   try {
     const cookies = nookies.get(context);
-    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    const authStatus = Boolean(token.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
+    const token = hasToken(cookies)
+      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
+      : null;
+    const authStatus = getAuthStatus(token);
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return {

@@ -24,6 +24,8 @@ import { AUTH_STATUS } from "src/constants/auth";
 // Hooks
 import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
+import { useAuth } from "src/providers/auth";
+
 const now = new Date();
 
 export const getServerSideProps = async context => {
@@ -45,10 +47,10 @@ export const getServerSideProps = async context => {
 
   try {
     cookies = nookies.get(context);
-    token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    authStatus = Boolean(token.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
+    token = hasToken(cookies)
+      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
+      : null;
+    authStatus = getAuthStatus(token);
   } catch (err) {
     noop();
   }
@@ -74,6 +76,9 @@ export const getServerSideProps = async context => {
 // Home
 
 const Home = props => {
+  const _a = useAuth();
+
+  console.log(_a);
   return (
     <React.Fragment>
       <Head>

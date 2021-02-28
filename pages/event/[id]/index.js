@@ -38,6 +38,9 @@ import {
 } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
+// Utilities
+import { hasToken, getAuthStatus } from "src/utilities/auth";
+
 // Other
 import { firebase } from "src/firebase";
 
@@ -75,8 +78,8 @@ export const getServerSideProps = async ({ params }) => {
 
   try {
     const cookies = nookies.get(context);
-    const token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    const authStatus = Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
+    const token = hasToken(cookies) ? await firebaseAdmin.auth().verifyIdToken(cookies.token) : null;
+    const authStatus = getAuthStatus(token);
     const isEventCreator = event.creator.id === token.uid;
     const { eventResponse } = await getUserEventResponse(params.id, token.uid);
     const canChangeEventResponse = (

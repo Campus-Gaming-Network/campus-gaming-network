@@ -50,6 +50,7 @@ import useFetchEventDetails from "src/hooks/useFetchEventDetails";
 
 // Utilities
 import { validateCreateEvent } from "src/utilities/validation";
+import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
@@ -71,10 +72,10 @@ export const getServerSideProps = async context => {
 
   try {
     cookies = nookies.get(context);
-    token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    authStatus = Boolean(token.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
+    token = hasToken(cookies)
+      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
+      : null;
+    authStatus = getAuthStatus(token);
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };

@@ -67,6 +67,7 @@ import YearSelect from "src/components/YearSelect";
 // Utilities
 import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
+import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 const DeleteAccountDialog = dynamic(
   () => import("src/components/dialogs/DeleteAccountDialog"),
@@ -83,10 +84,10 @@ export const getServerSideProps = async context => {
 
   try {
     cookies = nookies.get(context);
-    token = await firebaseAdmin.auth().verifyIdToken(cookies.token);
-    authStatus = Boolean(token.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
+    token = hasToken(cookies)
+      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
+      : null;
+    authStatus = getAuthStatus(token);
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };

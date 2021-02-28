@@ -4,6 +4,7 @@
 import React from "react";
 import nookies from "nookies";
 import { firebase } from "src/firebase";
+import { COOKIES } from "src/constants/other";
 
 const AuthContext = React.createContext({ user: null });
 
@@ -19,8 +20,8 @@ export function AuthProvider({ children }) {
       if (!user) {
         setUser(null);
 
-        nookies.destroy(null, "token");
-        nookies.set(null, "token", "", { path: "/" });
+        nookies.destroy(null, COOKIES.AUTH_TOKEN);
+        nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: "/" });
         return;
       }
 
@@ -28,8 +29,8 @@ export function AuthProvider({ children }) {
 
       setUser(user);
 
-      nookies.destroy(null, "token");
-      nookies.set(null, "token", token, { path: "/" });
+      nookies.destroy(null, COOKIES.AUTH_TOKEN);
+      nookies.set(null, COOKIES.AUTH_TOKEN, token, { path: "/" });
     });
   }, []);
 
