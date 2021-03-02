@@ -41,6 +41,7 @@ import { noop } from "src/utilities/other";
 import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Components
+import SiteLayout from "src/components/SiteLayout";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 import UserSilhouette from "src/components/silhouettes/UserSilhouette";
@@ -89,7 +90,7 @@ export const getServerSideProps = async (context) => {
 
 const User = (props) => {
   return (
-    <React.Fragment>
+    <SiteLayout>
     <Head>
   <title>{props.user.fullName} | CGN</title>
 </Head>
@@ -270,7 +271,7 @@ const User = (props) => {
         </Stack>
       </Stack>
     </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

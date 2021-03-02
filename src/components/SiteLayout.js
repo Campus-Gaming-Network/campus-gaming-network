@@ -7,13 +7,13 @@ import Nav from "src/components/Nav";
 import Footer from "src/components/Footer";
 import VerifyEmailReminderBanner from "src/components/banners/VerifyEmailReminderBanner";
 
-const SiteLayout = props => {
+const SiteLayout = ({ children, ...rest }) => {
   return (
     <React.Fragment>
       <VerifyEmailReminderBanner />
       <Nav />
-      <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%">
-        {props.children}
+      <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%" {...rest}>
+        {children}
       </Box>
       <Footer />
     </React.Fragment>

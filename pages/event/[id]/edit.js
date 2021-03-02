@@ -24,6 +24,7 @@ import {
   AlertDescription,
   Spacer
 } from "@chakra-ui/react";
+import dynamic from 'next/dynamic';
 import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
@@ -32,7 +33,6 @@ import Head from "next/head";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
-import dynamic from 'next/dynamic';
 
 // Other
 import firebase from "src/firebase";

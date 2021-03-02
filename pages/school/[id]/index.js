@@ -35,6 +35,7 @@ import {
 } from "src/constants/other";
 
 // Components
+import SiteLayout from "src/components/SiteLayout";
 import OutsideLink from "src/components/OutsideLink";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
@@ -71,7 +72,7 @@ export const getServerSideProps = async ({ params }) => {
 
 const School = (props) => {
   return (
-    <React.Fragment>
+    <SiteLayout>
           <Head>
         <title>{props.school.formattedName} | CGN</title>
       </Head>
@@ -203,7 +204,7 @@ const School = (props) => {
         </Stack>
       </Stack>
     </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

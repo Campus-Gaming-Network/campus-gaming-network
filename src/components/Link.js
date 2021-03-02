@@ -1,11 +1,11 @@
 import React from "react";
-import Link from "next/link";
+import NextLink from "next/link";
 import { Link as ChakraLink } from "@chakra-ui/react";
 
-const CustomLink = ({ children, ...rest }) => (
-  <ChakraLink as={Link} {...rest}>
-    <a>{children}</a>
-  </ChakraLink>
+const Link = ({ children, href, ...rest }) => (
+  <NextLink href={href}>
+    <ChakraLink {...rest}>{children}</ChakraLink>
+  </NextLink>
 );
 
-export default CustomLink;
+export default Link;

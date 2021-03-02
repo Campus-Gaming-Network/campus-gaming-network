@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 // Components
@@ -7,6 +7,7 @@ import NavWrapper from "src/components/NavWrapper";
 import SchoolSearch from "src/components/SchoolSearch";
 import Logo from "src/components/Logo";
 import Link from "src/components/Link";
+import ButtonLink from "src/components/ButtonLink";
 
 const UnauthenticatedNav = () => {
   const router = useRouter();
@@ -41,12 +42,12 @@ const UnauthenticatedNav = () => {
         flexGrow={1}
         justifyContent="flex-end"
       >
-        <Link href="/login" colorScheme="gray" mr={3}>
+        <ButtonLink href="/login" mr={3}>
           Log In
-        </Link>
-        <Link href="/signup" colorScheme="brand">
+        </ButtonLink>
+        <ButtonLink href="/signup" colorScheme="brand">
           Sign Up
-        </Link>
+        </ButtonLink>
       </Box>
     </NavWrapper>
   );

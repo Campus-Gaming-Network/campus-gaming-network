@@ -26,6 +26,7 @@ import SchoolSearch from "src/components/SchoolSearch";
 import SchoolLogo from "src/components/SchoolLogo";
 import Logo from "src/components/Logo";
 import Link from "src/components/Link";
+import ButtonLink from "src/components/ButtonLink";
 
 // Other
 import firebase from "src/firebase";
@@ -73,15 +74,9 @@ const AuthenticatedNav = () => {
         flexGrow={1}
         justifyContent="flex-end"
       >
-        <Button
-          as={Link}
-          href="/create-event"
-          colorScheme="brand"
-          size="sm"
-          mr={4}
-        >
+        <ButtonLink href="/create-event" colorScheme="brand" size="sm" mr={4}>
           Create an event
-        </Button>
+        </ButtonLink>
 
         <Menu>
           <MenuButton
