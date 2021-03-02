@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/router";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";

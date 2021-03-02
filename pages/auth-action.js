@@ -22,7 +22,9 @@ const AuthAction = props => {
   const { mode, oobCode } = router.query;
   const AuthActionComponent = React.useMemo(
     () =>
-      mode && !!AuthActionComponents[mode] ? AuthActionComponents[mode] : Empty,
+      mode && Boolean(AuthActionComponents[mode])
+        ? AuthActionComponents[mode]
+        : Empty,
     [mode]
   );
 

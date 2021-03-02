@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import Head from "next/head";
 
@@ -26,10 +26,13 @@ import { validatePasswordReset } from "src/utilities/validation";
 import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
+
+// Components
+import SiteLayout from "src/components/SiteLayout";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -136,7 +139,7 @@ const PasswordReset = props => {
   };
 
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Password Reset | CGN</title>
       </Head>
@@ -210,7 +213,7 @@ const PasswordReset = props => {
           </Button>
         </Box>
       </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

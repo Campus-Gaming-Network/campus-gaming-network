@@ -19,7 +19,7 @@ import {
 import safeJsonStringify from 'safe-json-stringify';
 import { getUserDetails, getUserEvents } from 'src/api/user'
 import Head from 'next/head'
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 
 // Constants
@@ -36,7 +36,7 @@ import {
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Utilities
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { noop } from "src/utilities/other";
 import { hasToken, getAuthStatus } from "src/utilities/auth";
 
@@ -376,25 +376,11 @@ const GameListItem = React.memo(props => {
 // EventsList
 
 const EventsList = ({ events }) => {
-  // const dispatch = useAppDispatch();
-  // const state = useAppState();
   // const [events, isLoadingEvents] = useFetchUserEvents(props.id);
   const hasEvents = React.useMemo(
     () => events && events.length && events.length > 0,
     [events]
   );
-
-  // React.useEffect(() => {
-  //   if (isLoadingEvents && hasEvents) {
-  //     dispatch({
-  //       type: ACTION_TYPES.SET_USER_EVENTS,
-  //       payload: {
-  //         id: props.id,
-  //         events: events
-  //       }
-  //     });
-  //   }
-  // }, [props.id, state.user.id, events, hasEvents, dispatch, isLoadingEvents]);
 
   // if (isLoadingEvents) {
   //   return (

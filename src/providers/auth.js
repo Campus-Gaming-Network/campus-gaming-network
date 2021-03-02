@@ -3,31 +3,35 @@
 
 import React from "react";
 import nookies from "nookies";
-import { firebase } from "src/firebase";
+
+// Other
+import firebase from "src/firebase";
+
+// Constants
 import { COOKIES } from "src/constants/other";
 
-const AuthContext = React.createContext({ user: null });
+const AuthContext = React.createContext({ authUser: null, user: null });
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = React.useState(null);
+export const AuthProvider = ({ children }) => {
+  const [authUser, setAuthUser] = React.useState(null);
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       window.nookies = nookies;
     }
 
-    return firebase.auth().onIdTokenChanged(async user => {
-      if (!user) {
-        setUser(null);
+    return firebase.auth().onIdTokenChanged(async authUser => {
+      if (!authUser) {
+        setAuthUser(null);
 
         nookies.destroy(null, COOKIES.AUTH_TOKEN);
         nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: "/" });
         return;
       }
 
-      const token = await user.getIdToken();
+      const token = await authUser.getIdToken();
 
-      setUser(user);
+      setAuthUser(authUser);
 
       nookies.destroy(null, COOKIES.AUTH_TOKEN);
       nookies.set(null, COOKIES.AUTH_TOKEN, token, { path: "/" });
@@ -37,19 +41,19 @@ export function AuthProvider({ children }) {
   // force refresh the token every 10 minutes
   React.useEffect(() => {
     const handle = setInterval(async () => {
-      const user = firebase.auth().currentUser;
+      const authUser = firebase.auth().currentUser;
 
-      if (user) {
-        await user.getIdToken(true);
+      if (authUser) {
+        await authUser.getIdToken(true);
       }
     }, 10 * 60 * 1000);
     return () => clearInterval(handle);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ authUser }}>{children}</AuthContext.Provider>
   );
-}
+};
 
 export const useAuth = () => {
   return React.useContext(AuthContext);

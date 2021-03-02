@@ -17,13 +17,14 @@ import Head from "next/head";
 
 // Components
 import OutsideLink from "src/components/OutsideLink";
+import SiteLayout from "src/components/SiteLayout";
 
 ////////////////////////////////////////////////////////////////////////////////
 // FrequentlyAskedQuestions
 
 const FrequentlyAskedQuestions = () => {
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Frequently Asked Questions | CGN</title>
       </Head>
@@ -45,7 +46,7 @@ const FrequentlyAskedQuestions = () => {
           })}
         </Accordion>
       </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

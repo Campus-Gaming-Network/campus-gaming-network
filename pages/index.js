@@ -1,14 +1,15 @@
 import React from "react";
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
 import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import Head from "next/head";
 import safeJsonStringify from "safe-json-stringify";
 
 // Components
+import SiteLayout from "src/components/SiteLayout";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 
@@ -29,18 +30,6 @@ import { useAuth } from "src/providers/auth";
 const now = new Date();
 
 export const getServerSideProps = async context => {
-  // TODO: Move this and all auth related to stuff into shared component that wraps page
-  if (!firebaseAdmin.apps.length) {
-    firebaseAdmin.initializeApp({
-      credential: firebaseAdmin.credential.cert({
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID
-      }),
-      databaseURL: `https://${process.env.FIREBASE_ADMIN_PROJECT_ID}.firebaseio.com`
-    });
-  }
-
   let cookies;
   let token;
   let authStatus;
@@ -75,12 +64,9 @@ export const getServerSideProps = async context => {
 ////////////////////////////////////////////////////////////////////////////////
 // Home
 
-const Home = props => {
-  const _a = useAuth();
-
-  console.log(_a);
+const Home = () => {
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Campus Gaming Network | CGN</title>
       </Head>
@@ -107,7 +93,7 @@ const Home = props => {
           </Stack>
         </Box>
       </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

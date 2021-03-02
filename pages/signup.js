@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import Head from "next/head";
 
@@ -38,9 +38,10 @@ import { hasToken, getAuthStatus } from "src/utilities/auth";
 // Components
 import Link from "src/components/Link";
 import SchoolSearch from "src/components/SchoolSearch";
+import SiteLayout from "src/components/SiteLayout";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -179,7 +180,7 @@ const Signup = () => {
   };
 
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Signup | CGN</title>
       </Head>
@@ -247,7 +248,7 @@ const Signup = () => {
           </Text>
         </Box>
       </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

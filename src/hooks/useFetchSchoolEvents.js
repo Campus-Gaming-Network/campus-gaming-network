@@ -1,18 +1,16 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { mapEvent } from "src/utilities/event";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/other";
-import { useAppState } from "src/store";
 
 const useFetchSchoolEvents = (
   id,
   limit = DEFAULT_EVENTS_LIST_PAGE_SIZE,
   page = 0
 ) => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -29,7 +27,7 @@ const useFetchSchoolEvents = (
         !isEmpty(state.schools[id]) &&
         state.schools[id].events &&
         !isEmpty(state.schools[id].events) &&
-        !!state.schools[id].events[page]
+        Boolean(state.schools[id].events[page])
       ) {
         console.log(`[CACHE] fetchSchoolEvents...${id}`);
 

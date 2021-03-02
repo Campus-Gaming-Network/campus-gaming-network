@@ -3,19 +3,7 @@
 
 import React from "react";
 
-import { GOOGLE_MAPS_QUERY_URL, PRODUCTION_URL } from "src/constants/other";
-
-export const isDev = () => {
-  if (
-    typeof window !== "undefined" &&
-    Boolean(window) &&
-    window.location &&
-    window.location.href
-  ) {
-    return window.location.href === PRODUCTION_URL;
-  }
-  return false;
-};
+import { GOOGLE_MAPS_QUERY_URL } from "src/constants/other";
 
 export const useFormFields = initialState => {
   const [fields, setValues] = React.useState(initialState);

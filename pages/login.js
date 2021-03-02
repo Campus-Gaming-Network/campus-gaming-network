@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import Head from "next/head";
 
@@ -28,9 +28,10 @@ import { validateLogIn } from "src/utilities/validation";
 import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 // Components
+import SiteLayout from "src/components/SiteLayout";
 import Link from "src/components/Link";
 
 // Constants
@@ -112,7 +113,7 @@ const Login = () => {
   };
 
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Login | CGN</title>
       </Head>
@@ -204,7 +205,7 @@ const Login = () => {
           </Flex>
         </Box>
       </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

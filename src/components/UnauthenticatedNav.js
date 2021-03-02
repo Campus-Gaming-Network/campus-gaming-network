@@ -3,12 +3,12 @@ import { Box, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 // Components
-import Nav from "src/components/Nav";
+import NavWrapper from "src/components/NavWrapper";
 import SchoolSearch from "src/components/SchoolSearch";
 import Logo from "src/components/Logo";
 import Link from "src/components/Link";
 
-const Header = () => {
+const UnauthenticatedNav = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -23,7 +23,7 @@ const Header = () => {
   };
 
   return (
-    <Nav>
+    <NavWrapper>
       <Flex align="center" mr={5}>
         <Logo width="200px" />
       </Flex>
@@ -48,8 +48,8 @@ const Header = () => {
           Sign Up
         </Link>
       </Box>
-    </Nav>
+    </NavWrapper>
   );
 };
 
-export default Header;
+export default UnauthenticatedNav;

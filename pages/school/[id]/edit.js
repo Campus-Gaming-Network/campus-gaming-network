@@ -18,7 +18,7 @@ import {
   Image
 } from "@chakra-ui/react";
 import { useDropzone } from "react-dropzone";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
 import Head from "next/head";
@@ -34,7 +34,7 @@ import { AUTH_STATUS } from "src/constants/auth";
 import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -459,12 +459,12 @@ const SocialAccountsSection = React.memo(props => {
                 {account.label}
               </FormLabel>
               <InputGroup size="lg">
-                {account.icon || !!account.url ? (
+                {account.icon || Boolean(account.url) ? (
                   <InputLeftAddon
                     children={
                       <React.Fragment>
                         <FontAwesomeIcon icon={account.icon} />
-                        {!!account.url ? (
+                        {Boolean(account.url) ? (
                           <Text ml={4}>{account.url}</Text>
                         ) : null}
                       </React.Fragment>

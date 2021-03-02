@@ -7,7 +7,7 @@ import {
   ComboboxList,
   ComboboxOption
 } from "@reach/combobox";
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import uniqBy from "lodash.uniqby";
 
 // Hooks

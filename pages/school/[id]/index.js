@@ -46,9 +46,6 @@ import useFetchSchoolDetails from "src/hooks/useFetchSchoolDetails";
 import useFetchSchoolEvents from "src/hooks/useFetchSchoolEvents";
 import useFetchSchoolUsers from "src/hooks/useFetchSchoolUsers";
 
-// Store
-import { useAppDispatch, useAppState, ACTION_TYPES } from "src/store";
-
 // Utilities
 import { isValidUrl } from "src/utilities/other";
 

@@ -17,7 +17,11 @@ export const createGravatarHash = (email = "") => {
   return md5(trimmedEmail.toLowerCase());
 };
 
-export const createGravatarRequestUrl = hash => {
+export const createGravatarRequestUrl = (hash = "", email = "") => {
+  if (!hash && Boolean(email)) {
+    hash = createGravatarHash(email);
+  }
+
   return `https://www.gravatar.com/avatar/${hash}?s=100&d=${GRAVATAR.DEFAULT}&r=${GRAVATAR.RA}`;
 };
 
@@ -31,8 +35,10 @@ export const mapUser = user =>
         ...user,
         fullName: `${user.firstName} ${user.lastName}`.trim(),
         hasAccounts: userHasAccounts(user),
-        hasFavoriteGames: !!(user.favoriteGames && user.favoriteGames.length),
-        hasCurrentlyPlaying: !!(
+        hasFavoriteGames: Boolean(
+          user.favoriteGames && user.favoriteGames.length
+        ),
+        hasCurrentlyPlaying: Boolean(
           user.currentlyPlaying && user.currentlyPlaying.length
         ),
         displayStatus: getUserDisplayStatus(user.status),
@@ -46,8 +52,8 @@ export const userHasAccounts = user => {
   }
 
   return (
-    intersection(Object.keys(ACCOUNTS), Object.keys(user)).filter(
-      key => !!user[key]
+    intersection(Object.keys(ACCOUNTS), Object.keys(user)).filter(key =>
+      Boolean(user[key])
     ).length > 0
   );
 };

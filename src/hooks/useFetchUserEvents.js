@@ -1,11 +1,10 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { mapEventResponse } from "src/utilities/eventResponse";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/other";
-import { useAppState } from "src/store";
 
 const useFetchUserEvents = (
   id,
@@ -13,7 +12,6 @@ const useFetchUserEvents = (
   next = null,
   prev = null
 ) => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);

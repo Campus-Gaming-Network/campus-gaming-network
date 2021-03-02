@@ -1,13 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { mapEvent } from "src/utilities/event";
-import { useAppState } from "src/store";
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchEventDetails = id => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [event, setEvent] = React.useState(null);
   const [error, setError] = React.useState(null);

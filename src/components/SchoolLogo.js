@@ -10,7 +10,7 @@ const SchoolLogo = React.memo(
       setHasError(true);
     };
 
-    if (hasError && !!fallback) {
+    if (hasError && Boolean(fallback)) {
       return fallback;
     }
 

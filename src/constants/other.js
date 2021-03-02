@@ -75,5 +75,16 @@ export const GRAVATAR = {
 export const MAX_DEFAULT_STRING_LENGTH = 255;
 export const MIN_PASSWORD_LENGTH = 6;
 export const COOKIES = {
-  AUTH_TOKEN: "cgn_auth_token"
+  AUTH_TOKEN:
+    process.env.NODE_ENV !== "production"
+      ? "cgn_dev.auth_token"
+      : "cgn.auth_token"
+};
+export const LOCAL_STORAGE = {
+  SCHOOLS:
+    process.env.NODE_ENV !== "production" ? "cgn_dev.schools" : "cgn.schools",
+  SCHOOLS_QUERY:
+    process.env.NODE_ENV !== "production"
+      ? "cgn_dev.schools_query"
+      : "cgn.schools_query"
 };

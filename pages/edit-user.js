@@ -33,7 +33,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
 import Head from "next/head";
@@ -52,11 +52,12 @@ import { ACCOUNTS } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { getUserDetails } from "src/api/user";
 import { getSchoolDetails } from "src/api/school";
 
 // Components
+import SiteLayout from "src/components/SiteLayout";
 import SchoolSearch from "src/components/SchoolSearch";
 import GameSearch from "src/components/GameSearch";
 import GameCover from "src/components/GameCover";
@@ -404,7 +405,7 @@ const EditUser = props => {
   }
 
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Edit User | CGN</title>
       </Head>
@@ -515,7 +516,7 @@ const EditUser = props => {
         isOpen={isDeletingAccountAlertOpen}
         onClose={closeDeleteAccountDialog}
       />
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 
@@ -880,12 +881,12 @@ const SocialAccountsSection = React.memo(props => {
                 {account.label}
               </FormLabel>
               <InputGroup size="lg">
-                {account.icon || !!account.url ? (
+                {Boolean(account.icon) || Boolean(account.url) ? (
                   <InputLeftAddon
                     children={
                       <React.Fragment>
                         <FontAwesomeIcon icon={account.icon} />
-                        {!!account.url ? (
+                        {Boolean(account.url) ? (
                           <Text ml={4}>{account.url}</Text>
                         ) : null}
                       </React.Fragment>

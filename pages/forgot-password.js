@@ -18,7 +18,7 @@ import {
   FormErrorMessage
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import Head from "next/head";
 
@@ -29,9 +29,10 @@ import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Components
 import Link from "src/components/Link";
+import SiteLayout from "src/components/SiteLayout";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
@@ -113,7 +114,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Forgot Password | CGN</title>
       </Head>
@@ -211,7 +212,7 @@ const ForgotPassword = () => {
           </Flex>
         </Box>
       </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

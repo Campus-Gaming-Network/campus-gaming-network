@@ -29,13 +29,13 @@ import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
 import dynamic from 'next/dynamic';
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 // Components
 import GameSearch from "src/components/GameSearch";
@@ -525,7 +525,7 @@ const CreateEvent = props => {
                     id="onlineEvent"
                     name="onlineEvent"
                     size="lg"
-                    disabled={!!formState.placeId}
+                    disabled={Boolean(formState.placeId)}
                     isChecked={formState.isOnlineEvent}
                     value={formState.isOnlineEvent}
                     onChange={e =>
@@ -556,7 +556,7 @@ const CreateEvent = props => {
                     }
                     debounce={600}
                     shouldFetchSuggestions={
-                      !!formState.location && formState.location.length >= 3
+                      Boolean(formState.location && formState.location.length >= 3)
                     }
                   >
                     {({

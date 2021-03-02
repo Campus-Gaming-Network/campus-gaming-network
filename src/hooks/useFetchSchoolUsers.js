@@ -1,18 +1,16 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { mapUser } from "src/utilities/user";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
-import { useAppState } from "src/store";
 
 const useFetchSchoolUsers = (
   id,
   limit = DEFAULT_USERS_LIST_PAGE_SIZE,
   page = 0
 ) => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -29,7 +27,7 @@ const useFetchSchoolUsers = (
         !isEmpty(state.schools[id]) &&
         state.schools[id].users &&
         !isEmpty(state.schools[id].users) &&
-        !!state.schools[id].users[page]
+        Boolean(state.schools[id].users[page])
       ) {
         console.log(`[CACHE] fetchSchoolUsers...${id}`);
 

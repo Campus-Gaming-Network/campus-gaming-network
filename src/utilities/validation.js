@@ -4,7 +4,6 @@ import isDate from "lodash.isdate";
 import isString from "lodash.isstring";
 import { DateTime } from "luxon";
 
-import { isDev } from "src/utilities/other";
 import {
   STUDENT_STATUS_OPTIONS,
   MAX_FAVORITE_GAME_LIST,
@@ -39,7 +38,7 @@ const validate = (validator, form, errors) => {
     isValid: isValid(errors)
   };
 
-  if (isDev()) {
+  if (process.env.NODE_ENV !== "production") {
     console.log(validator, validation);
   }
 

@@ -1,4 +1,4 @@
-import * as firebase from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import { mapUser } from "src/utilities/user";
 import { mapEventResponse } from "src/utilities/eventResponse";
 
@@ -6,7 +6,7 @@ export const getUserDetails = async id => {
   let user = null;
 
   try {
-    const userDoc = await firebase
+    const userDoc = await firebaseAdmin
       .firestore()
       .collection("users")
       .doc(id)
@@ -32,12 +32,12 @@ export const getUserEvents = async (
 
   try {
     const now = new Date();
-    const userDocRef = firebase
+    const userDocRef = firebaseAdmin
       .firestore()
       .collection("users")
       .doc(id);
 
-    let query = firebase
+    let query = firebaseAdmin
       .firestore()
       .collection("event-responses")
       .where("user.ref", "==", userDocRef)
@@ -45,7 +45,7 @@ export const getUserEvents = async (
       .where(
         "event.endDateTime",
         ">=",
-        firebase.firestore.Timestamp.fromDate(now)
+        firebaseAdmin.firestore.Timestamp.fromDate(now)
       );
 
     if (next) {
@@ -73,16 +73,16 @@ export const getUserEventResponse = async (eventId, userId) => {
   let eventResponse = null;
 
   try {
-    const eventDocRef = firebase
+    const eventDocRef = firebaseAdmin
       .firestore()
       .collection("events")
       .doc(eventId);
-    const userDocRef = firebase
+    const userDocRef = firebaseAdmin
       .firestore()
       .collection("users")
       .doc(userId);
 
-    const eventResponseSnapshot = await firebase
+    const eventResponseSnapshot = await firebaseAdmin
       .firestore()
       .collection("event-responses")
       .where("event.ref", "==", eventDocRef)

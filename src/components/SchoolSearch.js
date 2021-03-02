@@ -12,30 +12,24 @@ import {
   ComboboxOptionText
 } from "@reach/combobox";
 import useDebounce from "src/hooks/useDebounce";
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { mapSchool } from "src/utilities/school";
-import { isDev } from "src/utilities/other";
 import useLocalStorage from "src/hooks/useLocalStorage";
 import keyBy from "lodash.keyby";
-import { useAppDispatch, ACTION_TYPES } from "src/store";
 
 import SchoolLogo from "src/components/SchoolLogo";
 
-const LOCAL_STORAGE_SCHOOLS_KEY = isDev() ? "cgn_dev.schools" : "cgn.schools";
-const LOCAL_STORAGE_SCHOOLS_QUERY_KEY = isDev()
-  ? "cgn_dev.schools_query"
-  : "cgn.schools_query";
+import { LOCAL_STORAGE } from "src/constants/other";
 
 const SchoolSearch = props => {
-  const dispatch = useAppDispatch();
   const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
-    LOCAL_STORAGE_SCHOOLS_KEY,
+    LOCAL_STORAGE.SCHOOLS,
     null
   );
   const [
     localStorageSchoolQueries,
     setSchoolsQueryInLocalStorage
-  ] = useLocalStorage(LOCAL_STORAGE_SCHOOLS_QUERY_KEY, null);
+  ] = useLocalStorage(LOCAL_STORAGE.SCHOOLS_QUERY, null);
 
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
   const [isFetching, setIsFetching] = React.useState(false);
@@ -101,10 +95,6 @@ const SchoolSearch = props => {
         setSchoolsQueryInLocalStorage({
           ...localStorageSchoolQueries,
           [value]: result.data.hits.map(hit => hit.objectID)
-        });
-        dispatch({
-          type: ACTION_TYPES.SET_SCHOOLS,
-          payload: schools
         });
 
         return mappedSchools.slice(0, 10);

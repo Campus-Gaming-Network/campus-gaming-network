@@ -8,12 +8,20 @@ import {
   useToast
 } from "@chakra-ui/react";
 
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
+import { useAuth } from "src/providers/auth";
 
 const VerifyEmailReminderBanner = () => {
+  const auth = useAuth();
   const toast = useToast();
+  const hasAuthUser = Boolean(auth) && Boolean(auth.authUser);
+  const email = hasAuthUser ? auth.authUser.email : null;
 
   const sendEmailVerification = () => {
+    if (!email) {
+      return;
+    }
+
     firebase
       .auth()
       .currentUser.sendEmailVerification()
@@ -21,7 +29,7 @@ const VerifyEmailReminderBanner = () => {
         () => {
           toast({
             title: "Verification email sent.",
-            description: `A verification email has been sent to ${authenticatedUser.email}. Please check your inbox and follow the instructions in the email.`,
+            description: `A verification email has been sent to ${email}. Please check your inbox and follow the instructions in the email.`,
             status: "success",
             isClosable: true
           });
@@ -30,7 +38,7 @@ const VerifyEmailReminderBanner = () => {
           console.error(error);
           toast({
             title: "Error sending verification email.",
-            description: `There was an error sending the verification email to ${authenticatedUser.email}. Please contact support.`,
+            description: `There was an error sending the verification email to ${email}. Please contact support.`,
             status: "error",
             isClosable: true
           });
@@ -38,7 +46,7 @@ const VerifyEmailReminderBanner = () => {
       );
   };
 
-  if (firebase.auth().currentUser.emailVerified) {
+  if (!email || (hasAuthUser && auth.authUser.emailVerified)) {
     return null;
   }
 
@@ -49,7 +57,7 @@ const VerifyEmailReminderBanner = () => {
         <Text>
           Your email{" "}
           <Text as="span" fontWeight="bold">
-            {authenticatedUser.email}
+            {email}
           </Text>{" "}
           is not yet verified. Please verify your email address.{" "}
           <Button

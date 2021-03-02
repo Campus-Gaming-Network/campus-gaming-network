@@ -7,18 +7,21 @@ import {
   AlertTitle,
   AlertDescription
 } from "@chakra-ui/react";
-import * as firebaseAdmin from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import Head from "next/head";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 // Utilities
 import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
+
+// Components
+import SiteLayout from "src/components/SiteLayout";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -91,7 +94,7 @@ const VerifyEmail = props => {
   }
 
   return (
-    <React.Fragment>
+    <SiteLayout>
       <Head>
         <title>Verify Email | CGN</title>
       </Head>
@@ -117,7 +120,7 @@ const VerifyEmail = props => {
           </AlertDescription>
         </Alert>
       </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

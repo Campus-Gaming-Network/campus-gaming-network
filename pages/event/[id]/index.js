@@ -42,7 +42,7 @@ import { AUTH_STATUS } from "src/constants/auth";
 import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Other
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 
 // Components
 import OutsideLink from "src/components/OutsideLink";

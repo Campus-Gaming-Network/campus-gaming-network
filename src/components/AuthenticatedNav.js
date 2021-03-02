@@ -21,11 +21,14 @@ import {
   faTimes,
   faSchool
 } from "@fortawesome/free-solid-svg-icons";
-import Nav from "src/components/Nav";
+import NavWrapper from "src/components/NavWrapper";
 import SchoolSearch from "src/components/SchoolSearch";
 import SchoolLogo from "src/components/SchoolLogo";
 import Logo from "src/components/Logo";
 import Link from "src/components/Link";
+
+// Other
+import firebase from "src/firebase";
 
 const AuthenticatedNav = () => {
   const router = useRouter();
@@ -36,7 +39,10 @@ const AuthenticatedNav = () => {
   };
 
   const handleLogout = () => {
-    auth.signOut().then(() => router.push("/"));
+    firebase
+      .auth()
+      .signOut()
+      .then(() => router.push("/"));
   };
 
   const onSchoolSelect = selectedSchool => {
@@ -48,7 +54,7 @@ const AuthenticatedNav = () => {
   };
 
   return (
-    <Nav>
+    <NavWrapper>
       <Flex align="center" mr={5}>
         <Logo width="200px" />
       </Flex>
@@ -162,7 +168,7 @@ const AuthenticatedNav = () => {
           </MenuList>
         </Menu>
       </Box>
-    </Nav>
+    </NavWrapper>
   );
 };
 

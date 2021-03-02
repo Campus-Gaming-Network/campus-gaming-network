@@ -12,8 +12,7 @@ import {
 } from "@chakra-ui/react";
 
 // Other
-import { firebase } from "src/firebase";
-import { useAppState } from "src/store";
+import firebase from "src/firebase";
 
 // Constants
 import { EVENT_RESPONSES } from "src/constants/eventResponse";
@@ -23,9 +22,8 @@ const RSVPDialog = props => {
   const toast = useToast();
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
-  const state = useAppState();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const hasResponded = React.useMemo(() => !!props.eventResponse, [
+  const hasResponded = React.useMemo(() => Boolean(props.eventResponse), [
     props.eventResponse
   ]);
 
@@ -103,7 +101,8 @@ const RSVPDialog = props => {
       .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.event.school.id);
-    const user = state.users[props.authUser.uid];
+    // TODO
+    const user = {};
 
     const data = {
       response,

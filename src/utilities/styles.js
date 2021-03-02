@@ -1,10 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Style Utilities
 
-import { isDev } from "src/utilities/other";
-
 export const classNames = (_classNames = []) => {
-  if (isDev()) {
+  if (process.env.NODE_ENV !== "production") {
     if (!Array.isArray(_classNames)) {
       throw new Error(
         `classNames() was expecting value with type 'array' but got type '${typeof _classNames}'.`,

@@ -1,13 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { mapSchool } from "src/utilities/school";
-import { useAppState } from "src/store";
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchSchoolDetails = id => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [school, setSchool] = React.useState(null);
   const [error, setError] = React.useState(null);

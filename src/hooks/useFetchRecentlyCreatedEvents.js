@@ -1,6 +1,6 @@
 import React from "react";
 
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { mapEvent } from "src/utilities/event";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/event";

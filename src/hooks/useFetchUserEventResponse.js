@@ -1,5 +1,5 @@
 import React from "react";
-import { firebase } from "src/firebase";
+import firebase from "src/firebase";
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
