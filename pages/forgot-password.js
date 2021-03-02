@@ -20,7 +20,6 @@ import {
 import isEmpty from "lodash.isempty";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import Head from "next/head";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -114,10 +113,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <SiteLayout>
-      <Head>
-        <title>Forgot Password | CGN</title>
-      </Head>
+    <SiteLayout title="Forgot Password">
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

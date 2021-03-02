@@ -20,7 +20,6 @@ import isEmpty from "lodash.isempty";
 import times from "lodash.times";
 import safeJsonStringify from 'safe-json-stringify';
 import { getSchoolDetails, getSchoolEvents, getSchoolUsers } from 'src/api/school';
-import Head from 'next/head'
 
 // Constants
 import {
@@ -72,10 +71,7 @@ export const getServerSideProps = async ({ params }) => {
 
 const School = (props) => {
   return (
-    <SiteLayout>
-          <Head>
-        <title>{props.school.formattedName} | CGN</title>
-      </Head>
+    <SiteLayout title={props.school.formattedName}>
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">

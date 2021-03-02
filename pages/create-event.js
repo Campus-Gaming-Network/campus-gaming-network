@@ -29,7 +29,6 @@ import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
-import Head from "next/head";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
@@ -432,10 +431,7 @@ const CreateEvent = props => {
   }
 
   return (
-    <SiteLayout>
-      <Head>
-        <title>Create Event | CGN</title>
-      </Head>
+    <SiteLayout title="Create Event">
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

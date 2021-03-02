@@ -21,7 +21,6 @@ import { useDropzone } from "react-dropzone";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
-import Head from "next/head";
 
 // Constants
 import { SCHOOL_ACCOUNTS } from "src/constants/school";
@@ -35,6 +34,8 @@ import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Other
 import firebase from "src/firebase";
+
+import SiteLayout from "src/components/SiteLayout";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -204,10 +205,7 @@ const EditSchool = props => {
   }
 
   return (
-    <React.Fragment>
-    <Head>
-      <title>Edit {props.school.formattedName} | CGN</title>
-    </Head>
+    <SiteLayout title={`Edit ${props.school.formattedName}`}>
     <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h2" size="2xl">
@@ -256,7 +254,7 @@ const EditSchool = props => {
         </Button>
       </Stack>
     </Box>
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

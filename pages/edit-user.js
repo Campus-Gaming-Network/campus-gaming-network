@@ -36,7 +36,6 @@ import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
-import Head from "next/head";
 import dynamic from "next/dynamic";
 
 // Constants
@@ -405,10 +404,7 @@ const EditUser = props => {
   }
 
   return (
-    <SiteLayout>
-      <Head>
-        <title>Edit User | CGN</title>
-      </Head>
+    <SiteLayout title="Edit User">
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

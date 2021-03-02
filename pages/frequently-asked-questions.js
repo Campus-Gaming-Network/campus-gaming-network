@@ -13,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
-import Head from "next/head";
 
 // Components
 import OutsideLink from "src/components/OutsideLink";
@@ -24,10 +23,7 @@ import SiteLayout from "src/components/SiteLayout";
 
 const FrequentlyAskedQuestions = () => {
   return (
-    <SiteLayout>
-      <Head>
-        <title>Frequently Asked Questions | CGN</title>
-      </Head>
+    <SiteLayout title="Frequently Asked Questions">
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
         <Heading as="h2" size="2xl" pb={12}>
           Frequently Asked Questions

@@ -29,7 +29,6 @@ import PlacesAutocomplete from "react-places-autocomplete";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
-import Head from "next/head";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
@@ -38,6 +37,7 @@ import safeJsonStringify from "safe-json-stringify";
 import firebase from "src/firebase";
 
 // Components
+import SiteLayout from "src/components/SiteLayout";
 import GameSearch from "src/components/GameSearch";
 import GameCover from "src/components/GameCover";
 import MonthSelect from "src/components/MonthSelect";
@@ -433,10 +433,7 @@ const CreateEvent = props => {
   }
 
   return (
-    <React.Fragment>
-        <Head>
-      <title>{props.edit ? `Edit ${even.name}` : 'Create Event'} | CGN</title>
-    </Head>
+    <SiteLayout title={props.edit ? `Edit ${even.name}` : 'Create Event'}>
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
@@ -924,7 +921,7 @@ const CreateEvent = props => {
         isOpen={isDeletingEventAlertOpen}
         onClose={closeDeleteEventDialog}
       />
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 

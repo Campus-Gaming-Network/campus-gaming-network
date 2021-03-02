@@ -5,7 +5,6 @@ import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import Head from "next/head";
 import safeJsonStringify from "safe-json-stringify";
 
 // Components
@@ -67,9 +66,6 @@ export const getServerSideProps = async context => {
 const Home = () => {
   return (
     <SiteLayout>
-      <Head>
-        <title>Campus Gaming Network | CGN</title>
-      </Head>
       <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
         <Box>
           <Heading size="2xl" mb={8}>

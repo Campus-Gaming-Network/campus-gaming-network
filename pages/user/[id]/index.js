@@ -18,7 +18,6 @@ import {
 } from "@chakra-ui/react";
 import safeJsonStringify from 'safe-json-stringify';
 import { getUserDetails, getUserEvents } from 'src/api/user'
-import Head from 'next/head'
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 
@@ -90,10 +89,7 @@ export const getServerSideProps = async (context) => {
 
 const User = (props) => {
   return (
-    <SiteLayout>
-    <Head>
-  <title>{props.user.fullName} | CGN</title>
-</Head>
+    <SiteLayout title={props.user.fullName}>
     <Box
       as="article"
       pt={10}

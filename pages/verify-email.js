@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import Head from "next/head";
 
 // Other
 import firebase from "src/firebase";
@@ -94,10 +93,7 @@ const VerifyEmail = props => {
   }
 
   return (
-    <SiteLayout>
-      <Head>
-        <title>Verify Email | CGN</title>
-      </Head>
+    <SiteLayout title="Verify Email">
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
         <Alert
           status={verifyState}

@@ -23,7 +23,6 @@ import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import Head from "next/head";
 
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
@@ -180,10 +179,7 @@ const Signup = () => {
   };
 
   return (
-    <SiteLayout>
-      <Head>
-        <title>Signup | CGN</title>
-      </Head>
+    <SiteLayout title="Sign Up">
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

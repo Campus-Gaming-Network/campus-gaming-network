@@ -1,7 +1,6 @@
 // Libraries
 import React from "react";
 import { Box, Heading, Text } from "@chakra-ui/react";
-import Head from "next/head";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -11,10 +10,7 @@ import SiteLayout from "src/components/SiteLayout";
 
 const About = () => {
   return (
-    <SiteLayout>
-      <Head>
-        <title>About | CGN</title>
-      </Head>
+    <SiteLayout title="About">
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
         <Heading as="h2" size="2xl" mb={4}>
           About Campus Gaming Network

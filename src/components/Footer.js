@@ -40,7 +40,7 @@ const Footer = () => {
             Resources
           </ListItem>
           <ListItem fontSize="md">
-            <Link href="/about-us" color="brand.500" fontWeight={600}>
+            <Link href="/about" color="brand.500" fontWeight={600}>
               About us
             </Link>
           </ListItem>
