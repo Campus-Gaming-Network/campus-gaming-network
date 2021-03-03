@@ -7,6 +7,7 @@ import Head from "next/head";
 import Nav from "src/components/Nav";
 import Footer from "src/components/Footer";
 import VerifyEmailReminderBanner from "src/components/banners/VerifyEmailReminderBanner";
+import BetaWarningBanner from "./banners/BetaWarningBanner";
 
 const SiteLayout = ({
   children,
@@ -28,6 +29,7 @@ const SiteLayout = ({
       <Head>
         <title>{siteTitle}</title>
       </Head>
+      <BetaWarningBanner />
       <VerifyEmailReminderBanner />
       {!hideNav ? <Nav /> : null}
       <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%" {...rest}>
