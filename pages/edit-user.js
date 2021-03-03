@@ -745,6 +745,35 @@ const DetailSection = React.memo(props => {
           </FormHelperText>
           <FormErrorMessage>{props.errors.timezone}</FormErrorMessage>
         </FormControl>
+        {!Boolean(props.timezone) ? (
+          <Alert status="info">
+            <AlertIcon boxSize={4} />
+            <AlertDescription fontSize="sm">
+              Your browser timezone is{" "}
+              <Text as="span" fontWeight="bold">
+                {DateTime.local().zoneName}
+              </Text>
+              .
+            </AlertDescription>
+          </Alert>
+        ) : null}
+        {Boolean(props.timezone) &&
+        props.timezone !== DateTime.local().zoneName ? (
+          <Alert status="warning">
+            <AlertIcon boxSize={4} />
+            <AlertDescription fontSize="sm">
+              Your selected timezone{" "}
+              <Text as="span" fontWeight="bold">
+                {props.timezone}
+              </Text>{" "}
+              is different than your browser timezone{" "}
+              <Text as="span" fontWeight="bold">
+                {DateTime.local().zoneName}
+              </Text>
+              .
+            </AlertDescription>
+          </Alert>
+        ) : null}
       </Stack>
     </Box>
   );

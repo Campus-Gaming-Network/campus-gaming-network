@@ -207,6 +207,7 @@ const Signup = () => {
           <Heading as="h2" size="2xl">
             Create an account
           </Heading>
+          <Text color="gray.500">It's free!</Text>
           <Divider borderColor="gray.300" mt={12} mb={10} />
           {error ? (
             <Alert status="error" mb={12} rounded="lg">

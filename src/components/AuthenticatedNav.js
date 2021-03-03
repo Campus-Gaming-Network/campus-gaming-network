@@ -112,7 +112,7 @@ const AuthenticatedNav = props => {
           </MenuButton>
 
           <MenuList>
-            <MenuItem as={Link} href={`user/${props.user.id}`}>
+            <MenuItem as={Link} href={`/user/${props.user.id}`}>
               <Flex alignItems="center">
                 {Boolean(props.user.gravatar) ? (
                   <Avatar
@@ -129,7 +129,7 @@ const AuthenticatedNav = props => {
                 <Text lineHeight="1">Profile</Text>
               </Flex>
             </MenuItem>
-            <MenuItem as={Link} href={`school/${props.school.id}`}>
+            <MenuItem as={Link} href={`/school/${props.school.id}`}>
               <SchoolLogo
                 schoolId={props.school.id}
                 schoolName={props.school.name}

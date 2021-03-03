@@ -28,19 +28,26 @@ const FrequentlyAskedQuestions = () => {
         <Heading as="h2" size="2xl" pb={12}>
           Frequently Asked Questions
         </Heading>
-        <Accordion defaultIndex={[]} allowMultiple>
-          {QUESTIONS.map((item, index) => {
-            return (
-              <AccordionItem key={index}>
-                <AccordionButton>
-                  {item.question}
-                  <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel pb={4}>{item.answer}</AccordionPanel>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
+        <Box borderWidth={1} boxShadow="lg" rounded="lg" bg="white" p={6}>
+          <Accordion defaultIndex={[]} allowMultiple reduceMotion>
+            {QUESTIONS.map((item, index, arr) => {
+              const isFirst = index === 0;
+              const borderTopWidth = isFirst ? 0 : 1;
+
+              return (
+                <AccordionItem key={index} borderTopWidth={borderTopWidth}>
+                  <AccordionButton>
+                    {item.question}
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4} fontSize="md" borderBottomWidth={0}>
+                    {item.answer}
+                  </AccordionPanel>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </Box>
       </Box>
     </SiteLayout>
   );
