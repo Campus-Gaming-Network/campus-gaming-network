@@ -31,7 +31,6 @@ import { DateTime } from "luxon";
 import { useRouter } from "next/router";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import safeJsonStringify from "safe-json-stringify";
 
 // Other
 import firebase from "src/firebase";
@@ -50,12 +49,12 @@ import useFetchEventDetails from "src/hooks/useFetchEventDetails";
 
 // Utilities
 import { validateCreateEvent } from "src/utilities/validation";
-import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
 import { AUTH_STATUS } from "src/constants/auth";
+import { COOKIES } from "src/constants/other";
 
 const DeleteEventDialog = dynamic(
   () => import("src/components/dialogs/DeleteEventDialog"),
@@ -66,16 +65,16 @@ const DeleteEventDialog = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async context => {
-  let cookies;
-  let token;
-  let authStatus;
-
   try {
-    cookies = nookies.get(context);
-    token = hasToken(cookies)
-      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
-      : null;
-    authStatus = getAuthStatus(token);
+    const cookies = nookies.get(context);
+    const token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    const authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };
@@ -84,24 +83,7 @@ export const getServerSideProps = async context => {
     return { notFound: true };
   }
 
-  const { user } = await getUserDetails(token.uid);
-
-  if (!user) {
-    return { notFound: true };
-  }
-
-  const { school } = await getSchoolDetails(user.school.id);
-
-  const data = {
-    user,
-    authUser: {
-      email: token.email,
-      uid: token.uid
-    },
-    school
-  };
-
-  return { props: JSON.parse(safeJsonStringify(data)) };
+  return { props: {} };
 };
 
 ////////////////////////////////////////////////////////////////////////////////

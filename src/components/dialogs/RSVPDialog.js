@@ -18,7 +18,11 @@ import firebase from "src/firebase";
 import { EVENT_RESPONSES } from "src/constants/eventResponse";
 import { COLLECTIONS } from "src/constants/firebase";
 
+// Providers
+import { useAuth } from "src/providers/auth";
+
 const RSVPDialog = props => {
+  const { authUser } = useAuth();
   const toast = useToast();
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
@@ -92,7 +96,7 @@ const RSVPDialog = props => {
     const userDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.USERS)
-      .doc(props.authUser.uid);
+      .doc(authUser.uid);
     const eventDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.EVENTS)

@@ -8,18 +8,32 @@ import Nav from "src/components/Nav";
 import Footer from "src/components/Footer";
 import VerifyEmailReminderBanner from "src/components/banners/VerifyEmailReminderBanner";
 
-const SiteLayout = ({ children, title = "Campus Gaming Network", ...rest }) => {
+const SiteLayout = ({
+  children,
+  title = "Campus Gaming Network",
+  hideNav = false,
+  hideFooter = false,
+  ...rest
+}) => {
+  const siteTitle = React.useMemo(() => {
+    if (process.env.NODE_ENV !== "production") {
+      return `DEV | ${title} | CGN`;
+    }
+
+    return `${title} | CGN`;
+  }, [title]);
+
   return (
     <React.Fragment>
       <Head>
-        <title>{title} | CGN</title>
+        <title>{siteTitle}</title>
       </Head>
       <VerifyEmailReminderBanner />
-      <Nav />
+      {!hideNav ? <Nav /> : null}
       <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%" {...rest}>
         {children}
       </Box>
-      <Footer />
+      {!hideFooter ? <Footer /> : null}
     </React.Fragment>
   );
 };

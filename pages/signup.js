@@ -28,11 +28,11 @@ import nookies from "nookies";
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
 import { COLLECTIONS } from "src/constants/firebase";
 import { AUTH_STATUS } from "src/constants/auth";
+import { COOKIES } from "src/constants/other";
 
 // Utilities
 import { createGravatarHash } from "src/utilities/user";
 import { validateSignUp } from "src/utilities/validation";
-import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Components
 import Link from "src/components/Link";
@@ -48,10 +48,14 @@ import firebase from "src/firebase";
 export const getServerSideProps = async context => {
   try {
     const cookies = nookies.get(context);
-    const token = hasToken(cookies)
-      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
-      : null;
-    const authStatus = getAuthStatus(token);
+    const token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    const authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
       return {
@@ -304,7 +308,7 @@ const DetailSection = React.memo(props => {
           aria-describedby="email-helper-text"
         />
         <FormHelperText id="email-helper-text">
-          This is how you will login.
+          This is what you will use for logging in.
         </FormHelperText>
         <FormErrorMessage>{props.errors.email}</FormErrorMessage>
       </FormControl>

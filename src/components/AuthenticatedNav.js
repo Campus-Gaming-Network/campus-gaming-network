@@ -31,7 +31,7 @@ import ButtonLink from "src/components/ButtonLink";
 // Other
 import firebase from "src/firebase";
 
-const AuthenticatedNav = () => {
+const AuthenticatedNav = props => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -94,16 +94,16 @@ const AuthenticatedNav = () => {
             rounded="md"
           >
             <Flex align="center">
-              {user.gravatar ? (
+              {Boolean(props.user.gravatar) ? (
                 <Avatar
-                  name={user.fullName}
-                  src={user.gravatarUrl}
+                  name={props.user.fullName}
+                  src={props.user.gravatarUrl}
                   mr={2}
                   size="xs"
                 />
               ) : null}
               <Text fontWeight="bold" color="gray.900">
-                {user.firstName}
+                {props.user.firstName}
               </Text>
               <Box ml={2}>
                 <ChevronDownIcon />
@@ -112,12 +112,12 @@ const AuthenticatedNav = () => {
           </MenuButton>
 
           <MenuList>
-            <MenuItem as={Link} href={`user/${user.id}`}>
+            <MenuItem as={Link} href={`user/${props.user.id}`}>
               <Flex alignItems="center">
-                {user.gravatar ? (
+                {Boolean(props.user.gravatar) ? (
                   <Avatar
-                    name={user.fullName}
-                    src={user.gravatarUrl}
+                    name={props.user.fullName}
+                    src={props.user.gravatarUrl}
                     mr={2}
                     size="xs"
                   />
@@ -129,10 +129,10 @@ const AuthenticatedNav = () => {
                 <Text lineHeight="1">Profile</Text>
               </Flex>
             </MenuItem>
-            <MenuItem as={Link} href={`school/${user.school.id}`}>
+            <MenuItem as={Link} href={`school/${props.school.id}`}>
               <SchoolLogo
-                schoolId={school.id}
-                schoolName={school.name}
+                schoolId={props.school.id}
+                schoolName={props.school.name}
                 h={6}
                 w={6}
                 mr={2}

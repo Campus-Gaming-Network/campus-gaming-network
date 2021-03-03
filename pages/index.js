@@ -3,9 +3,6 @@ import firebase from "src/firebase";
 import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
 import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
 import startCase from "lodash.startcase";
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
-import safeJsonStringify from "safe-json-stringify";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -15,50 +12,14 @@ import EventListItem from "src/components/EventListItem";
 // Utilities
 import { mapEvent } from "src/utilities/event";
 import { mapEventResponse } from "src/utilities/eventResponse";
-import { noop } from "src/utilities/other";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
-import { AUTH_STATUS } from "src/constants/auth";
 
 // Hooks
 import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
-import { useAuth } from "src/providers/auth";
-
 const now = new Date();
-
-export const getServerSideProps = async context => {
-  let cookies;
-  let token;
-  let authStatus;
-
-  try {
-    cookies = nookies.get(context);
-    token = hasToken(cookies)
-      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
-      : null;
-    authStatus = getAuthStatus(token);
-  } catch (err) {
-    noop();
-  }
-
-  const data = {};
-
-  if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-    const { user } = await getUserDetails(token.uid);
-    const { school } = await getSchoolDetails(user.school.id);
-
-    data.authUser = {
-      email: token.email,
-      uid: token.uid
-    };
-    data.user = user;
-    data.school = school;
-  }
-
-  return { props: JSON.parse(safeJsonStringify(data)) };
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Home

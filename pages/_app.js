@@ -2,7 +2,7 @@
 import "src/styles/globals.css";
 import { SkipNavLink } from "@reach/skip-nav";
 import * as Sentry from "@sentry/react";
-import { ChakraProvider, extendTheme, Box } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "@reach/skip-nav/styles.css";
 import "@reach/combobox/styles.css";
 import { AuthProvider } from "src/providers/auth";
@@ -13,7 +13,9 @@ import { SENTRY_CONFIG } from "src/constants/sentry";
 
 const CUSTOM_THEME = extendTheme(CUSTOM_CHAKRA_THEME);
 
-Sentry.init(SENTRY_CONFIG);
+if (SENTRY_CONFIG.dsn) {
+  Sentry.init(SENTRY_CONFIG);
+}
 
 const App = ({ Component, pageProps }) => {
   return (

@@ -10,10 +10,21 @@ import firebase from "src/firebase";
 // Constants
 import { COOKIES } from "src/constants/other";
 
-const AuthContext = React.createContext({ authUser: null, user: null });
+// Utilities
+import { mapUser } from "src/utilities/user";
+import { mapSchool } from "src/utilities/school";
+import { noop } from "src/utilities/other";
+
+const AuthContext = React.createContext({
+  authUser: null,
+  user: null,
+  school: null
+});
 
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = React.useState(null);
+  const [user, setUser] = React.useState(null);
+  const [school, setSchool] = React.useState(null);
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -21,17 +32,64 @@ export const AuthProvider = ({ children }) => {
     }
 
     return firebase.auth().onIdTokenChanged(async authUser => {
+      console.log(`token changed!`);
+
       if (!authUser) {
+        console.log(`no token found...`);
+
         setAuthUser(null);
+        setUser(null);
+        setSchool(null);
 
         nookies.destroy(null, COOKIES.AUTH_TOKEN);
         nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: "/" });
         return;
       }
 
+      console.log(`updating token...`);
+
       const token = await authUser.getIdToken();
 
       setAuthUser(authUser);
+
+      if (Boolean(authUser) && Boolean(authUser.uid)) {
+        let userDoc;
+
+        try {
+          userDoc = await firebase
+            .firestore()
+            .collection("users")
+            .doc(authUser.uid)
+            .get();
+        } catch (error) {
+          noop();
+        }
+
+        console.log(`userDoc.exists -> ${userDoc.exists}`);
+
+        if (userDoc.exists) {
+          setUser({ ...mapUser(userDoc.data(), userDoc) });
+
+          try {
+            const schoolDoc = await firebase
+              .firestore()
+              .collection("schools")
+              .doc(userDoc.data().school.id)
+              .get();
+
+            console.log(`schoolDoc.exists -> ${schoolDoc.exists}`);
+
+            if (schoolDoc.exists) {
+              setSchool({ ...mapSchool(schoolDoc.data(), schoolDoc) });
+            }
+          } catch (error) {
+            console.log("err->", error);
+            noop();
+          }
+        }
+      }
+
+      console.log("AuthProvider", { authUser, user, school });
 
       nookies.destroy(null, COOKIES.AUTH_TOKEN);
       nookies.set(null, COOKIES.AUTH_TOKEN, token, { path: "/" });
@@ -41,6 +99,8 @@ export const AuthProvider = ({ children }) => {
   // force refresh the token every 10 minutes
   React.useEffect(() => {
     const handle = setInterval(async () => {
+      console.log(`refreshing token...`);
+
       const authUser = firebase.auth().currentUser;
 
       if (authUser) {
@@ -51,7 +111,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authUser }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ authUser, user, school }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 

@@ -24,7 +24,6 @@ import nookies from "nookies";
 // Utilities
 import { useFormFields } from "src/utilities/other";
 import { validateForgotPassword } from "src/utilities/validation";
-import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Components
 import Link from "src/components/Link";
@@ -35,6 +34,7 @@ import firebase from "src/firebase";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
+import { COOKIES } from "src/constants/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -42,10 +42,14 @@ import { AUTH_STATUS } from "src/constants/auth";
 export const getServerSideProps = async context => {
   try {
     const cookies = nookies.get(context);
-    const token = hasToken(cookies)
-      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
-      : null;
-    const authStatus = getAuthStatus(token);
+    const token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    const authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
       return {

@@ -18,7 +18,6 @@ import {
   Image
 } from "@chakra-ui/react";
 import { useDropzone } from "react-dropzone";
-import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
 
@@ -26,15 +25,14 @@ import safeJsonStringify from "safe-json-stringify";
 import { SCHOOL_ACCOUNTS } from "src/constants/school";
 import { DROPZONE_STYLES } from "src/constants/styles";
 import { COLLECTIONS } from "src/constants/firebase";
-import { ACCOUNTS } from "src/constants/other";
+import { ACCOUNTS, COOKIES } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
-
-// Utilities
-import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Other
 import firebase from "src/firebase";
+import firebaseAdmin from "src/firebaseAdmin";
 
+// Components
 import SiteLayout from "src/components/SiteLayout";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,8 +45,10 @@ export const getServerSideProps = async context => {
 
   try {
     cookies = nookies.get(context);
-    token = hasToken(cookies) ? await firebaseAdmin.auth().verifyIdToken(cookies.token) : null;
-    authStatus = getAuthStatus(token);
+    token = Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+      : null;
+    authStatus = Boolean(token) && Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };
@@ -59,16 +59,12 @@ export const getServerSideProps = async context => {
 
   const { school } = await getSchoolDetails(context.params.id);
 
-  if (!school) {
+  if (!Boolean(school)) {
     return { notFound: true };
   }
 
   const data = {
     school,
-    authUser: {
-      email: token.email,
-      uid: token.uid
-    },
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };

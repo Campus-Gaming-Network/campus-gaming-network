@@ -1,4 +1,4 @@
-import * as firebase from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import { mapSchool } from "src/utilities/school";
 import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
@@ -7,7 +7,7 @@ export const getSchoolDetails = async id => {
   let school = null;
 
   try {
-    const schoolDoc = await firebase
+    const schoolDoc = await firebaseAdmin
       .firestore()
       .collection("schools")
       .doc(id)
@@ -28,16 +28,20 @@ export const getSchoolEvents = async (id, limit = 25, page = 0) => {
   let events = [];
 
   try {
-    const schoolDocRef = firebase
+    const schoolDocRef = firebaseAdmin
       .firestore()
       .collection("schools")
       .doc(id);
 
-    let query = firebase
+    let query = firebaseAdmin
       .firestore()
       .collection("events")
       .where("school.ref", "==", schoolDocRef)
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now));
+      .where(
+        "endDateTime",
+        ">=",
+        firebaseAdmin.firestore.Timestamp.fromDate(now)
+      );
 
     if (page > 0) {
       if (!pages[page]) {
@@ -67,12 +71,12 @@ export const getSchoolUsers = async (id, limit = 25, page = 0) => {
   let users = [];
 
   try {
-    const schoolDocRef = firebase
+    const schoolDocRef = firebaseAdmin
       .firestore()
       .collection("schools")
       .doc(id);
 
-    let query = firebase
+    let query = firebaseAdmin
       .firestore()
       .collection("users")
       .where("school.ref", "==", schoolDocRef);

@@ -1,7 +1,8 @@
 // Libraries
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import isEmpty from "lodash.isempty";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import times from "lodash.times";
 import {
   Stack,
@@ -10,16 +11,15 @@ import {
   Text,
   List,
   ListItem,
-  Skeleton,
   Avatar,
   Flex,
   VisuallyHidden,
-  Image
+  Image,
+  Button,
+  useClipboard
 } from "@chakra-ui/react";
 import safeJsonStringify from 'safe-json-stringify';
 import { getUserDetails, getUserEvents } from 'src/api/user'
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
 
 // Constants
 import {
@@ -32,23 +32,19 @@ import {
   ACCOUNTS,
   DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE
 } from "src/constants/other";
-import { AUTH_STATUS } from "src/constants/auth";
-
-// Utilities
-import firebase from "src/firebase";
-import { noop } from "src/utilities/other";
-import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
-import UserSilhouette from "src/components/silhouettes/UserSilhouette";
 import GameCover from "src/components/GameCover";
 import GameLink from "src/components/GameLink";
 
 // Hooks
 import { getSchoolDetails } from "src/api/school";
+
+// Providers
+import { useAuth } from "src/providers/auth";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -57,7 +53,7 @@ export const getServerSideProps = async (context) => {
   const { user } = await getUserDetails(context.params.id);
   const { events } = await getUserEvents(context.params.id);
 
-  if (!user) {
+  if (!Boolean(user)) {
     return { notFound: true };
   }
 
@@ -66,20 +62,7 @@ export const getServerSideProps = async (context) => {
       user,
       school,
       events,
-      authStatus: AUTH_STATUS.UNAUTHENTICATED,
-      isAuthenticatedUser: false,
   };
-
-  try {
-    const cookies = nookies.get(context);
-    const token = hasToken(cookies) ? await firebaseAdmin.auth().verifyIdToken(cookies.token) : null;
-    const authStatus = getAuthStatus(token);
-    const isAuthenticatedUser = context.params.id === token.uid;
-    data.authStatus = authStatus;
-    data.isAuthenticatedUser = isAuthenticatedUser;
-  } catch (error) {
-    noop();
-  }
 
   return { props: JSON.parse(safeJsonStringify(data)) };
 }
@@ -88,6 +71,9 @@ export const getServerSideProps = async (context) => {
 // User
 
 const User = (props) => {
+  const { authUser } = useAuth();
+  const isAuthenticatedUser = React.useMemo(() => authUser && (authUser.uid === props.user.id), [authUser, props.user]);
+
   return (
     <SiteLayout title={props.user.fullName}>
     <Box
@@ -100,7 +86,7 @@ const User = (props) => {
       maxW="5xl"
       pos="relative"
     >
-      {props.isAuthenticatedUser ? (
+      {isAuthenticatedUser ? (
         <Box mb={10} textAlign="center" display="flex" justifyContent="center">
           <Link
             href="/edit-user"
@@ -302,30 +288,48 @@ const AccountsList = props => {
 // AccountsListItem
 
 const AccountsListItem = props => {
+  const [isHovered, setIsHovered] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(false);
+  const { hasCopied, onCopy } = useClipboard(props.value);
+
   if (!props.value) {
     return null;
   }
 
+  const icon = React.useMemo(() => {
+    if (hasCopied) {
+      return faCheck;
+    } else if (isHovered || isFocused) {
+      return faCopy
+    } else {
+      return props.icon;
+    }
+  });
+
   return (
     <ListItem>
       <Box
-        shadow="sm"
-        borderWidth={1}
-        rounded="lg"
+        as={Button}
+        onClick={onCopy}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        variant="outline"
         bg="white"
         pos="relative"
         alignItems="center"
         display="flex"
         px={4}
-        py={2}
+        py={6}
         mr={4}
         mb={4}
       >
         <Box borderRight="1px" borderColor="gray.300" pr={4}>
-          <FontAwesomeIcon icon={props.icon} />
+          <FontAwesomeIcon icon={icon} />
         </Box>
-        <Box pl={4}>
-          <Text fontSize="sm">{props.label}</Text>
+        <Box pl={4} textAlign="left">
+          <Text fontSize="sm" fontWeight="normal" color="gray.600">{hasCopied ? "Copied!" : props.label}</Text>
           <Text fontSize="sm" fontWeight="bold">
             {props.value}
           </Text>

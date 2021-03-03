@@ -18,7 +18,7 @@ const NotFound = () => {
         <Flex align="center" justify="center" h="100%">
           <Stack spacing={12} textAlign="center">
             <Image src="/404.svg" maxW={600} w="100%" mx="auto" />
-            <Text fontSize="3xl">
+            <Text fontSize="3xl" fontWeight="bold">
               Page not found{" "}
               <Text as="span" color="red.500">
                 <FontAwesomeIcon icon={faHeartBroken} />

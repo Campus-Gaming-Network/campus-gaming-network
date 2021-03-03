@@ -1,4 +1,4 @@
-import * as firebase from "firebase-admin";
+import firebaseAdmin from "src/firebaseAdmin";
 import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
 
@@ -6,7 +6,7 @@ export const getEventDetails = async id => {
   let event = null;
 
   try {
-    const eventDoc = await firebase
+    const eventDoc = await firebaseAdmin
       .firestore()
       .collection("events")
       .doc(id)
@@ -30,12 +30,12 @@ export const getEventUsers = async (
   let users = [];
 
   try {
-    const eventDocRef = firebase
+    const eventDocRef = firebaseAdmin
       .firestore()
       .collection("events")
       .doc(id);
 
-    let query = firebase
+    let query = firebaseAdmin
       .firestore()
       .collection("event-responses")
       .where("event.ref", "==", eventDocRef)

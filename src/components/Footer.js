@@ -41,7 +41,7 @@ const Footer = () => {
           </ListItem>
           <ListItem fontSize="md">
             <Link href="/about" color="brand.500" fontWeight={600}>
-              About us
+              About
             </Link>
           </ListItem>
           <ListItem fontSize="md">

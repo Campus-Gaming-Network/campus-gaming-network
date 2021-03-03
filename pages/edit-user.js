@@ -47,7 +47,7 @@ import {
 } from "src/constants/user";
 import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "src/constants/dateTime";
 import { COLLECTIONS } from "src/constants/firebase";
-import { ACCOUNTS } from "src/constants/other";
+import { ACCOUNTS, COOKIES } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
@@ -67,7 +67,7 @@ import YearSelect from "src/components/YearSelect";
 // Utilities
 import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
-import { hasToken, getAuthStatus } from "src/utilities/auth";
+import { useAuth } from "src/providers/auth";
 
 const DeleteAccountDialog = dynamic(
   () => import("src/components/dialogs/DeleteAccountDialog"),
@@ -84,10 +84,14 @@ export const getServerSideProps = async context => {
 
   try {
     cookies = nookies.get(context);
-    token = hasToken(cookies)
-      ? await firebaseAdmin.auth().verifyIdToken(cookies.token)
-      : null;
-    authStatus = getAuthStatus(token);
+    token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };
@@ -98,7 +102,7 @@ export const getServerSideProps = async context => {
 
   const { user } = await getUserDetails(token.uid);
 
-  if (!user) {
+  if (!Boolean(user)) {
     return { notFound: true };
   }
 
@@ -106,10 +110,6 @@ export const getServerSideProps = async context => {
 
   const data = {
     user,
-    authUser: {
-      email: token.email,
-      uid: token.uid
-    },
     school
   };
 
@@ -157,6 +157,7 @@ const formReducer = (state, { field, value }) => {
 // EditUser
 
 const EditUser = props => {
+  const { authUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [
@@ -447,7 +448,7 @@ const EditUser = props => {
             errors={errors}
             firstName={formState.firstName}
             lastName={formState.lastName}
-            email={props.authUser.email}
+            email={authUser.email}
             hometown={formState.hometown}
             birthYear={formState.birthYear}
             birthMonth={formState.birthMonth}

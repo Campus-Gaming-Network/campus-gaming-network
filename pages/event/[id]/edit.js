@@ -50,12 +50,13 @@ import useFetchEventDetails from "src/hooks/useFetchEventDetails";
 
 // Utilities
 import { validateCreateEvent } from "src/utilities/validation";
-import { hasToken, getAuthStatus } from "src/utilities/auth";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
 import { AUTH_STATUS } from "src/constants/auth";
+import { COOKIES } from "src/constants/other";
+
 import { getEventDetails } from "src/api/event";
 
 const DeleteEventDialog = dynamic(() => import('src/components/dialogs/DeleteEventDialog'), { ssr: false });
@@ -70,8 +71,10 @@ export const getServerSideProps = async context => {
 
   try {
     cookies = nookies.get(context);
-    token = hasToken(cookies) ? await firebaseAdmin.auth().verifyIdToken(cookies.token) : null;
-    authStatus = getAuthStatus(token);
+    token = Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+      : null;
+    authStatus = Boolean(token) && Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };
@@ -82,13 +85,13 @@ export const getServerSideProps = async context => {
 
   const { event } = await getEventDetails(context.params.id);
 
-  if (!event) {
+  if (!Boolean(event)) {
     return { notFound: true };
   }
 
   const { user } = await getUserDetails(token.uid);
 
-  if (!user) {
+  if (!Boolean(user)) {
     return { notFound: true };
   }
 
@@ -96,10 +99,6 @@ export const getServerSideProps = async context => {
 
   const data = {
     user,
-    authUser: {
-      email: token.email,
-      uid: token.uid
-    },
     school
   };
 

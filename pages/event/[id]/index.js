@@ -23,8 +23,6 @@ import {
   Skeleton
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
-import { getEventDetails, getEventUsers } from 'src/api/event';
-import { getUserEventResponse } from "src/api/user";
 import dynamic from 'next/dynamic';
 
 // Constants
@@ -34,15 +32,10 @@ import {
 } from "src/constants/event";
 import {
   DEFAULT_USERS_LIST_PAGE_SIZE,
-  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE
+  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE,
+  COOKIES
 } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
-
-// Utilities
-import { hasToken, getAuthStatus } from "src/utilities/auth";
-
-// Other
-import firebase from "src/firebase";
 
 // Components
 import OutsideLink from "src/components/OutsideLink";
@@ -51,6 +44,13 @@ import GameCover from "src/components/GameCover";
 
 // Hooks
 import useFetchEventUsers from "src/hooks/useFetchEventUsers";
+
+// Providers
+import { useAuth } from "src/providers/auth";
+
+// API
+import { getEventDetails, getEventUsers } from 'src/api/event';
+import { getUserEventResponse } from "src/api/user";
 
 const RSVPDialog = dynamic(() => import('src/components/dialogs/RSVPDialog'), { ssr: false });
 
@@ -61,7 +61,7 @@ export const getServerSideProps = async ({ params }) => {
   const { event } = await getEventDetails(params.id);
   const { users } = await getEventUsers(params.id);
 
-  if (!event) {
+  if (!Boolean(event)) {
     return { notFound: true };
   }
 
@@ -69,8 +69,6 @@ export const getServerSideProps = async ({ params }) => {
     event,
     users,
     eventResponse: null,
-    authUser: {},
-    authStatus: AUTH_STATUS.UNAUTHENTICATED,
     isEventCreator: false,
     hasResponded: false,
     canChangeEventResponse: false,
@@ -78,8 +76,10 @@ export const getServerSideProps = async ({ params }) => {
 
   try {
     const cookies = nookies.get(context);
-    const token = hasToken(cookies) ? await firebaseAdmin.auth().verifyIdToken(cookies.token) : null;
-    const authStatus = getAuthStatus(token);
+    const token = Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+      : null;
+      const authStatus = Boolean(token) && Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
     const isEventCreator = event.creator.id === token.uid;
     const { eventResponse } = await getUserEventResponse(params.id, token.uid);
     const canChangeEventResponse = (
@@ -88,11 +88,6 @@ export const getServerSideProps = async ({ params }) => {
       !event.hasEnded
     );
 
-    data.authUser = {
-      email: token.email,
-      uid: token.uid
-    };
-    data.authStatus = authStatus;
     data.isEventCreator = isEventCreator;
     data.eventResponse = eventResponse;
     data.hasResponded = Boolean(eventResponse);
@@ -108,6 +103,7 @@ export const getServerSideProps = async ({ params }) => {
 // Event
 
 const Event = props => {
+  const { authUser } = useAuth();
   const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
 
@@ -347,7 +343,7 @@ const Event = props => {
 
       {canChangeEventResponse ? (
         <RSVPDialog
-          authUser={props.authUser}
+          authUser={authUser}
           event={event}
           eventResponse={eventResponse}
           isOpen={isRSVPAlertOpen}

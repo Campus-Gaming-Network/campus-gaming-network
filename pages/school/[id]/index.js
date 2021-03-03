@@ -16,7 +16,6 @@ import {
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt, faSchool } from "@fortawesome/free-solid-svg-icons";
-import isEmpty from "lodash.isempty";
 import times from "lodash.times";
 import safeJsonStringify from 'safe-json-stringify';
 import { getSchoolDetails, getSchoolEvents, getSchoolUsers } from 'src/api/school';
@@ -39,15 +38,6 @@ import OutsideLink from "src/components/OutsideLink";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 import SchoolLogo from "src/components/SchoolLogo";
-import SchoolSilhouette from "src/components/silhouettes/SchoolSilhouette";
-
-// Hooks
-import useFetchSchoolDetails from "src/hooks/useFetchSchoolDetails";
-import useFetchSchoolEvents from "src/hooks/useFetchSchoolEvents";
-import useFetchSchoolUsers from "src/hooks/useFetchSchoolUsers";
-
-// Utilities
-import { isValidUrl } from "src/utilities/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -57,7 +47,7 @@ export const getServerSideProps = async ({ params }) => {
   const { users } = await getSchoolUsers(params.id);
   const { events } = await getSchoolEvents(params.id);
 
-  if (!school) {
+  if (!Boolean(school)) {
     return { notFound: true };
   }
 
