@@ -16,17 +16,21 @@ import { mapSchool } from "src/utilities/school";
 import { noop } from "src/utilities/other";
 
 const AuthContext = React.createContext({
+  authStatus: "idle",
   authUser: null,
   user: null,
   school: null
 });
 
 export const AuthProvider = ({ children }) => {
+  const [authStatus, setAuthStatus] = React.useState("idle");
   const [authUser, setAuthUser] = React.useState(null);
   const [user, setUser] = React.useState(null);
   const [school, setSchool] = React.useState(null);
 
   React.useEffect(() => {
+    setAuthStatus("authenticating");
+
     if (typeof window !== "undefined") {
       window.nookies = nookies;
     }
@@ -37,9 +41,11 @@ export const AuthProvider = ({ children }) => {
       if (!authUser) {
         console.log(`no token found...`);
 
+        setAuthStatus("unauthenticated");
         setAuthUser(null);
         setUser(null);
         setSchool(null);
+        setAuthStatus("finished");
 
         nookies.destroy(null, COOKIES.AUTH_TOKEN);
         nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: "/" });
@@ -53,6 +59,7 @@ export const AuthProvider = ({ children }) => {
       setAuthUser(authUser);
 
       if (Boolean(authUser) && Boolean(authUser.uid)) {
+        setAuthStatus("authenticated");
         let userDoc;
 
         try {
@@ -65,8 +72,6 @@ export const AuthProvider = ({ children }) => {
           noop();
         }
 
-        console.log(`userDoc.exists -> ${userDoc.exists}`);
-
         if (userDoc.exists) {
           setUser({ ...mapUser(userDoc.data(), userDoc) });
 
@@ -77,10 +82,9 @@ export const AuthProvider = ({ children }) => {
               .doc(userDoc.data().school.id)
               .get();
 
-            console.log(`schoolDoc.exists -> ${schoolDoc.exists}`);
-
             if (schoolDoc.exists) {
               setSchool({ ...mapSchool(schoolDoc.data(), schoolDoc) });
+              setAuthStatus("finished");
             }
           } catch (error) {
             console.log("err->", error);
@@ -88,8 +92,6 @@ export const AuthProvider = ({ children }) => {
           }
         }
       }
-
-      console.log("AuthProvider", { authUser, user, school });
 
       nookies.destroy(null, COOKIES.AUTH_TOKEN);
       nookies.set(null, COOKIES.AUTH_TOKEN, token, { path: "/" });
@@ -111,7 +113,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authUser, user, school }}>
+    <AuthContext.Provider value={{ authStatus, authUser, user, school }}>
       {children}
     </AuthContext.Provider>
   );

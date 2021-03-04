@@ -57,6 +57,7 @@ import { getSchoolDetails } from "src/api/school";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
+import FormSilhouette from "src/components/silhouettes/FormSilhouette";
 import SchoolSearch from "src/components/SchoolSearch";
 import GameSearch from "src/components/GameSearch";
 import GameCover from "src/components/GameCover";
@@ -157,7 +158,7 @@ const formReducer = (state, { field, value }) => {
 // EditUser
 
 const EditUser = props => {
-  const { authUser } = useAuth();
+  const { authStatus, authUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [
@@ -399,6 +400,14 @@ const EditUser = props => {
         });
       });
   };
+
+  if (authStatus !== "finished") {
+    return (
+      <SiteLayout title="Edit User">
+        <FormSilhouette />
+      </SiteLayout>
+    );
+  }
 
   if (!hasPrefilledForm) {
     prefillForm();
