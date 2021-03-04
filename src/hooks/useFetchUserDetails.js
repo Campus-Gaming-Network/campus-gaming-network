@@ -1,13 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebaseFirestore } from "../firebase";
-import { mapUser } from "utilities/user";
-import { useAppState } from "store";
-import { COLLECTIONS } from "constants/firebase";
+import firebase from "src/firebase";
+import { mapUser } from "src/utilities/user";
+import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchUserDetails = id => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [user, setUser] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -26,7 +24,8 @@ const useFetchUserDetails = id => {
       } else {
         console.log(`[API] fetchUserDetails...${id}`);
 
-        firebaseFirestore
+        firebase
+          .firestore()
           .collection(COLLECTIONS.USERS)
           .doc(id)
           .get()

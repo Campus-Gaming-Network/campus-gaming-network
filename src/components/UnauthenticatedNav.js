@@ -1,13 +1,16 @@
 import React from "react";
-import { Box, Button, Flex } from "@chakra-ui/react";
-import { Link as ReachLink, navigate } from "@reach/router";
+import { Box, Flex, Button } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 // Components
-import Nav from "./Nav";
-import SchoolSearch from "./SchoolSearch";
-import Logo from "./Logo";
+import NavWrapper from "src/components/NavWrapper";
+import SchoolSearch from "src/components/SchoolSearch";
+import Logo from "src/components/Logo";
+import Link from "src/components/Link";
+import ButtonLink from "src/components/ButtonLink";
 
-const Header = () => {
+const UnauthenticatedNav = () => {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {
@@ -16,12 +19,12 @@ const Header = () => {
 
   const onSchoolSelect = selectedSchool => {
     if (selectedSchool && selectedSchool.id) {
-      navigate(`/school/${selectedSchool.id}`);
+      router.push(`/school/${selectedSchool.id}`);
     }
   };
 
   return (
-    <Nav>
+    <NavWrapper>
       <Flex align="center" mr={5}>
         <Logo width="200px" />
       </Flex>
@@ -39,15 +42,15 @@ const Header = () => {
         flexGrow={1}
         justifyContent="flex-end"
       >
-        <Button as={ReachLink} to="/login" colorScheme="gray" mr={3}>
+        <ButtonLink href="/login" mr={3}>
           Log In
-        </Button>
-        <Button as={ReachLink} to="/register" colorScheme="brand">
+        </ButtonLink>
+        <ButtonLink href="/signup" colorScheme="brand">
           Sign Up
-        </Button>
+        </ButtonLink>
       </Box>
-    </Nav>
+    </NavWrapper>
   );
 };
 
-export default Header;
+export default UnauthenticatedNav;

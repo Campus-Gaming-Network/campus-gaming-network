@@ -10,24 +10,24 @@ import {
   AlertDialogContent,
   AlertDialogOverlay
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 // Other
-import { firebaseFirestore, firebaseAuth } from "../../firebase";
-import { useAppState } from "store";
+import firebase from "src/firebase";
 
 // Constants
-import { EVENT_RESPONSES } from "constants/eventResponse";
-import { COLLECTIONS } from "constants/firebase";
+import { EVENT_RESPONSES } from "src/constants/eventResponse";
+import { COLLECTIONS } from "src/constants/firebase";
+
+// Providers
+import { useAuth } from "src/providers/auth";
 
 const RSVPDialog = props => {
+  const { authUser } = useAuth();
   const toast = useToast();
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
-  const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const hasResponded = React.useMemo(() => !!props.eventResponse, [
+  const hasResponded = React.useMemo(() => Boolean(props.eventResponse), [
     props.eventResponse
   ]);
 
@@ -37,7 +37,8 @@ const RSVPDialog = props => {
     const data = getResponseFormData(response);
 
     if (!hasResponded) {
-      firebaseFirestore
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENT_RESPONSES)
         .add(data)
         .then(() => {
@@ -62,7 +63,8 @@ const RSVPDialog = props => {
           });
         });
     } else {
-      firebaseFirestore
+      firebase
+        .firestore()
         .collection(COLLECTIONS.EVENT_RESPONSES)
         .doc(props.eventResponse.id)
         .update({ response })
@@ -91,16 +93,20 @@ const RSVPDialog = props => {
   };
 
   const getResponseFormData = response => {
-    const userDocRef = firebaseFirestore
+    const userDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.USERS)
-      .doc(authenticatedUser.uid);
-    const eventDocRef = firebaseFirestore
+      .doc(authUser.uid);
+    const eventDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.EVENTS)
       .doc(props.event.id);
-    const schoolDocRef = firebaseFirestore
+    const schoolDocRef = firebase
+      .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.event.school.id);
-    const user = state.users[authenticatedUser.uid];
+    // TODO
+    const user = {};
 
     const data = {
       response,

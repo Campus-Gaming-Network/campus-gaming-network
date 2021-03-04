@@ -1,7 +1,11 @@
 import React from "react";
-import { Link as ReachLink } from "@reach/router";
+import NextLink from "next/link";
 import { Link as ChakraLink } from "@chakra-ui/react";
 
-const Link = props => <ChakraLink as={ReachLink} {...props} />;
+const Link = ({ children, href, ...rest }) => (
+  <NextLink href={href}>
+    <ChakraLink {...rest}>{children}</ChakraLink>
+  </NextLink>
+);
 
 export default Link;

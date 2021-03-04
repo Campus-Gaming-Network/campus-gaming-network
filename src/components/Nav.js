@@ -1,17 +1,34 @@
+// Libraries
 import React from "react";
-import { Flex } from "@chakra-ui/react";
 
-const Nav = props => (
-  <Flex
-    as="nav"
-    role="navigation"
-    align="center"
-    justify="space-between"
-    wrap="wrap"
-    paddingX="1.5rem"
-    borderBottomWidth={2}
-    {...props}
-  />
-);
+// Components
+import NavSilhouette from "src/components/silhouettes/NavSilhouette";
+import AuthenticatedNav from "src/components/AuthenticatedNav";
+import UnauthenticatedNav from "src/components/UnauthenticatedNav";
+
+// Providers
+import { useAuth } from "src/providers/auth";
+
+const Nav = () => {
+  const { authStatus, authUser, user, school } = useAuth();
+  const isAuthenticated = React.useMemo(
+    () => Boolean(authUser) && Boolean(authUser.uid),
+    [authUser]
+  );
+  const hasUserData = React.useMemo(() => Boolean(user) && Boolean(school), [
+    user,
+    school
+  ]);
+
+  if (authStatus !== "finished") {
+    return <NavSilhouette />;
+  }
+
+  if (isAuthenticated && hasUserData) {
+    return <AuthenticatedNav user={user} school={school} />;
+  }
+
+  return <UnauthenticatedNav />;
+};
 
 export default Nav;

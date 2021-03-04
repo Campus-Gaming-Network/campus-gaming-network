@@ -7,11 +7,11 @@ import {
   ComboboxList,
   ComboboxOption
 } from "@reach/combobox";
-import { firebase } from "../firebase";
+import firebase from "src/firebase";
 import uniqBy from "lodash.uniqby";
 
 // Hooks
-import useDebounce from "hooks/useDebounce";
+import useDebounce from "src/hooks/useDebounce";
 
 const CACHED_GAMES = {};
 

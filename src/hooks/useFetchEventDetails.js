@@ -1,13 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebaseFirestore } from "../firebase";
-import { mapEvent } from "utilities/event";
-import { useAppState } from "store";
-import { COLLECTIONS } from "constants/firebase";
+import firebase from "src/firebase";
+import { mapEvent } from "src/utilities/event";
+import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchEventDetails = id => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [event, setEvent] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -26,7 +24,8 @@ const useFetchEventDetails = id => {
       } else {
         console.log(`[API] fetchEventDetails...${id}`);
 
-        firebaseFirestore
+        firebase
+          .firestore()
           .collection(COLLECTIONS.EVENTS)
           .doc(id)
           .get()

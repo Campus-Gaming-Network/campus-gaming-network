@@ -1,13 +1,11 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebaseFirestore } from "../firebase";
-import { mapSchool } from "utilities/school";
-import { useAppState } from "store";
-import { COLLECTIONS } from "constants/firebase";
+import firebase from "src/firebase";
+import { mapSchool } from "src/utilities/school";
+import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchSchoolDetails = id => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [school, setSchool] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -26,7 +24,8 @@ const useFetchSchoolDetails = id => {
       } else {
         console.log(`[API] fetchSchoolDetails...${id}`);
 
-        firebaseFirestore
+        firebase
+          .firestore()
           .collection(COLLECTIONS.SCHOOLS)
           .doc(id)
           .get()

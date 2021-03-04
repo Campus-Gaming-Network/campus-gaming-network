@@ -1,2 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
+Disallow: /edit-user
+Disallow: /create-event
+Disallow: /auth-action
+Disallow: /verify-email
+Disallow: /user/*/edit/
+Disallow: /event/*/edit/
+Disallow: /school/*/edit/

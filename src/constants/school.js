@@ -1,14 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // School Constants
 
-import { ACCOUNTS } from "./other";
+import { ACCOUNTS } from "src/constants/other";
 
-export const BASE_SCHOOL = {
-  description: "",
-  email: "",
-  website: "",
-  phone: ""
-};
 export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
   "This school currently has no upcoming events.";
 export const SCHOOL_EMPTY_USERS_TEXT = "This school currently has no users.";

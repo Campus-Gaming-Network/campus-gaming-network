@@ -68,7 +68,6 @@ service cloud.firestore {
             hasLength('status', 1, 15) &&
             hasLength('gravatar', 1, 255) &&
             isValidOption("status", statusOptions) &&
-            "id" in incomingData().school &&
             (has('major') && hasLength('major', 0, 255)) &&
             (has('minor') && hasLength('minor', 0, 255)) &&
             (has('bio') && hasLength('bio', 0, 2500)) &&

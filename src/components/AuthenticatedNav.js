@@ -1,5 +1,5 @@
 import React from "react";
-import { Link as ReachLink, navigate } from "@reach/router";
+import { useRouter } from "next/router";
 import {
   Button,
   Flex,
@@ -13,7 +13,6 @@ import {
   Avatar
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserCircle,
@@ -22,30 +21,18 @@ import {
   faTimes,
   faSchool
 } from "@fortawesome/free-solid-svg-icons";
-import { firebaseAuth } from "../firebase";
-import { useAppState } from "../store";
-import Nav from "./Nav";
-import SchoolSearch from "./SchoolSearch";
-import SchoolLogo from "./SchoolLogo";
-import Logo from "./Logo";
+import NavWrapper from "src/components/NavWrapper";
+import SchoolSearch from "src/components/SchoolSearch";
+import SchoolLogo from "src/components/SchoolLogo";
+import Logo from "src/components/Logo";
+import Link from "src/components/Link";
+import ButtonLink from "src/components/ButtonLink";
 
-const AuthenticatedNav = () => {
-  const state = useAppState();
-  const [authenticatedUser] = useAuthState(firebaseAuth);
-  const user = React.useMemo(
-    () =>
-      authenticatedUser && state.users[authenticatedUser.uid]
-        ? state.users[authenticatedUser.uid]
-        : {},
-    [authenticatedUser, state.users]
-  );
-  const school = React.useMemo(
-    () =>
-      user && user.school && user.school.id
-        ? state.schools[user.school.id]
-        : {},
-    [user, state.schools]
-  );
+// Other
+import firebase from "src/firebase";
+
+const AuthenticatedNav = props => {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const toggleMenu = () => {
@@ -53,19 +40,22 @@ const AuthenticatedNav = () => {
   };
 
   const handleLogout = () => {
-    firebaseAuth.signOut().then(() => navigate("/"));
+    firebase
+      .auth()
+      .signOut()
+      .then(() => router.push("/"));
   };
 
   const onSchoolSelect = selectedSchool => {
     const id = selectedSchool.id || selectedSchool.objectID;
 
     if (selectedSchool && id) {
-      navigate(`/school/${id}`);
+      router.push(`/school/${id}`);
     }
   };
 
   return (
-    <Nav>
+    <NavWrapper>
       <Flex align="center" mr={5}>
         <Logo width="200px" />
       </Flex>
@@ -84,15 +74,9 @@ const AuthenticatedNav = () => {
         flexGrow={1}
         justifyContent="flex-end"
       >
-        <Button
-          as={ReachLink}
-          to="/create-event"
-          colorScheme="brand"
-          size="sm"
-          mr={4}
-        >
+        <ButtonLink href="/create-event" colorScheme="brand" size="sm" mr={4}>
           Create an event
-        </Button>
+        </ButtonLink>
 
         <Menu>
           <MenuButton
@@ -110,16 +94,16 @@ const AuthenticatedNav = () => {
             rounded="md"
           >
             <Flex align="center">
-              {user.gravatar ? (
+              {Boolean(props.user.gravatar) ? (
                 <Avatar
-                  name={user.fullName}
-                  src={user.gravatarUrl}
+                  name={props.user.fullName}
+                  src={props.user.gravatarUrl}
                   mr={2}
                   size="xs"
                 />
               ) : null}
               <Text fontWeight="bold" color="gray.900">
-                {user.firstName}
+                {props.user.firstName}
               </Text>
               <Box ml={2}>
                 <ChevronDownIcon />
@@ -128,12 +112,12 @@ const AuthenticatedNav = () => {
           </MenuButton>
 
           <MenuList>
-            <MenuItem as={ReachLink} to={`user/${user.id}`}>
+            <MenuItem as={Link} href={`/user/${props.user.id}`}>
               <Flex alignItems="center">
-                {user.gravatar ? (
+                {Boolean(props.user.gravatar) ? (
                   <Avatar
-                    name={user.fullName}
-                    src={user.gravatarUrl}
+                    name={props.user.fullName}
+                    src={props.user.gravatarUrl}
                     mr={2}
                     size="xs"
                   />
@@ -145,10 +129,10 @@ const AuthenticatedNav = () => {
                 <Text lineHeight="1">Profile</Text>
               </Flex>
             </MenuItem>
-            <MenuItem as={ReachLink} to={`school/${user.school.id}`}>
+            <MenuItem as={Link} href={`/school/${props.school.id}`}>
               <SchoolLogo
-                schoolId={school.id}
-                schoolName={school.name}
+                schoolId={props.school.id}
+                schoolName={props.school.name}
                 h={6}
                 w={6}
                 mr={2}
@@ -179,7 +163,7 @@ const AuthenticatedNav = () => {
           </MenuList>
         </Menu>
       </Box>
-    </Nav>
+    </NavWrapper>
   );
 };
 

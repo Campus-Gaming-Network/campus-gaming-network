@@ -1,18 +1,16 @@
 import React from "react";
 import isEmpty from "lodash.isempty";
 
-import { firebaseFirestore } from "../firebase";
-import { mapUser } from "utilities/user";
-import { COLLECTIONS } from "constants/firebase";
-import { DEFAULT_USERS_LIST_PAGE_SIZE } from "constants/other";
-import { useAppState } from "store";
+import firebase from "src/firebase";
+import { mapUser } from "src/utilities/user";
+import { COLLECTIONS } from "src/constants/firebase";
+import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
 
 const useFetchEventUsers = (
   id,
   limit = DEFAULT_USERS_LIST_PAGE_SIZE,
   page = 0
 ) => {
-  const state = useAppState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -29,7 +27,7 @@ const useFetchEventUsers = (
         !isEmpty(state.events[id]) &&
         state.events[id].users &&
         !isEmpty(state.events[id].users) &&
-        !!state.events[id].users[page]
+        Boolean(state.events[id].users[page])
       ) {
         console.log(`[CACHE] fetchEventUsers...${id}`);
 
@@ -38,11 +36,13 @@ const useFetchEventUsers = (
       } else {
         console.log(`[API] fetchEventUsers...${id}`);
 
-        const eventDocRef = firebaseFirestore
+        const eventDocRef = firebase
+          .firestore()
           .collection(COLLECTIONS.EVENTS)
           .doc(id);
 
-        let query = firebaseFirestore
+        let query = firebase
+          .firestore()
           .collection(COLLECTIONS.EVENT_RESPONSES)
           .where("event.ref", "==", eventDocRef)
           .where("response", "==", "YES");
