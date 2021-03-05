@@ -13,6 +13,7 @@ service cloud.firestore {
 
         function isValidUser() {
           let requiredFields = [
+            'id',
             'firstName',
             'lastName',
             'status',
@@ -63,28 +64,30 @@ service cloud.firestore {
 
           return (
             documentFieldsCheckOut(requiredFields, optionalFields) &&
+            hasLength('id', 1, 255) &&
             hasLength('firstName', 1, 255) &&
             hasLength('lastName', 1, 255) &&
             hasLength('status', 1, 15) &&
             hasLength('gravatar', 1, 255) &&
             isValidOption("status", statusOptions) &&
-            (has('major') && hasLength('major', 0, 255)) &&
-            (has('minor') && hasLength('minor', 0, 255)) &&
-            (has('bio') && hasLength('bio', 0, 2500)) &&
-            (has('timezone') && isValidOption("timezone", timezoneOptions)) &&
-            (has('hometown') && hasLength('hometown', 0, 255)) &&
-            (has('birthdate') && incomingData().birthdate is timestamp) &&
-            (has('twitter') && hasLength('twitter', 0, 255)) &&
-            (has('twitch') && hasLength('twitch', 0, 255)) &&
-            (has('youtube') && hasLength('youtube', 0, 255)) &&
-            (has('skype') && hasLength('skype', 0, 255)) &&
-            (has('discord') && hasLength('discord', 0, 255)) &&
-            (has('battlenet') && hasLength('battlenet', 0, 255)) &&
-            (has('steam') && hasLength('steam', 0, 255)) &&
-            (has('xbox') && hasLength('xbox', 0, 255)) &&
-            (has('psn') && hasLength('psn', 0, 255)) &&
-            (has('currentlyPlaying') && incomingData().currentlyPlaying.size() <= 5) &&
-            (has('favoriteGames') && incomingData().favoriteGames.size() <= 5)
+            hasValidUserSchool() &&
+            hasLengthOrNull("major", 255) &&
+            hasLengthOrNull("minor", 255) &&
+            hasLengthOrNull("bio", 2500) &&
+            isValidOption("timezone", timezoneOptions) &&
+            hasLengthOrNull("hometown", 255) &&
+            (val('birthdate') == '' || hasTimestampField('birthdate')) &&
+            hasLengthOrNull("twitter", 255) &&
+            hasLengthOrNull("twitch", 255) &&
+            hasLengthOrNull("youtube", 255) &&
+            hasLengthOrNull("skype", 255) &&
+            hasLengthOrNull("discord", 255) &&
+            hasLengthOrNull("battlenet", 255) &&
+            hasLengthOrNull("steam", 255) &&
+            hasLengthOrNull("xbox", 255) &&
+            hasLengthOrNull("psn", 255) &&
+            hasLessThanEqualSize('currentlyPlaying', 5) &&
+            hasLessThanEqualSize('favoriteGames', 5)
           );
         }
 
@@ -111,10 +114,6 @@ service cloud.firestore {
     match /events/{eventId} {
       function canCreateEvent() {
         return isSignedIn();
-        // return (
-        //   isSignedIn() &&
-        //   userHasSchool(getUserData())
-        // );
       }
 
       function isValidEvent() {
@@ -137,17 +136,11 @@ service cloud.firestore {
       }
 
       function canUpdateEvent() {
-        return canCreateEvent()
-        // return (
-        //   canCreateEvent(incomingData) &&
-        //   isOwner(getDocData(incomingData.creator).id)
-        // );
+        return canCreateEvent();
       }
 
       function canDeleteEvent() {
-        return (
-          isOwner(getDocData(existingData().creator).id)
-        )
+        return false;
       }
 
       allow read: if true;
@@ -165,9 +158,6 @@ service cloud.firestore {
     match /event-responses/{eventResponseId} {
       function canReadEventResponse() {
         return true;
-        // return (
-        //   isOwner(getDocData(existingData.user).id)
-        // )
       }
 
       function canCreateEventResponse() {
@@ -188,9 +178,6 @@ service cloud.firestore {
         //   incomingData.event is path &&
         //   incomingData.school is path &&
         //   incomingData.user is path &&
-        //   docExists(incomingData.event.path) &&
-        //   docExists(incomingData.school.path) &&
-        //   docExists(incomingData.user.path) &&
         //   hasLength("response", 1, 5) &&
         //   isValidOption("response", ["YES", "NO"])
         // );
@@ -200,7 +187,6 @@ service cloud.firestore {
         return true;
         // return (
         //   canCreateEventResponse(incomingData) &&
-        //   isOwner(getDocData(incomingData.user).id)
         // );
       }
 
@@ -218,6 +204,25 @@ service cloud.firestore {
 
     ///////////////////////////////////////////////////////////////////////////
     // Shared Functions
+
+      function hasValidUserSchool() {
+        return (
+          'id' in incomingData().school.keys()) &&
+          exists(/databases/$(database)/documents/schools/$(incomingData().school.id)
+        );
+      }
+
+      function hasTimestampField(field) {
+        return (
+          incomingData()[field] is timestamp
+        );
+      }
+
+     function hasLessThanEqualSize(field, size) {
+       return (
+         incomingData()[field].size() <= size
+        );
+     }
 
     function currentUser() {
       return request.auth;
@@ -253,42 +258,28 @@ service cloud.firestore {
       return request.resource.data;
     }
 
+    function incomingDataKeys() {
+      return incomingData().keys();
+    }
+
     function documentFieldsCheckOut(requiredFields, optionalFields) {
         let allFields = requiredFields.concat(optionalFields);
         return (
-          incomingData().keys().hasAll(requiredFields) &&
-          incomingData().keys().hasOnly(allFields)
+          incomingDataKeys().hasAll(requiredFields) &&
+          incomingDataKeys().hasOnly(allFields)
         );
-    }
-
-    // Check if document exists from reference path
-    function docExists(path) {
-      return exists(/databases/$(database)/documents/$(path));
-    }
-
-    // Fetch document data from reference path
-    function getDocData(path) {
-      return get(/databases/$(database)/documents/$(path)).data;
-    }
-
-    // Fetch the requesting user's data from Firestore
-    function getUserData() {
-      return get(/databases/$(database)/documents/users/$(requestingUser())).data;
-    }
-
-    // Does the user have a school?
-    function userHasSchool(userData) {
-      return (
-        docExists(userData.school.path)
-      );
-    }
-
-    function has(field) {
-      return field in incomingData().keys();
     }
 
     function val(field) {
       return incomingData()[field];
+    }
+
+    function isNull(field) {
+      return isValueNull(val(field));
+    }
+
+    function isValueNull(value) {
+      return value == null;
     }
 
     function isString(field) {
@@ -299,13 +290,16 @@ service cloud.firestore {
       return string(value) == value;
     }
 
+    function hasLengthOrNull(field, max) {
+      return hasLength(field, 0, max) || isNull(field);
+    }
+
     function hasLength(field, min, max) {
       return hasValueLength(val(field), min, max);
     }
 
     function hasValueLength(value, min, max) {
       return (
-        isValueString(value) &&
         (min == 0 || value.size() >= min) &&
         (max == 0 || value.size() <= max)
       );
