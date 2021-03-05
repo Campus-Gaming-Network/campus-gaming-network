@@ -60,3 +60,5 @@ firestore-coverage.html
 .eslintcache
 
 .next
+
+.vercel
