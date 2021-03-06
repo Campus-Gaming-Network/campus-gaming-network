@@ -19,7 +19,7 @@ const VerifyEmail = () => {
   const [verificationError] = React.useState("");
 
   return (
-    <SiteLayout title="Verify Email">
+    <SiteLayout title="Verify Email" hideNav hideFooter>
       <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
         <Alert
           status={verifyState}

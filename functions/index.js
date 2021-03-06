@@ -56,6 +56,18 @@ exports.searchGames = functions.https.onCall(async data => {
   //
   ////////////////////////////////////////////////////////////////////////////////
 
+  if (!IGDB_CLIENT_ID) {
+    return { success: false, error: "Missing client id" };
+  }
+
+  if (!IGDB_CLIENT_SECRET) {
+    return { success: false, error: "Missing client secret" };
+  }
+
+  if (!IGDB_GRANT_TYPE) {
+    return { success: false, error: "Missing grant type" };
+  }
+
   const configsQueryRef = db.collection("configs").doc("igdb");
   const gameQueryRef = db.collection("game-queries").doc(data.query);
 
@@ -80,6 +92,7 @@ exports.searchGames = functions.https.onCall(async data => {
 
   // Return what we have stored if weve made the query before
   if (gameQueryDoc.exists) {
+    // But first, update the query account
     try {
       await gameQueryRef.set(
         { queries: admin.firestore.FieldValue.increment(1) },
@@ -181,16 +194,20 @@ exports.searchGames = functions.https.onCall(async data => {
     }
   }
 
+  if (!accessToken) {
+    return { success: false, error: "Missing access token" };
+  }
+
   try {
     igdbResponse = await rp({
       url: "https://api.igdb.com/v4/games",
       method: "POST",
       headers: {
-        Accept: "application/json",
-        "Client-ID": functions.config().igdb.client_id,
+        "Client-ID": IGDB_CLIENT_ID,
         Authorization: `Bearer ${accessToken}`
       },
-      data: `fields name, cover.url, slug; search "${data.query}"; limit 10;`
+      body: `fields name, cover.url, slug; search "${data.query}"; limit 10;`,
+      transform: JSON.parse
     });
   } catch (error) {
     console.log(error);
@@ -201,14 +218,14 @@ exports.searchGames = functions.https.onCall(async data => {
   }
 
   if (igdbResponse) {
-    if (igdbResponse.data && igdbResponse.data.length > 0) {
+    if (igdbResponse.length > 0) {
       try {
         await db
           .collection("game-queries")
           .doc(data.query)
           .set(
             {
-              games: igdbResponse.data || [],
+              games: igdbResponse || [],
               queries: admin.firestore.FieldValue.increment(1)
             },
             { merge: true }
@@ -224,11 +241,12 @@ exports.searchGames = functions.https.onCall(async data => {
 
     return {
       success: true,
-      igdbResponse,
-      games: igdbResponse.data,
+      games: igdbResponse || [],
       query: data.query
     };
   }
+
+  return { success: false };
 });
 
 exports.searchSchools = functions.https.onCall(async data => {
