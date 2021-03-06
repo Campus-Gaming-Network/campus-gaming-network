@@ -16,8 +16,8 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
+// import firebaseAdmin from "src/firebaseAdmin";
+// import nookies from "nookies";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -27,46 +27,11 @@ import { validatePasswordReset } from "src/utilities/validation";
 import firebase from "src/firebase";
 
 // Constants
-import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES } from "src/constants/other";
+// import { AUTH_STATUS } from "src/constants/auth";
+// import { COOKIES } from "src/constants/other";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
-
-////////////////////////////////////////////////////////////////////////////////
-// getServerSideProps
-
-export const getServerSideProps = async context => {
-  try {
-    const cookies = nookies.get(context);
-    const token =
-      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
-        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-        : null;
-    const authStatus =
-      Boolean(token) && Boolean(token.uid)
-        ? AUTH_STATUS.AUTHENTICATED
-        : AUTH_STATUS.UNAUTHENTICATED;
-
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/"
-        }
-      };
-    }
-  } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/"
-      }
-    };
-  }
-
-  return { props: {} };
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset

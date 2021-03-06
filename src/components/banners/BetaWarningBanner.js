@@ -14,7 +14,7 @@ import OutsideLink from "src/components/OutsideLink";
 
 const BetaWarningBanner = () => {
   return (
-    <Alert status="warning">
+    <Alert status="warning" justifyContent="center">
       <AlertIcon />
       <AlertTitle mr={2} textTransform="uppercase">
         Beta

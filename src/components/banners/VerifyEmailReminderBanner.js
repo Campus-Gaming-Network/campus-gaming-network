@@ -16,11 +16,14 @@ const VerifyEmailReminderBanner = () => {
   const toast = useToast();
   const hasAuthUser = Boolean(auth) && Boolean(auth.authUser);
   const email = hasAuthUser ? auth.authUser.email : null;
+  const [sendingStatus, setSendingStatus] = React.useState("idle");
 
   const sendEmailVerification = () => {
-    if (!email) {
+    if (!email || sendingStatus !== "sending") {
       return;
     }
+
+    setSendingStatus("sending");
 
     firebase
       .auth()
@@ -33,6 +36,7 @@ const VerifyEmailReminderBanner = () => {
             status: "success",
             isClosable: true
           });
+          setSendingStatus("sent");
         },
         error => {
           console.error(error);
@@ -42,6 +46,7 @@ const VerifyEmailReminderBanner = () => {
             status: "error",
             isClosable: true
           });
+          setSendingStatus("error");
         }
       );
   };

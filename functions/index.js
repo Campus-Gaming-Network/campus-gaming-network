@@ -30,7 +30,7 @@ const algoliaSearchIndex = algoliaSearchClient.initIndex(
 ////////////////////////////////////////////////////////////////////////////////
 // onCall
 
-exports.searchGames = functions.https.onCall(async (data) => {
+exports.searchGames = functions.https.onCall(async data => {
   ////////////////////////////////////////////////////////////////////////////////
   //
   // Searches IGDB for games matching search query.
@@ -51,7 +51,7 @@ exports.searchGames = functions.https.onCall(async (data) => {
   //
   // By counting how many times a query is made, we can eventually optimize for the top N queries and
   // their results.
-  // 
+  //
   // TODO: Rewrite with new IGDB api process involved
   //
   ////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ exports.searchGames = functions.https.onCall(async (data) => {
     console.log(error);
     return {
       success: false,
-      error,
+      error
     };
   }
 
@@ -89,14 +89,14 @@ exports.searchGames = functions.https.onCall(async (data) => {
       console.log(error);
       return {
         success: false,
-        error,
+        error
       };
     }
 
     return {
       success: true,
       games: gameQueryDoc.data().games,
-      query: data.query,
+      query: data.query
     };
   }
 
@@ -108,7 +108,7 @@ exports.searchGames = functions.https.onCall(async (data) => {
     console.log(error);
     return {
       success: false,
-      error,
+      error
     };
   }
 
@@ -140,14 +140,14 @@ exports.searchGames = functions.https.onCall(async (data) => {
         body: {
           client_id: IGDB_CLIENT_ID,
           client_secret: IGDB_CLIENT_SECRET,
-          grant_type: IGDB_GRANT_TYPE,
-        },
+          grant_type: IGDB_GRANT_TYPE
+        }
       });
     } catch (error) {
       console.log(error);
       return {
         success: false,
-        error,
+        error
       };
     }
 
@@ -167,7 +167,7 @@ exports.searchGames = functions.https.onCall(async (data) => {
                 new Date(
                   DateTime.local().plus({ seconds: authResponse.expires_in })
                 )
-              ),
+              )
             },
             { merge: true }
           );
@@ -175,7 +175,7 @@ exports.searchGames = functions.https.onCall(async (data) => {
         console.log(error);
         return {
           success: false,
-          error,
+          error
         };
       }
     }
@@ -188,15 +188,15 @@ exports.searchGames = functions.https.onCall(async (data) => {
       headers: {
         Accept: "application/json",
         "Client-ID": functions.config().igdb.client_id,
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`
       },
-      data: `fields name, cover.url, slug; search "${data.query}"; limit 10;`,
+      data: `fields name, cover.url, slug; search "${data.query}"; limit 10;`
     });
   } catch (error) {
     console.log(error);
     return {
       success: false,
-      error,
+      error
     };
   }
 
@@ -209,7 +209,7 @@ exports.searchGames = functions.https.onCall(async (data) => {
           .set(
             {
               games: igdbResponse.data || [],
-              queries: admin.firestore.FieldValue.increment(1),
+              queries: admin.firestore.FieldValue.increment(1)
             },
             { merge: true }
           );
@@ -217,20 +217,21 @@ exports.searchGames = functions.https.onCall(async (data) => {
         console.log(error);
         return {
           success: false,
-          error,
+          error
         };
       }
     }
 
     return {
       success: true,
+      igdbResponse,
       games: igdbResponse.data,
-      query: data.query,
+      query: data.query
     };
   }
 });
 
-exports.searchSchools = functions.https.onCall(async (data) => {
+exports.searchSchools = functions.https.onCall(async data => {
   ////////////////////////////////////////////////////////////////////////////////
   //
   // Searches Algolia for schools matching search query.
@@ -244,7 +245,7 @@ exports.searchSchools = functions.https.onCall(async (data) => {
   const limit = data.limit > 100 ? 100 : data.limit < 0 ? 0 : data.limit;
 
   return await algoliaSearchIndex.search(data.query, {
-    hitsPerPage: limit,
+    hitsPerPage: limit
   });
 });
 
@@ -285,7 +286,7 @@ exports.searchUsers = functions.https.onCall(async (data, context) => {
 
     return {
       authUser: authRecord,
-      docUser: record.exists ? record.data() : null,
+      docUser: record.exists ? record.data() : null
     };
   } catch (error) {
     console.log(error);
@@ -315,7 +316,7 @@ exports.trackCreatedUpdated = functions.firestore
       "users",
       "schools",
       "game-queries",
-      "configs",
+      "configs"
     ];
 
     if (setCols.indexOf(context.params.colId) === -1) {
@@ -353,7 +354,7 @@ exports.trackCreatedUpdated = functions.firestore
           { createdAt: admin.firestore.FieldValue.serverTimestamp() },
           { merge: true }
         )
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           return false;
         });
@@ -365,7 +366,7 @@ exports.trackCreatedUpdated = functions.firestore
           { updatedAt: admin.firestore.FieldValue.serverTimestamp() },
           { merge: true }
         )
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           return false;
         });
@@ -379,7 +380,7 @@ exports.trackCreatedUpdated = functions.firestore
 
 exports.updateAlgoliaIndex = functions.firestore
   .document("schools/{schoolId}")
-  .onUpdate((change) => {
+  .onUpdate(change => {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Updates the school in Algolia whenever the school gets updated in firestore.
@@ -461,11 +462,11 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
 
       return eventResponsesQuery
         .get()
-        .then((snapshot) => {
+        .then(snapshot => {
           if (!snapshot.empty) {
             let batch = db.batch();
 
-            snapshot.forEach((doc) => {
+            snapshot.forEach(doc => {
               batch.set(
                 doc.ref,
                 {
@@ -476,8 +477,8 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
                     endDateTime: newEventData.endDateTime,
                     isOnlineEvent: newEventData.isOnlineEvent,
                     responses: newEventData.responses,
-                    game: newEventData.game,
-                  },
+                    game: newEventData.game
+                  }
                 },
                 { merge: true }
               );
@@ -486,7 +487,7 @@ exports.updateEventResponsesOnEventUpdate = functions.firestore
             return batch.commit();
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           return false;
         });
@@ -532,19 +533,19 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
 
       return eventResponsesQuery
         .get()
-        .then((snapshot) => {
+        .then(snapshot => {
           if (snapshot.empty) {
             return null;
           } else {
             let batch = db.batch();
 
-            snapshot.forEach((doc) => {
+            snapshot.forEach(doc => {
               batch.update(
                 doc.ref,
                 {
                   school: {
-                    name: newSchoolData.name,
-                  },
+                    name: newSchoolData.name
+                  }
                 },
                 { merge: true }
               );
@@ -553,7 +554,7 @@ exports.updateEventResponsesOnSchoolUpdate = functions.firestore
             return batch.commit();
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           return false;
         });
@@ -602,19 +603,19 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
 
       return eventResponsesQuery
         .get()
-        .then((snapshot) => {
+        .then(snapshot => {
           if (!snapshot.empty) {
             let batch = db.batch();
 
-            snapshot.forEach((doc) => {
+            snapshot.forEach(doc => {
               batch.set(
                 doc.ref,
                 {
                   user: {
                     firstName: newUserData.firstName,
                     lastName: newUserData.lastName,
-                    gravatar: newUserData.gravatar,
-                  },
+                    gravatar: newUserData.gravatar
+                  }
                 },
                 { merge: true }
               );
@@ -623,7 +624,7 @@ exports.updateEventResponsesOnUserUpdate = functions.firestore
             return batch.commit();
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           return false;
         });
@@ -672,12 +673,12 @@ exports.eventResponsesOnUpdated = functions.firestore
             {
               responses: {
                 no: admin.firestore.FieldValue.increment(-1),
-                yes: admin.firestore.FieldValue.increment(1),
-              },
+                yes: admin.firestore.FieldValue.increment(1)
+              }
             },
             { merge: true }
           )
-          .catch((err) => {
+          .catch(err => {
             console.log(err);
             return false;
           });
@@ -687,12 +688,12 @@ exports.eventResponsesOnUpdated = functions.firestore
             {
               responses: {
                 yes: admin.firestore.FieldValue.increment(-1),
-                no: admin.firestore.FieldValue.increment(1),
-              },
+                no: admin.firestore.FieldValue.increment(1)
+              }
             },
             { merge: true }
           )
-          .catch((err) => {
+          .catch(err => {
             console.log(err);
             return false;
           });
@@ -707,7 +708,7 @@ exports.eventResponsesOnUpdated = functions.firestore
 
 exports.addAlgoliaIndex = functions.firestore
   .document("schools/{schoolId}")
-  .onCreate((snapshot) => {
+  .onCreate(snapshot => {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Adds school to the Algolia collection whenever a school document is added to the
@@ -727,7 +728,7 @@ exports.addAlgoliaIndex = functions.firestore
 
 exports.eventResponsesOnCreated = functions.firestore
   .document("event-responses/{eventResponseId}")
-  .onCreate((snapshot) => {
+  .onCreate(snapshot => {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // To keep track of how many people are going to an event, when a event-response is created
@@ -745,7 +746,7 @@ exports.eventResponsesOnCreated = functions.firestore
             { responses: { yes: admin.firestore.FieldValue.increment(1) } },
             { merge: true }
           )
-          .catch((err) => {
+          .catch(err => {
             console.log(err);
             return false;
           });
@@ -755,7 +756,7 @@ exports.eventResponsesOnCreated = functions.firestore
             { responses: { no: admin.firestore.FieldValue.increment(1) } },
             { merge: true }
           )
-          .catch((err) => {
+          .catch(err => {
             console.log(err);
             return false;
           });
@@ -770,7 +771,7 @@ exports.eventResponsesOnCreated = functions.firestore
 
 exports.removeAlgoliaIndex = functions.firestore
   .document("schools/{schoolId}")
-  .onDelete((snapshot) => {
+  .onDelete(snapshot => {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // If a school document is deleted, remove the document from Algolia so that it can no
@@ -800,18 +801,18 @@ exports.eventOnDelete = functions.firestore
 
     return eventResponsesQuery
       .get()
-      .then((querySnapshot) => {
+      .then(querySnapshot => {
         if (!querySnapshot.empty) {
           let batch = db.batch();
 
-          querySnapshot.forEach((doc) => {
+          querySnapshot.forEach(doc => {
             batch.delete(doc.ref);
           });
 
           return batch.commit();
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         return false;
       });
@@ -841,35 +842,35 @@ exports.userOnDelete = functions.firestore
 
     eventResponsesQuery
       .get()
-      .then((querySnapshot) => {
+      .then(querySnapshot => {
         if (!querySnapshot.empty) {
           let batch = db.batch();
 
-          querySnapshot.forEach((doc) => {
+          querySnapshot.forEach(doc => {
             batch.delete(doc.ref);
           });
 
           batch.commit();
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
     eventsQuery
       .get()
-      .then((querySnapshot) => {
+      .then(querySnapshot => {
         if (!querySnapshot.empty) {
           let batch = db.batch();
 
-          querySnapshot.forEach((doc) => {
+          querySnapshot.forEach(doc => {
             batch.delete(doc.ref);
           });
 
           batch.commit();
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
@@ -878,7 +879,7 @@ exports.userOnDelete = functions.firestore
 
 exports.eventResponsesOnDelete = functions.firestore
   .document("event-responses/{eventResponseId}")
-  .onDelete((snapshot) => {
+  .onDelete(snapshot => {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // If an event-response document is deleted, find the attached event document if it
@@ -897,11 +898,11 @@ exports.eventResponsesOnDelete = functions.firestore
             return eventRef
               .set(
                 {
-                  responses: { yes: admin.firestore.FieldValue.increment(-1) },
+                  responses: { yes: admin.firestore.FieldValue.increment(-1) }
                 },
                 { merge: true }
               )
-              .catch((err) => {
+              .catch(err => {
                 console.log(err);
                 return false;
               });
@@ -911,7 +912,7 @@ exports.eventResponsesOnDelete = functions.firestore
                 { responses: { no: admin.firestore.FieldValue.increment(-1) } },
                 { merge: true }
               )
-              .catch((err) => {
+              .catch(err => {
                 console.log(err);
                 return false;
               });
@@ -945,4 +946,4 @@ const shallowEqual = (object1, object2) => {
 
 const changeLog = (prev, curr) => `${prev} -> ${curr}`;
 
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
