@@ -20,6 +20,7 @@ import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES } from "src/constants/other";
 
 import EventForm from "src/components/EventForm";
+import { useAuth } from "src/providers/auth";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -49,7 +50,8 @@ export const getServerSideProps = async context => {
 ////////////////////////////////////////////////////////////////////////////////
 // CreateEvent
 
-const CreateEvent = props => {
+const CreateEvent = () => {
+  const { school } = useAuth();
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -233,7 +235,6 @@ const CreateEvent = props => {
   return (
     <EventForm
       state="create"
-      event={props.event}
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
       errors={errors}

@@ -136,7 +136,7 @@ service cloud.firestore {
       }
 
       function canUpdateEvent() {
-        return canCreateEvent();
+        return isSignedIn();
       }
 
       function canDeleteEvent() {
