@@ -51,7 +51,7 @@ export const getServerSideProps = async context => {
 // CreateEvent
 
 const CreateEvent = () => {
-  const { school } = useAuth();
+  const { user, school } = useAuth();
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
