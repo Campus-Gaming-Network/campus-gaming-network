@@ -79,7 +79,7 @@ const Footer = () => {
             </ListItem>
             <ListItem fontSize="sm">
               Join our{" "}
-              <OutsideLink href="https://discord.gg/dpYU6TY" color="black">
+              <OutsideLink href="https://discord.gg/dpYU6TY">
                 Discord
                 <Text as="span" ml={1}>
                   <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
@@ -88,10 +88,7 @@ const Footer = () => {
             </ListItem>
             <ListItem fontSize="sm">
               Contribute on{" "}
-              <OutsideLink
-                href="https://github.com/bsansone/campus-gaming-network"
-                color="black"
-              >
+              <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
                 GitHub
                 <Text as="span" ml={1}>
                   <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
