@@ -1,10 +1,13 @@
 // Libraries
 import React from "react";
-import { Box, Heading, Text, Link } from "@chakra-ui/react";
+import { Box, Text, Link } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt, faLink } from "@fortawesome/free-solid-svg-icons";
 
 // Components
+import ArticleCard from "src/components/ArticleCard";
+import ArticleCardBody from "src/components/ArticleCardBody";
+import PageHeading from "src/components/PageHeading";
 import OutsideLink from "src/components/OutsideLink";
 import SiteLayout from "src/components/SiteLayout";
 
@@ -14,11 +17,9 @@ import SiteLayout from "src/components/SiteLayout";
 const FrequentlyAskedQuestions = () => {
   return (
     <SiteLayout title="Frequently Asked Questions">
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
-        <Heading as="h2" size="2xl" pb={12}>
-          Frequently Asked Questions
-        </Heading>
-        <Box borderWidth={1} boxShadow="lg" rounded="lg" bg="white" p={6}>
+      <ArticleCard>
+        <PageHeading>Frequently Asked Questions</PageHeading>
+        <ArticleCardBody>
           <dl>
             {QUESTIONS.map((item, index) => {
               return (
@@ -29,8 +30,8 @@ const FrequentlyAskedQuestions = () => {
               );
             })}
           </dl>
-        </Box>
-      </Box>
+        </ArticleCardBody>
+      </ArticleCard>
     </SiteLayout>
   );
 };
