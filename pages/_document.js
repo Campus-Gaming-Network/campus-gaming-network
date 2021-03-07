@@ -68,10 +68,16 @@ class MyDocument extends Document {
             size="180x180"
           />
           <meta name="theme-color" content="#000000" />
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
           <meta
             name="description"
-            content="Web site created using create-react-app"
+            content="Campus Gaming Network - Connect with other collegiate gamers for casual or competitive gaming at your school or nearby."
           />
+          <meta
+            name="keywords"
+            content="campus, gaming, social network, competitive gaming, social gaming, casual gaming, university, college, college gaming, university gaming, social network gaming, student gaming, student"
+          />
+          <meta name="author" content="Campus Gaming Network" />
           {/* manifest.json provides metadata used when your web app is installed on a
           user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/ */}
           <link rel="manifest" href="/manifest.json" />

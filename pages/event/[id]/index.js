@@ -7,7 +7,6 @@ import {
   faExternalLinkAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import startCase from "lodash.startcase";
 import times from "lodash.times";
 import {
   Stack,
@@ -24,6 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import dynamic from 'next/dynamic';
+import Head from "next/head";
 
 // Constants
 import {
@@ -38,12 +38,10 @@ import {
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Components
+import SiteLayout from "src/components/SiteLayout";
 import OutsideLink from "src/components/OutsideLink";
 import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
-
-// Hooks
-import useFetchEventUsers from "src/hooks/useFetchEventUsers";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -115,7 +113,7 @@ const Event = props => {
   };
 
   return (
-    <React.Fragment>
+    <SiteLayout pageTitle={props.event.name}>
       <Box
         as="article"
         pt={10}
@@ -150,15 +148,15 @@ const Event = props => {
           <Flex alignItems="center">
             <Box pr={2}>
               <Link
-                href={`/school/${event.school.id}`}
+                href={`/school/${props.event.school.id}`}
                 color="brand.500"
                 fontWeight={600}
                 fontSize="lg"
               >
-                {startCase(event.school.name.toLowerCase())}
+                {props.event.school.formattedName}
               </Link>
               <Heading as="h2" fontWeight="bold" fontSize="5xl">
-                {event.name}
+                {props.event.name}
               </Heading>
             </Box>
             <Flex
@@ -177,17 +175,17 @@ const Event = props => {
           <Stack as="section">
             <Flex align="center" pt={2}>
               <GameCover
-                name={event.game ? event.game.name : null}
+                name={Boolean(props.event.game) ? props.event.game.name : null}
                 url={
-                  event.game && event.game.cover ? event.game.cover.url : null
+                  Boolean(props.event.game) && Boolean(props.event.game.cover) ? props.event.game.cover.url : null
                 }
                 h={10}
                 w={10}
                 mr={2}
               />
-              <Text as="span">{event.game.name}</Text>
+              <Text as="span">{props.event.game.name}</Text>
             </Flex>
-            {event.hasEnded ? (
+            {props.event.hasEnded ? (
               <Flex
                 alignItems="center"
                 justifyContent="flex-start"
@@ -206,7 +204,7 @@ const Event = props => {
                   Event Ended
                 </Text>
               </Flex>
-            ) : event.hasStarted ? (
+            ) : props.event.hasStarted ? (
               <Flex
                 alignItems="center"
                 justifyContent="flex-start"
@@ -232,38 +230,38 @@ const Event = props => {
               </Text>
               <Text
                 as="time"
-                dateTime={event.startDateTime.toDate()}
-                title={event.startDateTime.toDate()}
+                dateTime={props.event.startDateTime.toDate()}
+                title={props.event.startDateTime.toDate()}
               >
-                {event.formattedStartDateTime}
+                {props.event.formattedStartDateTime}
               </Text>{" "}
               to{" "}
               <Text
                 as="time"
-                dateTime={event.endDateTime.toDate()}
-                title={event.endDateTime.toDate()}
+                dateTime={props.event.endDateTime.toDate()}
+                title={props.event.endDateTime.toDate()}
               >
-                {event.formattedEndDateTime}
+                {props.event.formattedEndDateTime}
               </Text>
             </Box>
             <Box>
-              {event.isOnlineEvent ? (
+              {props.event.isOnlineEvent ? (
                 <React.Fragment>
                   <Text as="span" mr={2}>
                     <FontAwesomeIcon icon={faGlobe} />
                   </Text>
                   <Text as="span">Online event</Text>
                 </React.Fragment>
-              ) : event.location ? (
+              ) : Boolean(props.event.location) ? (
                 <React.Fragment>
                   <Text as="span" color="gray.600" mr={2} fontSize="lg">
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </Text>
                   <OutsideLink
                     d="inline-block"
-                    href={event.googleMapsAddressLink}
+                    href={props.event.googleMapsAddressLink}
                   >
-                    {event.location}
+                    {props.event.location}
                     <Text as="span" ml={2}>
                       <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
                     </Text>
@@ -274,7 +272,7 @@ const Event = props => {
                   <Text as="span" color="gray.600" mr={2} fontSize="lg">
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </Text>
-                  <Text as="span">{EVENT_EMPTY_LOCATION_TEXT}</Text>
+                  <Text as="span">{props.EVENT_EMPTY_LOCATION_TEXT}</Text>
                 </React.Fragment>
               )}
             </Box>
@@ -321,8 +319,8 @@ const Event = props => {
             >
               Event Details
             </Heading>
-            {event.description && event.description.trim().length > 0 ? (
-              <Text>{event.description}</Text>
+            {Boolean(props.event.description) && props.event.description.trim().length > 0 ? (
+              <Text>{props.event.description}</Text>
             ) : (
               <Text color="gray.400">No event description provided</Text>
             )}
@@ -336,7 +334,7 @@ const Event = props => {
             >
               Attendees
             </Heading>
-            <UsersList id={props.id} />
+            <UsersList users={props.users} />
           </Stack>
         </Stack>
       </Box>
@@ -344,15 +342,15 @@ const Event = props => {
       {canChangeEventResponse ? (
         <RSVPDialog
           authUser={authUser}
-          event={event}
-          eventResponse={eventResponse}
+          event={props.event}
+          eventResponse={props.eventResponse}
           isOpen={isRSVPAlertOpen}
           onClose={closeRSVPDialog}
           refreshEventResponse={refreshEventResponse}
           setRefreshEventResponse={setRefreshEventResponse}
         />
       ) : null}
-    </React.Fragment>
+    </SiteLayout>
   );
 };
 
@@ -361,15 +359,14 @@ const Event = props => {
 
 const UsersList = props => {
   const [page, setPage] = React.useState(0);
-  const [users, isLoadingUsers] = useFetchEventUsers(props.id, undefined, page);
   const hasUsers = React.useMemo(
-    () => users && users.length && users.length > 0,
-    [users]
+    () => Boolean(props.users) && props.users.length && props.users.length > 0,
+    [props.users]
   );
   const isFirstPage = React.useMemo(() => page === 0, [page]);
   const isLastPage = React.useMemo(
-    () => hasUsers && users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
-    [hasUsers, users]
+    () => hasUsers && props.users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
+    [hasUsers, props.users]
   );
   const isValidPage = React.useMemo(() => page >= 0, [page]);
 
@@ -408,7 +405,7 @@ const UsersList = props => {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {users.map(user => (
+          {props.users.map(user => (
             <UsersListItem
               key={user.id}
               id={user.id}
@@ -450,7 +447,7 @@ const UsersList = props => {
 
   return (
     <Text mt={4} color="gray.400">
-      {EVENT_EMPTY_USERS_TEXT}
+      {props.EVENT_EMPTY_USERS_TEXT}
     </Text>
   );
 };
