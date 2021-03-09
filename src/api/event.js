@@ -1,6 +1,11 @@
 import firebaseAdmin from "src/firebaseAdmin";
+
+// Utilities
 import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
+
+// Constants
+import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
 
 export const getEventDetails = async id => {
   let event = null;

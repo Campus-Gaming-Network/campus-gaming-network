@@ -24,6 +24,7 @@ import {
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import dynamic from 'next/dynamic';
 import Head from "next/head";
+import safeJsonStringify from "safe-json-stringify";
 
 // Constants
 import {
@@ -92,7 +93,7 @@ export const getServerSideProps = async ({ params }) => {
     data.hasResponded = Boolean(eventResponse);
     data.canChangeEventResponse = canChangeEventResponse;
   } catch (error) {
-    noop();
+    // Do Nothing
   }
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -117,7 +118,7 @@ const Event = props => {
     <SiteLayout pageTitle={props.event.name}>
       <Article>
         <Stack spacing={10}>
-          {isEventCreator ? (
+          {props.isEventCreator ? (
             <Box
               mb={10}
               textAlign="center"
