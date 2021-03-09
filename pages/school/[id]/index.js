@@ -34,6 +34,7 @@ import {
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
+import Article from "src/components/Article";
 import OutsideLink from "src/components/OutsideLink";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
@@ -62,7 +63,7 @@ export const getServerSideProps = async ({ params }) => {
 const School = (props) => {
   return (
     <SiteLayout title={props.school.formattedName}>
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+    <Article>
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center">
           <SchoolLogo
@@ -189,7 +190,7 @@ const School = (props) => {
           <UsersList users={props.users} />
         </Stack>
       </Stack>
-    </Box>
+    </Article>
     </SiteLayout>
   );
 };

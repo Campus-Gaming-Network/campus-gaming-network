@@ -35,6 +35,7 @@ import {
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
+import Article from "src/components/Article";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 import GameCover from "src/components/GameCover";
@@ -76,16 +77,7 @@ const User = (props) => {
 
   return (
     <SiteLayout title={props.user.fullName}>
-    <Box
-      as="article"
-      pt={10}
-      pb={16}
-      px={8}
-      mx="auto"
-      fontSize="xl"
-      maxW="5xl"
-      pos="relative"
-    >
+    <Article>
       {isAuthenticatedUser ? (
         <Box mb={10} textAlign="center" display="flex" justifyContent="center">
           <Link
@@ -252,7 +244,7 @@ const User = (props) => {
           <EventsList events={props.events} />
         </Stack>
       </Stack>
-    </Box>
+    </Article>
     </SiteLayout>
   );
 };

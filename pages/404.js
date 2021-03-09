@@ -6,6 +6,7 @@ import { faHeartBroken } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
+import Article from "src/components/Article";
 import ButtonLink from "src/components/ButtonLink";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,7 @@ import ButtonLink from "src/components/ButtonLink";
 const NotFound = () => {
   return (
     <SiteLayout pb={0} minH="auto">
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+      <Article>
         <Flex align="center" justify="center" h="100%">
           <Stack spacing={12} textAlign="center">
             <Image src="/404.svg" maxW={600} w="100%" mx="auto" />
@@ -31,7 +32,7 @@ const NotFound = () => {
             </Box>
           </Stack>
         </Flex>
-      </Box>
+      </Article>
     </SiteLayout>
   );
 };

@@ -6,6 +6,7 @@ import startCase from "lodash.startcase";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
+import Article from "src/components/Article";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 
@@ -27,7 +28,7 @@ const now = new Date();
 const Home = () => {
   return (
     <SiteLayout>
-      <Box as="article" py={16} px={8} mx="auto" maxW="5xl">
+      <Article>
         <Box>
           <Heading size="2xl" mb={8}>
             Campus Gaming Network
@@ -49,7 +50,7 @@ const Home = () => {
           <RecentlyCreatedEvents /> */}
           </Stack>
         </Box>
-      </Box>
+      </Article>
     </SiteLayout>
   );
 };

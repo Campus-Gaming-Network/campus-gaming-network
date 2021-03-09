@@ -26,6 +26,8 @@ import { useFormFields } from "src/utilities/other";
 import { validateForgotPassword } from "src/utilities/validation";
 
 // Components
+import Article from "src/components/Article";
+import Card from "src/components/Card";
 import Link from "src/components/Link";
 import SiteLayout from "src/components/SiteLayout";
 
@@ -118,7 +120,7 @@ const ForgotPassword = () => {
 
   return (
     <SiteLayout title="Forgot Password">
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -128,16 +130,7 @@ const ForgotPassword = () => {
             </AlertDescription>
           </Alert>
         ) : null}
-        <Box
-          as="form"
-          borderWidth={1}
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-          p={12}
-          onSubmit={handleSubmit}
-        >
+        <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl" mb={4}>
             Reset your password
           </Heading>
@@ -210,8 +203,8 @@ const ForgotPassword = () => {
               .
             </Text>
           </Flex>
-        </Box>
-      </Box>
+        </Card>
+      </Article>
     </SiteLayout>
   );
 };

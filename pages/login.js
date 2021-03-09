@@ -30,6 +30,8 @@ import firebase from "src/firebase";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
+import Card from "src/components/Card";
+import Article from "src/components/Article";
 import Link from "src/components/Link";
 
 // Constants
@@ -117,7 +119,7 @@ const Login = () => {
 
   return (
     <SiteLayout title="Login">
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -127,16 +129,7 @@ const Login = () => {
             </AlertDescription>
           </Alert>
         ) : null}
-        <Box
-          as="form"
-          borderWidth={1}
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-          p={12}
-          onSubmit={handleSubmit}
-        >
+        <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">
             Welcome back!
           </Heading>
@@ -203,8 +196,8 @@ const Login = () => {
               Forgot your password?
             </Link>
           </Flex>
-        </Box>
-      </Box>
+        </Card>
+      </Article>
     </SiteLayout>
   );
 };

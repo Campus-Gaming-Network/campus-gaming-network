@@ -31,6 +31,8 @@ import firebase from "src/firebase";
 // import { COOKIES } from "src/constants/other";
 
 // Components
+import Article from "src/components/Article";
+import Card from "src/components/Card";
 import SiteLayout from "src/components/SiteLayout";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +110,7 @@ const PasswordReset = props => {
 
   return (
     <SiteLayout title="Password Reset">
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -118,16 +120,7 @@ const PasswordReset = props => {
             </AlertDescription>
           </Alert>
         ) : null}
-        <Box
-          as="form"
-          borderWidth={1}
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-          p={12}
-          onSubmit={handleSubmit}
-        >
+        <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl" mb={4}>
             Change Your Password
           </Heading>
@@ -176,8 +169,8 @@ const PasswordReset = props => {
           >
             Change Password
           </Button>
-        </Box>
-      </Box>
+        </Card>
+      </Article>
     </SiteLayout>
   );
 };

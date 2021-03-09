@@ -34,6 +34,7 @@ import firebaseAdmin from "src/firebaseAdmin";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
+import Article from "src/components/Article";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -202,7 +203,7 @@ const EditSchool = props => {
 
   return (
     <SiteLayout title={`Edit ${props.school.formattedName}`}>
-    <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+    <Article>
       <Stack as="form" spacing={32} onSubmit={handleSubmit}>
         <Heading as="h2" size="2xl">
           Edit School
@@ -249,7 +250,7 @@ const EditSchool = props => {
           {isSubmitting ? "Submitting..." : "Update School"}
         </Button>
       </Stack>
-    </Box>
+    </Article>
     </SiteLayout>
   );
 };
@@ -311,15 +312,7 @@ const DetailSection = React.memo(props => {
   );
 
   return (
-    <Box
-      as="fieldset"
-      borderWidth="1px"
-      boxShadow="lg"
-      rounded="lg"
-      bg="white"
-      pos="relative"
-      mb={32}
-    >
+    <Card as="fieldset" p={0} mb={32}>
       <Box pos="absolute" top="-5rem">
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Details
@@ -420,21 +413,13 @@ const DetailSection = React.memo(props => {
           </FormHelperText>
         </FormControl>
       </Stack>
-    </Box>
+    </Card>
   );
 });
 
 const SocialAccountsSection = React.memo(props => {
   return (
-    <Box
-      as="fieldset"
-      borderWidth="1px"
-      boxShadow="lg"
-      rounded="lg"
-      bg="white"
-      pos="relative"
-      mb={32}
-    >
+    <Card as="fieldset" p={0} mb={32}>
       <Box pos="absolute" top="-5rem">
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Social Accounts
@@ -479,7 +464,7 @@ const SocialAccountsSection = React.memo(props => {
           );
         })}
       </Stack>
-    </Box>
+    </Card>
   );
 });
 

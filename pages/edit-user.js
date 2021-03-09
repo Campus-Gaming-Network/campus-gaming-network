@@ -17,7 +17,6 @@ import {
   Select,
   Button,
   Textarea,
-  Heading,
   Text,
   Tooltip,
   Alert,
@@ -58,6 +57,9 @@ import { getSchoolDetails } from "src/api/school";
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import FormSilhouette from "src/components/silhouettes/FormSilhouette";
+import Article from "src/components/Article";
+import PageHeading from "src/components/PageHeading";
+import Card from "src/components/Card";
 import SchoolSearch from "src/components/SchoolSearch";
 import GameSearch from "src/components/GameSearch";
 import GameCover from "src/components/GameCover";
@@ -415,7 +417,7 @@ const EditUser = props => {
 
   return (
     <SiteLayout title="Edit User">
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+      <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -425,11 +427,11 @@ const EditUser = props => {
             </AlertDescription>
           </Alert>
         ) : null}
-        <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+        <Stack as="form" spacing={6} onSubmit={handleSubmit}>
           <Flex alignItems="center" flexWrap="wrap">
-            <Heading as="h2" size="2xl" pb={{ md: 0, sm: 6 }}>
+            <PageHeading pb={{ md: 0, sm: 6 }} px={0}>
               Your Profile
-            </Heading>
+            </PageHeading>
             <Spacer />
             <Menu>
               <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -442,16 +444,17 @@ const EditUser = props => {
               </MenuList>
             </Menu>
           </Flex>
-          <Button
-            colorScheme="brand"
-            type="submit"
-            size="lg"
-            w="full"
-            mt={-12}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Update Profile"}
-          </Button>
+          <Box pt={16} pb={32}>
+            <Button
+              colorScheme="brand"
+              type="submit"
+              size="lg"
+              w="full"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Update Profile"}
+            </Button>
+          </Box>
           <DetailSection
             handleFieldChange={handleFieldChange}
             errors={errors}
@@ -504,18 +507,19 @@ const EditUser = props => {
             onGameSelect={onCurrentlyPlayingGameSelect}
             reorderCurrentlyPlaying={reorderCurrentlyPlaying}
           />
-          <Button
-            colorScheme="brand"
-            type="submit"
-            size="lg"
-            w="full"
-            mt={-12}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Update Profile"}
-          </Button>
+          <Box pt={6} pb={12}>
+            <Button
+              colorScheme="brand"
+              type="submit"
+              size="lg"
+              w="full"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Update Profile"}
+            </Button>
+          </Box>
         </Stack>
-      </Box>
+      </Article>
 
       <DeleteAccountDialog
         user={props.user}
@@ -536,16 +540,8 @@ const DetailSection = React.memo(props => {
   );
 
   return (
-    <Box
-      as="fieldset"
-      borderWidth="1px"
-      boxShadow="lg"
-      rounded="lg"
-      bg="white"
-      pos="relative"
-      mb={32}
-    >
-      <Box pos="absolute" top="-5rem">
+    <Card as="fieldset" p={0} mb={32}>
+      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Details
         </Text>
@@ -784,7 +780,7 @@ const DetailSection = React.memo(props => {
           </Alert>
         ) : null}
       </Stack>
-    </Box>
+    </Card>
   );
 });
 
@@ -793,16 +789,8 @@ const DetailSection = React.memo(props => {
 
 const SchoolSection = React.memo(props => {
   return (
-    <Box
-      as="fieldset"
-      borderWidth="1px"
-      boxShadow="lg"
-      rounded="lg"
-      bg="white"
-      pos="relative"
-      mb={32}
-    >
-      <Box pos="absolute" top="-5rem">
+    <Card as="fieldset" p={0} mb={32}>
+      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           School
         </Text>
@@ -882,7 +870,7 @@ const SchoolSection = React.memo(props => {
           </FormControl>
         </Flex>
       </Stack>
-    </Box>
+    </Card>
   );
 });
 
@@ -891,16 +879,8 @@ const SchoolSection = React.memo(props => {
 
 const SocialAccountsSection = React.memo(props => {
   return (
-    <Box
-      as="fieldset"
-      borderWidth="1px"
-      boxShadow="lg"
-      rounded="lg"
-      bg="white"
-      pos="relative"
-      mb={32}
-    >
-      <Box pos="absolute" top="-5rem">
+    <Card as="fieldset" p={0} mb={32}>
+      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Social Accounts
         </Text>
@@ -943,7 +923,7 @@ const SocialAccountsSection = React.memo(props => {
           );
         })}
       </Stack>
-    </Box>
+    </Card>
   );
 });
 
@@ -952,16 +932,8 @@ const SocialAccountsSection = React.memo(props => {
 
 const FavoriteGamesSection = React.memo(props => {
   return (
-    <Box
-      as="fieldset"
-      borderWidth="1px"
-      boxShadow="lg"
-      rounded="lg"
-      bg="white"
-      pos="relative"
-      mb={32}
-    >
-      <Box pos="absolute" top="-5rem">
+    <Card as="fieldset" p={0} mb={32}>
+      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Favorite Games
         </Text>
@@ -1078,7 +1050,7 @@ const FavoriteGamesSection = React.memo(props => {
           )}
         </Stack>
       </Stack>
-    </Box>
+    </Card>
   );
 });
 
@@ -1087,16 +1059,8 @@ const FavoriteGamesSection = React.memo(props => {
 
 const CurrentlyPlayingSection = React.memo(props => {
   return (
-    <Box
-      as="fieldset"
-      borderWidth="1px"
-      boxShadow="lg"
-      rounded="lg"
-      bg="white"
-      pos="relative"
-      mb={32}
-    >
-      <Box pos="absolute" top="-5rem">
+    <Card as="fieldset" p={0} mb={0}>
+      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Currently Playing
         </Text>
@@ -1212,7 +1176,7 @@ const CurrentlyPlayingSection = React.memo(props => {
           )}
         </Stack>
       </Stack>
-    </Box>
+    </Card>
   );
 });
 

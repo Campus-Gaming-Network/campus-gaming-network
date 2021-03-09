@@ -2,12 +2,14 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 
-const ArticleCardBody = ({ children, ...rest }) => {
+const Card = ({ children, ...rest }) => {
   return (
     <Box
+      pos="relative"
+      rounded="lg"
       borderWidth={1}
       boxShadow="lg"
-      rounded={{ base: "lg", sm: "none" }}
+      rounded={{ md: "lg", sm: "none" }}
       bg="white"
       p={6}
       {...rest}
@@ -17,4 +19,4 @@ const ArticleCardBody = ({ children, ...rest }) => {
   );
 };
 
-export default ArticleCardBody;
+export default Card;

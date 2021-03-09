@@ -35,6 +35,8 @@ import { createGravatarHash } from "src/utilities/user";
 import { validateSignUp } from "src/utilities/validation";
 
 // Components
+import Article from "src/components/Article";
+import Card from "src/components/Card";
 import Link from "src/components/Link";
 import SchoolSearch from "src/components/SchoolSearch";
 import SiteLayout from "src/components/SiteLayout";
@@ -184,7 +186,7 @@ const Signup = () => {
 
   return (
     <SiteLayout title="Sign Up">
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -194,16 +196,7 @@ const Signup = () => {
             </AlertDescription>
           </Alert>
         ) : null}
-        <Box
-          as="form"
-          borderWidth={1}
-          boxShadow="lg"
-          rounded="lg"
-          bg="white"
-          pos="relative"
-          p={12}
-          onSubmit={handleSubmit}
-        >
+        <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">
             Create an account
           </Heading>
@@ -247,8 +240,8 @@ const Signup = () => {
               Log in
             </Link>
           </Text>
-        </Box>
-      </Box>
+        </Card>
+      </Article>
     </SiteLayout>
   );
 };

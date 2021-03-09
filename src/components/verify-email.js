@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 
 // Components
+import Article from "src/components/Article";
 import SiteLayout from "src/components/SiteLayout";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +21,7 @@ const VerifyEmail = () => {
 
   return (
     <SiteLayout title="Verify Email" hideNav hideFooter>
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="3xl">
+      <Article>
         <Alert
           status={verifyState}
           variant="subtle"
@@ -41,7 +42,7 @@ const VerifyEmail = () => {
               : verificationError}
           </AlertDescription>
         </Alert>
-      </Box>
+      </Article>
     </SiteLayout>
   );
 };

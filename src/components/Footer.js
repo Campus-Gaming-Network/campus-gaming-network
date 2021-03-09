@@ -43,10 +43,10 @@ const Footer = () => {
         <Flex justifyContent="space-between" flexWrap="wrap">
           <List
             spacing={2}
-            flexBasis={{ base: "33.3333%", sm: "100%" }}
-            minWidth={{ base: "33.3333%", sm: "100%" }}
+            flexBasis={{ md: "33.3333%", sm: "100%" }}
+            minWidth={{ md: "33.3333%", sm: "100%" }}
             flexGrow={0}
-            pt={{ base: 0, sm: 8 }}
+            pt={{ md: 0, sm: 8 }}
           >
             <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase">
               Resources
@@ -69,10 +69,10 @@ const Footer = () => {
           </List>
           <List
             spacing={2}
-            flexBasis={{ base: "33.3333%", sm: "100%" }}
-            minWidth={{ base: "33.3333%", sm: "100%" }}
+            flexBasis={{ md: "33.3333%", sm: "100%" }}
+            minWidth={{ md: "33.3333%", sm: "100%" }}
             flexGrow={0}
-            pt={{ base: 0, sm: 8 }}
+            pt={{ md: 0, sm: 8 }}
           >
             <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase">
               Community
@@ -98,10 +98,10 @@ const Footer = () => {
           </List>
           <List
             spacing={2}
-            flexBasis={{ base: "33.3333%", sm: "100%" }}
-            minWidth={{ base: "33.3333%", sm: "100%" }}
+            flexBasis={{ md: "33.3333%", sm: "100%" }}
+            minWidth={{ md: "33.3333%", sm: "100%" }}
             flexGrow={0}
-            pt={{ base: 0, sm: 8 }}
+            pt={{ md: 0, sm: 8 }}
           >
             <ListItem fontSize="sm">
               Made with{" "}

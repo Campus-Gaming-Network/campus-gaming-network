@@ -40,6 +40,7 @@ import { AUTH_STATUS } from "src/constants/auth";
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import OutsideLink from "src/components/OutsideLink";
+import Article from "src/components/Article";
 import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
 
@@ -114,15 +115,7 @@ const Event = props => {
 
   return (
     <SiteLayout pageTitle={props.event.name}>
-      <Box
-        as="article"
-        pt={10}
-        pb={16}
-        px={8}
-        mx="auto"
-        fontSize="xl"
-        maxW="5xl"
-      >
+      <Article>
         <Stack spacing={10}>
           {isEventCreator ? (
             <Box
@@ -337,7 +330,7 @@ const Event = props => {
             <UsersList users={props.users} />
           </Stack>
         </Stack>
-      </Box>
+      </Article>
 
       {canChangeEventResponse ? (
         <RSVPDialog

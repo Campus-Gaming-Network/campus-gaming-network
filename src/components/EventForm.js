@@ -11,7 +11,6 @@ import {
   Box,
   Button,
   Textarea,
-  Heading,
   Text,
   FormErrorMessage,
   Spinner,
@@ -30,6 +29,9 @@ import { DateTime } from "luxon";
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import FormSilhouette from "src/components/silhouettes/FormSilhouette";
+import Article from "src/components/Article";
+import PageHeading from "src/components/PageHeading";
+import Card from "src/components/Card";
 import GameSearch from "src/components/GameSearch";
 import GameCover from "src/components/GameCover";
 import MonthSelect from "src/components/MonthSelect";
@@ -186,7 +188,7 @@ const EventForm = props => {
 
   return (
     <SiteLayout title={pageTitle}>
-      <Box as="article" py={16} px={8} mx="auto" fontSize="xl" maxW="5xl">
+      <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -196,11 +198,11 @@ const EventForm = props => {
             </AlertDescription>
           </Alert>
         ) : null}
-        <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+        <Stack as="form" spacing={6} onSubmit={handleSubmit}>
           <Flex alignItems="center" flexWrap="wrap">
-            <Heading as="h2" size="2xl">
+            <PageHeading>
               {props.state === "edit" ? "Edit Event" : "Create an Event"}
-            </Heading>
+            </PageHeading>
             <Spacer />
             {props.state === "edit" ? (
               <Button
@@ -213,15 +215,9 @@ const EventForm = props => {
               </Button>
             ) : null}
           </Flex>
-          <Box
-            as="fieldset"
-            borderWidth="1px"
-            boxShadow="lg"
-            rounded="lg"
-            bg="white"
-            pos="relative"
-          >
-            <Box pos="absolute" top="-5rem">
+          <Spacer />
+          <Card as="fieldset" p={0}>
+            <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
               <Text as="legend" fontWeight="bold" fontSize="2xl">
                 Details
               </Text>
@@ -425,15 +421,15 @@ const EventForm = props => {
                 <FormErrorMessage>{props.errors.game}</FormErrorMessage>
               </FormControl>
               <Box as="fieldset">
-                <Text as="legend" fontSize="lg" fontWeight="bold">
+                <Text as="legend" fontSize="lg" fontWeight="bold" pt={4}>
                   Start Date and Time
                 </Text>
                 <Stack spacing={4}>
-                  <Flex flexWrap="wrap">
+                  <Flex pt={4} flexWrap="wrap">
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startDay}
-                      flexBasis={{ md: "20%", sm: "100%" }}
+                      flexBasis={{ md: "25%", sm: "100%" }}
                       pr={{ md: 4, sm: 0 }}
                     >
                       <FormLabel
@@ -457,7 +453,7 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startMonth}
-                      flexBasis={{ md: "25%", sm: "100%" }}
+                      flexBasis={{ md: "30%", sm: "100%" }}
                       pr={{ md: 4, sm: 0 }}
                     >
                       <FormLabel
@@ -535,15 +531,15 @@ const EventForm = props => {
                 </Text>
               </Box>
               <Box as="fieldset">
-                <Text as="legend" fontSize="lg" fontWeight="bold">
+                <Text as="legend" fontSize="lg" fontWeight="bold" pt={4}>
                   End Date and Time
                 </Text>
                 <Stack spacing={4}>
-                  <Flex flexWrap="wrap">
+                  <Flex pt={4} flexWrap="wrap">
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endDay}
-                      flexBasis={{ md: "20%", sm: "100%" }}
+                      flexBasis={{ md: "25%", sm: "100%" }}
                       pr={{ md: 4, sm: 0 }}
                     >
                       <FormLabel
@@ -565,7 +561,7 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endMonth}
-                      flexBasis={{ md: "25%", sm: "100%" }}
+                      flexBasis={{ md: "30%", sm: "100%" }}
                       pr={{ md: 4, sm: 0 }}
                     >
                       <FormLabel
@@ -644,23 +640,24 @@ const EventForm = props => {
                 </Text>
               </Box>
             </Stack>
+          </Card>
+          <Box pt={16}>
+            <Button
+              colorScheme="brand"
+              type="submit"
+              size="lg"
+              w="full"
+              disabled={props.isSubmitting}
+            >
+              {props.isSubmitting
+                ? "Submitting..."
+                : props.state === "edit"
+                ? "Edit Event"
+                : "Create Event"}
+            </Button>
           </Box>
-          <Button
-            colorScheme="brand"
-            type="submit"
-            size="lg"
-            w="full"
-            mt={-12}
-            disabled={props.isSubmitting}
-          >
-            {props.isSubmitting
-              ? "Submitting..."
-              : props.state === "edit"
-              ? "Edit Event"
-              : "Create Event"}
-          </Button>
         </Stack>
-      </Box>
+      </Article>
 
       {props.state === "edit" ? (
         <DeleteEventDialog

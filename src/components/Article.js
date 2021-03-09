@@ -2,15 +2,15 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 
-const ArticleCard = ({ children, ...rest }) => {
+const Article = ({ children, ...rest }) => {
   return (
     <Box
       as="article"
       py={16}
-      px={{ base: 8, sm: 0 }}
+      px={{ md: 8, sm: 0 }}
       mx="auto"
       fontSize="xl"
-      maxW={{ base: "3xl", sm: "100%" }}
+      maxW={{ md: "3xl", sm: "100%" }}
       {...rest}
     >
       {children}
@@ -18,4 +18,4 @@ const ArticleCard = ({ children, ...rest }) => {
   );
 };
 
-export default ArticleCard;
+export default Article;

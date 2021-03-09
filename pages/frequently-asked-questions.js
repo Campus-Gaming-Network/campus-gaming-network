@@ -5,8 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt, faLink } from "@fortawesome/free-solid-svg-icons";
 
 // Components
-import ArticleCard from "src/components/ArticleCard";
-import ArticleCardBody from "src/components/ArticleCardBody";
+import Article from "src/components/Article";
+import Card from "src/components/Card";
 import PageHeading from "src/components/PageHeading";
 import OutsideLink from "src/components/OutsideLink";
 import SiteLayout from "src/components/SiteLayout";
@@ -17,9 +17,9 @@ import SiteLayout from "src/components/SiteLayout";
 const FrequentlyAskedQuestions = () => {
   return (
     <SiteLayout title="Frequently Asked Questions">
-      <ArticleCard>
+      <Article>
         <PageHeading>Frequently Asked Questions</PageHeading>
-        <ArticleCardBody>
+        <Card>
           <dl>
             {QUESTIONS.map((item, index) => {
               return (
@@ -30,8 +30,8 @@ const FrequentlyAskedQuestions = () => {
               );
             })}
           </dl>
-        </ArticleCardBody>
-      </ArticleCard>
+        </Card>
+      </Article>
     </SiteLayout>
   );
 };
