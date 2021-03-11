@@ -125,3 +125,7 @@ nav [data-reach-combobox] {
 nav [data-reach-list] {
   font-size-adjust: 0.6rem;
 }
+
+.highlight-target:target {
+  background-color: lightgoldenrodyellow;
+}

@@ -1,29 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Event Response Utilities
 
-import {
-  formatCalendarDateTime,
-  hasStarted,
-  hasEnded
-} from "src/utilities/dateTime";
+import { hasStarted, hasEnded } from "src/utilities/dateTime";
 
-export const mapEventResponse = eventResponse =>
-  eventResponse
-    ? {
-        ...eventResponse,
-        event: {
-          ...eventResponse.event,
-          formattedStartDateTime: formatCalendarDateTime(
-            eventResponse.event.startDateTime
-          ),
-          formattedEndDateTime: formatCalendarDateTime(
-            eventResponse.event.endDateTime
-          ),
-          hasStarted: hasStarted(
-            eventResponse.event.startDateTime,
-            eventResponse.event.endDateTime
-          ),
-          hasEnded: hasEnded(eventResponse.event.endDateTime)
-        }
-      }
-    : undefined;
+export const mapEventResponse = eventResponse => {
+  if (!Boolean(eventResponse)) {
+    return undefined;
+  }
+
+  return {
+    ...eventResponse,
+    event: {
+      ...eventResponse.event,
+      hasStarted: hasStarted(
+        eventResponse.event.startDateTime,
+        eventResponse.event.endDateTime
+      ),
+      hasEnded: hasEnded(eventResponse.event.endDateTime)
+    }
+  };
+};

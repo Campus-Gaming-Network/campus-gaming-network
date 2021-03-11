@@ -2,7 +2,7 @@ import React from "react";
 import startCase from "lodash.startcase";
 import { Text, Spinner, Flex, Box } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import { faSchool, faHistory } from "@fortawesome/free-solid-svg-icons";
 import {
   Combobox,
   ComboboxInput,
@@ -20,6 +20,8 @@ import keyBy from "lodash.keyby";
 import SchoolLogo from "src/components/SchoolLogo";
 
 import { LOCAL_STORAGE } from "src/constants/other";
+
+const savedSearches = [];
 
 const SchoolSearch = props => {
   const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
@@ -125,14 +127,32 @@ const SchoolSearch = props => {
       } else {
         setSearchTerm(selectedSchool);
       }
+
+      if (savedSearches.length === 5) {
+        savedSearches.pop();
+      }
+
+      savedSearches.unshift({
+        ...matchedSchool,
+        savedSearch: true
+      });
     }
   };
+
+  const items = React.useMemo(() => {
+    if (!searchTerm && Boolean(savedSearches)) {
+      return savedSearches;
+    }
+
+    return results;
+  }, [searchTerm, results, savedSearches]);
 
   return (
     <Combobox
       aria-label="School"
       name={props.name || "school"}
       onSelect={handleSchoolSelect}
+      openOnFocus
     >
       <Flex align="center">
         <ComboboxInput
@@ -142,6 +162,8 @@ const SchoolSearch = props => {
           onChange={handleChange}
           value={searchTerm}
           autocomplete={false}
+          // This turns off the browser autocomplete
+          autoComplete="off"
         />
         {isFetching ? (
           <Spinner
@@ -153,11 +175,11 @@ const SchoolSearch = props => {
           />
         ) : null}
       </Flex>
-      {results ? (
+      {Boolean(items) ? (
         <ComboboxPopover>
-          {results.length > 0 ? (
+          {items.length > 0 ? (
             <ComboboxList>
-              {results.map(school => {
+              {items.map(school => {
                 const value = `${startCase(
                   school.name.toLowerCase()
                 )} – ${startCase(school.city.toLowerCase())}, ${school.state}`;
@@ -166,22 +188,35 @@ const SchoolSearch = props => {
                   <ComboboxOption key={school.objectID} value={value}>
                     <Flex align="center">
                       <Box h={6} w={6} mr={2} rounded="full" bg="gray.100">
-                        <SchoolLogo
-                          schoolId={school.objectID}
-                          schoolName={school.name}
-                          fallback={
-                            <Flex
-                              align="center"
-                              justify="center"
-                              color="gray.400"
-                              h={6}
-                              w={6}
-                              mr={2}
-                            >
-                              <FontAwesomeIcon icon={faSchool} />
-                            </Flex>
-                          }
-                        />
+                        {school.savedSearch ? (
+                          <Flex
+                            align="center"
+                            justify="center"
+                            color="gray.400"
+                            h={6}
+                            w={6}
+                            mr={2}
+                          >
+                            <FontAwesomeIcon icon={faHistory} />
+                          </Flex>
+                        ) : (
+                          <SchoolLogo
+                            schoolId={school.objectID}
+                            schoolName={school.name}
+                            fallback={
+                              <Flex
+                                align="center"
+                                justify="center"
+                                color="gray.400"
+                                h={6}
+                                w={6}
+                                mr={2}
+                              >
+                                <FontAwesomeIcon icon={faSchool} />
+                              </Flex>
+                            }
+                          />
+                        )}
                       </Box>
                       <Text>
                         <ComboboxOptionText />

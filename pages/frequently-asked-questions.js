@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box, Text, Link } from "@chakra-ui/react";
+import { Box, Text, Link, Flex } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt, faLink } from "@fortawesome/free-solid-svg-icons";
 
@@ -23,10 +23,15 @@ const FrequentlyAskedQuestions = () => {
           <dl>
             {QUESTIONS.map((item, index) => {
               return (
-                <React.Fragment key={index}>
-                  {item.question}
+                <Box key={index} id={item.id} class="highlight-target">
+                  <Flex align="center" px={2} pt={2}>
+                    <Link href={`#${item.id}`} color="gray.400" mr={2}>
+                      <FontAwesomeIcon icon={faLink} size="xs" />
+                    </Link>
+                    {item.question}
+                  </Flex>
                   {item.answer}
-                </React.Fragment>
+                </Box>
               );
             })}
           </dl>
@@ -42,15 +47,6 @@ const FrequentlyAskedQuestions = () => {
 const QuestionWrapper = props => {
   return (
     <Box as="dt" flex="1" textAlign="left" fontWeight="bold" fontSize="md">
-      <Link
-        href={`#${props.id}`}
-        id={props.id}
-        color="gray.400"
-        d="inline-flex"
-        mr={2}
-      >
-        <FontAwesomeIcon icon={faLink} size="xs" />
-      </Link>
       {props.children}
     </Box>
   );
@@ -61,7 +57,7 @@ const QuestionWrapper = props => {
 
 const AnswerWrapper = props => {
   return (
-    <Box as="dd" flex="1" textAlign="left" fontSize="md" pb={4}>
+    <Box as="dd" flex="1" textAlign="left" fontSize="md" px={2} pb={2}>
       {props.children}
     </Box>
   );
@@ -144,21 +140,23 @@ const BuyMeACoffeeLink = props => {
 
 const QUESTIONS = [
   {
+    id: "does-campus-gaming-network-cost-anything-to-use",
     question: (
-      <QuestionWrapper id="does-campus-gaming-network-cost-anything-to-use">
+      <QuestionWrapper>
         Does Campus Gaming Network cost anything to use?
       </QuestionWrapper>
     ),
     answer: <AnswerWrapper>No, it is completely free to use.</AnswerWrapper>
   },
   {
+    id: "how-does-campus-gaming-network-make-money",
     question: (
-      <QuestionWrapper id="how-does-campus-gaming-network-make-money">
+      <QuestionWrapper>
         How does Campus Gaming Network make money?
       </QuestionWrapper>
     ),
     answer: (
-      <AnswerWrapper id="we-make-money-by-donations-from-our-users-through-a-service-called-buy-me-a-coffee">
+      <AnswerWrapper>
         We make money by donations from our users through a service called{" "}
         <BuyMeACoffeeLink />. If you like what we do and want to donate to help
         with development costs, you can visit our{" "}
@@ -170,8 +168,9 @@ const QUESTIONS = [
     )
   },
   {
+    id: "where-does-my-profile-picture-come-from",
     question: (
-      <QuestionWrapper id="where-does-my-profile-picture-come-from">
+      <QuestionWrapper>
         Where does my profile picture come from?
       </QuestionWrapper>
     ),
@@ -185,10 +184,9 @@ const QUESTIONS = [
     )
   },
   {
+    id: "how-do-i-change-my-profile-picture",
     question: (
-      <QuestionWrapper id="how-do-i-change-my-profile-picture">
-        How do I change my profile picture?
-      </QuestionWrapper>
+      <QuestionWrapper>How do I change my profile picture?</QuestionWrapper>
     ),
     answer: (
       <AnswerWrapper>
@@ -202,8 +200,9 @@ const QUESTIONS = [
     )
   },
   {
+    id: "will-you-allow-uploading-of-profile-pictures-without-gravatar",
     question: (
-      <QuestionWrapper id="will-you-allow-uploading-of-profile-pictures-without-gravatar">
+      <QuestionWrapper>
         Will you allow uploading of profile pictures without <GravatarLink />?
       </QuestionWrapper>
     ),
@@ -215,10 +214,9 @@ const QUESTIONS = [
     )
   },
   {
+    id: "where-does-the-list-of-games-come-from",
     question: (
-      <QuestionWrapper id="where-does-the-list-of-games-come-from">
-        Where does the list of games come from?
-      </QuestionWrapper>
+      <QuestionWrapper>Where does the list of games come from?</QuestionWrapper>
     ),
     answer: (
       <AnswerWrapper>
@@ -227,8 +225,9 @@ const QUESTIONS = [
     )
   },
   {
+    id: "i-cant-find-a-certain-game-what-gives",
     question: (
-      <QuestionWrapper id="i-cant-find-a-certain-game-what-gives">
+      <QuestionWrapper>
         I can't find a certain game, what gives?
       </QuestionWrapper>
     ),
@@ -246,11 +245,8 @@ const QUESTIONS = [
     )
   },
   {
-    question: (
-      <QuestionWrapper id="is-there-a-mobile-app">
-        Is there a mobile app?
-      </QuestionWrapper>
-    ),
+    id: "is-there-a-mobile-app",
+    question: <QuestionWrapper>Is there a mobile app?</QuestionWrapper>,
     answer: (
       <AnswerWrapper>
         Not currently, but we plan to develop a native mobile app for both iOS
@@ -259,8 +255,9 @@ const QUESTIONS = [
     )
   },
   {
+    id: "what-happens-if-something-on-the-site-doesnt-work-as-expected",
     question: (
-      <QuestionWrapper id="what-happens-if-something-on-the-site-doesnt-work-as-expected">
+      <QuestionWrapper>
         What happens if something on the site doesn't work as expected?
       </QuestionWrapper>
     ),
@@ -280,7 +277,8 @@ const QUESTIONS = [
     )
   },
   {
-    question: <QuestionWrapper id="who-are-you">Who are you?</QuestionWrapper>,
+    id: "who-are-you",
+    question: <QuestionWrapper>Who are you?</QuestionWrapper>,
     answer: (
       <AnswerWrapper>
         An avid gamer, software developer, living in Salt Lake City, who wants

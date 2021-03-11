@@ -68,11 +68,7 @@ class MyDocument extends Document {
             size="180x180"
           />
           <meta name="theme-color" content="#000000" />
-          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-          <meta
-            name="description"
-            content="Campus Gaming Network - Connect with other collegiate gamers for casual or competitive gaming at your school or nearby."
-          />
+          <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
           <meta
             name="keywords"
             content="campus, gaming, social network, competitive gaming, social gaming, casual gaming, university, college, college gaming, university gaming, social network gaming, student gaming, student"

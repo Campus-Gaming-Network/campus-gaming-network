@@ -8,8 +8,9 @@ const NavWrapper = props => (
     align="center"
     justify="space-between"
     wrap="wrap"
-    paddingX="1.5rem"
+    paddingX="1rem"
     borderBottomWidth={2}
+    height={50}
     {...props}
   />
 );

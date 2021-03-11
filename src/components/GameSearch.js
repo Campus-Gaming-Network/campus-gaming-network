@@ -88,6 +88,9 @@ const GameSearch = props => {
         placeholder={props.inputPlaceholder || "Search"}
         onChange={handleChange}
         value={searchTerm}
+        autocomplete={false}
+        // This turns off the browser autocomplete
+        autoComplete="off"
       />
       {gamesResults && (
         <ComboboxPopover>

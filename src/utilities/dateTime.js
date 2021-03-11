@@ -5,28 +5,54 @@ import range from "lodash.range";
 import { DateTime, Interval } from "luxon";
 
 export const hasStarted = (startDateTime, endDateTime) => {
-  if (startDateTime && endDateTime) {
-    return Interval.fromDateTimes(
-      startDateTime.toDate(),
-      endDateTime.toDate()
-    ).contains(DateTime.local());
+  if (!Boolean(startDateTime) || !Boolean(endDateTime)) {
+    return undefined;
   }
 
-  return null;
+  return Interval.fromDateTimes(
+    startDateTime.toDate(),
+    endDateTime.toDate()
+  ).contains(DateTime.local());
 };
 
 export const hasEnded = endDateTime => {
-  if (endDateTime) {
-    return DateTime.local() > DateTime.local(endDateTime.toDate());
+  if (!Boolean(endDateTime)) {
+    return undefined;
   }
 
-  return null;
+  return (
+    DateTime.local() > DateTime.fromISO(endDateTime.toDate().toISOString())
+  );
 };
 
 export const formatCalendarDateTime = dateTime => {
-  return dateTime
-    ? DateTime.local(dateTime.toDate()).toRelativeCalendar()
-    : null;
+  if (!Boolean(dateTime)) {
+    return undefined;
+  }
+
+  return DateTime.fromISO(dateTime.toDate().toISOString()).toRelativeCalendar();
+};
+
+export const buildDateTime = dateTime => {
+  if (!Boolean(dateTime)) {
+    return undefined;
+  }
+
+  const _dateTime = dateTime.toDate();
+  const _dateTimeISO = _dateTime.toISOString();
+  // TODO: Move to constants
+  const localeFormat = {
+    ...DateTime.DATETIME_FULL,
+    ...{ month: "long", day: "numeric" }
+  };
+
+  return {
+    firestore: dateTime,
+    base: _dateTime,
+    iso: _dateTimeISO,
+    locale: DateTime.fromISO(_dateTimeISO).toLocaleString(localeFormat),
+    relative: DateTime.fromISO(_dateTimeISO).toRelativeCalendar()
+  };
 };
 
 export const getYears = (

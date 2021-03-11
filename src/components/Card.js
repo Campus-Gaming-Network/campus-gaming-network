@@ -6,7 +6,6 @@ const Card = ({ children, ...rest }) => {
   return (
     <Box
       pos="relative"
-      rounded="lg"
       borderWidth={1}
       boxShadow="lg"
       rounded={{ md: "lg", sm: "none" }}

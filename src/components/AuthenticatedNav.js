@@ -1,7 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
 import {
-  Button,
   Flex,
   Text,
   Menu,
@@ -17,10 +16,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserCircle,
   faSignOutAlt,
-  faBars,
-  faTimes,
   faSchool
 } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt } from "@fortawesome/free-regular-svg-icons";
 import NavWrapper from "src/components/NavWrapper";
 import SchoolSearch from "src/components/SchoolSearch";
 import SchoolLogo from "src/components/SchoolLogo";
@@ -57,7 +55,7 @@ const AuthenticatedNav = props => {
   return (
     <NavWrapper>
       <Flex align="center" mr={5}>
-        <Logo width="200px" />
+        <Logo height="35px" p={1} />
       </Flex>
 
       <SchoolSearch
@@ -67,15 +65,17 @@ const AuthenticatedNav = props => {
         clearInputOnSelect
       />
 
-      <Box
-        display="flex"
+      <Flex
         width="auto"
         alignItems="center"
         flexGrow={1}
         justifyContent="flex-end"
       >
         <ButtonLink href="/create-event" colorScheme="brand" size="sm" mr={4}>
-          Create an event
+          <Box mr={2}>
+            <FontAwesomeIcon icon={faCalendarAlt} />
+          </Box>
+          Create event
         </ButtonLink>
 
         <Menu>
@@ -92,6 +92,7 @@ const AuthenticatedNav = props => {
             }}
             px={2}
             rounded="md"
+            height="32px"
           >
             <Flex align="center">
               {Boolean(props.user.gravatar) ? (
@@ -162,7 +163,7 @@ const AuthenticatedNav = props => {
             </MenuItem>
           </MenuList>
         </Menu>
-      </Box>
+      </Flex>
     </NavWrapper>
   );
 };

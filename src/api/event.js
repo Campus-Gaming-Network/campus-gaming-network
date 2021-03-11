@@ -18,7 +18,7 @@ export const getEventDetails = async id => {
       .get();
 
     if (eventDoc.exists) {
-      event = { ...mapEvent(eventDoc.data(), eventDoc) };
+      event = { ...mapEvent(eventDoc.data()) };
     }
 
     return { event };
@@ -57,7 +57,7 @@ export const getEventUsers = async (
     const eventUsersSnapshot = await query.limit(limit).get();
 
     if (!eventUsersSnapshot.empty) {
-      snapshot.forEach(doc => {
+      eventUsersSnapshot.forEach(doc => {
         const data = doc.data();
         const user = mapUser({ id: data.user.id, ...data.user });
         users.push(user);

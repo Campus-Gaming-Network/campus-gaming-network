@@ -9,8 +9,12 @@ export const mapSchool = school =>
     ? {
         ...school,
         formattedName: startCase(school.name.toLowerCase()),
-        formattedAddress: startCase(school.address.toLowerCase()),
-        isValidWebsiteUrl: isValidUrl(school.website),
+        formattedAddress: Boolean(school.address)
+          ? startCase(school.address.toLowerCase())
+          : undefined,
+        isValidWebsiteUrl: Boolean(school.website)
+          ? isValidUrl(school.website)
+          : false,
         googleMapsAddressLink: googleMapsLink(
           `${school.address} ${school.city}, ${school.state}`
         )

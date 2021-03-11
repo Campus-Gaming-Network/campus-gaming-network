@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Text, Flex, Stack } from "@chakra-ui/react";
-import startCase from "lodash.startcase";
 import Link from "src/components/Link";
 
 const EventListItem = props => {
@@ -55,15 +54,15 @@ const EventListItem = props => {
               <Text
                 d="inline-block"
                 as="time"
-                dateTime={props.event.startDateTime.toDate()}
-                title={props.event.startDateTime.toDate()}
+                dateTime={props.event.startDateTime.locale}
+                title={props.event.startDateTime.locale}
                 fontSize="md"
                 textTransform="uppercase"
                 fontWeight="bold"
                 lineHeight="none"
                 isTruncated
               >
-                {props.event.formattedStartDateTime}
+                {props.event.startDateTime.locale}
               </Text>
             )}
           </Box>
@@ -86,9 +85,9 @@ const EventListItem = props => {
             isTruncated
             lineHeight="short"
             mt={-2}
-            title={startCase(props.school.name.toLowerCase())}
+            title={props.school.formattedName}
           >
-            {startCase(props.school.name.toLowerCase())}
+            {props.school.formattedName}
           </Link>
           <Flex justifyContent="space-between" alignItems="center">
             {props.event.isOnlineEvent ? (
@@ -102,7 +101,7 @@ const EventListItem = props => {
                 Online
               </Text>
             ) : null}
-            {props.event.responses &&
+            {Boolean(props.event.responses) &&
             props.event.responses.yes &&
             props.event.responses.yes > 0 ? (
               <Text

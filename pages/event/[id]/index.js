@@ -18,24 +18,21 @@ import {
   List,
   ListItem,
   Flex,
-  Avatar,
-  Skeleton
+  Avatar
 } from "@chakra-ui/react";
 import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import dynamic from 'next/dynamic';
 import Head from "next/head";
 import safeJsonStringify from "safe-json-stringify";
+import nookies from "nookies";
+import firebaseAdmin from "src/firebaseAdmin";
 
 // Constants
 import {
   EVENT_EMPTY_LOCATION_TEXT,
   EVENT_EMPTY_USERS_TEXT
 } from "src/constants/event";
-import {
-  DEFAULT_USERS_LIST_PAGE_SIZE,
-  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE,
-  COOKIES
-} from "src/constants/other";
+import { COOKIES } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Components
@@ -57,9 +54,9 @@ const RSVPDialog = dynamic(() => import('src/components/dialogs/RSVPDialog'), { 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async ({ params }) => {
-  const { event } = await getEventDetails(params.id);
-  const { users } = await getEventUsers(params.id);
+export const getServerSideProps = async (context) => {
+  const { event } = await getEventDetails(context.params.id);
+  const { users } = await getEventUsers(context.params.id);
 
   if (!Boolean(event)) {
     return { notFound: true };
@@ -81,7 +78,7 @@ export const getServerSideProps = async ({ params }) => {
       : null;
       const authStatus = Boolean(token) && Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
     const isEventCreator = event.creator.id === token.uid;
-    const { eventResponse } = await getUserEventResponse(params.id, token.uid);
+    const { eventResponse } = await getUserEventResponse(context.params.id, token.uid);
     const canChangeEventResponse = (
       authStatus === AUTH_STATUS.AUTHENTICATED &&
       !isEventCreator &&
@@ -93,7 +90,7 @@ export const getServerSideProps = async ({ params }) => {
     data.hasResponded = Boolean(eventResponse);
     data.canChangeEventResponse = canChangeEventResponse;
   } catch (error) {
-    // Do Nothing
+    return { notFound: true };
   }
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -108,14 +105,16 @@ const Event = props => {
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
 
   const openRSVPDialog = () => {
-    setIsRSVPAlertOpen(canChangeEventResponse);
+    setIsRSVPAlertOpen(props.canChangeEventResponse);
   };
   const closeRSVPDialog = () => {
     setIsRSVPAlertOpen(false);
   };
 
   return (
-    <SiteLayout pageTitle={props.event.name}>
+    <SiteLayout title={props.event.meta.title} description={props.event.meta.description}>
+      <Head>
+      </Head>
       <Article>
         <Stack spacing={10}>
           {props.isEventCreator ? (
@@ -224,18 +223,18 @@ const Event = props => {
               </Text>
               <Text
                 as="time"
-                dateTime={props.event.startDateTime.toDate()}
-                title={props.event.startDateTime.toDate()}
+                dateTime={props.event.startDateTime.locale}
+                title={props.event.startDateTime.locale}
               >
-                {props.event.formattedStartDateTime}
+                {props.event.startDateTime.locale}
               </Text>{" "}
               to{" "}
               <Text
                 as="time"
-                dateTime={props.event.endDateTime.toDate()}
-                title={props.event.endDateTime.toDate()}
+                dateTime={props.event.endDateTime.locale}
+                title={props.event.endDateTime.locale}
               >
-                {props.event.formattedEndDateTime}
+                {props.event.endDateTime.locale}
               </Text>
             </Box>
             <Box>
@@ -266,14 +265,14 @@ const Event = props => {
                   <Text as="span" color="gray.600" mr={2} fontSize="lg">
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </Text>
-                  <Text as="span">{props.EVENT_EMPTY_LOCATION_TEXT}</Text>
+                  <Text as="span">{EVENT_EMPTY_LOCATION_TEXT}</Text>
                 </React.Fragment>
               )}
             </Box>
           </Stack>
-          {canChangeEventResponse ? (
+          {props.canChangeEventResponse ? (
             <Stack as="section" spacing={4}>
-              {hasResponded && eventResponse.response === "YES" ? (
+              {props.hasResponded && props.eventResponse.response === "YES" ? (
                 <Alert
                   status="success"
                   variant="subtle"
@@ -333,7 +332,7 @@ const Event = props => {
         </Stack>
       </Article>
 
-      {canChangeEventResponse ? (
+      {props.canChangeEventResponse ? (
         <RSVPDialog
           authUser={authUser}
           event={props.event}
@@ -352,48 +351,7 @@ const Event = props => {
 // UsersList
 
 const UsersList = props => {
-  const [page, setPage] = React.useState(0);
-  const hasUsers = React.useMemo(
-    () => Boolean(props.users) && props.users.length && props.users.length > 0,
-    [props.users]
-  );
-  const isFirstPage = React.useMemo(() => page === 0, [page]);
-  const isLastPage = React.useMemo(
-    () => hasUsers && props.users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
-    [hasUsers, props.users]
-  );
-  const isValidPage = React.useMemo(() => page >= 0, [page]);
-
-  const nextPage = () => {
-    if (!isLastPage) {
-      setPage(page + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (!isFirstPage) {
-      setPage(page - 1);
-    }
-  };
-
-  if (isLoadingUsers) {
-    return (
-      <Flex flexWrap="wrap" mx={-2}>
-        {times(DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
-          <Box key={index} w={{ md: "20%", sm: "33%" }}>
-            <Skeleton
-              pos="relative"
-              d="flex"
-              m={2}
-              p={4}
-              h={130}
-              rounded="lg"
-            />
-          </Box>
-        ))}
-      </Flex>
-    );
-  }
+  const hasUsers = React.useMemo(() => { return Boolean(props.users) && props.users.length > 0; }, [props.users]);
 
   if (hasUsers) {
     return (
@@ -408,40 +366,13 @@ const UsersList = props => {
             />
           ))}
         </List>
-        <Flex justifyContent="space-between" m={2}>
-          {!isFirstPage ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              leftIcon={<ArrowBack />}
-              colorScheme="brand"
-              disabled={isFirstPage}
-              onClick={prevPage}
-            >
-              Prev Page
-            </Button>
-          ) : null}
-          {!isLastPage ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              rightIcon={<ArrowForward />}
-              colorScheme="brand"
-              disabled={isLastPage}
-              onClick={nextPage}
-              ml="auto"
-            >
-              Next Page
-            </Button>
-          ) : null}
-        </Flex>
       </React.Fragment>
     );
   }
 
   return (
     <Text mt={4} color="gray.400">
-      {props.EVENT_EMPTY_USERS_TEXT}
+      {EVENT_EMPTY_USERS_TEXT}
     </Text>
   );
 };

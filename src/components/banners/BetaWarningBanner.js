@@ -16,9 +16,7 @@ const BetaWarningBanner = () => {
   return (
     <Alert status="warning" justifyContent="center">
       <AlertIcon />
-      <AlertTitle mr={2} textTransform="uppercase">
-        Beta
-      </AlertTitle>
+      <AlertTitle mr={2}>Site in beta!</AlertTitle>
       <AlertDescription>
         <Text>
           Site is currently in{" "}

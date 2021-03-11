@@ -9,12 +9,19 @@ const NavSilhouette = () => {
   return (
     <NavWrapper>
       <Flex align="center" mr={5}>
-        <Logo width="200px" />
+        <Logo height="35px" p={1} />
       </Flex>
 
-      <Flex>
-        <Box bg="gray.200" w="65px" h="38px" mr="2" borderRadius="md" />
-        <Box bg="brand" w="125px" h="38px" borderRadius="md" />
+      <Box bg="gray.200" w="350px" h="35px" borderRadius="md" />
+
+      <Flex
+        width="auto"
+        alignItems="center"
+        flexGrow={1}
+        justifyContent="flex-end"
+      >
+        <Box bg="gray.200" w="65px" h="35px" mr="2" borderRadius="md" />
+        <Box bg="gray.200" w="125px" h="35px" borderRadius="md" />
       </Flex>
     </NavWrapper>
   );

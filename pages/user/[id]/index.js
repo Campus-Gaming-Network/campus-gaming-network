@@ -16,7 +16,8 @@ import {
   VisuallyHidden,
   Image,
   Button,
-  useClipboard
+  useClipboard,
+  useToast
 } from "@chakra-ui/react";
 import safeJsonStringify from 'safe-json-stringify';
 import { getUserDetails, getUserEvents } from 'src/api/user'
@@ -280,6 +281,7 @@ const AccountsList = props => {
 // AccountsListItem
 
 const AccountsListItem = props => {
+  const toast = useToast();
   const [isHovered, setIsHovered] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
   const { hasCopied, onCopy } = useClipboard(props.value);
@@ -287,6 +289,16 @@ const AccountsListItem = props => {
   if (!props.value) {
     return null;
   }
+
+  const handleCopy = (label) => {
+    onCopy();
+    toast({
+      title: "Copied!",
+      description: `${label} value copied to clipboard.`,
+      status: "info",
+      duration: 1500,
+    });
+  };
 
   const icon = React.useMemo(() => {
     if (hasCopied) {
@@ -302,7 +314,7 @@ const AccountsListItem = props => {
     <ListItem>
       <Box
         as={Button}
-        onClick={onCopy}
+        onClick={() => handleCopy(props.label)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onFocus={() => setIsFocused(true)}

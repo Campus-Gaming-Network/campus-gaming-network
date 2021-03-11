@@ -57,7 +57,7 @@ export const getUserEvents = async (
     const eventsSnapshot = await query.limit(limit).get();
 
     if (!eventsSnapshot.empty) {
-      snapshot.forEach(doc => {
+      eventsSnapshot.forEach(doc => {
         const event = mapEventResponse(doc.data(), doc);
         events.push(event);
       });

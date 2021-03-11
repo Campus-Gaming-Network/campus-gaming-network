@@ -131,7 +131,13 @@ const CreateEvent = () => {
       .doc(user.id);
 
     const eventData = {
-      creator: userDocRef,
+      creator: {
+        ref: userDocRef,
+        id: userDocRef.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        gravatar: user.gravatar
+      },
       name: formState.name.trim(),
       description: formState.description.trim(),
       isOnlineEvent: formState.isOnlineEvent,

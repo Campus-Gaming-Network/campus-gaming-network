@@ -22,7 +22,7 @@ export const useFormFields = initialState => {
 export const noop = () => {};
 
 export const isValidUrl = url =>
-  url.startsWith("http://") || url.startsWith("https://");
+  Boolean(url) && (url.startsWith("http://") || url.startsWith("https://"));
 
 // Move an array element from one array index to another
 export const move = (array, from, to) => {

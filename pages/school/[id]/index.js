@@ -198,7 +198,7 @@ const School = (props) => {
 ////////////////////////////////////////////////////////////////////////////////
 // EventsList
 
-const EventsList = ({ events }) => {
+const EventsList = (props) => {
   // const dispatch = useAppDispatch();
   // const [page] = React.useState(0);
   // const [events, isLoadingEvents] = useFetchSchoolEvents(
@@ -239,10 +239,10 @@ const EventsList = ({ events }) => {
   //   );
   // }
 
-  if (events && events.length && events.length > 0) {
+  if (Boolean(props.events) && props.events.length && props.events.length > 0) {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {events.map(event => (
+        {props.events.map(event => (
           <EventListItem key={event.id} event={event} school={event.school} />
         ))}
       </List>
@@ -259,7 +259,7 @@ const EventsList = ({ events }) => {
 ////////////////////////////////////////////////////////////////////////////////
 // UsersList
 
-const UsersList = ({ users }) => {
+const UsersList = (props) => {
   // const dispatch = useAppDispatch();
   // const [page, setPage] = React.useState(0);
   // const [users, isLoadingUsers] = useFetchSchoolUsers(
@@ -268,8 +268,8 @@ const UsersList = ({ users }) => {
   //   page
   // );
   const hasUsers = React.useMemo(
-    () => users && users.length && users.length > 0,
-    [users]
+    () => Boolean(props.users) && props.users.length && props.users.length > 0,
+    [props.users]
   );
   // const isFirstPage = React.useMemo(() => page === 0, [page]);
   // const isLastPage = React.useMemo(
@@ -332,7 +332,7 @@ const UsersList = ({ users }) => {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {users.map(user => (
+          {props.users.map(user => (
             <UsersListItem
               key={user.id}
               id={user.id}

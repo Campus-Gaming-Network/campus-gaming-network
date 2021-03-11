@@ -26,7 +26,7 @@ const UnauthenticatedNav = () => {
   return (
     <NavWrapper>
       <Flex align="center" mr={5}>
-        <Logo width="200px" />
+        <Logo height="35px" p={1} />
       </Flex>
 
       <SchoolSearch
@@ -36,19 +36,14 @@ const UnauthenticatedNav = () => {
         clearInputOnSelect
       />
 
-      <Box
-        display="flex"
-        alignItems="center"
-        flexGrow={1}
-        justifyContent="flex-end"
-      >
+      <Flex alignItems="center" flexGrow={1} justifyContent="flex-end">
         <ButtonLink href="/login" mr={3}>
           Log In
         </ButtonLink>
         <ButtonLink href="/signup" colorScheme="brand">
           Sign Up
         </ButtonLink>
-      </Box>
+      </Flex>
     </NavWrapper>
   );
 };
