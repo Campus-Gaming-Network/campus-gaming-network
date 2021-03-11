@@ -113,7 +113,6 @@ html {
 
 #siteSchoolSearch:focus {
   z-index: 1;
-  background-color: transparent;
   border-color: rgb(49, 130, 206);
 }
 
