@@ -62,7 +62,7 @@ const EventListItem = props => {
                 lineHeight="none"
                 isTruncated
               >
-                {props.event.startDateTime.locale}
+                {props.event.startDateTime.relative}
               </Text>
             )}
           </Box>
