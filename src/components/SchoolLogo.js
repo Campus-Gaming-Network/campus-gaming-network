@@ -3,12 +3,20 @@ import { Image } from "@chakra-ui/react";
 import startCase from "lodash.startcase";
 import { getSchoolLogoUrl } from "src/utilities/school";
 
+const erroredLogos = {};
+
 const SchoolLogo = React.memo(
   ({ schoolId, schoolName, fallback, src, ...rest }) => {
     const [hasError, setHasError] = React.useState(false);
     const handleError = () => {
       setHasError(true);
+      erroredLogos[schoolId] = Date.now();
     };
+
+    // If the logo has already errored out, dont try again
+    if (erroredLogos[schoolId] && !hasError) {
+      setHasError(true);
+    }
 
     if (hasError && Boolean(fallback)) {
       return fallback;
