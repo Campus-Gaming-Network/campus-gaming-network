@@ -16,7 +16,7 @@ const IGDB_GRANT_TYPE = "client_credentials";
 const ALGOLIA_ID = functions.config().algolia.app;
 const ALGOLIA_ADMIN_KEY = functions.config().algolia.key;
 const ALGOLIA_SEARCH_KEY = functions.config().algolia.search;
-const ALGOLIA_SCHOOLS_COLLECTION = "test_SCHOOLS";
+const ALGOLIA_SCHOOLS_COLLECTION = "prod_SCHOOLS";
 
 const algoliaAdminClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 const algoliaSearchClient = algoliasearch(ALGOLIA_ID, ALGOLIA_SEARCH_KEY);
