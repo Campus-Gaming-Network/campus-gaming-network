@@ -37,10 +37,10 @@ const UnauthenticatedNav = () => {
       />
 
       <Flex alignItems="center" flexGrow={1} justifyContent="flex-end">
-        <ButtonLink href="/login" mr={3}>
+        <ButtonLink href="/login" mr={3} size="sm" colorScheme="whiteAlpha">
           Log In
         </ButtonLink>
-        <ButtonLink href="/signup" colorScheme="brand">
+        <ButtonLink href="/signup" colorScheme="brand" size="sm">
           Sign Up
         </ButtonLink>
       </Flex>
