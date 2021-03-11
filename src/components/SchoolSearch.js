@@ -21,7 +21,7 @@ import SchoolLogo from "src/components/SchoolLogo";
 
 import { LOCAL_STORAGE } from "src/constants/other";
 
-const savedSearches = [];
+let savedSearches = [];
 
 const SchoolSearch = props => {
   const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
@@ -131,6 +131,10 @@ const SchoolSearch = props => {
       if (savedSearches.length === 5) {
         savedSearches.pop();
       }
+
+      savedSearches = savedSearches.filter(
+        school => school.id !== matchedSchool.id
+      );
 
       savedSearches.unshift({
         ...matchedSchool,
