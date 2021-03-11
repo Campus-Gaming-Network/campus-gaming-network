@@ -22,7 +22,7 @@ import OutsideLink from "src/components/OutsideLink";
 const Footer = () => {
   return (
     <React.Fragment>
-      <Box borderTopWidth={1} bg="gray.100" py={4} textAlign="center">
+      <Box borderTopWidth={1} bg="white" py={4} textAlign="center">
         <Text fontSize="lg">
           Enjoying the site?{" "}
           <OutsideLink href="https://www.buymeacoffee.com/cgnbrandon">

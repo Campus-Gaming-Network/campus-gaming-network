@@ -14,7 +14,7 @@ import ButtonLink from "src/components/ButtonLink";
 
 const NotFound = () => {
   return (
-    <SiteLayout pb={0} minH="auto">
+    <SiteLayout pb={0} minH="auto" bg="#e6e6e6">
       <Article>
         <Flex align="center" justify="center" h="100%">
           <Stack spacing={12} textAlign="center">

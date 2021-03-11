@@ -12,7 +12,7 @@ const NavSilhouette = () => {
         <Logo height="35px" p={1} />
       </Flex>
 
-      <Box bg="gray.200" w="350px" h="35px" borderRadius="md" />
+      <Box bg="gray.600" w="350px" h="35px" borderRadius="md" />
 
       <Flex
         width="auto"
@@ -20,8 +20,8 @@ const NavSilhouette = () => {
         flexGrow={1}
         justifyContent="flex-end"
       >
-        <Box bg="gray.200" w="65px" h="35px" mr="2" borderRadius="md" />
-        <Box bg="gray.200" w="125px" h="35px" borderRadius="md" />
+        <Box bg="gray.600" w="65px" h="35px" mr="2" borderRadius="md" />
+        <Box bg="gray.600" w="125px" h="35px" borderRadius="md" />
       </Flex>
     </NavWrapper>
   );
