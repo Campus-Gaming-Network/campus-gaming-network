@@ -84,15 +84,16 @@ const AuthenticatedNav = props => {
             alignItems="center"
             justifyContent="center"
             _focus={{
-              bg: "gray.100",
+              bg: "gray.900",
               boxShadow: "outline"
             }}
             _hover={{
-              bg: "gray.100"
+              bg: "gray.900"
             }}
             px={2}
             rounded="md"
             height="32px"
+            color="gray.200"
           >
             <Flex align="center">
               {Boolean(props.user.gravatar) ? (
@@ -103,9 +104,7 @@ const AuthenticatedNav = props => {
                   size="xs"
                 />
               ) : null}
-              <Text fontWeight="bold" color="gray.900">
-                {props.user.firstName}
-              </Text>
+              <Text fontWeight="bold">{props.user.firstName}</Text>
               <Box ml={2}>
                 <ChevronDownIcon />
               </Box>

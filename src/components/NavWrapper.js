@@ -11,6 +11,7 @@ const NavWrapper = props => (
     paddingX="1rem"
     borderBottomWidth={2}
     height={50}
+    bg="#323031"
     {...props}
   />
 );

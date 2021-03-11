@@ -39,6 +39,8 @@ const Footer = () => {
         textAlign="center"
         pt={{ md: 8, sm: 0 }}
         pb={8}
+        bg="#323031"
+        color="gray.300"
       >
         <Flex justifyContent="space-between" flexWrap="wrap">
           <List
@@ -48,7 +50,12 @@ const Footer = () => {
             flexGrow={0}
             pt={{ md: 0, sm: 8 }}
           >
-            <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase">
+            <ListItem
+              fontSize="xs"
+              fontWeight="bold"
+              textTransform="uppercase"
+              color="gray.500"
+            >
               Resources
             </ListItem>
             <ListItem fontSize="sm">
@@ -74,7 +81,12 @@ const Footer = () => {
             flexGrow={0}
             pt={{ md: 0, sm: 8 }}
           >
-            <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase">
+            <ListItem
+              fontSize="xs"
+              fontWeight="bold"
+              textTransform="uppercase"
+              color="gray.500"
+            >
               Community
             </ListItem>
             <ListItem fontSize="sm">
