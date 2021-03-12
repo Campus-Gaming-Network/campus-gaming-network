@@ -3,7 +3,6 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import times from "lodash.times";
 import {
   Stack,
   Box,
@@ -20,7 +19,7 @@ import {
   useToast
 } from "@chakra-ui/react";
 import safeJsonStringify from 'safe-json-stringify';
-import { getUserDetails, getUserEvents } from 'src/api/user'
+import { getUserDetails, getUserAttendingEvents } from 'src/api/user'
 
 // Constants
 import {
@@ -29,10 +28,7 @@ import {
   USER_EMPTY_ACCOUNTS_TEXT,
   USER_EMPTY_UPCOMING_EVENTS_TEXT
 } from "src/constants/user";
-import {
-  ACCOUNTS,
-  DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE
-} from "src/constants/other";
+import { ACCOUNTS } from "src/constants/other";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -53,7 +49,7 @@ import { useAuth } from "src/providers/auth";
 
 export const getServerSideProps = async (context) => {
   const { user } = await getUserDetails(context.params.id);
-  const { events } = await getUserEvents(context.params.id);
+  const { events } = await getUserAttendingEvents(context.params.id);
 
   if (!Boolean(user)) {
     return { notFound: true };
@@ -391,7 +387,7 @@ const EventsList = ({ events }) => {
   //   return (
   //     <List d="flex" flexWrap="wrap" m={-2} p={0}>
   //       {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
-  //         <Box key={index} w={{ md: "33%", sm: "50%" }}>
+  //         <Box key={index} w={{ base: "50%", md: "33.3333%" }}>
   //           <Skeleton
   //             pos="relative"
   //             d="flex"

@@ -429,7 +429,7 @@ const EditUser = props => {
         ) : null}
         <Stack as="form" spacing={6} onSubmit={handleSubmit}>
           <Flex alignItems="center" flexWrap="wrap">
-            <PageHeading pb={{ md: 0, sm: 6 }} px={0}>
+            <PageHeading pb={{ base: 6, md: 0 }} px={0}>
               Your Profile
             </PageHeading>
             <Spacer />
@@ -541,7 +541,7 @@ const DetailSection = React.memo(props => {
 
   return (
     <Card as="fieldset" p={0} mb={32}>
-      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
+      <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Details
         </Text>
@@ -552,8 +552,8 @@ const DetailSection = React.memo(props => {
           <FormControl
             isRequired
             isInvalid={props.errors.firstName}
-            flexBasis={{ md: "50%", sm: "100%" }}
-            pr={{ md: 4, sm: 0 }}
+            flexBasis={{ base: "100%", md: "50%" }}
+            pr={{ base: 0, md: 4 }}
           >
             <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
               First Name
@@ -572,8 +572,8 @@ const DetailSection = React.memo(props => {
           <FormControl
             isRequired
             isInvalid={props.errors.lastName}
-            flexBasis={{ md: "50%", sm: "100%" }}
-            pt={{ md: 0, sm: 6 }}
+            flexBasis={{ base: "100%", md: "50%" }}
+            pt={{ base: 6, md: 0 }}
           >
             <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
               Last Name
@@ -593,8 +593,8 @@ const DetailSection = React.memo(props => {
         </Flex>
         <FormControl
           disabled
-          width={{ md: "50%", sm: "100%" }}
-          pr={{ md: 4, sm: 0 }}
+          width={{ base: "100%", md: "50%" }}
+          pr={{ base: 0, md: 4 }}
         >
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
             Email
@@ -615,8 +615,8 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl
           isInvalid={props.errors.hometown}
-          width={{ md: "50%", sm: "100%" }}
-          pr={{ md: 4, sm: 0 }}
+          width={{ base: "100%", md: "50%" }}
+          pr={{ base: 0, md: 4 }}
         >
           <FormLabel htmlFor="hometown" fontSize="lg" fontWeight="bold">
             Hometown
@@ -639,8 +639,8 @@ const DetailSection = React.memo(props => {
           <Flex flexWrap="wrap">
             <FormControl
               isInvalid={props.errors.birthMonth}
-              flexBasis={{ md: "33.3333%", sm: "100%" }}
-              pr={{ md: 4, sm: 0 }}
+              flexBasis={{ base: "100%", md: "33.3333%" }}
+              pr={{ base: 0, md: 4 }}
             >
               <FormLabel htmlFor="birthMonth" fontSize="sm" fontWeight="bold">
                 Month
@@ -656,8 +656,8 @@ const DetailSection = React.memo(props => {
             </FormControl>
             <FormControl
               isInvalid={props.errors.birthDay}
-              flexBasis={{ md: "33.3333%", sm: "100%" }}
-              pr={{ md: 4, sm: 0 }}
+              flexBasis={{ base: "100%", md: "33.3333%" }}
+              pr={{ base: 0, md: 4 }}
             >
               <FormLabel htmlFor="birthDay" fontSize="sm" fontWeight="bold">
                 Day
@@ -673,7 +673,7 @@ const DetailSection = React.memo(props => {
             </FormControl>
             <FormControl
               isInvalid={props.errors.birthYear}
-              flexBasis={{ md: "33.3333%", sm: "100%" }}
+              flexBasis={{ base: "100%", md: "33.3333%" }}
             >
               <FormLabel htmlFor="birthYear" fontSize="sm" fontWeight="bold">
                 Year
@@ -724,8 +724,8 @@ const DetailSection = React.memo(props => {
         </FormControl>
         <FormControl
           isInvalid={props.errors.timezone}
-          width={{ md: "50%", sm: "100%" }}
-          pr={{ md: 4, sm: 0 }}
+          width={{ base: "100%", md: "50%" }}
+          pr={{ base: 0, md: 4 }}
         >
           <FormLabel htmlFor="timezone" fontSize="lg" fontWeight="bold">
             Timezone
@@ -790,7 +790,7 @@ const DetailSection = React.memo(props => {
 const SchoolSection = React.memo(props => {
   return (
     <Card as="fieldset" p={0} mb={32}>
-      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
+      <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           School
         </Text>
@@ -810,8 +810,8 @@ const SchoolSection = React.memo(props => {
         <FormControl
           isRequired
           isInvalid={props.errors.status}
-          width={{ md: "50%", sm: "100%" }}
-          pr={{ md: 4, sm: 0 }}
+          width={{ base: "100%", md: "50%" }}
+          pr={{ base: 0, md: 4 }}
         >
           <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
             Status
@@ -834,8 +834,8 @@ const SchoolSection = React.memo(props => {
         <Flex flexWrap="wrap">
           <FormControl
             isInvalid={props.errors.major}
-            flexBasis={{ md: "50%", sm: "100%" }}
-            pr={{ md: 4, sm: 0 }}
+            flexBasis={{ base: "100%", md: "50%" }}
+            pr={{ base: 0, md: 4 }}
           >
             <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
               Major
@@ -852,8 +852,8 @@ const SchoolSection = React.memo(props => {
           </FormControl>
           <FormControl
             isInvalid={props.errors.minor}
-            flexBasis={{ md: "50%", sm: "100%" }}
-            pt={{ md: 0, sm: 6 }}
+            flexBasis={{ base: "100%", md: "50%" }}
+            pt={{ base: 6, md: 0 }}
           >
             <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
               Minor
@@ -880,7 +880,7 @@ const SchoolSection = React.memo(props => {
 const SocialAccountsSection = React.memo(props => {
   return (
     <Card as="fieldset" p={0} mb={32}>
-      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
+      <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Social Accounts
         </Text>
@@ -933,7 +933,7 @@ const SocialAccountsSection = React.memo(props => {
 const FavoriteGamesSection = React.memo(props => {
   return (
     <Card as="fieldset" p={0} mb={32}>
-      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
+      <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Favorite Games
         </Text>
@@ -1060,7 +1060,7 @@ const FavoriteGamesSection = React.memo(props => {
 const CurrentlyPlayingSection = React.memo(props => {
   return (
     <Card as="fieldset" p={0} mb={0}>
-      <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
+      <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Currently Playing
         </Text>

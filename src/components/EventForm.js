@@ -217,7 +217,7 @@ const EventForm = props => {
           </Flex>
           <Spacer />
           <Card as="fieldset" p={0}>
-            <Box pos="absolute" top="-5rem" px={{ md: 0, sm: 8 }}>
+            <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
               <Text as="legend" fontWeight="bold" fontSize="2xl">
                 Details
               </Text>
@@ -429,8 +429,8 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startDay}
-                      flexBasis={{ md: "25%", sm: "100%" }}
-                      pr={{ md: 4, sm: 0 }}
+                      flexBasis={{ base: "100%", md: "25%" }}
+                      pr={{ base: 0, md: 4 }}
                     >
                       <FormLabel
                         htmlFor="startDay"
@@ -453,8 +453,8 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startMonth}
-                      flexBasis={{ md: "30%", sm: "100%" }}
-                      pr={{ md: 4, sm: 0 }}
+                      flexBasis={{ base: "100%", md: "30%" }}
+                      pr={{ base: 0, md: 4 }}
                     >
                       <FormLabel
                         htmlFor="startMonth"
@@ -477,7 +477,7 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startYear}
-                      flexBasis={{ md: "25%", sm: "100%" }}
+                      flexBasis={{ base: "100%", md: "25%" }}
                     >
                       <FormLabel
                         htmlFor="startYear"
@@ -504,7 +504,7 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startTime}
-                      flexBasis={{ md: "33.3333%", sm: "100%" }}
+                      flexBasis={{ base: "100%", md: "33.3333%" }}
                     >
                       <FormLabel
                         htmlFor="startTime"
@@ -539,8 +539,8 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endDay}
-                      flexBasis={{ md: "25%", sm: "100%" }}
-                      pr={{ md: 4, sm: 0 }}
+                      flexBasis={{ base: "100%", md: "25%" }}
+                      pr={{ base: 0, md: 4 }}
                     >
                       <FormLabel
                         htmlFor="endDay"
@@ -561,8 +561,8 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endMonth}
-                      flexBasis={{ md: "30%", sm: "100%" }}
-                      pr={{ md: 4, sm: 0 }}
+                      flexBasis={{ base: "100%", md: "30%" }}
+                      pr={{ base: 0, md: 4 }}
                     >
                       <FormLabel
                         htmlFor="endMonth"
@@ -585,8 +585,8 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endYear}
-                      flexBasis={{ md: "25%", sm: "100%" }}
-                      pr={{ md: 4, sm: 0 }}
+                      flexBasis={{ base: "100%", md: "25%" }}
+                      pr={{ base: 0, md: 4 }}
                     >
                       <FormLabel
                         htmlFor="endYear"
@@ -613,7 +613,7 @@ const EventForm = props => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endTime}
-                      flexBasis={{ md: "33.3333%", sm: "100%" }}
+                      flexBasis={{ base: "100%", md: "33.3333%" }}
                     >
                       <FormLabel
                         htmlFor="endTime"

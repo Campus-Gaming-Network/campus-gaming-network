@@ -1,9 +1,11 @@
+// Libraries
 import isNil from "lodash.isnil";
 import isEmpty from "lodash.isempty";
 import isDate from "lodash.isdate";
 import isString from "lodash.isstring";
 import { DateTime } from "luxon";
 
+// Constants
 import {
   STUDENT_STATUS_OPTIONS,
   MAX_FAVORITE_GAME_LIST,
@@ -26,6 +28,7 @@ import {
   MAX_DEFAULT_STRING_LENGTH
 } from "src/constants/other";
 
+// Utilities
 import { getTimes } from "src/utilities/dateTime";
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -43,10 +43,10 @@ import SchoolLogo from "src/components/SchoolLogo";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async ({ params }) => {
-  const { school } = await getSchoolDetails(params.id);
-  const { users } = await getSchoolUsers(params.id);
-  const { events } = await getSchoolEvents(params.id);
+export const getServerSideProps = async (context) => {
+  const { school } = await getSchoolDetails(context.params.id);
+  const { users } = await getSchoolUsers(context.params.id);
+  const { events } = await getSchoolEvents(context.params.id);
 
   if (!Boolean(school)) {
     return { notFound: true };
@@ -65,10 +65,10 @@ const School = (props) => {
     <SiteLayout title={props.school.formattedName}>
     <Article>
       <Stack spacing={10}>
-        <Box as="header" display="flex" alignItems="center">
+        <Box as="header" display="flex" alignItems="center" px={{ base: 4, md: 0 }}>
           <SchoolLogo
             schoolId={props.school.id}
-            schoolName={props.school.name}
+            schoolName={props.school.formattedName}
             h={40}
             w={40}
             fallback={
@@ -106,10 +106,11 @@ const School = (props) => {
             fontSize="sm"
             textTransform="uppercase"
             color="gray.500"
+            px={{ base: 4, md: 0 }}
           >
             Information
           </Heading>
-          <Flex as="dl" flexWrap="wrap" w="100%">
+          <Flex as="dl" flexWrap="wrap" w="100%" px={{ base: 4, md: 0 }}>
             <Text as="dt" w="50%" fontWeight="bold">
               Contact Email
             </Text>
@@ -173,6 +174,7 @@ const School = (props) => {
             fontSize="sm"
             textTransform="uppercase"
             color="gray.500"
+            px={{ base: 4, md: 0 }}
           >
             Upcoming Events
           </Heading>
@@ -184,6 +186,7 @@ const School = (props) => {
             fontSize="sm"
             textTransform="uppercase"
             color="gray.500"
+            px={{ base: 4, md: 0 }}
           >
             Members
           </Heading>
@@ -206,38 +209,6 @@ const EventsList = (props) => {
   //   undefined,
   //   page
   // );
-
-  // React.useEffect(() => {
-  //   if (isLoadingEvents && events && page >= 0) {
-  //     dispatch({
-  //       type: ACTION_TYPES.SET_SCHOOL_EVENTS,
-  //       payload: {
-  //         id: props.id,
-  //         events,
-  //         page
-  //       }
-  //     });
-  //   }
-  // }, [isLoadingEvents, events, dispatch, props.id, page]);
-
-  // if (isLoadingEvents) {
-  //   return (
-  //     <List d="flex" flexWrap="wrap" m={-2} p={0}>
-  //       {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
-  //         <Box key={index} w={{ md: "33%", sm: "50%" }}>
-  //           <Skeleton
-  //             pos="relative"
-  //             d="flex"
-  //             m={2}
-  //             p={4}
-  //             h={151}
-  //             rounded="lg"
-  //           />
-  //         </Box>
-  //       ))}
-  //     </List>
-  //   );
-  // }
 
   if (Boolean(props.events) && props.events.length && props.events.length > 0) {
     return (
@@ -289,44 +260,6 @@ const UsersList = (props) => {
   //     setPage(page - 1);
   //   }
   // };
-
-  // React.useEffect(() => {
-  //   if (isLoadingUsers && hasUsers && isValidPage) {
-  //     dispatch({
-  //       type: ACTION_TYPES.SET_SCHOOL_USERS,
-  //       payload: {
-  //         id: props.id,
-  //         users,
-  //         page
-  //       }
-  //     });
-  //   }
-  // }, [isLoadingUsers, users, hasUsers, dispatch, props.id, page, isValidPage]);
-
-  // if (isLoadingUsers) {
-  //   return (
-  //     <Flex flexWrap="wrap" mx={-2}>
-  //       {times(DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE, index => (
-  //         <Box key={index} w={{ md: "20%", sm: "33%" }}>
-  //           <Skeleton
-  //             pos="relative"
-  //             d="flex"
-  //             m={2}
-  //             p={4}
-  //             h={130}
-  //             rounded="lg"
-  //           />
-  //         </Box>
-  //       ))}
-  //     </Flex>
-  //   );
-  // }
-
-  // console.log({
-  //   users,
-  //   isFirstPage,
-  //   isLastPage
-  // });
 
   if (hasUsers) {
     return (
@@ -384,7 +317,7 @@ const UsersList = (props) => {
 
 const UsersListItem = props => {
   return (
-    <ListItem w={{ md: "20%", sm: "33%" }}>
+    <ListItem w={{ base: "33.3333%", md: "20%" }}>
       <Box
         shadow="sm"
         borderWidth={1}

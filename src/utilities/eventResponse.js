@@ -1,7 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Event Response Utilities
 
-import { hasStarted, hasEnded } from "src/utilities/dateTime";
+import { mapEvent } from "./event";
+import { mapSchool } from "./school";
+import { mapUser } from "./user";
 
 export const mapEventResponse = eventResponse => {
   if (!Boolean(eventResponse)) {
@@ -10,13 +12,8 @@ export const mapEventResponse = eventResponse => {
 
   return {
     ...eventResponse,
-    event: {
-      ...eventResponse.event,
-      hasStarted: hasStarted(
-        eventResponse.event.startDateTime,
-        eventResponse.event.endDateTime
-      ),
-      hasEnded: hasEnded(eventResponse.event.endDateTime)
-    }
+    school: mapSchool(eventResponse.school),
+    user: mapUser(eventResponse.user),
+    event: mapEvent(eventResponse.event)
   };
 };

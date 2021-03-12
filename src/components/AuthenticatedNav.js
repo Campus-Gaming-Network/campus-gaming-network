@@ -68,8 +68,8 @@ const AuthenticatedNav = props => {
       <Flex
         width="auto"
         alignItems="center"
-        flexGrow={1}
-        justifyContent="flex-end"
+        flexGrow={{ base: 0, md: 1 }}
+        justifyContent={{ base: "flex-start", md: "flex-end" }}
       >
         <ButtonLink href="/create-event" colorScheme="brand" size="sm" mr={4}>
           <Box mr={2}>
@@ -132,7 +132,7 @@ const AuthenticatedNav = props => {
             <MenuItem as={Link} href={`/school/${props.school.id}`}>
               <SchoolLogo
                 schoolId={props.school.id}
-                schoolName={props.school.name}
+                schoolName={props.school.formattedName}
                 h={6}
                 w={6}
                 mr={2}

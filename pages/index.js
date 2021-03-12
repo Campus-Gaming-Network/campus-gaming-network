@@ -1,8 +1,8 @@
 import React from "react";
-import firebase from "src/firebase";
 import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
-import { useCollectionDataOnce } from "react-firebase-hooks/firestore";
-import startCase from "lodash.startcase";
+import safeJsonStringify from "safe-json-stringify";
+import nookies from "nookies";
+import firebaseAdmin from "src/firebaseAdmin";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -10,22 +10,85 @@ import Article from "src/components/Article";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 
-// Utilities
-import { mapEvent } from "src/utilities/event";
-import { mapEventResponse } from "src/utilities/eventResponse";
-
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
+import { AUTH_STATUS } from "src/constants/auth";
+import { COOKIES } from "src/constants/other";
 
-// Hooks
-import useFetchUserEvents from "src/hooks/useFetchUserEvents";
+// API
+import {
+  getUserDetails,
+  getUserAttendingEvents,
+  getUserCreatedEvents
+} from "src/api/user";
+import { getSchoolEvents } from "src/api/school";
+import { getRecentlyCreatedEvents } from "src/api/events";
 
-const now = new Date();
+// Providers
+import { useAuth } from "src/providers/auth";
+
+////////////////////////////////////////////////////////////////////////////////
+// getServerSideProps
+
+export const getServerSideProps = async context => {
+  const data = {
+    user: null,
+    userAttendingEvents: [],
+    userCreatedEvents: [],
+    schoolEvents: [],
+    recentlyCreatedEvents: []
+  };
+
+  try {
+    const cookies = nookies.get(context);
+    const token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    const authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      const { user } = await getUserDetails(token.uid);
+
+      data.user = user;
+
+      const [
+        userAttendingEventsRes,
+        schoolEventsRes,
+        userCreatedEventsRes
+      ] = await Promise.all([
+        getUserAttendingEvents(user.id),
+        getSchoolEvents(user.school.id),
+        getUserCreatedEvents(user.id)
+      ]);
+
+      data.userAttendingEvents = userAttendingEventsRes.events;
+      data.schoolEvents = schoolEventsRes.events;
+      data.userCreatedEvents = userCreatedEventsRes.events;
+    }
+
+    const { events: recentlyCreatedEvents } = await getRecentlyCreatedEvents();
+
+    data.recentlyCreatedEvents = recentlyCreatedEvents;
+  } catch (error) {
+    // Do nothing
+  }
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Home
 
-const Home = () => {
+const Home = props => {
+  const { authUser } = useAuth();
+  const isAuthenticated = React.useMemo(
+    () => Boolean(authUser) && Boolean(authUser.uid),
+    [authUser]
+  );
+
   return (
     <SiteLayout>
       <Article>
@@ -38,16 +101,16 @@ const Home = () => {
             gaming at your school or nearby.
           </Text>
           <Stack pt={8} spacing={8}>
-            {/* <UserCreatedEvents isAuthenticated={isAuthenticated} user={user} />
-          <AttendingEvents
-            isAuthenticated={isAuthenticated}
-            authenticatedUser={authenticatedUser}
-          />
-          <UpcomingSchoolEvents
-            isAuthenticated={isAuthenticated}
-            school={school}
-          />
-          <RecentlyCreatedEvents /> */}
+            {isAuthenticated ? (
+              <UserCreatedEvents events={props.userCreatedEvents} />
+            ) : null}
+            {isAuthenticated ? (
+              <AttendingEvents events={props.userAttendingEvents} />
+            ) : null}
+            {isAuthenticated ? (
+              <UpcomingSchoolEvents events={props.schoolEvents} />
+            ) : null}
+            <RecentlyCreatedEvents events={props.recentlyCreatedEvents} />
           </Stack>
         </Box>
       </Article>
@@ -56,34 +119,15 @@ const Home = () => {
 };
 
 const UserCreatedEvents = props => {
-  const userDocRef = props.user
-    ? firebase
-        .firestore()
-        .collection(COLLECTIONS.USERS)
-        .doc(props.user.id)
-    : null;
-  const [userCreatedEvents, isLoading] = useCollectionDataOnce(
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.EVENTS)
-      .where("creator", "==", userDocRef)
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
-      .limit(12)
-  );
-
-  if (!props.isAuthenticated || isLoading) {
-    return null;
-  }
-
   return (
     <Stack as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
         Your events
       </Heading>
-      {userCreatedEvents && userCreatedEvents.length ? (
+      {Boolean(props.events) && props.events.length > 0 ? (
         <React.Fragment>
           <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {userCreatedEvents.map(mapEvent).map(event => (
+            {props.events.map(event => (
               <EventListItem
                 key={event.id}
                 event={event}
@@ -102,24 +146,15 @@ const UserCreatedEvents = props => {
 };
 
 const AttendingEvents = props => {
-  const [attendingEvents, isLoading] = useFetchUserEvents(
-    props.isAuthenticated ? props.authenticatedUser.uid : null,
-    12
-  );
-
-  if (!props.isAuthenticated || isLoading) {
-    return null;
-  }
-
   return (
     <Stack as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
         Events you're attending
       </Heading>
-      {attendingEvents && attendingEvents.length ? (
+      {Boolean(props.events) && props.events.length > 0 ? (
         <React.Fragment>
           <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {attendingEvents.map(mapEventResponse).map(event => (
+            {props.events.map(event => (
               <EventListItem key={event.id} {...event} />
             ))}
           </List>
@@ -134,49 +169,28 @@ const AttendingEvents = props => {
 };
 
 const UpcomingSchoolEvents = props => {
-  const schoolDocRef = props.school
-    ? firebase
-        .firestore()
-        .collection(COLLECTIONS.SCHOOLS)
-        .doc(props.school.id)
-    : null;
-  const [schoolEvents, isLoading] = useCollectionDataOnce(
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.EVENTS)
-      .where("school.ref", "==", schoolDocRef)
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
-      .limit(12)
-  );
-  const canDisplay = React.useMemo(
-    () => props.isAuthenticated && props.school && props.school.name,
-    [props.isAuthenticated, props.school]
-  );
-
-  if (!canDisplay || isLoading) {
-    return null;
-  }
+  const [{ school } = {}] = props.events;
 
   return (
     <Stack as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
         Upcoming events at{" "}
         <Link
-          href={`/school/${props.school.id}`}
+          href={`/school/${school.id}`}
           color="brand.500"
           fontWeight="bold"
           isTruncated
           lineHeight="short"
           mt={-2}
-          title={startCase(props.school.name.toLowerCase())}
+          title={school.formattedName}
         >
-          {startCase(props.school.name.toLowerCase())}
+          {school.formattedName}
         </Link>
       </Heading>
-      {schoolEvents && schoolEvents.length ? (
+      {Boolean(props.events) && props.events.length > 0 ? (
         <React.Fragment>
           <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {schoolEvents.map(mapEvent).map(event => (
+            {props.events.map(event => (
               <EventListItem
                 key={event.id}
                 event={event}
@@ -187,38 +201,23 @@ const UpcomingSchoolEvents = props => {
         </React.Fragment>
       ) : (
         <Text color="gray.400" fontSize="xl" fontWeight="600">
-          There are no upcoming events at{" "}
-          {startCase(props.school.name.toLowerCase())}
+          There are no upcoming events at {school.formattedName}
         </Text>
       )}
     </Stack>
   );
 };
 
-const RecentlyCreatedEvents = () => {
-  const [recentlyCreatedEvents, isLoading] = useCollectionDataOnce(
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.EVENTS)
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
-      .orderBy("endDateTime")
-      .orderBy("createdAt", "desc")
-      .limit(12)
-  );
-
-  if (isLoading) {
-    return null;
-  }
-
+const RecentlyCreatedEvents = props => {
   return (
     <Stack as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
         Recently created events
       </Heading>
-      {recentlyCreatedEvents && recentlyCreatedEvents.length ? (
+      {Boolean(props.events) && props.events.length > 0 ? (
         <React.Fragment>
           <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {recentlyCreatedEvents.map(mapEvent).map(event => (
+            {props.events.map(event => (
               <EventListItem
                 key={event.id}
                 event={event}

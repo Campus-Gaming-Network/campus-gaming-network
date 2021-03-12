@@ -37,7 +37,7 @@ const Footer = () => {
         as="footer"
         borderTopWidth={1}
         textAlign="center"
-        pt={{ md: 8, sm: 0 }}
+        pt={{ base: 0, md: 8 }}
         pb={8}
         bg="#323031"
         color="gray.300"
@@ -45,10 +45,10 @@ const Footer = () => {
         <Flex justifyContent="space-between" flexWrap="wrap">
           <List
             spacing={2}
-            flexBasis={{ md: "33.3333%", sm: "100%" }}
-            minWidth={{ md: "33.3333%", sm: "100%" }}
+            flexBasis={{ base: "100%", md: "33.3333%" }}
+            minWidth={{ base: "100%", md: "33.3333%" }}
             flexGrow={0}
-            pt={{ md: 0, sm: 8 }}
+            pt={{ base: 8, md: 0 }}
           >
             <ListItem
               fontSize="xs"
@@ -76,10 +76,10 @@ const Footer = () => {
           </List>
           <List
             spacing={2}
-            flexBasis={{ md: "33.3333%", sm: "100%" }}
-            minWidth={{ md: "33.3333%", sm: "100%" }}
+            flexBasis={{ base: "100%", md: "33.3333%" }}
+            minWidth={{ base: "100%", md: "33.3333%" }}
             flexGrow={0}
-            pt={{ md: 0, sm: 8 }}
+            pt={{ base: 8, md: 0 }}
           >
             <ListItem
               fontSize="xs"
@@ -110,10 +110,10 @@ const Footer = () => {
           </List>
           <List
             spacing={2}
-            flexBasis={{ md: "33.3333%", sm: "100%" }}
-            minWidth={{ md: "33.3333%", sm: "100%" }}
+            flexBasis={{ base: "100%", md: "33.3333%" }}
+            minWidth={{ base: "100%", md: "33.3333%" }}
             flexGrow={0}
-            pt={{ md: 0, sm: 8 }}
+            pt={{ base: 8, md: 0 }}
           >
             <ListItem fontSize="sm">
               Made with{" "}

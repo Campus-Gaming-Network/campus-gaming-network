@@ -382,7 +382,7 @@ const UsersList = props => {
 
 const UsersListItem = props => {
   return (
-    <ListItem w={{ md: "20%", sm: "33%" }}>
+    <ListItem w={{ base: "33%", md: "20%" }}>
       <Box
         shadow="sm"
         borderWidth={1}

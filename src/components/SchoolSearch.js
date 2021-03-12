@@ -206,7 +206,7 @@ const SchoolSearch = props => {
                         ) : (
                           <SchoolLogo
                             schoolId={school.objectID}
-                            schoolName={school.name}
+                            schoolName={school.formattedName}
                             fallback={
                               <Flex
                                 align="center"

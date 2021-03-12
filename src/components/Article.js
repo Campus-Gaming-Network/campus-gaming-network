@@ -7,10 +7,10 @@ const Article = ({ children, ...rest }) => {
     <Box
       as="article"
       py={16}
-      px={{ md: 8, sm: 0 }}
+      px={{ base: 0, md: 8 }}
       mx="auto"
       fontSize="xl"
-      maxW={{ md: "3xl", sm: "100%" }}
+      maxW={{ base: "100%", md: "3xl" }}
       {...rest}
     >
       {children}

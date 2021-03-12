@@ -8,7 +8,7 @@ const Card = ({ children, ...rest }) => {
       pos="relative"
       borderWidth={1}
       boxShadow="lg"
-      rounded={{ md: "lg", sm: "none" }}
+      rounded={{ base: "none", md: "lg" }}
       bg="white"
       p={6}
       {...rest}

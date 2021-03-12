@@ -36,7 +36,11 @@ const UnauthenticatedNav = () => {
         clearInputOnSelect
       />
 
-      <Flex alignItems="center" flexGrow={1} justifyContent="flex-end">
+      <Flex
+        alignItems="center"
+        flexGrow={{ base: 0, md: 1 }}
+        justifyContent={{ base: "flex-start", md: "flex-end" }}
+      >
         <ButtonLink href="/login" mr={3} size="sm" colorScheme="whiteAlpha">
           Log In
         </ButtonLink>

@@ -10,8 +10,8 @@ const EventListItem = props => {
   return (
     <Box
       as="li"
-      flexBasis={{ md: "33.3333%", sm: "100%" }}
-      minWidth={{ md: "33.3333%", sm: "100%" }}
+      flexBasis={{ base: "100%", md: "33.3333%" }}
+      minWidth={{ base: "100%", md: "33.3333%" }}
       flexGrow={0}
       p={2}
     >

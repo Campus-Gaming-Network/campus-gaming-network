@@ -1,6 +1,5 @@
 import React from "react";
 import { Image } from "@chakra-ui/react";
-import startCase from "lodash.startcase";
 import { getSchoolLogoUrl } from "src/utilities/school";
 
 const erroredLogos = {};
@@ -30,7 +29,7 @@ const SchoolLogo = React.memo(
       <Image
         src={getSchoolLogoUrl(schoolId, "webp")}
         fallbackSrc={getSchoolLogoUrl(schoolId, "jpg")}
-        alt={startCase(schoolName.toLowerCase())}
+        alt={schoolName}
         loading="lazy"
         bg="white"
         onError={handleError}

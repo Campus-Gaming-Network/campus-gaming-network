@@ -1,5 +1,6 @@
 import firebaseAdmin from "src/firebaseAdmin";
 import { mapUser } from "src/utilities/user";
+import { mapEvent } from "src/utilities/event";
 import { mapEventResponse } from "src/utilities/eventResponse";
 
 export const getUserDetails = async id => {
@@ -22,16 +23,16 @@ export const getUserDetails = async id => {
   }
 };
 
-export const getUserEvents = async (
+export const getUserAttendingEvents = async (
   id,
   limit = 25,
   next = null,
   prev = null
 ) => {
+  const now = new Date();
   let events = [];
 
   try {
-    const now = new Date();
     const userDocRef = firebaseAdmin
       .firestore()
       .collection("users")
@@ -105,5 +106,40 @@ export const getUserEventResponse = async (eventId, userId) => {
     return { eventResponse };
   } catch (error) {
     return { eventResponse, error };
+  }
+};
+
+export const getUserCreatedEvents = async userId => {
+  const now = new Date();
+  let events = [];
+
+  try {
+    const userDocRef = firebaseAdmin
+      .firestore()
+      .collection("users")
+      .doc(userId);
+
+    const userCreatedEventsSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("events")
+      .where("creator", "==", userDocRef)
+      .where(
+        "endDateTime",
+        ">=",
+        firebaseAdmin.firestore.Timestamp.fromDate(now)
+      )
+      .limit(25);
+
+    if (!userCreatedEventsSnapshot.empty) {
+      userCreatedEventsSnapshot.forEach(doc => {
+        const data = doc.data();
+        const event = mapEvent({ id: doc.id, ...data }, doc);
+        events.push(event);
+      });
+    }
+
+    return { events };
+  } catch (error) {
+    return { events, error };
   }
 };
