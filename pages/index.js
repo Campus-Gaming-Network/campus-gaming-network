@@ -171,6 +171,10 @@ const AttendingEvents = props => {
 const UpcomingSchoolEvents = props => {
   const [{ school } = {}] = props.events;
 
+  if (!Boolean(school)) {
+    return null;
+  }
+
   return (
     <Stack as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
