@@ -34,7 +34,7 @@ const RecentlyCreatedUsers = props => {
                   flexDirection="column"
                   alignItems="center"
                   justifyContent="center"
-                  mr={2}
+                  mr={4}
                   p={4}
                   height="calc(100% - 1rem)"
                 >

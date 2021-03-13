@@ -54,10 +54,12 @@ export const getServerSideProps = async (context) => {
 const School = (props) => {
   return (
     <SiteLayout title={props.school.formattedName}>
+      <Box bg="gray.100" h="150px" />
     <Article>
-      <Stack spacing={10}>
-        <Box as="header" display="flex" alignItems="center" px={{ base: 4, md: 0 }}>
-          <SchoolLogo
+    <Flex align="center" justify="center">
+<Box rounded="full" mt={{ base: -50, sm: -100, md: -150}} bg="white"                   shadow="sm"
+                  borderWidth={1}>
+<SchoolLogo
             schoolId={props.school.id}
             schoolName={props.school.formattedName}
             h={40}
@@ -76,6 +78,10 @@ const School = (props) => {
               </Flex>
             }
           />
+</Box>
+        </Flex>
+      <Stack spacing={10}>
+        <Box as="header" display="flex" alignItems="center" px={{ base: 4, md: 0 }} pt={8}>
           <Box pl={12}>
             <Heading
               as="h2"
@@ -84,6 +90,7 @@ const School = (props) => {
               pb={2}
               display="flex"
               alignItems="center"
+              textAlign="center"
             >
               {props.school.formattedName}
             </Heading>
@@ -315,7 +322,7 @@ const UsersListItem = props => {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        m={2}
+        mr={5}
         p={4}
         height="calc(100% - 1rem)"
       >

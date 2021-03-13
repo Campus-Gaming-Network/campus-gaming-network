@@ -9,7 +9,6 @@ const NavWrapper = props => (
     justify="space-between"
     wrap="wrap"
     paddingX="1rem"
-    borderBottomWidth={2}
     height={{ base: 150, md: 50 }}
     bg="#323031"
     {...props}
