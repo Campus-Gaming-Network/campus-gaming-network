@@ -35,9 +35,11 @@ import SchoolLogo from "src/components/SchoolLogo";
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const { school } = await getSchoolDetails(context.params.id);
-  const { users } = await getSchoolUsers(context.params.id);
-  const { events } = await getSchoolEvents(context.params.id);
+  const [schoolResponse, usersResponse, eventsResponse] = await Promise.all([getSchoolDetails(context.params.id), getSchoolUsers(context.params.id), getSchoolEvents(context.params.id)]);
+
+  const { school } = schoolResponse;
+  const { users } = usersResponse;
+  const { events } = eventsResponse;
 
   if (!Boolean(school)) {
     return { notFound: true };
@@ -88,8 +90,8 @@ const School = (props) => {
           </Box>
         </Flex>
       <Stack spacing={10}>
-        <Box as="header" display="flex" alignItems="center" px={{ base: 4, md: 0 }} pt={8}>
-          <Box pl={12}>
+        <Box as="header" display="flex" alignItems="center" px={{ base: 4, md: 0 }} pt={8} textAlign="center">
+          <Box>
             <Heading
               as="h2"
               fontSize="5xl"
@@ -97,7 +99,6 @@ const School = (props) => {
               pb={2}
               display="flex"
               alignItems="center"
-              textAlign="center"
             >
               {props.school.formattedName}
             </Heading>
