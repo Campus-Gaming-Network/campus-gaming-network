@@ -57,9 +57,12 @@ const School = (props) => {
       <Box bg="gray.100" h="150px" />
     <Article>
     <Flex align="center" justify="center">
-<Box rounded="full" mt={{ base: -50, sm: -100, md: -150}} bg="white"                   shadow="sm"
-                  borderWidth={1}>
-<SchoolLogo
+      <Box  mt={{ base: -50, sm: -100, md: -150}}>
+        <SchoolLogo
+            rounded="full"
+            bg="white"
+            shadow="sm"
+            borderWidth={2}
             schoolId={props.school.id}
             schoolName={props.school.formattedName}
             h={40}
@@ -68,6 +71,10 @@ const School = (props) => {
             htmlWidth={40}
             fallback={
               <Flex
+              rounded="full"
+            bg="white"
+            shadow="sm"
+            borderWidth={2}
                 alignItems="center"
                 justifyContent="center"
                 color="gray.600"
@@ -78,7 +85,7 @@ const School = (props) => {
               </Flex>
             }
           />
-</Box>
+          </Box>
         </Flex>
       <Stack spacing={10}>
         <Box as="header" display="flex" alignItems="center" px={{ base: 4, md: 0 }} pt={8}>
