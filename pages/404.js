@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box, Text, Image, Stack, Flex } from "@chakra-ui/react";
+import { Box, Text, Img, Stack, Flex } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeartBroken } from "@fortawesome/free-solid-svg-icons";
 
@@ -18,7 +18,7 @@ const NotFound = () => {
       <Article>
         <Flex align="center" justify="center" h="100%">
           <Stack spacing={12} textAlign="center">
-            <Image src="/404.svg" maxW={600} w="100%" mx="auto" />
+            <Img src="/404.svg" maxW={600} w="100%" mx="auto" />
             <Text fontSize="3xl" fontWeight="bold">
               Page not found{" "}
               <Text as="span" color="red.500">
