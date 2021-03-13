@@ -6,7 +6,6 @@ import {
   faSchool,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import times from "lodash.times";
 import {
   Stack,
   Box,
@@ -19,9 +18,7 @@ import {
   Flex,
   Avatar
 } from "@chakra-ui/react";
-import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import dynamic from 'next/dynamic';
-import Head from "next/head";
 import safeJsonStringify from "safe-json-stringify";
 import nookies from "nookies";
 import firebaseAdmin from "src/firebaseAdmin";
@@ -54,8 +51,9 @@ const RSVPDialog = dynamic(() => import('src/components/dialogs/RSVPDialog'), { 
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const { event } = await getEventDetails(context.params.id);
-  const { users } = await getEventUsers(context.params.id);
+  const [eventResponse, usersResponse] = await Promise.all([getEventDetails(context.params.id), getEventUsers(context.params.id),]);
+  const { event } = eventResponse;
+  const { users } = usersResponse;
 
   if (!Boolean(event)) {
     return { notFound: true };
@@ -112,8 +110,6 @@ const Event = props => {
 
   return (
     <SiteLayout title={props.event.meta.title} description={props.event.meta.description}>
-      <Head>
-      </Head>
       <Article>
         <Stack spacing={10}>
           {props.isEventCreator ? (

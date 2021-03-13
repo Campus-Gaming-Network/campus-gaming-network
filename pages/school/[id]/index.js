@@ -36,7 +36,6 @@ import SchoolLogo from "src/components/SchoolLogo";
 
 export const getServerSideProps = async (context) => {
   const [schoolResponse, usersResponse, eventsResponse] = await Promise.all([getSchoolDetails(context.params.id), getSchoolUsers(context.params.id), getSchoolEvents(context.params.id)]);
-
   const { school } = schoolResponse;
   const { users } = usersResponse;
   const { events } = eventsResponse;
