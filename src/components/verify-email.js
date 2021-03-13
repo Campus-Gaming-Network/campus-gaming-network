@@ -26,21 +26,7 @@ const VerifyEmail = props => {
       .auth()
       .applyActionCode(props.oobCode)
       .then(() => {
-        firebase
-          .auth()
-          .currentUser.reload()
-          .then(() => {
-            if (firebase.auth().currentUser.emailVerified) {
-              setVerifyState("success");
-            } else {
-              setVerifyState("error");
-            }
-          })
-          .catch(error => {
-            console.error(error);
-            setError(error.message);
-            setVerifyState("error");
-          });
+        setVerifyState("success");
       })
       .catch(error => {
         console.error(error);

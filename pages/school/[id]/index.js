@@ -71,10 +71,10 @@ const School = (props) => {
             htmlWidth={40}
             fallback={
               <Flex
-              rounded="full"
-            bg="white"
-            shadow="sm"
-            borderWidth={2}
+                rounded="full"
+                bg="white"
+                shadow="sm"
+                borderWidth={2}
                 alignItems="center"
                 justifyContent="center"
                 color="gray.600"
