@@ -119,6 +119,7 @@ const AuthenticatedNav = props => {
               {Boolean(props.user.gravatar) ? (
                 <Avatar
                   name={props.user.fullName}
+                  title={props.user.fullName}
                   src={props.user.gravatarUrl}
                   mr={2}
                   size="xs"
@@ -137,6 +138,7 @@ const AuthenticatedNav = props => {
                 {Boolean(props.user.gravatar) ? (
                   <Avatar
                     name={props.user.fullName}
+                    title={props.user.fullName}
                     src={props.user.gravatarUrl}
                     mr={2}
                     size="xs"

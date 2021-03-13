@@ -241,6 +241,7 @@ const EventForm = props => {
                   {user.gravatar ? (
                     <Avatar
                       name={user.fullName}
+                      title={props.user.fullName}
                       src={user.gravatarUrl}
                       size="sm"
                     />

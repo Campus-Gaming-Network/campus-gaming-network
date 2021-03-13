@@ -393,7 +393,7 @@ const UsersListItem = props => {
         p={4}
         height="calc(100% - 1rem)"
       >
-        <Avatar name={props.fullName} src={props.gravatarUrl} size="md" />
+        <Avatar name={props.fullName} title={props.fullName} src={props.gravatarUrl} size="md" />
         <Link
           href={`/user/${props.id}`}
           color="brand.500"

@@ -92,7 +92,7 @@ const User = (props) => {
         </Box>
       ) : null}
       <Box as="header" display="flex" alignItems="center">
-        <Avatar name={props.user.fullName} src={props.user.gravatarUrl} mr={2} size="2xl" />
+        <Avatar name={props.user.fullName} title={props.user.fullName} src={props.user.gravatarUrl} mr={2} size="2xl" />
         <Box pl={12}>
           <Heading
             as="h2"

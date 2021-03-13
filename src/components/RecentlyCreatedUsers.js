@@ -40,6 +40,7 @@ const RecentlyCreatedUsers = props => {
                 >
                   <Avatar
                     name={user.fullName}
+                    title={props.fullName}
                     src={user.gravatarUrl}
                     size="md"
                   />
