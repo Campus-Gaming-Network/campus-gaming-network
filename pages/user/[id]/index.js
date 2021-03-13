@@ -19,7 +19,8 @@ import {
   useToast
 } from "@chakra-ui/react";
 import safeJsonStringify from 'safe-json-stringify';
-import { getUserDetails, getUserAttendingEvents } from 'src/api/user'
+import { getUserDetails, getUserAttendingEvents } from 'src/api/user';
+import dynamic from "next/dynamic";
 
 // Constants
 import {
@@ -38,11 +39,16 @@ import EventListItem from "src/components/EventListItem";
 import GameCover from "src/components/GameCover";
 import GameLink from "src/components/GameLink";
 
-// Hooks
+// API
 import { getSchoolDetails } from "src/api/school";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+
+const TwitchEmbed = dynamic(
+  () => import("src/components/TwitchEmbed"),
+  { ssr: false }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -201,6 +207,11 @@ const User = (props) => {
           </Heading>
           <AccountsList user={props.user} />
         </Stack>
+        {Boolean(props.user.twitch) ? (
+          <Stack as="section" spacing={4}>
+          <TwitchEmbed channel={props.user.twitch} />
+        </Stack>
+        ) : null}
         <Stack as="section" spacing={4}>
           <Heading
             as="h3"

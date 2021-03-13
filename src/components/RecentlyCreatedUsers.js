@@ -17,7 +17,7 @@ const RecentlyCreatedUsers = props => {
   return (
     <Stack as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
-        Recently created users
+        Newest Users
       </Heading>
       {Boolean(props.users) && props.users.length > 0 ? (
         <React.Fragment>
