@@ -46,7 +46,7 @@ export const move = (array, from, to) => {
 
 export const googleMapsLink = query => {
   if (!query) {
-    return null;
+    return undefined;
   }
 
   return `${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(query)}`;

@@ -9,11 +9,7 @@ import {
   Flex
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHeart,
-  faMugHot,
-  faExternalLinkAlt
-} from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faMugHot } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Link from "src/components/Link";
@@ -27,9 +23,6 @@ const Footer = () => {
           Enjoying the site?{" "}
           <OutsideLink href="https://www.buymeacoffee.com/cgnbrandon">
             Buy me a coffee.
-            <Text as="span" ml={1}>
-              <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-            </Text>
           </OutsideLink>
         </Text>
       </Box>
@@ -58,17 +51,17 @@ const Footer = () => {
             >
               Resources
             </ListItem>
-            <ListItem fontSize="sm">
+            <ListItem fontSize="md">
               <Link href="/about">About</Link>
             </ListItem>
-            <ListItem fontSize="sm">
+            <ListItem fontSize="md">
               <Link href="/frequently-asked-questions">
                 <Text as="abbr" title="Frequently asked questions">
                   FAQ
                 </Text>
               </Link>
             </ListItem>
-            <ListItem fontSize="sm">
+            <ListItem fontSize="md">
               <ChakraLink href="mailto:support@campusgamingnetwork.com">
                 Email us
               </ChakraLink>
@@ -89,22 +82,32 @@ const Footer = () => {
             >
               Community
             </ListItem>
-            <ListItem fontSize="sm">
+            <ListItem fontSize="md">
               Join our{" "}
               <OutsideLink href="https://discord.gg/dpYU6TY">
                 Discord
-                <Text as="span" ml={1}>
-                  <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-                </Text>
               </OutsideLink>
             </ListItem>
-            <ListItem fontSize="sm">
+            <ListItem fontSize="md">
               Contribute on{" "}
               <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
                 GitHub
-                <Text as="span" ml={1}>
-                  <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-                </Text>
+              </OutsideLink>
+            </ListItem>
+            <ListItem fontSize="md">
+              Like on{" "}
+              <OutsideLink href="https://www.facebook.com/campusgamingnetwork/">
+                Facebook
+              </OutsideLink>{" "}
+              and{" "}
+              <OutsideLink href="https://www.instagram.com/campusgamingnetwork/">
+                Instagram
+              </OutsideLink>
+            </ListItem>
+            <ListItem fontSize="md">
+              Follow on{" "}
+              <OutsideLink href="https://twitter.com/CampusGamingNet">
+                Twitter
               </OutsideLink>
             </ListItem>
           </List>
@@ -115,13 +118,16 @@ const Footer = () => {
             flexGrow={0}
             pt={{ base: 8, md: 0 }}
           >
-            <ListItem fontSize="sm">
+            <ListItem fontSize="md">
               Made with{" "}
               <Text d="inline" color="red.500">
                 <FontAwesomeIcon icon={faHeart} />
               </Text>{" "}
-              and <FontAwesomeIcon icon={faMugHot} /> in{" "}
-              <Text d="inline">Salt Lake City, Utah</Text>
+              and{" "}
+              <Text d="inline" color="white">
+                <FontAwesomeIcon icon={faMugHot} />
+              </Text>{" "}
+              in <Text d="inline">Salt Lake City, Utah</Text>
             </ListItem>
           </List>
         </Flex>

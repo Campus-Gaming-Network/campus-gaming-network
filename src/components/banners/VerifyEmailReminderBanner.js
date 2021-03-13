@@ -12,14 +12,14 @@ import firebase from "src/firebase";
 import { useAuth } from "src/providers/auth";
 
 const VerifyEmailReminderBanner = () => {
-  const auth = useAuth();
+  const { authUser } = useAuth();
   const toast = useToast();
-  const hasAuthUser = Boolean(auth) && Boolean(auth.authUser);
-  const email = hasAuthUser ? auth.authUser.email : null;
+  const hasAuthUser = Boolean(authUser);
+  const email = hasAuthUser ? authUser.email : null;
   const [sendingStatus, setSendingStatus] = React.useState("idle");
 
   const sendEmailVerification = () => {
-    if (!email || sendingStatus !== "sending") {
+    if (!email || sendingStatus === "sending") {
       return;
     }
 
@@ -51,7 +51,7 @@ const VerifyEmailReminderBanner = () => {
       );
   };
 
-  if (!email || (hasAuthUser && auth.authUser.emailVerified)) {
+  if (!email || (hasAuthUser && authUser.emailVerified)) {
     return null;
   }
 

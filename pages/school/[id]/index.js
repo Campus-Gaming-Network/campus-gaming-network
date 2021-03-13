@@ -9,14 +9,10 @@ import {
   ListItem,
   Flex,
   Avatar,
-  Button,
-  Skeleton,
   VisuallyHidden
 } from "@chakra-ui/react";
-import { ArrowBack, ArrowForward } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt, faSchool } from "@fortawesome/free-solid-svg-icons";
-import times from "lodash.times";
+import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import safeJsonStringify from 'safe-json-stringify';
 import { getSchoolDetails, getSchoolEvents, getSchoolUsers } from 'src/api/school';
 
@@ -26,11 +22,6 @@ import {
   SCHOOL_EMPTY_USERS_TEXT,
   SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT
 } from "src/constants/school";
-import {
-  DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE,
-  DEFAULT_USERS_LIST_PAGE_SIZE,
-  DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE
-} from "src/constants/other";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -71,6 +62,8 @@ const School = (props) => {
             schoolName={props.school.formattedName}
             h={40}
             w={40}
+            htmlHeight={40}
+            htmlWidth={40}
             fallback={
               <Flex
                 alignItems="center"
@@ -133,9 +126,6 @@ const School = (props) => {
                 {props.school.isValidWebsiteUrl ? (
                   <OutsideLink d="inline-block" href={`//${props.school.website}`}>
                     {props.school.website}
-                    <Text as="span" ml={2}>
-                      <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-                    </Text>
                   </OutsideLink>
                 ) : (
                   <Text>{props.school.website}</Text>
@@ -156,9 +146,6 @@ const School = (props) => {
                   href={props.school.googleMapsAddressLink}
                 >
                   {props.school.formattedAddress}
-                  <Text as="span" ml={2}>
-                    <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-                  </Text>
                 </OutsideLink>
               </Text>
             ) : (

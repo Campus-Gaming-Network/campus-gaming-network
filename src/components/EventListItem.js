@@ -1,5 +1,11 @@
 import React from "react";
 import { Box, Text, Flex, Stack } from "@chakra-ui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import startCase from "lodash.startcase";
+
+// Components
+import SchoolLogo from "src/components/SchoolLogo";
 import Link from "src/components/Link";
 
 const EventListItem = props => {
@@ -10,10 +16,10 @@ const EventListItem = props => {
   return (
     <Box
       as="li"
-      flexBasis={{ base: "100%", md: "33.3333%" }}
-      minWidth={{ base: "100%", md: "33.3333%" }}
+      flexBasis={{ base: "100%", sm: "50%", md: "33.3333%" }}
+      minWidth={{ base: "100%", sm: "50%", md: "33.3333%" }}
       flexGrow={0}
-      p={2}
+      pr={4}
     >
       <Box
         borderWidth={1}
@@ -23,99 +29,121 @@ const EventListItem = props => {
         overflow="hidden"
         pos="relative"
         shadow="sm"
+        height="200px"
       >
-        <Stack px={4} pt={2} pb={3}>
-          <Box mr="auto">
-            {props.event.hasEnded ? (
-              <Text
-                d="inline-block"
-                color="red.400"
-                fontSize="md"
-                textTransform="uppercase"
-                fontWeight="bold"
-                lineHeight="none"
-                isTruncated
-              >
-                Event ended
-              </Text>
-            ) : props.event.hasStarted ? (
-              <Text
-                d="inline-block"
-                color="green.400"
-                fontSize="md"
-                textTransform="uppercase"
-                fontWeight="bold"
-                lineHeight="none"
-                isTruncated
-              >
-                Happening now
-              </Text>
-            ) : (
-              <Text
-                d="inline-block"
-                as="time"
-                dateTime={props.event.startDateTime.locale}
-                title={props.event.startDateTime.locale}
-                fontSize="md"
-                textTransform="uppercase"
-                fontWeight="bold"
-                lineHeight="none"
-                isTruncated
-              >
-                {props.event.startDateTime.relative}
-              </Text>
-            )}
-          </Box>
-          <Link
-            href={`/event/${props.event.id}`}
-            color="brand.500"
-            fontWeight="bold"
-            fontSize="3xl"
-            isTruncated
-            lineHeight="short"
-            mt={-2}
-            title={props.event.name}
-          >
-            {props.event.name}
-          </Link>
-          <Link
-            href={`/school/${props.school.id}`}
-            color="brand.500"
-            fontWeight={600}
-            isTruncated
-            lineHeight="short"
-            mt={-2}
-            title={props.school.formattedName}
-          >
-            {props.school.formattedName}
-          </Link>
+        <Flex
+          direction="column"
+          justify="space-between"
+          px={4}
+          py={3}
+          height="100%"
+        >
+          <Stack>
+            <Flex justify="space-between" align="Center">
+              {props.event.hasEnded ? (
+                <Text
+                  d="inline"
+                  color="red.400"
+                  fontSize="sm"
+                  textTransform="uppercase"
+                  fontWeight="bold"
+                  lineHeight="none"
+                  isTruncated
+                >
+                  Event ended
+                </Text>
+              ) : props.event.hasStarted ? (
+                <Text
+                  d="inline"
+                  color="green.400"
+                  fontSize="sm"
+                  textTransform="uppercase"
+                  fontWeight="bold"
+                  lineHeight="none"
+                  isTruncated
+                >
+                  Happening now
+                </Text>
+              ) : (
+                <Text
+                  d="inline"
+                  as="time"
+                  color="blue.400"
+                  fontWeight="bold"
+                  dateTime={props.event.startDateTime.locale}
+                  title={props.event.startDateTime.locale}
+                  fontSize="sm"
+                  lineHeight="none"
+                  isTruncated
+                >
+                  {startCase(props.event.startDateTime.relative)}
+                </Text>
+              )}
+              <SchoolLogo
+                schoolId={props.school.id}
+                schoolName={props.school.formattedName}
+                h={6}
+                w={6}
+                htmlHeight={6}
+                htmlWidth={6}
+                ml={2}
+                fallback={
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    color="gray.500"
+                    h={6}
+                    w={6}
+                    ml={2}
+                  >
+                    <FontAwesomeIcon icon={faSchool} />
+                  </Flex>
+                }
+              />
+            </Flex>
+            <Link
+              href={`/event/${props.event.id}`}
+              color="gray.700"
+              fontWeight={900}
+              fontSize="2xl"
+              isTruncated
+              lineHeight="none"
+              title={props.event.name}
+              noOfLines={3}
+            >
+              {props.event.name}
+            </Link>
+            <Link
+              href={`/school/${props.school.id}`}
+              color="brand.500"
+              fontSize="sm"
+              isTruncated
+              lineHeight="none"
+              title={props.school.formattedName}
+            >
+              {props.school.formattedName}
+            </Link>
+          </Stack>
           <Flex justifyContent="space-between" alignItems="center">
             {props.event.isOnlineEvent ? (
-              <Text
-                fontSize="sm"
-                color="gray.400"
-                fontWeight={600}
-                textTransform="uppercase"
-                isTruncated
-              >
-                Online
+              <Text fontSize="xs" color="gray.400" fontWeight={600} isTruncated>
+                Online event
               </Text>
             ) : null}
             {Boolean(props.event.responses) &&
             props.event.responses.yes &&
             props.event.responses.yes > 0 ? (
               <Text
-                fontSize="sm"
+                fontSize="xs"
                 color="gray.400"
                 fontWeight={600}
-                textTransform="uppercase"
                 flexShrink={0}
               >
                 {props.event.responses.yes} Attending
               </Text>
             ) : null}
           </Flex>
-        </Stack>
+        </Flex>
       </Box>
     </Box>
   );

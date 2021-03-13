@@ -14,7 +14,8 @@ export const getRecentlyCreatedEvents = async () => {
       .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
       .orderBy("endDateTime")
       .orderBy("createdAt", "desc")
-      .limit(25);
+      .limit(25)
+      .get();
 
     if (!recentlyCreatedEventsSnapshot.empty) {
       recentlyCreatedEventsSnapshot.forEach(doc => {

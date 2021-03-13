@@ -32,8 +32,9 @@ const SiteLayout = ({
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=yes"
+          key="viewport"
         />
-        <meta name="description" content={description} />
+        <meta name="description" content={description} key="description" />
       </Head>
       <BetaWarningBanner />
       <VerifyEmailReminderBanner />

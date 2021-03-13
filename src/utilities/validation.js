@@ -18,6 +18,7 @@ import {
   DAYS,
   MONTHS,
   LAST_100_YEARS,
+  NEXT_5_YEARS,
   TIMEZONES,
   DASHED_DATE,
   DASHED_DATE_TIME,
@@ -192,10 +193,11 @@ export const validateCreateEvent = form => {
     errors.name = "Name is required.";
   }
 
-  if (
-    !isNilOrEmpty(description) &&
-    isGreaterThan(description.trim().length, MAX_DESCRIPTION_LENGTH)
-  ) {
+  if (isNilOrEmpty(description)) {
+    errors.description = "Description is required.";
+  }
+
+  if (isGreaterThan(description.trim().length, MAX_DESCRIPTION_LENGTH)) {
     errors.description = `Description is too long (maximum is ${MAX_DESCRIPTION_LENGTH.toLocaleString()} characters).`;
   }
 
@@ -223,7 +225,7 @@ export const validateCreateEvent = form => {
     errors.startTime = "Start time is required.";
   }
 
-  if (!isNilOrEmpty(startYear) && isWithin(startYear, LAST_100_YEARS)) {
+  if (!isNilOrEmpty(startYear) && !isWithin(startYear, NEXT_5_YEARS)) {
     errors.startYear = `${startYear} is not a valid year`;
   }
 
@@ -258,7 +260,7 @@ export const validateCreateEvent = form => {
     errors.endTime = "End time is required.";
   }
 
-  if (!isNilOrEmpty(endYear) && isWithin(endYear, LAST_100_YEARS)) {
+  if (!isNilOrEmpty(endYear) && !isWithin(endYear, NEXT_5_YEARS)) {
     errors.endYear = `${endYear} is not a valid year`;
   }
 

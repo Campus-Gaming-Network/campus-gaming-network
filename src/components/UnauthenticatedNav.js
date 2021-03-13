@@ -26,7 +26,7 @@ const UnauthenticatedNav = () => {
   return (
     <NavWrapper>
       <Flex align="center" mr={5}>
-        <Logo height="35px" p={1} />
+        <Logo htmlHeight="35px" htmlWidth="115px" p={1} />
       </Flex>
 
       <SchoolSearch

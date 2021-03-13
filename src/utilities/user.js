@@ -5,9 +5,12 @@ import intersection from "lodash.intersection";
 import capitalize from "lodash.capitalize";
 import md5 from "md5";
 
-import { mapSchool } from "src/utilities/school";
-
+// Constants
 import { GRAVATAR, ACCOUNTS } from "src/constants/other";
+
+// Utilities
+import { mapSchool } from "src/utilities/school";
+import { buildDateTime } from "src/utilities/dateTime";
 
 export const createGravatarHash = (email = "") => {
   const trimmedEmail = email.trim();
@@ -38,6 +41,7 @@ export const mapUser = user => {
 
   return {
     ...user,
+    birthdate: buildDateTime(user.birthdate),
     school: mapSchool(user.school),
     fullName: `${user.firstName} ${user.lastName}`.trim(),
     hasAccounts: userHasAccounts(user),

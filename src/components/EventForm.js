@@ -8,6 +8,7 @@ import {
   Stack,
   FormControl,
   FormLabel,
+  FormHelperText,
   Box,
   Button,
   Textarea,
@@ -41,6 +42,7 @@ import TimeSelect from "src/components/TimeSelect";
 
 // Constants
 import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
+import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";
 
 import { useAuth } from "src/providers/auth";
 
@@ -98,6 +100,13 @@ const EventForm = props => {
     () =>
       props.state === "edit" ? `Edit ${props.event.name}` : "Create Event",
     [props.state, props.event]
+  );
+  const descriptionCharactersRemaining = React.useMemo(
+    () =>
+      formState.description
+        ? MAX_DESCRIPTION_LENGTH - formState.description.length
+        : MAX_DESCRIPTION_LENGTH,
+    [formState.description]
   );
 
   const openDeleteEventDialog = () => {
@@ -369,7 +378,7 @@ const EventForm = props => {
                   <FormErrorMessage>{props.errors.location}</FormErrorMessage>
                 </Stack>
               </FormControl>
-              <FormControl isInvalid={props.errors.description}>
+              <FormControl isRequired isInvalid={props.errors.description}>
                 <FormLabel
                   htmlFor="description"
                   fontSize="lg"
@@ -388,6 +397,21 @@ const EventForm = props => {
                   maxLength="5000"
                   h="150px"
                 />
+                <FormHelperText id="description-helper-text">
+                  Describe your event in fewer than{" "}
+                  {MAX_DESCRIPTION_LENGTH.toLocaleString()} characters.{" "}
+                  <Text
+                    as="span"
+                    color={
+                      descriptionCharactersRemaining <= 0
+                        ? "red.500"
+                        : undefined
+                    }
+                  >
+                    {descriptionCharactersRemaining.toLocaleString()} characters
+                    remaining.
+                  </Text>
+                </FormHelperText>
               </FormControl>
               <FormErrorMessage>{props.errors.description}</FormErrorMessage>
               <FormControl isRequired isInvalid={props.errors.game}>
@@ -492,7 +516,6 @@ const EventForm = props => {
                         onChange={handleFieldChange}
                         value={formState.startYear}
                         size="lg"
-                        min={CURRENT_YEAR}
                         max={CURRENT_YEAR + 5}
                       />
                       <FormErrorMessage>
@@ -601,7 +624,6 @@ const EventForm = props => {
                         onChange={handleFieldChange}
                         value={formState.endYear}
                         size="lg"
-                        min={CURRENT_YEAR}
                         max={CURRENT_YEAR + 5}
                       />
                       <FormErrorMessage>

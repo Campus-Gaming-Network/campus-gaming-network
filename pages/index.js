@@ -1,14 +1,15 @@
 import React from "react";
-import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
+import { Box, Heading, Text, Stack } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import nookies from "nookies";
 import firebaseAdmin from "src/firebaseAdmin";
+import dynamic from "next/dynamic";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import Article from "src/components/Article";
-import Link from "src/components/Link";
-import EventListItem from "src/components/EventListItem";
+import RecentlyCreatedEvents from "src/components/RecentlyCreatedEvents";
+import RecentlyCreatedUsers from "src/components/RecentlyCreatedUsers";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
@@ -22,9 +23,24 @@ import {
 } from "src/api/user";
 import { getSchoolEvents } from "src/api/school";
 import { getRecentlyCreatedEvents } from "src/api/events";
+import { getRecentlyCreatedUsers } from "src/api/users";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+
+// Dynamic Components
+const UserCreatedEvents = dynamic(
+  () => import("src/components/UserCreatedEvents"),
+  { ssr: false }
+);
+const AttendingEvents = dynamic(
+  () => import("src/components/AttendingEvents"),
+  { ssr: false }
+);
+const UpcomingSchoolEvents = dynamic(
+  () => import("src/components/UpcomingSchoolEvents"),
+  { ssr: false }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -35,7 +51,8 @@ export const getServerSideProps = async context => {
     userAttendingEvents: [],
     userCreatedEvents: [],
     schoolEvents: [],
-    recentlyCreatedEvents: []
+    recentlyCreatedEvents: [],
+    recentlyCreatedUsers: []
   };
 
   try {
@@ -55,24 +72,32 @@ export const getServerSideProps = async context => {
       data.user = user;
 
       const [
-        userAttendingEventsRes,
-        schoolEventsRes,
-        userCreatedEventsRes
+        userAttendingEventsResponse,
+        schoolEventsResponse,
+        userCreatedEventsResponse
       ] = await Promise.all([
         getUserAttendingEvents(user.id),
         getSchoolEvents(user.school.id),
         getUserCreatedEvents(user.id)
       ]);
 
-      data.userAttendingEvents = userAttendingEventsRes.events;
-      data.schoolEvents = schoolEventsRes.events;
-      data.userCreatedEvents = userCreatedEventsRes.events;
+      data.userAttendingEvents = userAttendingEventsResponse.events;
+      data.schoolEvents = schoolEventsResponse.events;
+      data.userCreatedEvents = userCreatedEventsResponse.events;
     }
 
-    const { events: recentlyCreatedEvents } = await getRecentlyCreatedEvents();
+    const [
+      recentlyCreatedEventsResponse,
+      recentlyCreatedUsersResponse
+    ] = await Promise.all([
+      getRecentlyCreatedEvents(),
+      getRecentlyCreatedUsers()
+    ]);
 
-    data.recentlyCreatedEvents = recentlyCreatedEvents;
+    data.recentlyCreatedEvents = recentlyCreatedEventsResponse.events;
+    data.recentlyCreatedUsers = recentlyCreatedUsersResponse.users;
   } catch (error) {
+    console.log(error);
     // Do nothing
   }
 
@@ -111,131 +136,11 @@ const Home = props => {
               <UpcomingSchoolEvents events={props.schoolEvents} />
             ) : null}
             <RecentlyCreatedEvents events={props.recentlyCreatedEvents} />
+            <RecentlyCreatedUsers users={props.recentlyCreatedUsers} />
           </Stack>
         </Box>
       </Article>
     </SiteLayout>
-  );
-};
-
-const UserCreatedEvents = props => {
-  return (
-    <Stack as="section" spacing={2} py={4}>
-      <Heading as="h3" fontSize="xl" pb={4}>
-        Your events
-      </Heading>
-      {Boolean(props.events) && props.events.length > 0 ? (
-        <React.Fragment>
-          <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {props.events.map(event => (
-              <EventListItem
-                key={event.id}
-                event={event}
-                school={event.school}
-              />
-            ))}
-          </List>
-        </React.Fragment>
-      ) : (
-        <Text color="gray.400" fontSize="xl" fontWeight="600">
-          You have no events
-        </Text>
-      )}
-    </Stack>
-  );
-};
-
-const AttendingEvents = props => {
-  return (
-    <Stack as="section" spacing={2} py={4}>
-      <Heading as="h3" fontSize="xl" pb={4}>
-        Events you're attending
-      </Heading>
-      {Boolean(props.events) && props.events.length > 0 ? (
-        <React.Fragment>
-          <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {props.events.map(event => (
-              <EventListItem key={event.id} {...event} />
-            ))}
-          </List>
-        </React.Fragment>
-      ) : (
-        <Text color="gray.400" fontSize="xl" fontWeight="600">
-          You are not attending any upcoming events
-        </Text>
-      )}
-    </Stack>
-  );
-};
-
-const UpcomingSchoolEvents = props => {
-  const [{ school } = {}] = props.events;
-
-  if (!Boolean(school)) {
-    return null;
-  }
-
-  return (
-    <Stack as="section" spacing={2} py={4}>
-      <Heading as="h3" fontSize="xl" pb={4}>
-        Upcoming events at{" "}
-        <Link
-          href={`/school/${school.id}`}
-          color="brand.500"
-          fontWeight="bold"
-          isTruncated
-          lineHeight="short"
-          mt={-2}
-          title={school.formattedName}
-        >
-          {school.formattedName}
-        </Link>
-      </Heading>
-      {Boolean(props.events) && props.events.length > 0 ? (
-        <React.Fragment>
-          <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {props.events.map(event => (
-              <EventListItem
-                key={event.id}
-                event={event}
-                school={event.school}
-              />
-            ))}
-          </List>
-        </React.Fragment>
-      ) : (
-        <Text color="gray.400" fontSize="xl" fontWeight="600">
-          There are no upcoming events at {school.formattedName}
-        </Text>
-      )}
-    </Stack>
-  );
-};
-
-const RecentlyCreatedEvents = props => {
-  return (
-    <Stack as="section" spacing={2} py={4}>
-      <Heading as="h3" fontSize="xl" pb={4}>
-        Recently created events
-      </Heading>
-      {Boolean(props.events) && props.events.length > 0 ? (
-        <React.Fragment>
-          <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {props.events.map(event => (
-              <EventListItem
-                key={event.id}
-                event={event}
-                school={event.school}
-              />
-            ))}
-          </List>
-        </React.Fragment>
-      ) : (
-        <Text color="gray.400" fontSize="xl" fontWeight="600">
-          No events have been recently created
-        </Text>
-      )}
-    </Stack>
   );
 };
 

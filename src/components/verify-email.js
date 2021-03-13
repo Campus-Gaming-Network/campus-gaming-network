@@ -1,12 +1,14 @@
 // Libraries
 import React from "react";
 import {
-  Box,
   Alert,
   AlertIcon,
   AlertTitle,
   AlertDescription
 } from "@chakra-ui/react";
+
+// Other
+import firebase from "src/firebase";
 
 // Components
 import Article from "src/components/Article";
@@ -15,9 +17,43 @@ import SiteLayout from "src/components/SiteLayout";
 ////////////////////////////////////////////////////////////////////////////////
 // VerifyEmail
 
-const VerifyEmail = () => {
-  const [verifyState] = React.useState("success");
-  const [verificationError] = React.useState("");
+const VerifyEmail = props => {
+  const [verifyState, setVerifyState] = React.useState("idle");
+  const [verificationError, setError] = React.useState("");
+
+  const handleVerifyEmail = React.useCallback(() => {
+    firebase
+      .auth()
+      .applyActionCode(props.oobCode)
+      .then(() => {
+        firebase
+          .auth()
+          .currentUser.reload()
+          .then(() => {
+            if (firebase.auth().currentUser.emailVerified) {
+              setVerifyState("success");
+            } else {
+              setVerifyState("error");
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            setError(error.message);
+            setVerifyState("error");
+          });
+      })
+      .catch(error => {
+        console.error(error);
+        setError(error.message);
+        setVerifyState("error");
+      });
+  }, [props.oobCode]);
+
+  React.useEffect(() => handleVerifyEmail(), [props.oobCode]);
+
+  if (verifyState === "idle") {
+    return null;
+  }
 
   return (
     <SiteLayout title="Verify Email" hideNav hideFooter>

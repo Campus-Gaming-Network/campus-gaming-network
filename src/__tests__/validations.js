@@ -642,6 +642,42 @@ describe(CREATE_EVENT_FORM, () => {
     expect(isValid).toEqual(false);
   });
 
+  it("should be an invalid create event - description - empty string", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      description: EMPTY_STRING
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - description - null", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      description: NULL
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - description - undefined", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      description: UNDEFINED
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
+  it("should be an invalid create event - description - empty string space", () => {
+    const { isValid } = validateCreateEvent({
+      ...FORMS.CREATE_EVENT,
+      description: EMPTY_STRING_SPACE
+    });
+
+    expect(isValid).toEqual(false);
+  });
+
   it("should be an invalid create event - description - too long", () => {
     const { isValid } = validateCreateEvent({
       ...FORMS.CREATE_EVENT,

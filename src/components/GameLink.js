@@ -1,7 +1,4 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
-import { Text } from "@chakra-ui/react";
 
 // Constants
 import { IGDB_GAME_URL } from "src/constants/igdb";
@@ -25,9 +22,6 @@ const GameLink = React.memo(props => {
       mt={2}
     >
       {props.name}
-      <Text as="span" ml={1}>
-        <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-      </Text>
     </OutsideLink>
   );
 });

@@ -31,7 +31,7 @@ export const getSchoolLogoPath = (schoolId, extension = "png") =>
   `schools/${schoolId}/images/logo.${extension}`;
 
 export const getSchoolLogoUrl = (schoolId, extension = "png") =>
-  `https://storage.googleapis.com/v0/b/${
+  `https://firebasestorage.googleapis.com/v0/b/${
     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
   }/o/${encodeURIComponent(
     getSchoolLogoPath(schoolId, extension)

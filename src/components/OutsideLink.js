@@ -1,11 +1,18 @@
 import React from "react";
-import { Link as ChakraLink } from "@chakra-ui/react";
+import { Link, Text } from "@chakra-ui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
-const OutsideLink = ({ children, ...props }) => {
+const OutsideLink = ({ children, noIcon, ...props }) => {
   return (
-    <ChakraLink color="brand.500" fontWeight={600} isExternal {...props}>
+    <Link color="brand.500" fontWeight={600} isExternal {...props}>
       {children}
-    </ChakraLink>
+      {!noIcon ? (
+        <Text as="span" ml={1}>
+          <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
+        </Text>
+      ) : null}
+    </Link>
   );
 };
 

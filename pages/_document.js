@@ -77,20 +77,21 @@ class MyDocument extends Document {
           {/* manifest.json provides metadata used when your web app is installed on a
           user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/ */}
           <link rel="manifest" href="/manifest.json" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
-            rel="stylesheet"
-          />
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+          <script
+            async
+            defer
+            data-domain="campusgamingnetwork.com"
+            src="https://plausible.io/js/plausible.js"
+          ></script>
           <script
             async
             defer
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           ></script>
-        </Head>
-        <body>
-          <Main />
-          <NextScript />
         </body>
       </Html>
     );

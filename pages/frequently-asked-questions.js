@@ -1,8 +1,8 @@
 // Libraries
 import React from "react";
-import { Box, Text, Link, Flex } from "@chakra-ui/react";
+import { Box, Link, Flex } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt, faLink } from "@fortawesome/free-solid-svg-icons";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Article from "src/components/Article";
@@ -64,26 +64,12 @@ const AnswerWrapper = props => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// ExternalLink
-
-const ExternalLink = props => {
-  return (
-    <OutsideLink href={props.href}>
-      {props.children}
-      <Text as="span" ml={1}>
-        <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-      </Text>
-    </OutsideLink>
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
 // VerifyEmail=
 const IGDBLink = props => {
   return (
-    <ExternalLink href="https://www.igdb.com/discover">
+    <OutsideLink href="https://www.igdb.com/discover">
       {props.children ? props.children : "Internet Games Database (IGDB)"}
-    </ExternalLink>
+    </OutsideLink>
   );
 };
 
@@ -92,9 +78,9 @@ const IGDBLink = props => {
 
 const GithubLink = props => {
   return (
-    <ExternalLink href="https://github.com/bsansone/campus-gaming-network">
+    <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
       {props.children ? props.children : "GitHub"}
-    </ExternalLink>
+    </OutsideLink>
   );
 };
 
@@ -103,9 +89,9 @@ const GithubLink = props => {
 
 const DiscordLink = props => {
   return (
-    <ExternalLink href="https://discord.gg/dpYU6TY">
+    <OutsideLink href="https://discord.gg/dpYU6TY">
       {props.children ? props.children : "Discord"}
-    </ExternalLink>
+    </OutsideLink>
   );
 };
 
@@ -114,9 +100,9 @@ const DiscordLink = props => {
 
 const GravatarLink = props => {
   return (
-    <ExternalLink href="https://en.gravatar.com/">
+    <OutsideLink href="https://en.gravatar.com/">
       {props.children ? props.children : "Gravatar"}
-    </ExternalLink>
+    </OutsideLink>
   );
 };
 
@@ -129,9 +115,9 @@ const BuyMeACoffeeLink = props => {
   }`.trim();
 
   return (
-    <ExternalLink href={href}>
+    <OutsideLink href={href}>
       {props.children ? props.children : "Buy Me a Coffee"}
-    </ExternalLink>
+    </OutsideLink>
   );
 };
 
@@ -234,12 +220,9 @@ const QUESTIONS = [
     answer: (
       <AnswerWrapper>
         You would need to take that up with the{" "}
-        <ExternalLink href="https://www.igdb.com/discover">
+        <OutsideLink href="https://www.igdb.com/discover">
           Internet Games Database (IGDB)
-          <Text as="span" ml={1}>
-            <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-          </Text>
-        </ExternalLink>
+        </OutsideLink>
         , we have no control over that.
       </AnswerWrapper>
     )

@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, Image, VisuallyHidden } from "@chakra-ui/react";
+import { Img, Heading, Image, VisuallyHidden } from "@chakra-ui/react";
 
 // Components
 import Link from "src/components/Link";
@@ -12,7 +12,7 @@ const Logo = ({ src, ...rest }) => {
           Campus Gaming Network
         </Heading>
       </VisuallyHidden>
-      <Image
+      <Img
         src="/logo.svg"
         alt="Campus Gaming Network Home"
         title="Campus Gaming Network Home"

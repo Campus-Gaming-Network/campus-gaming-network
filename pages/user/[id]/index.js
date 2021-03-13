@@ -126,7 +126,7 @@ const User = (props) => {
           </Heading>
         </Box>
       </Box>
-      <Image
+      {/* <Image
         src="../profile_illustration_1st_edition_compressed.png"
         alt="Controller leaning on stack of books"
         pos="absolute"
@@ -136,7 +136,7 @@ const User = (props) => {
         bottom="0"
         margin="auto"
         transform="scale(1.25)"
-      />
+      /> */}
       <Stack spacing={10}>
         <Box as="section" pt={4}>
           <VisuallyHidden as="h2">Biography</VisuallyHidden>

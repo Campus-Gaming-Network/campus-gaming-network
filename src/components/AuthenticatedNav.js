@@ -9,7 +9,10 @@ import {
   MenuItem,
   MenuDivider,
   Box,
-  Avatar
+  Avatar,
+  Tooltip,
+  Wrap,
+  WrapItem
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,7 +32,11 @@ import ButtonLink from "src/components/ButtonLink";
 // Other
 import firebase from "src/firebase";
 
+// Providers
+import { useAuth } from "src/providers/auth";
+
 const AuthenticatedNav = props => {
+  const { authUser } = useAuth();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -55,7 +62,7 @@ const AuthenticatedNav = props => {
   return (
     <NavWrapper>
       <Flex align="center" mr={5}>
-        <Logo height="35px" p={1} />
+        <Logo htmlHeight="35px" htmlWidth="115px" p={1} />
       </Flex>
 
       <SchoolSearch
@@ -71,11 +78,24 @@ const AuthenticatedNav = props => {
         flexGrow={{ base: 0, md: 1 }}
         justifyContent={{ base: "flex-start", md: "flex-end" }}
       >
-        <ButtonLink href="/create-event" colorScheme="brand" size="sm" mr={4}>
-          <Box mr={2}>
-            <FontAwesomeIcon icon={faCalendarAlt} />
-          </Box>
-          Create event
+        <ButtonLink
+          href="/create-event"
+          colorScheme="brand"
+          size="sm"
+          mr={4}
+          disabled={!authUser.emailVerified}
+        >
+          <Tooltip
+            label="Event creation is disabled until email is verified."
+            isDisabled={authUser.emailVerified}
+          >
+            <Flex align="center" justify="center">
+              <Box mr={2}>
+                <FontAwesomeIcon icon={faCalendarAlt} />
+              </Box>
+              <Text>Create event</Text>
+            </Flex>
+          </Tooltip>
         </ButtonLink>
 
         <Menu>
@@ -135,6 +155,8 @@ const AuthenticatedNav = props => {
                 schoolName={props.school.formattedName}
                 h={6}
                 w={6}
+                htmlHeight={6}
+                htmlWidth={6}
                 mr={2}
                 fallback={
                   <Flex

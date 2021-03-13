@@ -71,6 +71,7 @@ import YearSelect from "src/components/YearSelect";
 import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
 import { useAuth } from "src/providers/auth";
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 
 const DeleteAccountDialog = dynamic(
   () => import("src/components/dialogs/DeleteAccountDialog"),
@@ -226,9 +227,9 @@ const EditUser = props => {
       value: props.user.hometown || initialFormState.hometown
     });
 
-    if (props.user.birthdate) {
+    if (Boolean(props.user.birthdate)) {
       const [birthMonth, birthDay, birthYear] = DateTime.fromISO(
-        props.user.birthdate.toDate().toISOString()
+        props.user.birthdate.iso
       )
         .toFormat(DASHED_DATE)
         .split("-");
@@ -351,6 +352,7 @@ const EditUser = props => {
     }
 
     const data = {
+      id: authUser.uid,
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
       status: formState.status,
@@ -374,9 +376,11 @@ const EditUser = props => {
         ref: schoolDocRef,
         id: schoolDocRef.id
       },
-      currentlyPlaying,
-      favoriteGames
+      currentlyPlaying: currentlyPlaying || [],
+      favoriteGames: favoriteGames || []
     };
+
+    console.log({ data });
 
     firebase
       .firestore()
@@ -438,7 +442,14 @@ const EditUser = props => {
                 Options
               </MenuButton>
               <MenuList fontSize="md">
-                <MenuItem onClick={openDeleteAccountDialog}>
+                <MenuItem
+                  onClick={openDeleteAccountDialog}
+                  fontWeight="bold"
+                  color="red.500"
+                >
+                  <Box mr={2}>
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                  </Box>
                   Delete account
                 </MenuItem>
               </MenuList>
@@ -712,7 +723,8 @@ const DetailSection = React.memo(props => {
             h="150px"
           />
           <FormHelperText id="bio-helper-text">
-            Describe yourself in fewer than 2,500 characters.{" "}
+            Describe yourself in fewer than {MAX_BIO_LENGTH.toLocaleString()}{" "}
+            characters.{" "}
             <Text
               as="span"
               color={bioCharactersRemaining <= 0 ? "red.500" : undefined}

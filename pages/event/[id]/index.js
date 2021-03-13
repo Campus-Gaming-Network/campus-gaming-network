@@ -4,7 +4,6 @@ import {
   faMapMarkerAlt,
   faGlobe,
   faSchool,
-  faExternalLinkAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import times from "lodash.times";
@@ -255,9 +254,6 @@ const Event = props => {
                     href={props.event.googleMapsAddressLink}
                   >
                     {props.event.location}
-                    <Text as="span" ml={2}>
-                      <FontAwesomeIcon icon={faExternalLinkAlt} size="xs" />
-                    </Text>
                   </OutsideLink>
                 </React.Fragment>
               ) : (
