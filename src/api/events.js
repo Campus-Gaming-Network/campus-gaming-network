@@ -11,7 +11,11 @@ export const getRecentlyCreatedEvents = async () => {
     const recentlyCreatedEventsSnapshot = await firebaseAdmin
       .firestore()
       .collection("events")
-      .where("endDateTime", ">=", firebase.firestore.Timestamp.fromDate(now))
+      .where(
+        "endDateTime",
+        ">=",
+        firebaseAdmin.firestore.Timestamp.fromDate(now)
+      )
       .orderBy("endDateTime")
       .orderBy("createdAt", "desc")
       .limit(25)
