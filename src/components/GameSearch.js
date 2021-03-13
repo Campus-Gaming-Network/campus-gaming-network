@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "@chakra-ui/react";
+import { Flex, Text, Spinner } from "@chakra-ui/react";
 import {
   Combobox,
   ComboboxInput,
@@ -17,6 +17,7 @@ const CACHED_GAMES = {};
 
 const GameSearch = props => {
   const [searchTerm, setSearchTerm] = React.useState(props.gameName || "");
+  const [isFetching, setIsFetching] = React.useState(false);
 
   const handleChange = event => setSearchTerm(event.target.value);
 
@@ -30,10 +31,12 @@ const GameSearch = props => {
 
       if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 2) {
         let isFresh = true;
+        setIsFetching(true);
 
         fetchGames(debouncedGameSearch).then(games => {
           if (isFresh) {
             setGames(games);
+            setIsFetching(false);
           }
         });
         return () => (isFresh = false);
@@ -82,16 +85,23 @@ const GameSearch = props => {
       name={props.name || "gameSearch"}
       onSelect={handleGameSelect}
     >
-      <ComboboxInput
-        id={props.id || "gameSearch"}
-        name={props.name || "gameSearch"}
-        placeholder={props.inputPlaceholder || "Search"}
-        onChange={handleChange}
-        value={searchTerm}
-        autocomplete={false}
-        // This turns off the browser autocomplete
-        autoComplete="off"
-      />
+      <Flex align="center">
+        <ComboboxInput
+          id={props.id || "gameSearch"}
+          name={props.name || "gameSearch"}
+          placeholder={props.inputPlaceholder || "Search"}
+          onChange={handleChange}
+          value={searchTerm}
+          autocomplete={false}
+          // This turns off the browser autocomplete
+          autoComplete="off"
+        />
+        <Spinner
+          visibility={isFetching ? "visible" : "hidden"}
+          color="orange.500"
+          ml={2}
+        />
+      </Flex>
       {gamesResults && (
         <ComboboxPopover>
           {gamesResults.length > 0 ? (

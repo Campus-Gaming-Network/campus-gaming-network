@@ -169,15 +169,11 @@ const SchoolSearch = props => {
           // This turns off the browser autocomplete
           autoComplete="off"
         />
-        {isFetching ? (
-          <Spinner
-            color="orange.500"
-            emptyColor="gray.100"
-            speed="0.65s"
-            thickness="3px"
-            ml={2}
-          />
-        ) : null}
+        <Spinner
+          visibility={isFetching ? "visible" : "hidden"}
+          color="orange.500"
+          ml={2}
+        />
       </Flex>
       {Boolean(items) ? (
         <ComboboxPopover>
