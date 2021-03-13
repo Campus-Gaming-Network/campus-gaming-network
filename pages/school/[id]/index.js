@@ -322,6 +322,7 @@ const UsersListItem = props => {
       <Box
         shadow="sm"
         borderWidth={1}
+        borderStyle="solid"
         rounded="lg"
         bg="white"
         pos="relative"

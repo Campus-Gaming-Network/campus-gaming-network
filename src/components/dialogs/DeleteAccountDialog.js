@@ -61,7 +61,7 @@ const DeleteAccountDialog = props => {
         isClosable: true
       });
       setTimeout(() => {
-        firebaes
+        firebase
           .auth()
           .signOut()
           .then(() => router.push("/"));
@@ -105,7 +105,7 @@ const DeleteAccountDialog = props => {
               name="deleteConfirmation"
               type="text"
               placeholder="DELETE"
-              onChange={setDeleteConfirmation}
+              onChange={e => setDeleteConfirmation(e.target.value)}
               value={deleteConfirmation}
             />
             <FormErrorMessage>{errors.deleteConfirmation}</FormErrorMessage>
