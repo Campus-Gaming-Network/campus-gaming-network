@@ -46,10 +46,14 @@ export const getServerSideProps = async context => {
 
   try {
     cookies = nookies.get(context);
-    token = Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
-      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-      : null;
-    authStatus = Boolean(token) && Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
+    token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };
@@ -65,7 +69,7 @@ export const getServerSideProps = async context => {
   }
 
   const data = {
-    school,
+    school
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -103,10 +107,22 @@ const EditSchool = props => {
   }, []);
 
   const prefillForm = () => {
-    dispatch({ field: "description", value: props.school.description || initialFormState.description });
-    dispatch({ field: "website", value: props.school.website || initialFormState.website });
-    dispatch({ field: "email", value: props.school.email || initialFormState.email });
-    dispatch({ field: "phone", value: props.school.phone || initialFormState.phone });
+    dispatch({
+      field: "description",
+      value: props.school.description || initialFormState.description
+    });
+    dispatch({
+      field: "website",
+      value: props.school.website || initialFormState.website
+    });
+    dispatch({
+      field: "email",
+      value: props.school.email || initialFormState.email
+    });
+    dispatch({
+      field: "phone",
+      value: props.school.phone || initialFormState.phone
+    });
     setHasPrefilledForm(true);
   };
 
@@ -171,7 +187,8 @@ const EditSchool = props => {
       );
     }
 
-    firebase.firestore()
+    firebase
+      .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.school.id)
       .update(data)
@@ -203,54 +220,54 @@ const EditSchool = props => {
 
   return (
     <SiteLayout title={`Edit ${props.school.formattedName}`}>
-    <Article>
-      <Stack as="form" spacing={32} onSubmit={handleSubmit}>
-        <Heading as="h2" size="2xl">
-          Edit School
-        </Heading>
-        <Button
-          colorScheme="brand"
-          type="submit"
-          size="lg"
-          w="full"
-          mt={-12}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Submitting..." : "Update School"}
-        </Button>
-        <DetailSection
-          dispatch={dispatch}
-          schoolName={props.school.formattedName}
-          handleFieldChange={handleFieldChange}
-          description={state.description}
-          phone={state.phone}
-          email={state.email}
-          file={state.file}
-          logo={state.logo}
-        />
-        <SocialAccountsSection
-          schoolName={props.school.formattedName}
-          handleFieldChange={handleFieldChange}
-          {...Object.keys(ACCOUNTS).reduce(
-            (acc, cur) => ({
-              ...acc,
-              [cur]: state[cur]
-            }),
-            {}
-          )}
-        />
-        <Button
-          colorScheme="brand"
-          type="submit"
-          size="lg"
-          w="full"
-          mt={-12}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Submitting..." : "Update School"}
-        </Button>
-      </Stack>
-    </Article>
+      <Article>
+        <Stack as="form" spacing={32} onSubmit={handleSubmit}>
+          <Heading as="h2" size="2xl">
+            Edit School
+          </Heading>
+          <Button
+            colorScheme="brand"
+            type="submit"
+            size="lg"
+            w="full"
+            mt={-12}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Update School"}
+          </Button>
+          <DetailSection
+            dispatch={dispatch}
+            schoolName={props.school.formattedName}
+            handleFieldChange={handleFieldChange}
+            description={state.description}
+            phone={state.phone}
+            email={state.email}
+            file={state.file}
+            logo={state.logo}
+          />
+          <SocialAccountsSection
+            schoolName={props.school.formattedName}
+            handleFieldChange={handleFieldChange}
+            {...Object.keys(ACCOUNTS).reduce(
+              (acc, cur) => ({
+                ...acc,
+                [cur]: state[cur]
+              }),
+              {}
+            )}
+          />
+          <Button
+            colorScheme="brand"
+            type="submit"
+            size="lg"
+            w="full"
+            mt={-12}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Update School"}
+          </Button>
+        </Stack>
+      </Article>
     </SiteLayout>
   );
 };

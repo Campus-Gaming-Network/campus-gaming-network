@@ -18,8 +18,8 @@ import {
   useClipboard,
   useToast
 } from "@chakra-ui/react";
-import safeJsonStringify from 'safe-json-stringify';
-import { getUserDetails, getUserAttendingEvents } from 'src/api/user';
+import safeJsonStringify from "safe-json-stringify";
+import { getUserDetails, getUserAttendingEvents } from "src/api/user";
 import dynamic from "next/dynamic";
 
 // Constants
@@ -45,15 +45,14 @@ import { getSchoolDetails } from "src/api/school";
 // Providers
 import { useAuth } from "src/providers/auth";
 
-const TwitchEmbed = dynamic(
-  () => import("src/components/TwitchEmbed"),
-  { ssr: false }
-);
+const TwitchEmbed = dynamic(() => import("src/components/TwitchEmbed"), {
+  ssr: false
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps = async context => {
   const { user } = await getUserDetails(context.params.id);
   const { events } = await getUserAttendingEvents(context.params.id);
 
@@ -63,76 +62,90 @@ export const getServerSideProps = async (context) => {
 
   const { school } = await getSchoolDetails(user.school.id);
   const data = {
-      user,
-      school,
-      events,
+    user,
+    school,
+    events
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // User
 
-const User = (props) => {
+const User = props => {
   const { authUser } = useAuth();
-  const isAuthenticatedUser = React.useMemo(() => authUser && (authUser.uid === props.user.id), [authUser, props.user]);
+  const isAuthenticatedUser = React.useMemo(
+    () => authUser && authUser.uid === props.user.id,
+    [authUser, props.user]
+  );
 
   return (
     <SiteLayout title={props.user.fullName}>
-    <Article>
-      {isAuthenticatedUser ? (
-        <Box mb={10} textAlign="center" display="flex" justifyContent="center">
-          <Link
-            href="/edit-user"
-            fontWeight="bold"
-            width="100%"
-            borderRadius="md"
-            bg="gray.100"
-            _focus={{ bg: "gray.200", boxShadow: "outline" }}
-            _hover={{ bg: "gray.200" }}
-            p={8}
-          >
-            Edit Your Profile
-          </Link>
-        </Box>
-      ) : null}
-      <Box as="header" display="flex" alignItems="center">
-        <Avatar name={props.user.fullName} title={props.user.fullName} src={props.user.gravatarUrl} mr={2} size="2xl" />
-        <Box pl={12}>
-          <Heading
-            as="h2"
-            fontSize="5xl"
-            fontWeight="bold"
-            pb={2}
+      <Article>
+        {isAuthenticatedUser ? (
+          <Box
+            mb={10}
+            textAlign="center"
             display="flex"
-            alignItems="center"
+            justifyContent="center"
           >
-            {props.user.fullName}
-          </Heading>
-          <Heading
-            as="h2"
-            fontSize="2xl"
-            fontWeight="normal"
-            fontStyle="italic"
-            display="flex"
-            alignItems="center"
-          >
-            {props.user.displayStatus}
-            {Boolean(props.school) ? (
-              <Link
-                href={`/school/${props.school.id}`}
-                color="brand.500"
-                fontWeight={600}
-                ml={2}
-              >
-                {props.school.formattedName}
-              </Link>
-            ) : null}
-          </Heading>
+            <Link
+              href="/edit-user"
+              fontWeight="bold"
+              width="100%"
+              borderRadius="md"
+              bg="gray.100"
+              _focus={{ bg: "gray.200", boxShadow: "outline" }}
+              _hover={{ bg: "gray.200" }}
+              p={8}
+            >
+              Edit Your Profile
+            </Link>
+          </Box>
+        ) : null}
+        <Box as="header" display="flex" alignItems="center">
+          <Avatar
+            name={props.user.fullName}
+            title={props.user.fullName}
+            src={props.user.gravatarUrl}
+            mr={2}
+            size="2xl"
+          />
+          <Box pl={12}>
+            <Heading
+              as="h2"
+              fontSize="5xl"
+              fontWeight="bold"
+              pb={2}
+              display="flex"
+              alignItems="center"
+            >
+              {props.user.fullName}
+            </Heading>
+            <Heading
+              as="h2"
+              fontSize="2xl"
+              fontWeight="normal"
+              fontStyle="italic"
+              display="flex"
+              alignItems="center"
+            >
+              {props.user.displayStatus}
+              {Boolean(props.school) ? (
+                <Link
+                  href={`/school/${props.school.id}`}
+                  color="brand.500"
+                  fontWeight={600}
+                  ml={2}
+                >
+                  {props.school.formattedName}
+                </Link>
+              ) : null}
+            </Heading>
+          </Box>
         </Box>
-      </Box>
-      {/* <Image
+        {/* <Image
         src="../profile_illustration_1st_edition_compressed.png"
         alt="Controller leaning on stack of books"
         pos="absolute"
@@ -143,116 +156,116 @@ const User = (props) => {
         margin="auto"
         transform="scale(1.25)"
       /> */}
-      <Stack spacing={10}>
-        <Box as="section" pt={4}>
-          <VisuallyHidden as="h2">Biography</VisuallyHidden>
-          {Boolean(props.user.bio) ? <Text>{props.user.bio}</Text> : null}
-        </Box>
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-          >
-            Information
-          </Heading>
-          <Flex as="dl" flexWrap="wrap" w="100%">
-            <Text as="dt" w="50%" fontWeight="bold">
-              Hometown
-            </Text>
-            {Boolean(props.user.hometown) ? (
-              <Text as="dd" w="50%">
-                {props.user.hometown}
-              </Text>
-            ) : (
-              <Text as="dd" w="50%" color="gray.400">
-                Nothing set
-              </Text>
-            )}
-            <Text as="dt" w="50%" fontWeight="bold">
-              Major
-            </Text>
-            {Boolean(props.user.major) ? (
-              <Text as="dd" w="50%">
-                {props.user.major}
-              </Text>
-            ) : (
-              <Text as="dd" w="50%" color="gray.400">
-                Nothing set
-              </Text>
-            )}
-            <Text as="dt" w="50%" fontWeight="bold">
-              Minor
-            </Text>
-            {Boolean(props.user.minor) ? (
-              <Text as="dd" w="50%">
-                {props.user.minor}
-              </Text>
-            ) : (
-              <Text as="dd" w="50%" color="gray.400">
-                Nothing set
-              </Text>
-            )}
-          </Flex>
-        </Stack>
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-          >
-            Accounts
-          </Heading>
-          <AccountsList user={props.user} />
-        </Stack>
-        {Boolean(props.user.twitch) ? (
+        <Stack spacing={10}>
+          <Box as="section" pt={4}>
+            <VisuallyHidden as="h2">Biography</VisuallyHidden>
+            {Boolean(props.user.bio) ? <Text>{props.user.bio}</Text> : null}
+          </Box>
           <Stack as="section" spacing={4}>
-          <TwitchEmbed channel={props.user.twitch} />
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+            >
+              Information
+            </Heading>
+            <Flex as="dl" flexWrap="wrap" w="100%">
+              <Text as="dt" w="50%" fontWeight="bold">
+                Hometown
+              </Text>
+              {Boolean(props.user.hometown) ? (
+                <Text as="dd" w="50%">
+                  {props.user.hometown}
+                </Text>
+              ) : (
+                <Text as="dd" w="50%" color="gray.400">
+                  Nothing set
+                </Text>
+              )}
+              <Text as="dt" w="50%" fontWeight="bold">
+                Major
+              </Text>
+              {Boolean(props.user.major) ? (
+                <Text as="dd" w="50%">
+                  {props.user.major}
+                </Text>
+              ) : (
+                <Text as="dd" w="50%" color="gray.400">
+                  Nothing set
+                </Text>
+              )}
+              <Text as="dt" w="50%" fontWeight="bold">
+                Minor
+              </Text>
+              {Boolean(props.user.minor) ? (
+                <Text as="dd" w="50%">
+                  {props.user.minor}
+                </Text>
+              ) : (
+                <Text as="dd" w="50%" color="gray.400">
+                  Nothing set
+                </Text>
+              )}
+            </Flex>
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+            >
+              Accounts
+            </Heading>
+            <AccountsList user={props.user} />
+          </Stack>
+          {Boolean(props.user.twitch) ? (
+            <Stack as="section" spacing={4}>
+              <TwitchEmbed channel={props.user.twitch} />
+            </Stack>
+          ) : null}
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+            >
+              Currently Playing
+            </Heading>
+            <GameList
+              games={props.user.currentlyPlaying}
+              emptyText={USER_EMPTY_CURRENTLY_PLAYING_TEXT}
+            />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+            >
+              Favorite Games
+            </Heading>
+            <GameList
+              games={props.user.favoriteGames}
+              emptyText={USER_EMPTY_FAVORITE_GAMES_TEXT}
+            />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+            >
+              Events Attending
+            </Heading>
+            <EventsList events={props.events} />
+          </Stack>
         </Stack>
-        ) : null}
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-          >
-            Currently Playing
-          </Heading>
-          <GameList
-            games={props.user.currentlyPlaying}
-            emptyText={USER_EMPTY_CURRENTLY_PLAYING_TEXT}
-          />
-        </Stack>
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-          >
-            Favorite Games
-          </Heading>
-          <GameList
-            games={props.user.favoriteGames}
-            emptyText={USER_EMPTY_FAVORITE_GAMES_TEXT}
-          />
-        </Stack>
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-          >
-            Events Attending
-          </Heading>
-          <EventsList events={props.events} />
-        </Stack>
-      </Stack>
-    </Article>
+      </Article>
     </SiteLayout>
   );
 };
@@ -297,13 +310,13 @@ const AccountsListItem = props => {
     return null;
   }
 
-  const handleCopy = (label) => {
+  const handleCopy = label => {
     onCopy();
     toast({
       title: "Copied!",
       description: `${label} value copied to clipboard.`,
       status: "info",
-      duration: 1500,
+      duration: 1500
     });
   };
 
@@ -311,7 +324,7 @@ const AccountsListItem = props => {
     if (hasCopied) {
       return faCheck;
     } else if (isHovered || isFocused) {
-      return faCopy
+      return faCopy;
     } else {
       return props.icon;
     }
@@ -340,7 +353,9 @@ const AccountsListItem = props => {
           <FontAwesomeIcon icon={icon} />
         </Box>
         <Box pl={4} textAlign="left">
-          <Text fontSize="sm" fontWeight="normal" color="gray.600">{hasCopied ? "Copied!" : props.label}</Text>
+          <Text fontSize="sm" fontWeight="normal" color="gray.600">
+            {hasCopied ? "Copied!" : props.label}
+          </Text>
           <Text fontSize="sm" fontWeight="bold">
             {props.value}
           </Text>

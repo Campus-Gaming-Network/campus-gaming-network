@@ -13,8 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
-import safeJsonStringify from 'safe-json-stringify';
-import { getSchoolDetails, getSchoolEvents, getSchoolUsers } from 'src/api/school';
+import safeJsonStringify from "safe-json-stringify";
+import {
+  getSchoolDetails,
+  getSchoolEvents,
+  getSchoolUsers
+} from "src/api/school";
 
 // Constants
 import {
@@ -34,8 +38,12 @@ import SchoolLogo from "src/components/SchoolLogo";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async (context) => {
-  const [schoolResponse, usersResponse, eventsResponse] = await Promise.all([getSchoolDetails(context.params.id), getSchoolUsers(context.params.id), getSchoolEvents(context.params.id)]);
+export const getServerSideProps = async context => {
+  const [schoolResponse, usersResponse, eventsResponse] = await Promise.all([
+    getSchoolDetails(context.params.id),
+    getSchoolUsers(context.params.id),
+    getSchoolEvents(context.params.id)
+  ]);
   const { school } = schoolResponse;
   const { users } = usersResponse;
   const { events } = eventsResponse;
@@ -47,154 +55,165 @@ export const getServerSideProps = async (context) => {
   const data = { school, users, events };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // School
 
-const School = (props) => {
+const School = props => {
   return (
     <SiteLayout title={props.school.formattedName}>
       <Box bg="gray.100" h="150px" />
-    <Article>
-    <Flex align="center" justify="center">
-      <Box  mt={{ base: -50, sm: -100, md: -150}}>
-        <SchoolLogo
-            rounded="full"
-            bg="white"
-            shadow="sm"
-            borderWidth={2}
-            schoolId={props.school.id}
-            schoolName={props.school.formattedName}
-            h={40}
-            w={40}
-            htmlHeight={40}
-            htmlWidth={40}
-            fallback={
-              <Flex
-                rounded="full"
-                bg="white"
-                shadow="sm"
-                borderWidth={2}
-                alignItems="center"
-                justifyContent="center"
-                color="gray.600"
-                h={40}
-                w={40}
-              >
-                <FontAwesomeIcon icon={faSchool} size="4x" />
-              </Flex>
-            }
-          />
+      <Article>
+        <Flex align="center" justify="center">
+          <Box mt={{ base: -50, sm: -100, md: -150 }}>
+            <SchoolLogo
+              rounded="full"
+              bg="white"
+              shadow="sm"
+              borderWidth={2}
+              schoolId={props.school.id}
+              schoolName={props.school.formattedName}
+              h={40}
+              w={40}
+              htmlHeight={40}
+              htmlWidth={40}
+              fallback={
+                <Flex
+                  rounded="full"
+                  bg="white"
+                  shadow="sm"
+                  borderWidth={2}
+                  alignItems="center"
+                  justifyContent="center"
+                  color="gray.600"
+                  h={40}
+                  w={40}
+                >
+                  <FontAwesomeIcon icon={faSchool} size="4x" />
+                </Flex>
+              }
+            />
           </Box>
         </Flex>
-      <Stack spacing={10}>
-        <Box as="header" display="flex" alignItems="center" px={{ base: 4, md: 0 }} pt={8} textAlign="center">
-          <Box>
-            <Heading
-              as="h2"
-              fontSize="5xl"
-              fontWeight="bold"
-              pb={2}
-              display="flex"
-              alignItems="center"
-            >
-              {props.school.formattedName}
-            </Heading>
+        <Stack spacing={10}>
+          <Box
+            as="header"
+            display="flex"
+            alignItems="center"
+            px={{ base: 4, md: 0 }}
+            pt={8}
+            textAlign="center"
+          >
+            <Box>
+              <Heading
+                as="h2"
+                fontSize="5xl"
+                fontWeight="bold"
+                pb={2}
+                display="flex"
+                alignItems="center"
+              >
+                {props.school.formattedName}
+              </Heading>
+            </Box>
           </Box>
-        </Box>
-        <Box as="section" pt={4}>
-          <VisuallyHidden as="h2">Description</VisuallyHidden>
-          <Text>{props.school.description}</Text>
-        </Box>
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-            px={{ base: 4, md: 0 }}
-          >
-            Information
-          </Heading>
-          <Flex as="dl" flexWrap="wrap" w="100%" px={{ base: 4, md: 0 }}>
-            <Text as="dt" w="50%" fontWeight="bold">
-              Contact Email
-            </Text>
-            {Boolean(props.school.contactEmail) ? (
-              <Text as="dd" w="50%">
-                <OutsideLink href={`mailto:${props.school.contactEmail}`}>
-                  {props.school.contactEmail}
-                </OutsideLink>
+          <Box as="section" pt={4}>
+            <VisuallyHidden as="h2">Description</VisuallyHidden>
+            <Text>{props.school.description}</Text>
+          </Box>
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+              px={{ base: 4, md: 0 }}
+            >
+              Information
+            </Heading>
+            <Flex as="dl" flexWrap="wrap" w="100%" px={{ base: 4, md: 0 }}>
+              <Text as="dt" w="50%" fontWeight="bold">
+                Contact Email
               </Text>
-            ) : (
-              <Text as="dd" w="50%" color="gray.400">
-                Nothing set
-              </Text>
-            )}
-            <Text as="dt" w="50%" fontWeight="bold">
-              Website
-            </Text>
-            {props.school.website && props.school.website !== EMPTY_SCHOOL_WEBSITE ? (
-              <Text as="dd" w="50%">
-                {props.school.isValidWebsiteUrl ? (
-                  <OutsideLink d="inline-block" href={`//${props.school.website}`}>
-                    {props.school.website}
+              {Boolean(props.school.contactEmail) ? (
+                <Text as="dd" w="50%">
+                  <OutsideLink href={`mailto:${props.school.contactEmail}`}>
+                    {props.school.contactEmail}
                   </OutsideLink>
-                ) : (
-                  <Text>{props.school.website}</Text>
-                )}
+                </Text>
+              ) : (
+                <Text as="dd" w="50%" color="gray.400">
+                  Nothing set
+                </Text>
+              )}
+              <Text as="dt" w="50%" fontWeight="bold">
+                Website
               </Text>
-            ) : (
-              <Text as="dd" w="50%" color="gray.400">
-                Nothing set
+              {props.school.website &&
+              props.school.website !== EMPTY_SCHOOL_WEBSITE ? (
+                <Text as="dd" w="50%">
+                  {props.school.isValidWebsiteUrl ? (
+                    <OutsideLink
+                      d="inline-block"
+                      href={`//${props.school.website}`}
+                    >
+                      {props.school.website}
+                    </OutsideLink>
+                  ) : (
+                    <Text>{props.school.website}</Text>
+                  )}
+                </Text>
+              ) : (
+                <Text as="dd" w="50%" color="gray.400">
+                  Nothing set
+                </Text>
+              )}
+              <Text as="dt" w="50%" fontWeight="bold">
+                Address
               </Text>
-            )}
-            <Text as="dt" w="50%" fontWeight="bold">
-              Address
-            </Text>
-            {Boolean(props.school.address) ? (
-              <Text as="dd" w="50%">
-                <OutsideLink
-                  d="inline-block"
-                  href={props.school.googleMapsAddressLink}
-                >
-                  {props.school.formattedAddress}
-                </OutsideLink>
-              </Text>
-            ) : (
-              <Text as="dd" w="50%" color="gray.400">
-                Nothing set
-              </Text>
-            )}
-          </Flex>
+              {Boolean(props.school.address) ? (
+                <Text as="dd" w="50%">
+                  <OutsideLink
+                    d="inline-block"
+                    href={props.school.googleMapsAddressLink}
+                  >
+                    {props.school.formattedAddress}
+                  </OutsideLink>
+                </Text>
+              ) : (
+                <Text as="dd" w="50%" color="gray.400">
+                  Nothing set
+                </Text>
+              )}
+            </Flex>
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+              px={{ base: 4, md: 0 }}
+            >
+              Upcoming Events
+            </Heading>
+            <EventsList events={props.events} />
+          </Stack>
+          <Stack as="section" spacing={4}>
+            <Heading
+              as="h3"
+              fontSize="sm"
+              textTransform="uppercase"
+              color="gray.500"
+              px={{ base: 4, md: 0 }}
+            >
+              Members
+            </Heading>
+            <UsersList users={props.users} />
+          </Stack>
         </Stack>
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-            px={{ base: 4, md: 0 }}
-          >
-            Upcoming Events
-          </Heading>
-          <EventsList events={props.events} />
-        </Stack>
-        <Stack as="section" spacing={4}>
-          <Heading
-            as="h3"
-            fontSize="sm"
-            textTransform="uppercase"
-            color="gray.500"
-            px={{ base: 4, md: 0 }}
-          >
-            Members
-          </Heading>
-          <UsersList users={props.users} />
-        </Stack>
-      </Stack>
-    </Article>
+      </Article>
     </SiteLayout>
   );
 };
@@ -202,7 +221,7 @@ const School = (props) => {
 ////////////////////////////////////////////////////////////////////////////////
 // EventsList
 
-const EventsList = (props) => {
+const EventsList = props => {
   // const dispatch = useAppDispatch();
   // const [page] = React.useState(0);
   // const [events, isLoadingEvents] = useFetchSchoolEvents(
@@ -231,7 +250,7 @@ const EventsList = (props) => {
 ////////////////////////////////////////////////////////////////////////////////
 // UsersList
 
-const UsersList = (props) => {
+const UsersList = props => {
   // const dispatch = useAppDispatch();
   // const [page, setPage] = React.useState(0);
   // const [users, isLoadingUsers] = useFetchSchoolUsers(
@@ -334,7 +353,12 @@ const UsersListItem = props => {
         p={4}
         height="calc(100% - 1rem)"
       >
-        <Avatar name={props.fullName} title={props.fullName} src={props.gravatarUrl} size="md" />
+        <Avatar
+          name={props.fullName}
+          title={props.fullName}
+          src={props.gravatarUrl}
+          size="md"
+        />
         <Link
           href={`/user/${props.id}`}
           color="brand.500"

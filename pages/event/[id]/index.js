@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
   faGlobe,
-  faSchool,
+  faSchool
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -18,7 +18,7 @@ import {
   Flex,
   Avatar
 } from "@chakra-ui/react";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import safeJsonStringify from "safe-json-stringify";
 import nookies from "nookies";
 import firebaseAdmin from "src/firebaseAdmin";
@@ -42,16 +42,21 @@ import GameCover from "src/components/GameCover";
 import { useAuth } from "src/providers/auth";
 
 // API
-import { getEventDetails, getEventUsers } from 'src/api/event';
+import { getEventDetails, getEventUsers } from "src/api/event";
 import { getUserEventResponse } from "src/api/user";
 
-const RSVPDialog = dynamic(() => import('src/components/dialogs/RSVPDialog'), { ssr: false });
+const RSVPDialog = dynamic(() => import("src/components/dialogs/RSVPDialog"), {
+  ssr: false
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async (context) => {
-  const [eventResponse, usersResponse] = await Promise.all([getEventDetails(context.params.id), getEventUsers(context.params.id),]);
+export const getServerSideProps = async context => {
+  const [eventResponse, usersResponse] = await Promise.all([
+    getEventDetails(context.params.id),
+    getEventUsers(context.params.id)
+  ]);
   const { event } = eventResponse;
   const { users } = usersResponse;
 
@@ -65,22 +70,28 @@ export const getServerSideProps = async (context) => {
     eventResponse: null,
     isEventCreator: false,
     hasResponded: false,
-    canChangeEventResponse: false,
+    canChangeEventResponse: false
   };
 
   try {
     const cookies = nookies.get(context);
-    const token = Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
-      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-      : null;
-      const authStatus = Boolean(token) && Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
+    const token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    const authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
     const isEventCreator = event.creator.id === token.uid;
-    const { eventResponse } = await getUserEventResponse(context.params.id, token.uid);
-    const canChangeEventResponse = (
+    const { eventResponse } = await getUserEventResponse(
+      context.params.id,
+      token.uid
+    );
+    const canChangeEventResponse =
       authStatus === AUTH_STATUS.AUTHENTICATED &&
       !isEventCreator &&
-      !event.hasEnded
-    );
+      !event.hasEnded;
 
     data.isEventCreator = isEventCreator;
     data.eventResponse = eventResponse;
@@ -91,7 +102,7 @@ export const getServerSideProps = async (context) => {
   }
 
   return { props: JSON.parse(safeJsonStringify(data)) };
-}
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Event
@@ -109,7 +120,10 @@ const Event = props => {
   };
 
   return (
-    <SiteLayout title={props.event.meta.title} description={props.event.meta.description}>
+    <SiteLayout
+      title={props.event.meta.title}
+      description={props.event.meta.description}
+    >
       <Article>
         <Stack spacing={10}>
           {props.isEventCreator ? (
@@ -165,7 +179,9 @@ const Event = props => {
               <GameCover
                 name={Boolean(props.event.game) ? props.event.game.name : null}
                 url={
-                  Boolean(props.event.game) && Boolean(props.event.game.cover) ? props.event.game.cover.url : null
+                  Boolean(props.event.game) && Boolean(props.event.game.cover)
+                    ? props.event.game.cover.url
+                    : null
                 }
                 h={10}
                 w={10}
@@ -304,7 +320,8 @@ const Event = props => {
             >
               Event Details
             </Heading>
-            {Boolean(props.event.description) && props.event.description.trim().length > 0 ? (
+            {Boolean(props.event.description) &&
+            props.event.description.trim().length > 0 ? (
               <Text>{props.event.description}</Text>
             ) : (
               <Text color="gray.400">No event description provided</Text>
@@ -343,7 +360,9 @@ const Event = props => {
 // UsersList
 
 const UsersList = props => {
-  const hasUsers = React.useMemo(() => { return Boolean(props.users) && props.users.length > 0; }, [props.users]);
+  const hasUsers = React.useMemo(() => {
+    return Boolean(props.users) && props.users.length > 0;
+  }, [props.users]);
 
   if (hasUsers) {
     return (
@@ -389,7 +408,12 @@ const UsersListItem = props => {
         p={4}
         height="calc(100% - 1rem)"
       >
-        <Avatar name={props.fullName} title={props.fullName} src={props.gravatarUrl} size="md" />
+        <Avatar
+          name={props.fullName}
+          title={props.fullName}
+          src={props.gravatarUrl}
+          size="md"
+        />
         <Link
           href={`/user/${props.id}`}
           color="brand.500"

@@ -32,10 +32,14 @@ export const getServerSideProps = async context => {
 
   try {
     const cookies = nookies.get(context);
-    token = Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
-      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-      : null;
-    const authStatus = Boolean(token) && Boolean(token.uid) ? AUTH_STATUS.AUTHENTICATED : AUTH_STATUS.UNAUTHENTICATED;
+    token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    const authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return { notFound: true };
@@ -162,37 +166,36 @@ const EditEvent = props => {
       eventData.placeId = formState.placeId;
     }
 
-      firebase
-        .firestore()
-        .collection(COLLECTIONS.EVENTS)
-        .doc(props.id)
-        .update(eventData)
-        .then(() => {
-          toast({
-            title: "Event updated.",
-            description:
-              "Your event has been updated. You will be redirected...",
-            status: "success",
-            isClosable: true
-          });
-          setTimeout(() => {
-            router.push(`/event/${props.id}`);
-          }, 2000);
-        })
-        .catch(error => {
-          setIsSubmitting(false);
-          toast({
-            title: "An error occurred.",
-            description: error.message,
-            status: "error",
-            isClosable: true
-          });
+    firebase
+      .firestore()
+      .collection(COLLECTIONS.EVENTS)
+      .doc(props.id)
+      .update(eventData)
+      .then(() => {
+        toast({
+          title: "Event updated.",
+          description: "Your event has been updated. You will be redirected...",
+          status: "success",
+          isClosable: true
         });
+        setTimeout(() => {
+          router.push(`/event/${props.id}`);
+        }, 2000);
+      })
+      .catch(error => {
+        setIsSubmitting(false);
+        toast({
+          title: "An error occurred.",
+          description: error.message,
+          status: "error",
+          isClosable: true
+        });
+      });
   };
 
   return (
     <EventForm
-    state="edit"
+      state="edit"
       event={props.event}
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
