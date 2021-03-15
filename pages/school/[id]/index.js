@@ -72,6 +72,7 @@ const School = props => {
               bg="white"
               shadow="sm"
               borderWidth={2}
+              borderStyle="solid"
               schoolId={props.school.id}
               schoolName={props.school.formattedName}
               h={40}
