@@ -140,7 +140,7 @@ const Event = props => {
               justifyContent="center"
             >
               <Link
-                href={`/event/${props.id}/edit`}
+                href={`/event/${props.event.id}/edit`}
                 fontWeight="bold"
                 width="100%"
                 borderRadius="md"
