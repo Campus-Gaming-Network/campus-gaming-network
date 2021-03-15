@@ -23,7 +23,7 @@ const TwitchEmbed = ({
   theme = "dark",
   time = "",
   video = "",
-  width = 854,
+  width = "100%",
   ...rest
 }) => {
   const scriptStatus = useScript(TWITCH_EMBED_SCRIPT_URL);

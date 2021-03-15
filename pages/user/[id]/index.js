@@ -402,11 +402,11 @@ const GameListItem = React.memo(props => {
 ////////////////////////////////////////////////////////////////////////////////
 // EventsList
 
-const EventsList = ({ events }) => {
+const EventsList = (props) => {
   // const [events, isLoadingEvents] = useFetchUserEvents(props.id);
   const hasEvents = React.useMemo(
-    () => events && events.length && events.length > 0,
-    [events]
+    () => Boolean(props.events) && props.events.length && props.events.length > 0,
+    [props.events]
   );
 
   // if (isLoadingEvents) {
@@ -431,7 +431,7 @@ const EventsList = ({ events }) => {
   if (hasEvents) {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {events.map(event => (
+        {props.events.map(event => (
           <EventListItem key={event.id} {...event} />
         ))}
       </List>
