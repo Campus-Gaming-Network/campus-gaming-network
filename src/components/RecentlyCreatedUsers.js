@@ -23,7 +23,10 @@ const RecentlyCreatedUsers = props => {
         <React.Fragment>
           <List d="flex" flexWrap="wrap" m={-2}>
             {props.users.map(user => (
-              <ListItem w={{ base: "50%", sm: "33.3333%", md: "20%" }}>
+              <ListItem
+                key={user.id}
+                w={{ base: "50%", sm: "33.3333%", md: "20%" }}
+              >
                 <Box
                   shadow="sm"
                   borderWidth={1}

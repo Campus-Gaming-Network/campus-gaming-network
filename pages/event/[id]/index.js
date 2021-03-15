@@ -53,14 +53,15 @@ const RSVPDialog = dynamic(() => import("src/components/dialogs/RSVPDialog"), {
 // getServerSideProps
 
 export const getServerSideProps = async context => {
-  const [eventResponse, usersResponse] = await Promise.all([
+  const [eventDetailsResponse, usersResponse] = await Promise.all([
     getEventDetails(context.params.id),
     getEventUsers(context.params.id)
   ]);
-  const { event } = eventResponse;
+  const { event } = eventDetailsResponse;
   const { users } = usersResponse;
 
   if (!Boolean(event)) {
+    console.log('no event')
     return { notFound: true };
   }
 
@@ -73,6 +74,9 @@ export const getServerSideProps = async context => {
     canChangeEventResponse: false
   };
 
+  let isEventCreator = false;
+  let canChangeEventResponse = false;
+
   try {
     const cookies = nookies.get(context);
     const token =
@@ -83,19 +87,21 @@ export const getServerSideProps = async context => {
       Boolean(token) && Boolean(token.uid)
         ? AUTH_STATUS.AUTHENTICATED
         : AUTH_STATUS.UNAUTHENTICATED;
-    const isEventCreator = event.creator.id === token.uid;
-    const { eventResponse } = await getUserEventResponse(
-      context.params.id,
-      token.uid
-    );
-    const canChangeEventResponse =
-      authStatus === AUTH_STATUS.AUTHENTICATED &&
-      !isEventCreator &&
-      !event.hasEnded;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      const { eventResponse } = await getUserEventResponse(
+        context.params.id,
+        token.uid
+      );
+
+      data.eventResponse = eventResponse;
+      data.hasResponded = Boolean(eventResponse);
+
+      isEventCreator = event.creator.id === token.uid;
+      canChangeEventResponse = !isEventCreator && !event.hasEnded;
+    }
 
     data.isEventCreator = isEventCreator;
-    data.eventResponse = eventResponse;
-    data.hasResponded = Boolean(eventResponse);
     data.canChangeEventResponse = canChangeEventResponse;
   } catch (error) {
     return { notFound: true };
