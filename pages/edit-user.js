@@ -352,10 +352,13 @@ const EditUser = props => {
     }
 
     const data = {
+      createdAt: props.user.createdAt,
+      updatedAt: props.user.updatedAt,
       id: authUser.uid,
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
       status: formState.status,
+      gravatar: props.user.gravatar,
       hometown: formState.hometown.trim(),
       birthdate: birthdate,
       major: formState.major.trim(),

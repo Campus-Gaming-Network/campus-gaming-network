@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, Flex, Stack } from "@chakra-ui/react";
+import { Box, Text, Flex, Stack, Badge } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
 import startCase from "lodash.startcase";
@@ -47,7 +47,6 @@ const EventListItem = props => {
                   fontSize="sm"
                   textTransform="uppercase"
                   fontWeight="bold"
-                  lineHeight="none"
                   isTruncated
                 >
                   Event ended
@@ -59,7 +58,6 @@ const EventListItem = props => {
                   fontSize="sm"
                   textTransform="uppercase"
                   fontWeight="bold"
-                  lineHeight="none"
                   isTruncated
                 >
                   Happening now
@@ -68,12 +66,11 @@ const EventListItem = props => {
                 <Text
                   d="inline"
                   as="time"
-                  color="blue.400"
+                  color="blue.500"
                   fontWeight="bold"
                   dateTime={props.event.startDateTime.locale}
                   title={props.event.startDateTime.locale}
                   fontSize="sm"
-                  lineHeight="none"
                   isTruncated
                 >
                   {startCase(props.event.startDateTime.relative)}
@@ -107,7 +104,6 @@ const EventListItem = props => {
               fontWeight={900}
               fontSize="2xl"
               isTruncated
-              lineHeight="none"
               title={props.event.name}
               noOfLines={3}
             >
@@ -115,10 +111,10 @@ const EventListItem = props => {
             </Link>
             <Link
               href={`/school/${props.school.id}`}
-              color="brand.500"
+              color="gray.400"
+              fontWeight={600}
               fontSize="sm"
               isTruncated
-              lineHeight="none"
               title={props.school.formattedName}
             >
               {props.school.formattedName}
@@ -126,9 +122,9 @@ const EventListItem = props => {
           </Stack>
           <Flex justifyContent="space-between" alignItems="center">
             {props.event.isOnlineEvent ? (
-              <Text fontSize="xs" color="gray.400" fontWeight={600} isTruncated>
+              <Badge fontSize="xs" color="gray.500" isTruncated>
                 Online event
-              </Text>
+              </Badge>
             ) : null}
             {Boolean(props.event.responses) &&
             props.event.responses.yes &&

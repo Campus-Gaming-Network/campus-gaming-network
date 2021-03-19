@@ -92,7 +92,7 @@ export const getUserEventResponse = async (eventId, userId) => {
       .get();
 
     if (!eventResponseSnapshot.empty) {
-      const [doc] = snapshot.docs;
+      const [doc] = eventResponseSnapshot.docs;
 
       eventResponse = {
         ...{

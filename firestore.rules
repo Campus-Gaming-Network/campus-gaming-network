@@ -201,14 +201,17 @@ service cloud.firestore {
       allow write, update, create, delete: if false;
     }
 
+    match /reports/{reportId} {
+      allow read, write, create, update, delete: if false;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Shared Functions
 
       function hasValidUserSchool() {
         return (
-          'id' in incomingData().school.keys()) &&
-          exists(/databases/$(database)/documents/schools/$(incomingData().school.id)
+          'id' in incomingData().school.keys() &&
+          exists(/databases/$(database)/documents/schools/$(incomingData().school.id))
         );
       }
 

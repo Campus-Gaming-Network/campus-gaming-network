@@ -50,7 +50,7 @@ const RSVPDialog = props => {
             status: "success",
             isClosable: true
           });
-          props.setRefreshEventResponse(!props.refreshEventResponse);
+          window.location.reload();
         })
         .catch(error => {
           props.onClose();
@@ -77,7 +77,7 @@ const RSVPDialog = props => {
             status: "success",
             isClosable: true
           });
-          props.setRefreshEventResponse(!props.refreshEventResponse);
+          window.location.reload();
         })
         .catch(error => {
           props.onClose();
@@ -105,17 +105,15 @@ const RSVPDialog = props => {
       .firestore()
       .collection(COLLECTIONS.SCHOOLS)
       .doc(props.event.school.id);
-    // TODO
-    const user = {};
 
     const data = {
       response,
       user: {
         id: userDocRef.id,
         ref: userDocRef,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        gravatar: user.gravatar
+        firstName: props.user.firstName,
+        lastName: props.user.lastName,
+        gravatar: props.user.gravatar
       },
       event: {
         id: eventDocRef.id,
@@ -140,7 +138,7 @@ const RSVPDialog = props => {
     return data;
   };
 
-  if (hasResponded && props.eventResponse.response === EVENT_RESPONSES.NO) {
+  if (!hasResponded || (hasResponded && props.eventResponse.response === EVENT_RESPONSES.NO)) {
     return (
       <AlertDialog
         isOpen={props.isOpen}

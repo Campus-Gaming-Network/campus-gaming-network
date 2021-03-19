@@ -43,7 +43,7 @@ import { useAuth } from "src/providers/auth";
 
 // API
 import { getEventDetails, getEventUsers } from "src/api/event";
-import { getUserEventResponse } from "src/api/user";
+import { getUserDetails, getUserEventResponse } from "src/api/user";
 
 const RSVPDialog = dynamic(() => import("src/components/dialogs/RSVPDialog"), {
   ssr: false
@@ -89,11 +89,11 @@ export const getServerSideProps = async context => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-      const { eventResponse } = await getUserEventResponse(
-        context.params.id,
-        token.uid
-      );
+      const [userResponse, userEventResponse] = await Promise.all([getUserDetails(token.uid), getUserEventResponse(context.params.id, token.uid)]);
+      const { user } = userResponse;
+      const { eventResponse } = userEventResponse;
 
+      data.user = user;
       data.eventResponse = eventResponse;
       data.hasResponded = Boolean(eventResponse);
 
@@ -115,7 +115,6 @@ export const getServerSideProps = async context => {
 
 const Event = props => {
   const { authUser } = useAuth();
-  const [refreshEventResponse, setRefreshEventResponse] = React.useState(false);
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
 
   const openRSVPDialog = () => {
@@ -349,13 +348,12 @@ const Event = props => {
 
       {props.canChangeEventResponse ? (
         <RSVPDialog
+          user={props.user}
           authUser={authUser}
           event={props.event}
           eventResponse={props.eventResponse}
           isOpen={isRSVPAlertOpen}
           onClose={closeRSVPDialog}
-          refreshEventResponse={refreshEventResponse}
-          setRefreshEventResponse={setRefreshEventResponse}
         />
       ) : null}
     </SiteLayout>
