@@ -3,20 +3,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
   faGlobe,
-  faSchool
+  faSchool,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import {
   Stack,
   Box,
-  Button,
   Heading,
   Text,
-  Alert,
   List,
   ListItem,
   Flex,
-  Avatar
+  Avatar,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import safeJsonStringify from "safe-json-stringify";
@@ -26,7 +24,7 @@ import firebaseAdmin from "src/firebaseAdmin";
 // Constants
 import {
   EVENT_EMPTY_LOCATION_TEXT,
-  EVENT_EMPTY_USERS_TEXT
+  EVENT_EMPTY_USERS_TEXT,
 } from "src/constants/event";
 import { COOKIES } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
@@ -46,22 +44,28 @@ import { getEventDetails, getEventUsers } from "src/api/event";
 import { getUserDetails, getUserEventResponse } from "src/api/user";
 
 const RSVPDialog = dynamic(() => import("src/components/dialogs/RSVPDialog"), {
-  ssr: false
+  ssr: false,
 });
+const EventResponseAlert = dynamic(() =>
+  import("src/components/EventResponseAlert")
+);
+const EditEventLink = dynamic(() => import("src/components/EditEventLink"));
+const EventResponseAttendButton = dynamic(() =>
+  import("src/components/EventResponseAttendButton")
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   const [eventDetailsResponse, usersResponse] = await Promise.all([
     getEventDetails(context.params.id),
-    getEventUsers(context.params.id)
+    getEventUsers(context.params.id),
   ]);
   const { event } = eventDetailsResponse;
   const { users } = usersResponse;
 
   if (!Boolean(event)) {
-    console.log('no event')
     return { notFound: true };
   }
 
@@ -71,7 +75,7 @@ export const getServerSideProps = async context => {
     eventResponse: null,
     isEventCreator: false,
     hasResponded: false,
-    canChangeEventResponse: false
+    canChangeEventResponse: false,
   };
 
   let isEventCreator = false;
@@ -89,7 +93,10 @@ export const getServerSideProps = async context => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-      const [userResponse, userEventResponse] = await Promise.all([getUserDetails(token.uid), getUserEventResponse(context.params.id, token.uid)]);
+      const [userResponse, userEventResponse] = await Promise.all([
+        getUserDetails(token.uid),
+        getUserEventResponse(context.params.id, token.uid),
+      ]);
       const { user } = userResponse;
       const { eventResponse } = userEventResponse;
 
@@ -113,7 +120,7 @@ export const getServerSideProps = async context => {
 ////////////////////////////////////////////////////////////////////////////////
 // Event
 
-const Event = props => {
+const Event = (props) => {
   const { authUser } = useAuth();
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
 
@@ -129,25 +136,7 @@ const Event = props => {
       <Article>
         <Stack spacing={10}>
           {props.isEventCreator ? (
-            <Box
-              mb={10}
-              textAlign="center"
-              display="flex"
-              justifyContent="center"
-            >
-              <Link
-                href={`/event/${props.event.id}/edit`}
-                fontWeight="bold"
-                width="100%"
-                borderRadius="md"
-                bg="gray.100"
-                _focus={{ bg: "gray.200", boxShadow: "outline" }}
-                _hover={{ bg: "gray.200" }}
-                p={8}
-              >
-                Edit Event
-              </Link>
-            </Box>
+            <EditEventLink eventId={props.event.id} />
           ) : null}
           <Flex alignItems="center">
             <Box pr={2}>
@@ -283,33 +272,9 @@ const Event = props => {
           {props.canChangeEventResponse ? (
             <Stack as="section" spacing={4}>
               {props.hasResponded && props.eventResponse.response === "YES" ? (
-                <Alert
-                  status="success"
-                  variant="subtle"
-                  flexDirection="column"
-                  justifyContent="center"
-                  textAlign="center"
-                  height="100px"
-                  rounded="lg"
-                >
-                  <Stack>
-                    <Text fontWeight="bold" fontSize="2xl" color="green.500">
-                      You’re going!
-                    </Text>
-                    <Button
-                      onClick={openRSVPDialog}
-                      variant="link"
-                      color="green.500"
-                      display="inline"
-                    >
-                      Cancel your RSVP
-                    </Button>
-                  </Stack>
-                </Alert>
+                <EventResponseAlert onClick={openRSVPDialog} />
               ) : (
-                <Button onClick={openRSVPDialog} colorScheme="brand" w="200px">
-                  Attend Event
-                </Button>
+                <EventResponseAttendButton onClick={openRSVPDialog} />
               )}
             </Stack>
           ) : null}
@@ -360,7 +325,7 @@ const Event = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // UsersList
 
-const UsersList = props => {
+const UsersList = (props) => {
   const hasUsers = React.useMemo(() => {
     return Boolean(props.users) && props.users.length > 0;
   }, [props.users]);
@@ -369,7 +334,7 @@ const UsersList = props => {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {props.users.map(user => (
+          {props.users.map((user) => (
             <UsersListItem
               key={user.id}
               id={user.id}
@@ -392,7 +357,7 @@ const UsersList = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // UsersListItem
 
-const UsersListItem = props => {
+const UsersListItem = (props) => {
   return (
     <ListItem w={{ base: "33%", md: "20%" }}>
       <Box
