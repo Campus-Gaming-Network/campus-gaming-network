@@ -46,7 +46,7 @@ import {
 } from "src/constants/user";
 import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "src/constants/dateTime";
 import { COLLECTIONS } from "src/constants/firebase";
-import { ACCOUNTS, COOKIES } from "src/constants/other";
+import { ACCOUNTS, COOKIES, PRODUCTION_URL } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
@@ -412,7 +412,7 @@ const EditUser = props => {
 
   if (authStatus !== "finished") {
     return (
-      <SiteLayout title="Edit User">
+      <SiteLayout meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}>
         <FormSilhouette />
       </SiteLayout>
     );
@@ -423,7 +423,7 @@ const EditUser = props => {
   }
 
   return (
-    <SiteLayout title="Edit User">
+    <SiteLayout meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}>
       <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

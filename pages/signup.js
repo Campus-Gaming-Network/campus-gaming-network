@@ -28,7 +28,7 @@ import nookies from "nookies";
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
 import { COLLECTIONS } from "src/constants/firebase";
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES } from "src/constants/other";
+import { COOKIES, PRODUCTION_URL } from "src/constants/other";
 
 // Utilities
 import { createGravatarHash } from "src/utilities/user";
@@ -185,7 +185,7 @@ const Signup = () => {
   };
 
   return (
-    <SiteLayout title="Sign Up">
+    <SiteLayout meta={{ title: "Sign Up", og: { url: `${PRODUCTION_URL}/signup` } }}>
       <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

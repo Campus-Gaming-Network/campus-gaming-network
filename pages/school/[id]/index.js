@@ -62,7 +62,7 @@ export const getServerSideProps = async context => {
 
 const School = props => {
   return (
-    <SiteLayout title={props.school.formattedName}>
+    <SiteLayout meta={props.school.meta}>
       <Box bg="gray.100" h="150px" />
       <Article>
         <Flex align="center" justify="center">

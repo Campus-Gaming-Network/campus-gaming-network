@@ -1,19 +1,26 @@
 ////////////////////////////////////////////////////////////////////////////////
 // School Utilities
 
-import { googleMapsLink, isValidUrl } from "src/utilities/other";
+// Libraries
 import startCase from "lodash.startcase";
+
+// Utilities
+import { googleMapsLink, isValidUrl } from "src/utilities/other";
+
+// Constants
+import { PRODUCTION_URL } from "src/constants/other";
 
 export const mapSchool = school => {
   if (!Boolean(school)) {
     return undefined;
   }
 
+  const formattedName = Boolean(school.name) ? startCase(school.name.toLowerCase()) : undefined
+  const url = `${PRODUCTION_URL}/school/${school.id}`;
+
   return {
     ...school,
-    formattedName: school.name
-      ? startCase(school.name.toLowerCase())
-      : undefined,
+    formattedName: formattedName,
     formattedAddress: Boolean(school.address)
       ? startCase(school.address.toLowerCase())
       : undefined,
@@ -23,7 +30,13 @@ export const mapSchool = school => {
     googleMapsAddressLink:
       Boolean(school.address) && Boolean(school.city) && Boolean(school.state)
         ? googleMapsLink(`${school.address} ${school.city}, ${school.state}`)
-        : undefined
+        : undefined,
+      meta: {
+        title: formattedName,
+        og: {
+          url
+        }
+      },
   };
 };
 

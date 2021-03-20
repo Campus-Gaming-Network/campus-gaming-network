@@ -8,12 +8,15 @@ import Card from "src/components/Card";
 import PageHeading from "src/components/PageHeading";
 import SiteLayout from "src/components/SiteLayout";
 
+// Constants
+import { PRODUCTION_URL } from "src/constants/other";
+
 ////////////////////////////////////////////////////////////////////////////////
 // About
 
 const About = () => {
   return (
-    <SiteLayout title="About">
+    <SiteLayout meta={{ title: "About", og: { url: `${PRODUCTION_URL}/about` } }}>
       <Article>
         <PageHeading>About Campus Gaming Network</PageHeading>
         <Card>

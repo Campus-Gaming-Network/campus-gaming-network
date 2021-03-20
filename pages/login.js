@@ -36,7 +36,7 @@ import Link from "src/components/Link";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES } from "src/constants/other";
+import { COOKIES, PRODUCTION_URL } from "src/constants/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -118,7 +118,7 @@ const Login = () => {
   };
 
   return (
-    <SiteLayout title="Login">
+    <SiteLayout meta={{ title: "Login", og: { url: `${PRODUCTION_URL}/login` } }}>
       <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

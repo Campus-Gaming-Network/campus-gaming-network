@@ -25,7 +25,7 @@ import safeJsonStringify from "safe-json-stringify";
 import { SCHOOL_ACCOUNTS } from "src/constants/school";
 import { DROPZONE_STYLES } from "src/constants/styles";
 import { COLLECTIONS } from "src/constants/firebase";
-import { ACCOUNTS, COOKIES } from "src/constants/other";
+import { ACCOUNTS, COOKIES, PRODUCTION_URL } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
@@ -219,7 +219,7 @@ const EditSchool = props => {
   }
 
   return (
-    <SiteLayout title={`Edit ${props.school.formattedName}`}>
+    <SiteLayout meta={{ title: `Edit ${props.school.formattedName}`, og: { url: `${PRODUCTION_URL}/school/${props.school.id}/edit` } }}>
       <Article>
         <Stack as="form" spacing={32} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">

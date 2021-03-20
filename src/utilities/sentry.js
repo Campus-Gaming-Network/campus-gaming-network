@@ -11,7 +11,7 @@ export const isProdSentry = () => {
     Boolean(window.location) &&
     Boolean(window.location.href)
   ) {
-    return window.location.href === PRODUCTION_URL;
+    return window.location.href === `${PRODUCTION_URL}/`;
   }
   return false;
 };

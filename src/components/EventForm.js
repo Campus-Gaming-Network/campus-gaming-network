@@ -43,7 +43,9 @@ import TimeSelect from "src/components/TimeSelect";
 // Constants
 import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
 import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";
+import { PRODUCTION_URL } from "src/constants/other";
 
+// Providers
 import { useAuth } from "src/providers/auth";
 
 const DeleteEventDialog = dynamic(
@@ -183,9 +185,17 @@ const EventForm = props => {
     setHasPrefilledForm(true);
   };
 
+  const url = React.useMemo(() => {
+    if (props.state === "edit") {
+        return `${PRODUCTION_URL}/event/${props.event.id}/edit`;
+    } else {
+        return `${PRODUCTION_URL}/create-event`;
+    }
+  }, [props.state, props.event]);
+
   if (authStatus !== "finished") {
     return (
-      <SiteLayout title={pageTitle}>
+      <SiteLayout meta={{ title: pageTitle, og: { url } }}>
         <FormSilhouette />
       </SiteLayout>
     );
@@ -196,7 +206,7 @@ const EventForm = props => {
   }
 
   return (
-    <SiteLayout title={pageTitle}>
+    <SiteLayout meta={{ title: pageTitle, og: { url } }}>
       <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

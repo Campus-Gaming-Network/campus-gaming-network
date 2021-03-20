@@ -11,12 +11,15 @@ import PageHeading from "src/components/PageHeading";
 import OutsideLink from "src/components/OutsideLink";
 import SiteLayout from "src/components/SiteLayout";
 
+// Constants
+import { PRODUCTION_URL } from "src/constants/other";
+
 ////////////////////////////////////////////////////////////////////////////////
 // FrequentlyAskedQuestions
 
 const FrequentlyAskedQuestions = () => {
   return (
-    <SiteLayout title="Frequently Asked Questions">
+    <SiteLayout meta={{ title: "Frequently Asked Questions", og: { url: `${PRODUCTION_URL}/frequently-asked-questions` } }}>
       <Article>
         <PageHeading>Frequently Asked Questions</PageHeading>
         <Card>

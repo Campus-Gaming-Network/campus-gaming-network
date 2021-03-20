@@ -13,7 +13,6 @@ import {
   Avatar,
   Flex,
   VisuallyHidden,
-  Image,
   Button,
   useClipboard,
   useToast
@@ -81,7 +80,7 @@ const User = props => {
   );
 
   return (
-    <SiteLayout title={props.user.fullName}>
+    <SiteLayout meta={props.user.meta}>
       <Article>
         {isAuthenticatedUser ? (
           <Box

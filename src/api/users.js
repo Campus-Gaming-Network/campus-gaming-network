@@ -11,7 +11,7 @@ export const getRecentlyCreatedUsers = async () => {
       .firestore()
       .collection("users")
       .orderBy("createdAt", "desc")
-      .limit(25)
+      .limit(50)
       .get();
 
     if (!recentlyCreatedUsersSnapshot.empty) {
@@ -23,7 +23,6 @@ export const getRecentlyCreatedUsers = async () => {
 
     return { users };
   } catch (error) {
-    console.log(error);
     return { users, error };
   }
 };

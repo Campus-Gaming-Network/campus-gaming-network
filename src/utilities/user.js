@@ -6,7 +6,7 @@ import capitalize from "lodash.capitalize";
 import md5 from "md5";
 
 // Constants
-import { GRAVATAR, ACCOUNTS } from "src/constants/other";
+import { GRAVATAR, ACCOUNTS, PRODUCTION_URL } from "src/constants/other";
 
 // Utilities
 import { mapSchool } from "src/utilities/school";
@@ -39,18 +39,25 @@ export const mapUser = user => {
     return undefined;
   }
 
+  const fullName = `${user.firstName} ${user.lastName}`.trim();
+  const url = `${PRODUCTION_URL}/user/${user.id}`;
+
   return {
     ...user,
     birthdate: buildDateTime(user.birthdate),
     school: mapSchool(user.school),
-    fullName: `${user.firstName} ${user.lastName}`.trim(),
+    fullName: fullName,
     hasAccounts: userHasAccounts(user),
-    hasFavoriteGames: Boolean(user.favoriteGames && user.favoriteGames.length),
-    hasCurrentlyPlaying: Boolean(
-      user.currentlyPlaying && user.currentlyPlaying.length
-    ),
+    hasFavoriteGames: Boolean(user.favoriteGames) && user.favoriteGames.length,
+    hasCurrentlyPlaying: Boolean(user.currentlyPlaying) && user.currentlyPlaying.length,
     displayStatus: getUserDisplayStatus(user.status),
-    gravatarUrl: createGravatarRequestUrl(user.gravatar)
+    gravatarUrl: createGravatarRequestUrl(user.gravatar),
+    meta: {
+      title: fullName,
+      og: {
+        url
+      }
+    },
   };
 };
 

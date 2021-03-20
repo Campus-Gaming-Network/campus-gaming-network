@@ -1,7 +1,6 @@
 // Libraries
 import React from "react";
 import {
-  Box,
   Alert,
   AlertIcon,
   Button,
@@ -16,8 +15,6 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
-// import firebaseAdmin from "src/firebaseAdmin";
-// import nookies from "nookies";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -27,8 +24,7 @@ import { validatePasswordReset } from "src/utilities/validation";
 import firebase from "src/firebase";
 
 // Constants
-// import { AUTH_STATUS } from "src/constants/auth";
-// import { COOKIES } from "src/constants/other";
+import { PRODUCTION_URL } from "src/constants/other";
 
 // Components
 import Article from "src/components/Article";
@@ -109,7 +105,7 @@ const PasswordReset = props => {
   };
 
   return (
-    <SiteLayout title="Password Reset">
+    <SiteLayout meta={{ title: "Password Reset", og: { url: `${PRODUCTION_URL}/password-reset` } }}>
       <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

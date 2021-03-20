@@ -1,7 +1,6 @@
 // Libraries
 import React from "react";
 import {
-  Box,
   Alert,
   AlertIcon,
   Button,
@@ -36,7 +35,7 @@ import firebase from "src/firebase";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES } from "src/constants/other";
+import { COOKIES, PRODUCTION_URL } from "src/constants/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -119,7 +118,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <SiteLayout title="Forgot Password">
+    <SiteLayout meta={{ title: "Forgot Password", og: { url: `${PRODUCTION_URL}/forgot-password` } }}>
       <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">

@@ -14,6 +14,9 @@ import firebase from "src/firebase";
 import Article from "src/components/Article";
 import SiteLayout from "src/components/SiteLayout";
 
+// Constants
+import { PRODUCTION_URL } from "src/constants/other";
+
 ////////////////////////////////////////////////////////////////////////////////
 // VerifyEmail
 
@@ -42,7 +45,7 @@ const VerifyEmail = props => {
   }
 
   return (
-    <SiteLayout title="Verify Email" hideNav hideFooter>
+    <SiteLayout meta={{ title: "Verify Email", og: { url: `${PRODUCTION_URL}/verify-email` } }} hideNav hideFooter>
       <Article>
         <Alert
           status={verifyState}

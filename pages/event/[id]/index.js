@@ -125,10 +125,7 @@ const Event = props => {
   };
 
   return (
-    <SiteLayout
-      title={props.event.meta.title}
-      description={props.event.meta.description}
-    >
+    <SiteLayout meta={props.event.meta}>
       <Article>
         <Stack spacing={10}>
           {props.isEventCreator ? (
