@@ -3,6 +3,8 @@ import { mapSchool } from "src/utilities/school";
 import { mapEvent } from "src/utilities/event";
 import { mapUser } from "src/utilities/user";
 
+// const geofire = require('geofire-common');
+
 export const getSchoolDetails = async id => {
   let school = null;
 
@@ -103,3 +105,45 @@ export const getSchoolUsers = async (id, limit = 25, page = 0) => {
     return { users, error };
   }
 };
+
+// export const getNearbySchools = async (latitude, longitude, radiusInM = 50 * 1000) => {
+//   const center = [latitude, longitude];
+//   // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+//   // a separate query for each pair. There can be up to 9 pairs of bounds
+//   // depending on overlap, but in most cases there are 4.
+//   const bounds = geofire.geohashQueryBounds(center, radiusInM);
+//   const promises = [];
+//   for (const b of bounds) {
+//     const q = db.collection('schools')
+//       .orderBy('geohash')
+//       .startAt(b[0])
+//       .endAt(b[1]);
+
+//     promises.push(q.get());
+//   }
+
+//   // Collect all the query results together into a single list
+//   Promise.all(promises).then((snapshots) => {
+//     const matchingDocs = [];
+
+//     for (const snap of snapshots) {
+//       for (const doc of snap.docs) {
+//         const location = doc.get('location');
+//         const lat = doc.get('lat');
+//         const lng = doc.get('lng');
+
+//         // We have to filter out a few false positives due to GeoHash
+//         // accuracy, but most will match
+//         const distanceInKm = geofire.distanceBetween([lat, lng], center);
+//         const distanceInM = distanceInKm * 1000;
+//         if (distanceInM <= radiusInM) {
+//           matchingDocs.push(doc);
+//         }
+//       }
+//     }
+
+//     return matchingDocs;
+//   }).then((matchingDocs) => {
+//     console.log(matchingDocs);
+//   });
+// };
