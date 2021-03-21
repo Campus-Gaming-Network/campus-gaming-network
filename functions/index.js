@@ -4,6 +4,7 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 const db = admin.firestore();
+const auth = admin.auth();
 
 const rp = require("request-promise");
 const { DateTime } = require("luxon");
@@ -288,17 +289,13 @@ exports.searchUsers = functions.https.onCall(async (data, context) => {
       const isEmailQuery = isValidEmail(query);
 
       if (isEmailQuery) {
-        authRecord = await admin.auth().getUserByEmail(query);
+        authRecord = await auth.getUserByEmail(query);
       } else {
-        authRecord = await admin.auth().getUser(query);
+        authRecord = await auth.getUser(query);
       }
 
       if (authRecord && authRecord.uid) {
-        record = await admin
-          .firestore()
-          .collection("users")
-          .doc(authRecord.uid)
-          .get();
+        record = await db.collection("users").doc(authRecord.uid).get();
       }
     }
 
@@ -310,6 +307,53 @@ exports.searchUsers = functions.https.onCall(async (data, context) => {
     console.log(error);
     return error;
   }
+});
+
+exports.reportEntity = functions.https.onCall(async (data, context) => {
+  if (!Boolean(context.auth.uid)) {
+    return;
+  }
+
+  const reportData = {
+    reportingUser: {
+        ref: db.collection("users").doc(context.auth.uid),
+        id: context.auth.uid,
+    },
+    reason: data.reason,
+    metadata: data.metadata,
+    entity: data.entity,
+    reportedEntity: null,
+    error: {
+      message: null,
+      trace: null,
+    },
+  };
+
+  let reportedEntityDoc;
+
+  try {
+    reportedEntityDoc = await db.collection(data.entity.type).doc(data.entity.id).get();
+  } catch (error) {
+    reportData.error.message = "Error getting entity."
+    reportData.error.trace = error;
+  }
+
+  if (reportedEntityDoc.exists) {
+    reportData.reportedEntity = {
+      ref: reportedEntityDoc.ref,
+      ...reportedEntityDoc.data(),
+    };
+  } else {
+    reportData.error.message = "Entity does not exist."
+  }
+
+  try {
+    await db.collection("reports").add(reportData);
+  } catch (error) {
+    return error;
+  }
+
+  return;
 });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +378,8 @@ exports.trackCreatedUpdated = functions.firestore
       "users",
       "schools",
       "game-queries",
-      "configs"
+      "configs",
+      "reports"
     ];
 
     if (setCols.indexOf(context.params.colId) === -1) {
@@ -892,7 +937,7 @@ exports.userOnDelete = functions.firestore
         console.log(err);
       });
 
-    return admin.auth().deleteUser(context.params.userId);
+    return auth.deleteUser(context.params.userId);
   });
 
 exports.eventResponsesOnDelete = functions.firestore
