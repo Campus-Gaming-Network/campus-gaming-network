@@ -11,7 +11,7 @@ import {
   MAX_FAVORITE_GAME_LIST,
   MAX_CURRENTLY_PLAYING_LIST,
   MAX_BIO_LENGTH,
-  DELETE_USER_VERIFICATION_TEXT
+  DELETE_USER_VERIFICATION_TEXT,
 } from "src/constants/user";
 import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";
 import {
@@ -22,11 +22,11 @@ import {
   TIMEZONES,
   DASHED_DATE,
   DASHED_DATE_TIME,
-  DEFAULT_TIME_INCREMENT
+  DEFAULT_TIME_INCREMENT,
 } from "src/constants/dateTime";
 import {
   MIN_PASSWORD_LENGTH,
-  MAX_DEFAULT_STRING_LENGTH
+  MAX_DEFAULT_STRING_LENGTH,
 } from "src/constants/other";
 
 // Utilities
@@ -39,7 +39,7 @@ const validate = (validator, form, errors) => {
   const validation = {
     form,
     errors,
-    isValid: isValid(errors)
+    isValid: isValid(errors),
   };
 
   if (process.env.NODE_ENV !== "production") {
@@ -48,9 +48,9 @@ const validate = (validator, form, errors) => {
 
   return validation;
 };
-const isValid = errors => isEmpty(errors);
-const isValidEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const isNilOrEmpty = value => {
+const isValid = (errors) => isEmpty(errors);
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isNilOrEmpty = (value) => {
   if (isDate(value)) {
     return false;
   }
@@ -64,8 +64,8 @@ const isNilOrEmpty = value => {
 const isWithin = (value, options) => options.includes(value);
 const isGreaterThan = (value, other) => value > other;
 const isLessThan = (value, other) => value < other;
-const isValidDateTime = dateTime => dateTime.isValid;
-const isBeforeToday = dateTime => dateTime < DateTime.local();
+const isValidDateTime = (dateTime) => dateTime.isValid;
+const isBeforeToday = (dateTime) => dateTime < DateTime.local();
 const isSameOrAfterEndDateTime = (startDateTime, endDateTime) =>
   startDateTime >= endDateTime;
 const isSameOrBeforeStartDateTime = (endDateTime, startDateTime) =>
@@ -74,13 +74,13 @@ const isSameOrBeforeStartDateTime = (endDateTime, startDateTime) =>
 ////////////////////////////////////////////////////////////////////////////////
 // Local Constants
 
-const STATUS_VALUES = STUDENT_STATUS_OPTIONS.map(option => option.value);
-const TIMEZONE_VALUES = TIMEZONES.map(option => option.value);
+const STATUS_VALUES = STUDENT_STATUS_OPTIONS.map((option) => option.value);
+const TIMEZONE_VALUES = TIMEZONES.map((option) => option.value);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Sign Up
 
-export const validateSignUp = form => {
+export const validateSignUp = (form) => {
   const { firstName, lastName, email, password, school, status } = form;
   const errors = {};
 
@@ -119,7 +119,7 @@ export const validateSignUp = form => {
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Log In
 
-export const validateLogIn = form => {
+export const validateLogIn = (form) => {
   const { email, password } = form;
   const errors = {};
 
@@ -139,7 +139,7 @@ export const validateLogIn = form => {
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Forgot Password
 
-export const validateForgotPassword = form => {
+export const validateForgotPassword = (form) => {
   const { email } = form;
   const errors = {};
 
@@ -155,7 +155,7 @@ export const validateForgotPassword = form => {
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Password Reset
 
-export const validatePasswordReset = form => {
+export const validatePasswordReset = (form) => {
   const { password } = form;
   const errors = {};
 
@@ -171,7 +171,7 @@ export const validatePasswordReset = form => {
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Create Event
 
-export const validateCreateEvent = form => {
+export const validateCreateEvent = (form) => {
   const {
     name,
     description,
@@ -185,7 +185,7 @@ export const validateCreateEvent = form => {
     endMonth,
     endDay,
     endYear,
-    endTime
+    endTime,
   } = form;
   const errors = {};
 
@@ -349,7 +349,7 @@ export const validateCreateEvent = form => {
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Edit User
 
-export const validateEditUser = form => {
+export const validateEditUser = (form) => {
   const {
     firstName,
     lastName,
@@ -374,7 +374,7 @@ export const validateEditUser = form => {
     xbox,
     psn,
     currentlyPlaying,
-    favoriteGames
+    favoriteGames,
   } = form;
   const errors = {};
 
@@ -539,7 +539,7 @@ export const validateEditUser = form => {
 ////////////////////////////////////////////////////////////////////////////////
 // Validate Delete Account
 
-export const validateDeleteAccount = form => {
+export const validateDeleteAccount = (form) => {
   const { deleteConfirmation } = form;
   const errors = {};
 
@@ -550,4 +550,18 @@ export const validateDeleteAccount = form => {
   }
 
   return validate("validateDeleteAccount", form, errors);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Validate Report Entity
+
+export const validateReportEntity = (form) => {
+  const { reason } = form;
+  const errors = {};
+
+  if (isNilOrEmpty(reason)) {
+    errors.reason = "Reason is required.";
+  }
+
+  return validate("validateReportEntity", form, errors);
 };

@@ -19,7 +19,7 @@ const AuthContext = React.createContext({
   authStatus: "idle",
   authUser: null,
   user: null,
-  school: null
+  school: null,
 });
 
 export const AuthProvider = ({ children }) => {
@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = React.useState(null);
   const [user, setUser] = React.useState(null);
   const [school, setSchool] = React.useState(null);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   React.useEffect(() => {
     setAuthStatus("authenticating");
@@ -35,13 +36,14 @@ export const AuthProvider = ({ children }) => {
       window.nookies = nookies;
     }
 
-    return firebase.auth().onIdTokenChanged(async authUser => {
+    return firebase.auth().onIdTokenChanged(async (authUser) => {
       console.log(`token changed!`);
 
       if (!authUser) {
         console.log(`no token found...`);
 
         setAuthStatus("unauthenticated");
+        setIsAuthenticated(false);
         setAuthUser(null);
         setUser(null);
         setSchool(null);
@@ -60,6 +62,7 @@ export const AuthProvider = ({ children }) => {
 
       if (Boolean(authUser) && Boolean(authUser.uid)) {
         setAuthStatus("authenticated");
+        setIsAuthenticated(true);
         let userDoc;
 
         try {
@@ -113,7 +116,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authStatus, authUser, user, school }}>
+    <AuthContext.Provider
+      value={{ authStatus, authUser, user, school, isAuthenticated }}
+    >
       {children}
     </AuthContext.Provider>
   );

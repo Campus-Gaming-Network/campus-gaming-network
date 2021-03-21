@@ -28,10 +28,13 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Spacer
+  Spacer,
 } from "@chakra-ui/react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretRight,
+  faCaretLeft,
+  faEllipsisH,
+} from "@fortawesome/free-solid-svg-icons";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
@@ -42,7 +45,7 @@ import {
   STUDENT_STATUS_OPTIONS,
   MAX_BIO_LENGTH,
   MAX_FAVORITE_GAME_LIST,
-  MAX_CURRENTLY_PLAYING_LIST
+  MAX_CURRENTLY_PLAYING_LIST,
 } from "src/constants/user";
 import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "src/constants/dateTime";
 import { COLLECTIONS } from "src/constants/firebase";
@@ -71,7 +74,6 @@ import YearSelect from "src/components/YearSelect";
 import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
 import { useAuth } from "src/providers/auth";
-import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 
 const DeleteAccountDialog = dynamic(
   () => import("src/components/dialogs/DeleteAccountDialog"),
@@ -81,7 +83,7 @@ const DeleteAccountDialog = dynamic(
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   let cookies;
   let token;
   let authStatus;
@@ -114,7 +116,7 @@ export const getServerSideProps = async context => {
 
   const data = {
     user,
-    school
+    school,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -147,33 +149,33 @@ const initialFormState = {
   xbox: "",
   psn: "",
   favoriteGameSearch: "",
-  currentGameSearch: ""
+  currentGameSearch: "",
 };
 
 const formReducer = (state, { field, value }) => {
   return {
     ...state,
-    [field]: value
+    [field]: value,
   };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // EditUser
 
-const EditUser = props => {
+const EditUser = (props) => {
   const { authStatus, authUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [
     isDeletingAccountAlertOpen,
-    setDeletingAccountAlertIsOpen
+    setDeletingAccountAlertIsOpen,
   ] = React.useState(false);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
   );
   const toast = useToast();
-  const handleFieldChange = React.useCallback(e => {
+  const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
   const [favoriteGames, setFavoriteGames] = React.useState([]);
@@ -192,39 +194,39 @@ const EditUser = props => {
   const prefillForm = () => {
     formDispatch({
       field: "firstName",
-      value: props.user.firstName || initialFormState.firstName
+      value: props.user.firstName || initialFormState.firstName,
     });
     formDispatch({
       field: "lastName",
-      value: props.user.lastName || initialFormState.lastName
+      value: props.user.lastName || initialFormState.lastName,
     });
     formDispatch({
       field: "school",
-      value: props.user.school.id || initialFormState.school
+      value: props.user.school.id || initialFormState.school,
     });
     formDispatch({
       field: "status",
-      value: props.user.status || initialFormState.status
+      value: props.user.status || initialFormState.status,
     });
     formDispatch({
       field: "major",
-      value: props.user.major || initialFormState.major
+      value: props.user.major || initialFormState.major,
     });
     formDispatch({
       field: "minor",
-      value: props.user.minor || initialFormState.minor
+      value: props.user.minor || initialFormState.minor,
     });
     formDispatch({
       field: "bio",
-      value: props.user.bio || initialFormState.bio
+      value: props.user.bio || initialFormState.bio,
     });
     formDispatch({
       field: "timezone",
-      value: props.user.timezone || initialFormState.timezone
+      value: props.user.timezone || initialFormState.timezone,
     });
     formDispatch({
       field: "hometown",
-      value: props.user.hometown || initialFormState.hometown
+      value: props.user.hometown || initialFormState.hometown,
     });
 
     if (Boolean(props.user.birthdate)) {
@@ -244,66 +246,66 @@ const EditUser = props => {
 
     formDispatch({
       field: "website",
-      value: props.user.website || initialFormState.website
+      value: props.user.website || initialFormState.website,
     });
     formDispatch({
       field: "twitter",
-      value: props.user.twitter || initialFormState.twitter
+      value: props.user.twitter || initialFormState.twitter,
     });
     formDispatch({
       field: "twitch",
-      value: props.user.twitch || initialFormState.twitch
+      value: props.user.twitch || initialFormState.twitch,
     });
     formDispatch({
       field: "youtube",
-      value: props.user.youtube || initialFormState.youtube
+      value: props.user.youtube || initialFormState.youtube,
     });
     formDispatch({
       field: "skype",
-      value: props.user.skype || initialFormState.skype
+      value: props.user.skype || initialFormState.skype,
     });
     formDispatch({
       field: "discord",
-      value: props.user.discord || initialFormState.discord
+      value: props.user.discord || initialFormState.discord,
     });
     formDispatch({
       field: "battlenet",
-      value: props.user.battlenet || initialFormState.battlenet
+      value: props.user.battlenet || initialFormState.battlenet,
     });
     formDispatch({
       field: "steam",
-      value: props.user.steam || initialFormState.steam
+      value: props.user.steam || initialFormState.steam,
     });
     formDispatch({
       field: "xbox",
-      value: props.user.xbox || initialFormState.xbox
+      value: props.user.xbox || initialFormState.xbox,
     });
     formDispatch({
       field: "psn",
-      value: props.user.psn || initialFormState.psn
+      value: props.user.psn || initialFormState.psn,
     });
     setCurrentGames(props.user.currentlyPlaying || []);
     setFavoriteGames(props.user.favoriteGames || []);
     setHasPrefilledForm(true);
   };
 
-  const onSchoolSelect = school => {
+  const onSchoolSelect = (school) => {
     formDispatch({ field: "school", value: school.id || "" });
   };
 
-  const toggleFavoriteGame = game => {
+  const toggleFavoriteGame = (game) => {
     setFavoriteGames(xorBy(favoriteGames, [game], "id"));
   };
 
-  const toggleCurrentGame = game => {
+  const toggleCurrentGame = (game) => {
     setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
   };
 
-  const onFavoriteGameSelect = game => {
+  const onFavoriteGameSelect = (game) => {
     toggleFavoriteGame(game);
   };
 
-  const onCurrentlyPlayingGameSelect = game => {
+  const onCurrentlyPlayingGameSelect = (game) => {
     toggleCurrentGame(game);
   };
 
@@ -315,7 +317,7 @@ const EditUser = props => {
     setFavoriteGames(move(favoriteGames, from, to));
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsSubmitting(true);
@@ -323,7 +325,7 @@ const EditUser = props => {
     const { isValid, errors } = validateEditUser({
       ...formState,
       currentlyPlaying,
-      favoriteGames
+      favoriteGames,
     });
 
     setErrors(errors);
@@ -377,10 +379,10 @@ const EditUser = props => {
       psn: formState.psn.trim(),
       school: {
         ref: schoolDocRef,
-        id: schoolDocRef.id
+        id: schoolDocRef.id,
       },
       currentlyPlaying: currentlyPlaying || [],
-      favoriteGames: favoriteGames || []
+      favoriteGames: favoriteGames || [],
     };
 
     console.log({ data });
@@ -396,23 +398,28 @@ const EditUser = props => {
           title: "Profile updated.",
           description: "Your profile has been updated.",
           status: "success",
-          isClosable: true
+          isClosable: true,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setIsSubmitting(false);
         toast({
           title: "An error occurred.",
           description: error.message,
           status: "error",
-          isClosable: true
+          isClosable: true,
         });
       });
   };
 
   if (authStatus !== "finished") {
     return (
-      <SiteLayout meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}>
+      <SiteLayout
+        meta={{
+          title: "Edit User",
+          og: { url: `${PRODUCTION_URL}/edit-user` },
+        }}
+      >
         <FormSilhouette />
       </SiteLayout>
     );
@@ -423,7 +430,9 @@ const EditUser = props => {
   }
 
   return (
-    <SiteLayout meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}>
+    <SiteLayout
+      meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}
+    >
       <Article>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
@@ -441,18 +450,18 @@ const EditUser = props => {
             </PageHeading>
             <Spacer />
             <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                Options
-              </MenuButton>
+              <MenuButton
+                as={Button}
+                icon={<FontAwesomeIcon icon={faEllipsisH} />}
+                aria-label="Options"
+              />
               <MenuList fontSize="md">
                 <MenuItem
                   onClick={openDeleteAccountDialog}
                   fontWeight="bold"
                   color="red.500"
+                  aria-label="Options"
                 >
-                  <Box mr={2}>
-                    <FontAwesomeIcon icon={faTrashAlt} />
-                  </Box>
                   Delete account
                 </MenuItem>
               </MenuList>
@@ -547,7 +556,7 @@ const EditUser = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // DetailSection
 
-const DetailSection = React.memo(props => {
+const DetailSection = React.memo((props) => {
   const bioCharactersRemaining = React.useMemo(
     () => (props.bio ? MAX_BIO_LENGTH - props.bio.length : MAX_BIO_LENGTH),
     [props.bio]
@@ -754,7 +763,7 @@ const DetailSection = React.memo(props => {
             aria-describedby="timezone-helper-text"
           >
             <option value="">Select your timezone</option>
-            {TIMEZONES.map(status => (
+            {TIMEZONES.map((status) => (
               <option key={status.value} value={status.value}>
                 {status.name}
               </option>
@@ -802,7 +811,7 @@ const DetailSection = React.memo(props => {
 ////////////////////////////////////////////////////////////////////////////////
 // SchoolSection
 
-const SchoolSection = React.memo(props => {
+const SchoolSection = React.memo((props) => {
   return (
     <Card as="fieldset" p={0} mb={32}>
       <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
@@ -838,7 +847,7 @@ const SchoolSection = React.memo(props => {
             value={props.status}
             size="lg"
           >
-            {STUDENT_STATUS_OPTIONS.map(status => (
+            {STUDENT_STATUS_OPTIONS.map((status) => (
               <option key={status.value} value={status.value}>
                 {status.label}
               </option>
@@ -892,7 +901,7 @@ const SchoolSection = React.memo(props => {
 ////////////////////////////////////////////////////////////////////////////////
 // SocialAccountsSection
 
-const SocialAccountsSection = React.memo(props => {
+const SocialAccountsSection = React.memo((props) => {
   return (
     <Card as="fieldset" p={0} mb={32}>
       <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
@@ -902,7 +911,7 @@ const SocialAccountsSection = React.memo(props => {
         <Text color="gray.500">Other places where people can find you at.</Text>
       </Box>
       <Stack spacing={6} p={8}>
-        {Object.keys(ACCOUNTS).map(id => {
+        {Object.keys(ACCOUNTS).map((id) => {
           const account = ACCOUNTS[id];
 
           return (
@@ -945,7 +954,7 @@ const SocialAccountsSection = React.memo(props => {
 ////////////////////////////////////////////////////////////////////////////////
 // FavoriteGamesSection
 
-const FavoriteGamesSection = React.memo(props => {
+const FavoriteGamesSection = React.memo((props) => {
   return (
     <Card as="fieldset" p={0} mb={32}>
       <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
@@ -1020,8 +1029,9 @@ const FavoriteGamesSection = React.memo(props => {
                             </Button>
                           </Tooltip>
                           <Tooltip
-                            label={`Move ${nextGame.name} to spot #${index +
-                              1}`}
+                            label={`Move ${nextGame.name} to spot #${
+                              index + 1
+                            }`}
                           >
                             <Button
                               size="xs"
@@ -1072,7 +1082,7 @@ const FavoriteGamesSection = React.memo(props => {
 ////////////////////////////////////////////////////////////////////////////////
 // CurrentlyPlayingSection
 
-const CurrentlyPlayingSection = React.memo(props => {
+const CurrentlyPlayingSection = React.memo((props) => {
   return (
     <Card as="fieldset" p={0} mb={0}>
       <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
@@ -1146,8 +1156,9 @@ const CurrentlyPlayingSection = React.memo(props => {
                             </Button>
                           </Tooltip>
                           <Tooltip
-                            label={`Move ${nextGame.name} to spot #${index +
-                              1}`}
+                            label={`Move ${nextGame.name} to spot #${
+                              index + 1
+                            }`}
                           >
                             <Button
                               size="xs"

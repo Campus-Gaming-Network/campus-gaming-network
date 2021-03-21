@@ -1,9 +1,12 @@
+// Libraries
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
   faGlobe,
   faSchool,
+  faFlag,
+  faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -15,11 +18,15 @@ import {
   ListItem,
   Flex,
   Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import safeJsonStringify from "safe-json-stringify";
 import nookies from "nookies";
-import firebaseAdmin from "src/firebaseAdmin";
 
 // Constants
 import {
@@ -43,6 +50,16 @@ import { useAuth } from "src/providers/auth";
 import { getEventDetails, getEventUsers } from "src/api/event";
 import { getUserDetails, getUserEventResponse } from "src/api/user";
 
+// Other
+import firebaseAdmin from "src/firebaseAdmin";
+
+// Dynamic Components
+const ReportEntityDialog = dynamic(
+  () => import("src/components/dialogs/ReportEntityDialog"),
+  {
+    ssr: false,
+  }
+);
 const RSVPDialog = dynamic(() => import("src/components/dialogs/RSVPDialog"), {
   ssr: false,
 });
@@ -121,8 +138,20 @@ export const getServerSideProps = async (context) => {
 // Event
 
 const Event = (props) => {
-  const { authUser } = useAuth();
+  const { authUser, isAuthenticated } = useAuth();
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
+  const [
+    isReportingUserDialogOpen,
+    setReportingUserDialogIsOpen,
+  ] = React.useState(false);
+
+  const openReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(true);
+  };
+
+  const closeReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(false);
+  };
 
   const openRSVPDialog = () => {
     setIsRSVPAlertOpen(props.canChangeEventResponse);
@@ -138,7 +167,7 @@ const Event = (props) => {
           {props.isEventCreator ? (
             <EditEventLink eventId={props.event.id} />
           ) : null}
-          <Flex alignItems="center">
+          <Flex align="center" justify="space-between">
             <Box pr={2}>
               <Link
                 href={`/school/${props.event.school.id}`}
@@ -164,6 +193,26 @@ const Event = (props) => {
             >
               <FontAwesomeIcon icon={faSchool} size="2x" />
             </Flex>
+            {isAuthenticated ? (
+              <Box pl={4}>
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    size="sm"
+                    icon={<FontAwesomeIcon icon={faEllipsisH} />}
+                    aria-label="Options"
+                  />
+                  <MenuList fontSize="md">
+                    <MenuItem
+                      onClick={openReportEntityDialog}
+                      icon={<FontAwesomeIcon icon={faFlag} />}
+                    >
+                      Report event
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </Box>
+            ) : null}
           </Flex>
           <Stack as="section">
             <Flex align="center" pt={2}>
@@ -316,6 +365,18 @@ const Event = (props) => {
           eventResponse={props.eventResponse}
           isOpen={isRSVPAlertOpen}
           onClose={closeRSVPDialog}
+        />
+      ) : null}
+
+      {isAuthenticated ? (
+        <ReportEntityDialog
+          entity={{
+            type: "events",
+            id: props.event.id,
+          }}
+          pageProps={props}
+          isOpen={isReportingUserDialogOpen}
+          onClose={closeReportEntityDialog}
         />
       ) : null}
     </SiteLayout>

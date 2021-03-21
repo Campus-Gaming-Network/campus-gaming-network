@@ -8,12 +8,17 @@ export const FIREBASE_CONFIG = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 export const COLLECTIONS = {
   SCHOOLS: "schools",
   USERS: "users",
   EVENTS: "events",
   EVENT_RESPONSES: "event-responses",
-  GAME_QUERIES: "game-queries"
+  GAME_QUERIES: "game-queries",
+};
+export const CALLABLES = {
+  SEARCH_GAMES: "searchGames",
+  SEARCH_SCHOOLS: "searchSchools",
+  REPORT_ENTITY: "reportEntity",
 };

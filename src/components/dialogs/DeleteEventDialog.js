@@ -8,7 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
-  AlertDialogOverlay
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
@@ -18,7 +18,7 @@ import firebase from "src/firebase";
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 
-const DeleteEventDialog = props => {
+const DeleteEventDialog = (props) => {
   const router = useRouter();
   const toast = useToast();
   const cancelRef = React.useRef();
@@ -41,7 +41,7 @@ const DeleteEventDialog = props => {
         title: "Event deleted.",
         description: `Event ${props.event.name} has been deleted. You will be redirected...`,
         status: "success",
-        isClosable: true
+        isClosable: true,
       });
       setTimeout(() => {
         router.push("/");
@@ -54,7 +54,7 @@ const DeleteEventDialog = props => {
         title: "An error occurred.",
         description: error.message,
         status: "error",
-        isClosable: true
+        isClosable: true,
       });
     }
   };
@@ -67,9 +67,7 @@ const DeleteEventDialog = props => {
     >
       <AlertDialogOverlay />
       <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-          Delete Event
-        </AlertDialogHeader>
+        <AlertDialogHeader>Delete Event</AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to delete the event{" "}

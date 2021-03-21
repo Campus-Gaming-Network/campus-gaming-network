@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Flex, Text, Spinner } from "@chakra-ui/react";
 import {
@@ -5,25 +6,30 @@ import {
   ComboboxInput,
   ComboboxPopover,
   ComboboxList,
-  ComboboxOption
+  ComboboxOption,
 } from "@reach/combobox";
-import firebase from "src/firebase";
 import uniqBy from "lodash.uniqby";
 
 // Hooks
 import useDebounce from "src/hooks/useDebounce";
 
+// Constants
+import { CALLABLES } from "src/constants/firebase";
+
+// Other
+import firebase from "src/firebase";
+
 const CACHED_GAMES = {};
 
-const GameSearch = props => {
+const GameSearch = (props) => {
   const [searchTerm, setSearchTerm] = React.useState(props.gameName || "");
   const [isFetching, setIsFetching] = React.useState(false);
 
-  const handleChange = event => setSearchTerm(event.target.value);
+  const handleChange = (event) => setSearchTerm(event.target.value);
 
   const debouncedGameSearch = useDebounce(searchTerm, 250);
 
-  const useGameSearch = debouncedGameSearch => {
+  const useGameSearch = (debouncedGameSearch) => {
     const [games, setGames] = React.useState(null);
 
     React.useEffect(() => {
@@ -33,7 +39,7 @@ const GameSearch = props => {
         let isFresh = true;
         setIsFetching(true);
 
-        fetchGames(debouncedGameSearch).then(games => {
+        fetchGames(debouncedGameSearch).then((games) => {
           if (isFresh) {
             setGames(games);
             setIsFetching(false);
@@ -46,26 +52,28 @@ const GameSearch = props => {
     return games;
   };
 
-  const fetchGames = value => {
+  const fetchGames = (value) => {
     if (CACHED_GAMES[value]) {
       return Promise.resolve(CACHED_GAMES[value]);
     }
 
-    const searchGames = firebase.functions().httpsCallable("searchGames");
+    const searchGames = firebase
+      .functions()
+      .httpsCallable(CALLABLES.SEARCH_GAMES);
 
-    return searchGames({ query: value }).then(result => {
+    return searchGames({ query: value }).then((result) => {
       CACHED_GAMES[value] = result.data.games;
       return result.data.games;
     });
   };
 
-  const handleGameSelect = selectedGame => {
+  const handleGameSelect = (selectedGame) => {
     const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
     const _selectedGame = games.find(
-      game =>
+      (game) =>
         game.name.toLowerCase().trim() === selectedGame.toLowerCase().trim()
     ) || {
-      name: selectedGame
+      name: selectedGame,
     };
 
     props.onSelect(_selectedGame);
@@ -106,7 +114,7 @@ const GameSearch = props => {
         <ComboboxPopover>
           {gamesResults.length > 0 ? (
             <ComboboxList>
-              {gamesResults.map(game => {
+              {gamesResults.map((game) => {
                 return <ComboboxOption key={game.id} value={game.name} />;
               })}
             </ComboboxList>

@@ -2,7 +2,11 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faFlag,
+  faEllipsisH,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Stack,
   Box,
@@ -15,7 +19,12 @@ import {
   VisuallyHidden,
   Button,
   useClipboard,
-  useToast
+  useToast,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import { getUserDetails, getUserAttendingEvents } from "src/api/user";
@@ -26,7 +35,7 @@ import {
   USER_EMPTY_CURRENTLY_PLAYING_TEXT,
   USER_EMPTY_FAVORITE_GAMES_TEXT,
   USER_EMPTY_ACCOUNTS_TEXT,
-  USER_EMPTY_UPCOMING_EVENTS_TEXT
+  USER_EMPTY_UPCOMING_EVENTS_TEXT,
 } from "src/constants/user";
 import { ACCOUNTS } from "src/constants/other";
 
@@ -44,14 +53,21 @@ import { getSchoolDetails } from "src/api/school";
 // Providers
 import { useAuth } from "src/providers/auth";
 
+// Dynamic Components
 const TwitchEmbed = dynamic(() => import("src/components/TwitchEmbed"), {
-  ssr: false
+  ssr: false,
 });
+const ReportEntityDialog = dynamic(
+  () => import("src/components/dialogs/ReportEntityDialog"),
+  {
+    ssr: false,
+  }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   const { user } = await getUserDetails(context.params.id);
   const { events } = await getUserAttendingEvents(context.params.id);
 
@@ -63,7 +79,7 @@ export const getServerSideProps = async context => {
   const data = {
     user,
     school,
-    events
+    events,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -72,12 +88,24 @@ export const getServerSideProps = async context => {
 ////////////////////////////////////////////////////////////////////////////////
 // User
 
-const User = props => {
-  const { authUser } = useAuth();
+const User = (props) => {
+  const { authUser, isAuthenticated } = useAuth();
   const isAuthenticatedUser = React.useMemo(
     () => authUser && authUser.uid === props.user.id,
     [authUser, props.user]
   );
+  const [
+    isReportingUserDialogOpen,
+    setReportingUserDialogIsOpen,
+  ] = React.useState(false);
+
+  const openReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(true);
+  };
+
+  const closeReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(false);
+  };
 
   return (
     <SiteLayout meta={props.user.meta}>
@@ -103,7 +131,7 @@ const User = props => {
             </Link>
           </Box>
         ) : null}
-        <Box as="header" display="flex" alignItems="center">
+        <Flex as="header" align="center" justify="space-between">
           <Avatar
             name={props.user.fullName}
             title={props.user.fullName}
@@ -143,7 +171,27 @@ const User = props => {
               ) : null}
             </Heading>
           </Box>
-        </Box>
+          {isAuthenticated ? (
+            <Box>
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  size="sm"
+                  icon={<FontAwesomeIcon icon={faEllipsisH} />}
+                  aria-label="Options"
+                />
+                <MenuList fontSize="md">
+                  <MenuItem
+                    onClick={openReportEntityDialog}
+                    icon={<FontAwesomeIcon icon={faFlag} />}
+                  >
+                    Report user
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
+          ) : null}
+        </Flex>
         {/* <Image
         src="../profile_illustration_1st_edition_compressed.png"
         alt="Controller leaning on stack of books"
@@ -265,6 +313,18 @@ const User = props => {
           </Stack>
         </Stack>
       </Article>
+
+      {isAuthenticated ? (
+        <ReportEntityDialog
+          entity={{
+            type: "users",
+            id: props.user.id,
+          }}
+          pageProps={props}
+          isOpen={isReportingUserDialogOpen}
+          onClose={closeReportEntityDialog}
+        />
+      ) : null}
     </SiteLayout>
   );
 };
@@ -272,11 +332,11 @@ const User = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // AccountsList
 
-const AccountsList = props => {
+const AccountsList = (props) => {
   if (props.user && props.user.hasAccounts) {
     return (
       <List display="flex" flexWrap="wrap" width="100%" styleType="none">
-        {Object.keys(ACCOUNTS).map(key => {
+        {Object.keys(ACCOUNTS).map((key) => {
           const account = ACCOUNTS[key];
           const value = props.user[key];
 
@@ -299,7 +359,7 @@ const AccountsList = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // AccountsListItem
 
-const AccountsListItem = props => {
+const AccountsListItem = (props) => {
   const toast = useToast();
   const [isHovered, setIsHovered] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
@@ -309,13 +369,13 @@ const AccountsListItem = props => {
     return null;
   }
 
-  const handleCopy = label => {
+  const handleCopy = (label) => {
     onCopy();
     toast({
       title: "Copied!",
       description: `${label} value copied to clipboard.`,
       status: "info",
-      duration: 1500
+      duration: 1500,
     });
   };
 
@@ -367,14 +427,14 @@ const AccountsListItem = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // GameList
 
-const GameList = props => {
+const GameList = (props) => {
   if (!props.games || props.games.length === 0) {
     return <Text color="gray.400">{props.emptyText || "No games"}</Text>;
   }
 
   return (
     <List display="flex" flexWrap="wrap">
-      {props.games.map(game => (
+      {props.games.map((game) => (
         <GameListItem
           key={game.slug}
           name={game.name}
@@ -389,7 +449,7 @@ const GameList = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // GameListItem
 
-const GameListItem = React.memo(props => {
+const GameListItem = React.memo((props) => {
   return (
     <ListItem w="100px" mt={4} mr={4}>
       <GameCover name={props.name} url={props.url} />
@@ -404,7 +464,8 @@ const GameListItem = React.memo(props => {
 const EventsList = (props) => {
   // const [events, isLoadingEvents] = useFetchUserEvents(props.id);
   const hasEvents = React.useMemo(
-    () => Boolean(props.events) && props.events.length && props.events.length > 0,
+    () =>
+      Boolean(props.events) && props.events.length && props.events.length > 0,
     [props.events]
   );
 
@@ -430,7 +491,7 @@ const EventsList = (props) => {
   if (hasEvents) {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {props.events.map(event => (
+        {props.events.map((event) => (
           <EventListItem key={event.id} {...event} />
         ))}
       </List>

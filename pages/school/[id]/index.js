@@ -9,22 +9,34 @@ import {
   ListItem,
   Flex,
   Avatar,
-  VisuallyHidden
+  VisuallyHidden,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSchool,
+  faFlag,
+  faEllipsisH,
+} from "@fortawesome/free-solid-svg-icons";
 import safeJsonStringify from "safe-json-stringify";
+import dynamic from "next/dynamic";
+
+// API
 import {
   getSchoolDetails,
   getSchoolEvents,
-  getSchoolUsers
+  getSchoolUsers,
 } from "src/api/school";
 
 // Constants
 import {
   EMPTY_SCHOOL_WEBSITE,
   SCHOOL_EMPTY_USERS_TEXT,
-  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT
+  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT,
 } from "src/constants/school";
 
 // Components
@@ -35,14 +47,25 @@ import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 import SchoolLogo from "src/components/SchoolLogo";
 
+// Providers
+import { useAuth } from "src/providers/auth";
+
+// Dynamic Components
+const ReportEntityDialog = dynamic(
+  () => import("src/components/dialogs/ReportEntityDialog"),
+  {
+    ssr: false,
+  }
+);
+
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   const [schoolResponse, usersResponse, eventsResponse] = await Promise.all([
     getSchoolDetails(context.params.id),
     getSchoolUsers(context.params.id),
-    getSchoolEvents(context.params.id)
+    getSchoolEvents(context.params.id),
   ]);
   const { school } = schoolResponse;
   const { users } = usersResponse;
@@ -60,7 +83,21 @@ export const getServerSideProps = async context => {
 ////////////////////////////////////////////////////////////////////////////////
 // School
 
-const School = props => {
+const School = (props) => {
+  const { isAuthenticated } = useAuth();
+  const [
+    isReportingUserDialogOpen,
+    setReportingUserDialogIsOpen,
+  ] = React.useState(false);
+
+  const openReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(true);
+  };
+
+  const closeReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(false);
+  };
+
   return (
     <SiteLayout meta={props.school.meta}>
       <Box bg="gray.100" h="150px" />
@@ -98,27 +135,37 @@ const School = props => {
           </Box>
         </Flex>
         <Stack spacing={10}>
-          <Box
+          <Flex
             as="header"
-            display="flex"
-            alignItems="center"
+            align="center"
+            justify="space-between"
             px={{ base: 4, md: 0 }}
             pt={8}
-            textAlign="center"
           >
-            <Box>
-              <Heading
-                as="h2"
-                fontSize="5xl"
-                fontWeight="bold"
-                pb={2}
-                display="flex"
-                alignItems="center"
-              >
-                {props.school.formattedName}
-              </Heading>
-            </Box>
-          </Box>
+            <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
+              {props.school.formattedName}
+            </Heading>
+            {isAuthenticated ? (
+              <Box>
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    size="sm"
+                    icon={<FontAwesomeIcon icon={faEllipsisH} />}
+                    aria-label="Options"
+                  />
+                  <MenuList fontSize="md">
+                    <MenuItem
+                      onClick={openReportEntityDialog}
+                      icon={<FontAwesomeIcon icon={faFlag} />}
+                    >
+                      Report school
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </Box>
+            ) : null}
+          </Flex>
           <Box as="section" pt={4}>
             <VisuallyHidden as="h2">Description</VisuallyHidden>
             <Text>{props.school.description}</Text>
@@ -215,6 +262,18 @@ const School = props => {
           </Stack>
         </Stack>
       </Article>
+
+      {isAuthenticated ? (
+        <ReportEntityDialog
+          entity={{
+            type: "schools",
+            id: props.school.id,
+          }}
+          pageProps={props}
+          isOpen={isReportingUserDialogOpen}
+          onClose={closeReportEntityDialog}
+        />
+      ) : null}
     </SiteLayout>
   );
 };
@@ -222,7 +281,7 @@ const School = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // EventsList
 
-const EventsList = props => {
+const EventsList = (props) => {
   // const dispatch = useAppDispatch();
   // const [page] = React.useState(0);
   // const [events, isLoadingEvents] = useFetchSchoolEvents(
@@ -234,7 +293,7 @@ const EventsList = props => {
   if (Boolean(props.events) && props.events.length && props.events.length > 0) {
     return (
       <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {props.events.map(event => (
+        {props.events.map((event) => (
           <EventListItem key={event.id} event={event} school={event.school} />
         ))}
       </List>
@@ -251,7 +310,7 @@ const EventsList = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // UsersList
 
-const UsersList = props => {
+const UsersList = (props) => {
   // const dispatch = useAppDispatch();
   // const [page, setPage] = React.useState(0);
   // const [users, isLoadingUsers] = useFetchSchoolUsers(
@@ -286,7 +345,7 @@ const UsersList = props => {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {props.users.map(user => (
+          {props.users.map((user) => (
             <UsersListItem
               key={user.id}
               id={user.id}
@@ -336,7 +395,7 @@ const UsersList = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // UsersListItem
 
-const UsersListItem = props => {
+const UsersListItem = (props) => {
   return (
     <ListItem w={{ base: "33.3333%", md: "20%" }}>
       <Box

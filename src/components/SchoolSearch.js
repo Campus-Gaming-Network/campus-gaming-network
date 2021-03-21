@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import startCase from "lodash.startcase";
 import { Text, Spinner, Flex, Box } from "@chakra-ui/react";
@@ -9,38 +10,47 @@ import {
   ComboboxPopover,
   ComboboxList,
   ComboboxOption,
-  ComboboxOptionText
+  ComboboxOptionText,
 } from "@reach/combobox";
-import useDebounce from "src/hooks/useDebounce";
-import firebase from "src/firebase";
-import { mapSchool } from "src/utilities/school";
-import useLocalStorage from "src/hooks/useLocalStorage";
 import keyBy from "lodash.keyby";
 
+// Components
 import SchoolLogo from "src/components/SchoolLogo";
 
+// Hooks
+import useLocalStorage from "src/hooks/useLocalStorage";
+import useDebounce from "src/hooks/useDebounce";
+
+// Utilities
+import { mapSchool } from "src/utilities/school";
+
+// Constants
+import { CALLABLES } from "src/constants/firebase";
 import { LOCAL_STORAGE } from "src/constants/other";
+
+// Other
+import firebase from "src/firebase";
 
 let savedSearches = [];
 
-const SchoolSearch = props => {
+const SchoolSearch = (props) => {
   const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
     LOCAL_STORAGE.SCHOOLS,
     null
   );
   const [
     localStorageSchoolQueries,
-    setSchoolsQueryInLocalStorage
+    setSchoolsQueryInLocalStorage,
   ] = useLocalStorage(LOCAL_STORAGE.SCHOOLS_QUERY, null);
 
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
   const [isFetching, setIsFetching] = React.useState(false);
 
-  const handleChange = event => setSearchTerm(event.target.value);
+  const handleChange = (event) => setSearchTerm(event.target.value);
 
   const debouncedSchoolSearch = useDebounce(searchTerm, 250);
 
-  const useSchoolSearch = debouncedSchoolSearch => {
+  const useSchoolSearch = (debouncedSchoolSearch) => {
     const [schools, setSchools] = React.useState(null);
 
     React.useEffect(() => {
@@ -50,7 +60,7 @@ const SchoolSearch = props => {
         let isFresh = true;
         setIsFetching(true);
 
-        fetchSchools(debouncedSchoolSearch).then(schools => {
+        fetchSchools(debouncedSchoolSearch).then((schools) => {
           if (isFresh) {
             setSchools(schools);
             setIsFetching(false);
@@ -63,7 +73,7 @@ const SchoolSearch = props => {
     return schools;
   };
 
-  const fetchSchools = searchTerm => {
+  const fetchSchools = (searchTerm) => {
     const value = searchTerm ? searchTerm.trim().toLowerCase() : "";
     const cachedQueryResults = localStorageSchoolQueries
       ? localStorageSchoolQueries[value]
@@ -72,31 +82,33 @@ const SchoolSearch = props => {
     if (cachedQueryResults && cachedQueryResults.length > 0) {
       return Promise.resolve(
         Object.entries(localStorageSchools)
-          .filter(entry => cachedQueryResults.includes(entry[0]))
-          .map(entry => entry[1])
+          .filter((entry) => cachedQueryResults.includes(entry[0]))
+          .map((entry) => entry[1])
           .slice(0, 10)
       );
     }
 
-    const searchSchools = firebase.functions().httpsCallable("searchSchools");
+    const searchSchools = firebase
+      .functions()
+      .httpsCallable(CALLABLES.SEARCH_SCHOOLS);
 
-    return searchSchools({ query: value }).then(result => {
+    return searchSchools({ query: value }).then((result) => {
       if (
         result &&
         result.data &&
         result.data.hits &&
         result.data.hits.length > 0
       ) {
-        const mappedSchools = result.data.hits.map(hit => mapSchool(hit));
+        const mappedSchools = result.data.hits.map((hit) => mapSchool(hit));
         const schools = {
           ...localStorageSchools,
-          ...keyBy(mappedSchools, "objectID")
+          ...keyBy(mappedSchools, "objectID"),
         };
 
         setSchoolsInLocalStorage(schools);
         setSchoolsQueryInLocalStorage({
           ...localStorageSchoolQueries,
-          [value]: result.data.hits.map(hit => hit.objectID)
+          [value]: result.data.hits.map((hit) => hit.objectID),
         });
 
         return mappedSchools.slice(0, 10);
@@ -108,11 +120,11 @@ const SchoolSearch = props => {
 
   const results = useSchoolSearch(debouncedSchoolSearch);
 
-  const handleSchoolSelect = selectedSchool => {
+  const handleSchoolSelect = (selectedSchool) => {
     const [schoolName, location] = selectedSchool.split(" – ");
     const [city, state] = location.split(", ");
     const matchedSchool = results.find(
-      school =>
+      (school) =>
         startCase(school.name.toLowerCase()) ===
           startCase(schoolName.toLowerCase()) &&
         school.city.toLowerCase() === city.toLowerCase() &&
@@ -133,12 +145,12 @@ const SchoolSearch = props => {
       }
 
       savedSearches = savedSearches.filter(
-        school => school.id !== matchedSchool.id
+        (school) => school.id !== matchedSchool.id
       );
 
       savedSearches.unshift({
         ...matchedSchool,
-        savedSearch: true
+        savedSearch: true,
       });
     }
   };
@@ -179,7 +191,7 @@ const SchoolSearch = props => {
         <ComboboxPopover>
           {items.length > 0 ? (
             <ComboboxList>
-              {items.map(school => {
+              {items.map((school) => {
                 const value = `${startCase(
                   school.name.toLowerCase()
                 )} – ${startCase(school.city.toLowerCase())}, ${school.state}`;

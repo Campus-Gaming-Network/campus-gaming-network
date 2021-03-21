@@ -12,14 +12,14 @@ import {
   Avatar,
   Tooltip,
   Wrap,
-  WrapItem
+  WrapItem,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserCircle,
   faSignOutAlt,
-  faSchool
+  faSchool,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarAlt } from "@fortawesome/free-regular-svg-icons";
 import NavWrapper from "src/components/NavWrapper";
@@ -35,7 +35,7 @@ import firebase from "src/firebase";
 // Providers
 import { useAuth } from "src/providers/auth";
 
-const AuthenticatedNav = props => {
+const AuthenticatedNav = (props) => {
   const { authUser } = useAuth();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -51,7 +51,7 @@ const AuthenticatedNav = props => {
       .then(() => router.push("/"));
   };
 
-  const onSchoolSelect = selectedSchool => {
+  const onSchoolSelect = (selectedSchool) => {
     const id = selectedSchool.id || selectedSchool.objectID;
 
     if (selectedSchool && id) {
@@ -105,10 +105,10 @@ const AuthenticatedNav = props => {
             justifyContent="center"
             _focus={{
               bg: "gray.900",
-              boxShadow: "outline"
+              boxShadow: "outline",
             }}
             _hover={{
-              bg: "gray.900"
+              bg: "gray.900",
             }}
             px={2}
             rounded="md"
@@ -176,13 +176,11 @@ const AuthenticatedNav = props => {
               <Text lineHeight="1">School</Text>
             </MenuItem>
             <MenuDivider />
-            <MenuItem onClick={handleLogout}>
-              <Flex alignItems="center">
-                <Flex alignItems="center" color="gray.600" mr={2}>
-                  <FontAwesomeIcon icon={faSignOutAlt} />
-                </Flex>
-                <Text lineHeight="1">Log out</Text>
-              </Flex>
+            <MenuItem
+              onClick={handleLogout}
+              icon={<FontAwesomeIcon icon={faSignOutAlt} />}
+            >
+              <Text lineHeight="1">Log out</Text>
             </MenuItem>
           </MenuList>
         </Menu>

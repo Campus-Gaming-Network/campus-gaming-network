@@ -8,7 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
-  AlertDialogOverlay
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 
 // Other
@@ -21,17 +21,17 @@ import { COLLECTIONS } from "src/constants/firebase";
 // Providers
 import { useAuth } from "src/providers/auth";
 
-const RSVPDialog = props => {
+const RSVPDialog = (props) => {
   const { authUser } = useAuth();
   const toast = useToast();
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const hasResponded = React.useMemo(() => Boolean(props.eventResponse), [
-    props.eventResponse
+    props.eventResponse,
   ]);
 
-  const onAttendingAlertConfirm = async response => {
+  const onAttendingAlertConfirm = async (response) => {
     setIsSubmitting(true);
 
     const data = getResponseFormData(response);
@@ -48,18 +48,18 @@ const RSVPDialog = props => {
             title: "RSVP created.",
             description: "Your RSVP has been created.",
             status: "success",
-            isClosable: true
+            isClosable: true,
           });
           window.location.reload();
         })
-        .catch(error => {
+        .catch((error) => {
           props.onClose();
           setIsSubmitting(false);
           toast({
             title: "An error occurred.",
             description: error.message,
             status: "error",
-            isClosable: true
+            isClosable: true,
           });
         });
     } else {
@@ -75,24 +75,24 @@ const RSVPDialog = props => {
             title: "RSVP updated.",
             description: "Your RSVP has been updated.",
             status: "success",
-            isClosable: true
+            isClosable: true,
           });
           window.location.reload();
         })
-        .catch(error => {
+        .catch((error) => {
           props.onClose();
           setIsSubmitting(false);
           toast({
             title: "An error occurred.",
             description: error.message,
             status: "error",
-            isClosable: true
+            isClosable: true,
           });
         });
     }
   };
 
-  const getResponseFormData = response => {
+  const getResponseFormData = (response) => {
     const userDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.USERS)
@@ -113,7 +113,7 @@ const RSVPDialog = props => {
         ref: userDocRef,
         firstName: props.user.firstName,
         lastName: props.user.lastName,
-        gravatar: props.user.gravatar
+        gravatar: props.user.gravatar,
       },
       event: {
         id: eventDocRef.id,
@@ -125,20 +125,23 @@ const RSVPDialog = props => {
         isOnlineEvent: props.event.isOnlineEvent,
         responses: {
           yes: 1,
-          no: 0
-        }
+          no: 0,
+        },
       },
       school: {
         id: schoolDocRef.id,
         ref: schoolDocRef,
-        name: props.event.school.name
-      }
+        name: props.event.school.name,
+      },
     };
 
     return data;
   };
 
-  if (!hasResponded || (hasResponded && props.eventResponse.response === EVENT_RESPONSES.NO)) {
+  if (
+    !hasResponded ||
+    (hasResponded && props.eventResponse.response === EVENT_RESPONSES.NO)
+  ) {
     return (
       <AlertDialog
         isOpen={props.isOpen}
@@ -147,9 +150,7 @@ const RSVPDialog = props => {
       >
         <AlertDialogOverlay />
         <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            RSVP
-          </AlertDialogHeader>
+          <AlertDialogHeader>RSVP</AlertDialogHeader>
 
           <AlertDialogBody>
             Are you sure you want to RSVP for{" "}
@@ -194,9 +195,7 @@ const RSVPDialog = props => {
       >
         <AlertDialogOverlay />
         <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Cancel RSVP
-          </AlertDialogHeader>
+          <AlertDialogHeader>Cancel RSVP</AlertDialogHeader>
 
           <AlertDialogBody>
             Are you sure you want to cancel your RSVP for{" "}

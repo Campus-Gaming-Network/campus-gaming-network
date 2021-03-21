@@ -1,27 +1,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Other Utilities
 
+// Libraries
 import React from "react";
 
+// Constans
 import { GOOGLE_MAPS_QUERY_URL } from "src/constants/other";
 
-export const useFormFields = initialState => {
+export const useFormFields = (initialState) => {
   const [fields, setValues] = React.useState(initialState);
 
   return [
     fields,
-    event => {
+    (event) => {
       setValues({
         ...fields,
-        [event.target.id]: event.target.value
+        [event.target.id]: event.target.value,
       });
-    }
+    },
   ];
 };
 
 export const noop = () => {};
 
-export const isValidUrl = url =>
+export const isValidUrl = (url) =>
   Boolean(url) && (url.startsWith("http://") || url.startsWith("https://"));
 
 // Move an array element from one array index to another
@@ -44,10 +46,25 @@ export const move = (array, from, to) => {
   return newArray;
 };
 
-export const googleMapsLink = query => {
+export const googleMapsLink = (query) => {
   if (!query) {
     return undefined;
   }
 
   return `${GOOGLE_MAPS_QUERY_URL}${encodeURIComponent(query)}`;
+};
+
+// NOTE: This method mutates the original object, otherwise the `delete` would not work.
+export const sanitizePrivateProperties = (obj = {}) => {
+  for (const prop in obj) {
+    // Assuming a private property starts with an underscore.
+    // In the case of Firebase ref properties, they do.
+    if (prop.startsWith("_")) {
+      delete obj[prop];
+    } else if (typeof obj[prop] === "object") {
+      sanitizePrivateProperties(obj[prop]);
+    }
+  }
+
+  return obj;
 };

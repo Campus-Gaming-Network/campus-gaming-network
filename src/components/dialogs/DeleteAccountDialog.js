@@ -12,7 +12,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
-  AlertDialogOverlay
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
@@ -25,14 +25,20 @@ import { COLLECTIONS } from "src/constants/firebase";
 // Utilities
 import { validateDeleteAccount } from "src/utilities/validation";
 
-const DeleteAccountDialog = props => {
+const DeleteAccountDialog = (props) => {
   const router = useRouter();
   const toast = useToast();
   const cancelRef = React.useRef();
-  const deleteAccountRef = React.useRef();
   const [deleteConfirmation, setDeleteConfirmation] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState({});
+
+  const handleOnClose = () => {
+    setDeleteConfirmation("");
+    setIsSubmitting(false);
+    setErrors({});
+    props.onClose();
+  };
 
   const onDeleteAccountConfirm = async () => {
     const { isValid, errors } = validateDeleteAccount({ deleteConfirmation });
@@ -58,7 +64,7 @@ const DeleteAccountDialog = props => {
         title: "Account deleted.",
         description: "Your account has been deleted. You will be redirected...",
         status: "success",
-        isClosable: true
+        isClosable: true,
       });
       setTimeout(() => {
         firebase
@@ -74,7 +80,7 @@ const DeleteAccountDialog = props => {
         title: "An error occurred.",
         description: error.message,
         status: "error",
-        isClosable: true
+        isClosable: true,
       });
     }
   };
@@ -83,13 +89,11 @@ const DeleteAccountDialog = props => {
     <AlertDialog
       isOpen={props.isOpen}
       leastDestructiveRef={cancelRef}
-      onClose={props.onClose}
+      onClose={handleOnClose}
     >
       <AlertDialogOverlay />
       <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-          Delete Account
-        </AlertDialogHeader>
+        <AlertDialogHeader>Delete Account</AlertDialogHeader>
 
         <AlertDialogBody>
           <Text pb={4}>
@@ -105,7 +109,7 @@ const DeleteAccountDialog = props => {
               name="deleteConfirmation"
               type="text"
               placeholder="DELETE"
-              onChange={e => setDeleteConfirmation(e.target.value)}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
               value={deleteConfirmation}
             />
             <FormErrorMessage>{errors.deleteConfirmation}</FormErrorMessage>
@@ -119,7 +123,7 @@ const DeleteAccountDialog = props => {
             </Button>
           ) : (
             <React.Fragment>
-              <Button ref={deleteAccountRef} onClick={props.onClose}>
+              <Button ref={cancelRef} onClick={handleOnClose}>
                 No, nevermind
               </Button>
               <Button colorScheme="red" onClick={onDeleteAccountConfirm} ml={3}>
