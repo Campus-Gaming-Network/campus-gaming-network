@@ -29,6 +29,7 @@ import {
   MenuList,
   MenuItem,
   Spacer,
+  IconButton,
 } from "@chakra-ui/react";
 import {
   faCaretRight,
@@ -128,7 +129,7 @@ export const getServerSideProps = async (context) => {
 const initialFormState = {
   firstName: "",
   lastName: "",
-  school: "",
+  school: {},
   status: "",
   major: "",
   minor: "",
@@ -202,7 +203,7 @@ const EditUser = (props) => {
     });
     formDispatch({
       field: "school",
-      value: props.user.school.id || initialFormState.school,
+      value: props.user.school || initialFormState.school,
     });
     formDispatch({
       field: "status",
@@ -290,7 +291,7 @@ const EditUser = (props) => {
   };
 
   const onSchoolSelect = (school) => {
-    formDispatch({ field: "school", value: school.id || "" });
+    formDispatch({ field: "school", value: school });
   };
 
   const toggleFavoriteGame = (game) => {
@@ -320,13 +321,19 @@ const EditUser = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
-
-    const { isValid, errors } = validateEditUser({
+    // setIsSubmitting(true);
+    const form = {
       ...formState,
+      school: formState.school.id,
       currentlyPlaying,
       favoriteGames,
-    });
+    };
+
+    console.log(form);
+
+    const { isValid, errors } = validateEditUser(form);
+
+    return;
 
     setErrors(errors);
 
@@ -339,7 +346,7 @@ const EditUser = (props) => {
     const schoolDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.SCHOOLS)
-      .doc(formState.school);
+      .doc(formState.school.id);
 
     let birthdate = "";
 
@@ -380,6 +387,7 @@ const EditUser = (props) => {
       school: {
         ref: schoolDocRef,
         id: schoolDocRef.id,
+        name: formState.school.name,
       },
       currentlyPlaying: currentlyPlaying || [],
       favoriteGames: favoriteGames || [],
@@ -433,7 +441,7 @@ const EditUser = (props) => {
     <SiteLayout
       meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}
     >
-      <Article>
+      <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -451,7 +459,7 @@ const EditUser = (props) => {
             <Spacer />
             <Menu>
               <MenuButton
-                as={Button}
+                as={IconButton}
                 icon={<FontAwesomeIcon icon={faEllipsisH} />}
                 aria-label="Options"
               />

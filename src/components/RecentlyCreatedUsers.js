@@ -1,65 +1,26 @@
 // Libraries
 import React from "react";
-import {
-  Stack,
-  Box,
-  Heading,
-  Text,
-  List,
-  ListItem,
-  Avatar
-} from "@chakra-ui/react";
+import { Stack, Heading, Text, List } from "@chakra-ui/react";
 
 // Components
-import Link from "src/components/Link";
+import UserListItem from "src/components/UserListItem";
 
-const RecentlyCreatedUsers = props => {
+const RecentlyCreatedUsers = (props) => {
+  const [users, setUsers] = React.useState(props.users || []);
+  const hasUsers = React.useMemo(() => Boolean(users) && users.length > 0, [
+    users,
+  ]);
+
   return (
     <Stack as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
-        Newest Users
+        Newest users
       </Heading>
-      {Boolean(props.users) && props.users.length > 0 ? (
+      {hasUsers ? (
         <React.Fragment>
           <List d="flex" flexWrap="wrap" m={-2}>
-            {props.users.map(user => (
-              <ListItem
-                key={user.id}
-                w={{ base: "50%", sm: "33.3333%", md: "20%" }}
-              >
-                <Box
-                  shadow="sm"
-                  borderWidth={1}
-                  rounded="lg"
-                  bg="white"
-                  pos="relative"
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  mr={4}
-                  p={4}
-                  height="calc(100% - 1rem)"
-                >
-                  <Avatar
-                    name={user.fullName}
-                    title={props.fullName}
-                    src={user.gravatarUrl}
-                    size="md"
-                  />
-                  <Link
-                    href={`/user/${user.id}`}
-                    color="brand.500"
-                    fontWeight="bold"
-                    mt={4}
-                    fontSize="sm"
-                    lineHeight="1.2"
-                    textAlign="center"
-                  >
-                    {user.fullName}
-                  </Link>
-                </Box>
-              </ListItem>
+            {users.map((user) => (
+              <UserListItem key={user.id} user={user} />
             ))}
           </List>
         </React.Fragment>

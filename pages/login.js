@@ -14,7 +14,7 @@ import {
   Heading,
   Divider,
   Flex,
-  FormErrorMessage
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
@@ -41,7 +41,7 @@ import { COOKIES, PRODUCTION_URL } from "src/constants/other";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token =
@@ -57,16 +57,16 @@ export const getServerSideProps = async context => {
       return {
         redirect: {
           permanent: false,
-          destination: "/"
-        }
+          destination: "/",
+        },
       };
     }
   } catch (error) {
     return {
       redirect: {
         permanent: false,
-        destination: "/"
-      }
+        destination: "/",
+      },
     };
   }
 
@@ -80,14 +80,14 @@ const Login = () => {
   const router = useRouter();
   const [fields, handleFieldChange] = useFormFields({
     email: "",
-    password: ""
+    password: "",
   });
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     setError(null);
@@ -109,7 +109,7 @@ const Login = () => {
       .then(() => {
         router.push("/");
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         setError(error.message);
         setIsLoading(false);
@@ -118,8 +118,10 @@ const Login = () => {
   };
 
   return (
-    <SiteLayout meta={{ title: "Login", og: { url: `${PRODUCTION_URL}/login` } }}>
-      <Article>
+    <SiteLayout
+      meta={{ title: "Login", og: { url: `${PRODUCTION_URL}/login` } }}
+    >
+      <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />

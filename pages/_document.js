@@ -6,77 +6,39 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <meta charSet="utf-8" />
-          <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-          <link rel="icon" type="image/png" href="/favicon.png" />
-          <link
-            rel="icon"
-            type="image/png"
-            href="/favicon-16x16.png"
-            sizes="16x16"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            href="/favicon-32x32.png"
-            sizes="32x32"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            href="/favicon-96x96.png"
-            sizes="96x96"
-          />
           <link
             rel="apple-touch-icon"
-            type="image/png"
+            sizes="180x180"
             href="/apple-touch-icon.png"
           />
           <link
-            rel="apple-touch-icon"
+            rel="icon"
             type="image/png"
-            href="/apple-touch-icon-57x57.png"
-            size="57x57"
+            sizes="32x32"
+            href="/favicon-32x32.png"
           />
           <link
-            rel="apple-touch-icon"
+            rel="icon"
             type="image/png"
-            href="/apple-touch-icon-72x72.png"
-            size="72x72"
+            sizes="16x16"
+            href="/favicon-16x16.png"
           />
-          <link
-            rel="apple-touch-icon"
-            type="image/png"
-            href="/apple-touch-icon-114x114.png"
-            size="114x114"
+          <link rel="manifest" href="/manifest.json" />
+          <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+          <meta
+            name="apple-mobile-web-app-title"
+            content="Campus Gaming Network"
           />
-          <link
-            rel="apple-touch-icon"
-            type="image/png"
-            href="/apple-touch-icon-144x144.png"
-            size="144x144"
-          />
-          <link
-            rel="apple-touch-icon"
-            type="image/png"
-            href="/apple-touch-icon-152x152.png"
-            size="152x152"
-          />
-          <link
-            rel="apple-touch-icon"
-            type="image/png"
-            href="/apple-touch-icon-180x180.png"
-            size="180x180"
-          />
-          <meta name="theme-color" content="#000000" />
+          <meta name="application-name" content="Campus Gaming Network" />
+          <meta name="msapplication-TileColor" content="#da532c" />
+          <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+          <meta name="theme-color" content="#ffffff"></meta>
           <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
           <meta
             name="keywords"
             content="campus, gaming, social network, competitive gaming, social gaming, casual gaming, university, college, college gaming, university gaming, social network gaming, student gaming, student"
           />
           <meta name="author" content="Campus Gaming Network" />
-          {/* manifest.json provides metadata used when your web app is installed on a
-          user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/ */}
-          <link rel="manifest" href="/manifest.json" />
         </Head>
         <body>
           <Main />

@@ -42,6 +42,7 @@ import OutsideLink from "src/components/OutsideLink";
 import Article from "src/components/Article";
 import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
+import UserListItem from "src/components/UserListItem";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -396,12 +397,7 @@ const UsersList = (props) => {
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
           {props.users.map((user) => (
-            <UsersListItem
-              key={user.id}
-              id={user.id}
-              gravatarUrl={user.gravatarUrl}
-              fullName={user.fullName}
-            />
+            <UserListItem key={user.id} user={user} />
           ))}
         </List>
       </React.Fragment>
@@ -412,48 +408,6 @@ const UsersList = (props) => {
     <Text mt={4} color="gray.400">
       {EVENT_EMPTY_USERS_TEXT}
     </Text>
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// UsersListItem
-
-const UsersListItem = (props) => {
-  return (
-    <ListItem w={{ base: "33%", md: "20%" }}>
-      <Box
-        shadow="sm"
-        borderWidth={1}
-        rounded="lg"
-        bg="white"
-        pos="relative"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        m={2}
-        p={4}
-        height="calc(100% - 1rem)"
-      >
-        <Avatar
-          name={props.fullName}
-          title={props.fullName}
-          src={props.gravatarUrl}
-          size="md"
-        />
-        <Link
-          href={`/user/${props.id}`}
-          color="brand.500"
-          fontWeight="bold"
-          mt={4}
-          fontSize="sm"
-          lineHeight="1.2"
-          textAlign="center"
-        >
-          {props.fullName}
-        </Link>
-      </Box>
-    </ListItem>
   );
 };
 

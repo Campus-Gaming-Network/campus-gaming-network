@@ -17,7 +17,7 @@ const UnauthenticatedNav = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const onSchoolSelect = selectedSchool => {
+  const onSchoolSelect = (selectedSchool) => {
     if (selectedSchool && selectedSchool.id) {
       router.push(`/school/${selectedSchool.id}`);
     }
@@ -41,9 +41,15 @@ const UnauthenticatedNav = () => {
         flexGrow={{ base: 0, md: 1 }}
         justifyContent={{ base: "flex-start", md: "flex-end" }}
       >
-        <ButtonLink href="/login" mr={3} size="sm" colorScheme="whiteAlpha">
+        <Link
+          href="/login"
+          mr={3}
+          fontSize="sm"
+          color="gray.100"
+          fontWeight={600}
+        >
           Log In
-        </ButtonLink>
+        </Link>
         <ButtonLink href="/signup" colorScheme="brand" size="sm">
           Sign Up
         </ButtonLink>

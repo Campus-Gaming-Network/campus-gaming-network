@@ -19,7 +19,7 @@ import { COOKIES } from "src/constants/other";
 import {
   getUserDetails,
   getUserAttendingEvents,
-  getUserCreatedEvents
+  getUserCreatedEvents,
 } from "src/api/user";
 import { getSchoolEvents } from "src/api/school";
 import { getRecentlyCreatedEvents } from "src/api/events";
@@ -45,14 +45,14 @@ const UpcomingSchoolEvents = dynamic(
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   const data = {
     user: null,
     userAttendingEvents: [],
     userCreatedEvents: [],
     schoolEvents: [],
     recentlyCreatedEvents: [],
-    recentlyCreatedUsers: []
+    recentlyCreatedUsers: [],
   };
 
   try {
@@ -74,11 +74,11 @@ export const getServerSideProps = async context => {
       const [
         userAttendingEventsResponse,
         schoolEventsResponse,
-        userCreatedEventsResponse
+        userCreatedEventsResponse,
       ] = await Promise.all([
         getUserAttendingEvents(user.id),
         getSchoolEvents(user.school.id),
-        getUserCreatedEvents(user.id)
+        getUserCreatedEvents(user.id),
       ]);
 
       data.userAttendingEvents = userAttendingEventsResponse.events;
@@ -88,10 +88,10 @@ export const getServerSideProps = async context => {
 
     const [
       recentlyCreatedEventsResponse,
-      recentlyCreatedUsersResponse
+      recentlyCreatedUsersResponse,
     ] = await Promise.all([
       getRecentlyCreatedEvents(),
-      getRecentlyCreatedUsers()
+      getRecentlyCreatedUsers(),
     ]);
 
     data.recentlyCreatedEvents = recentlyCreatedEventsResponse.events;
@@ -107,7 +107,7 @@ export const getServerSideProps = async context => {
 ////////////////////////////////////////////////////////////////////////////////
 // Home
 
-const Home = props => {
+const Home = (props) => {
   const { authUser } = useAuth();
   const isAuthenticated = React.useMemo(
     () => Boolean(authUser) && Boolean(authUser.uid),
@@ -117,28 +117,26 @@ const Home = props => {
   return (
     <SiteLayout>
       <Article>
-        <Box>
-          <Heading size="2xl" mb={8}>
-            Campus Gaming Network
-          </Heading>
-          <Text fontSize="3xl" color="gray.60">
-            Connect with other collegiate gamers for casual or competitive
-            gaming at your school or nearby.
-          </Text>
-          <Stack pt={8} spacing={8}>
-            {isAuthenticated ? (
-              <UserCreatedEvents events={props.userCreatedEvents} />
-            ) : null}
-            {isAuthenticated ? (
-              <AttendingEvents events={props.userAttendingEvents} />
-            ) : null}
-            {isAuthenticated ? (
-              <UpcomingSchoolEvents events={props.schoolEvents} />
-            ) : null}
-            <RecentlyCreatedEvents events={props.recentlyCreatedEvents} />
-            <RecentlyCreatedUsers users={props.recentlyCreatedUsers} />
-          </Stack>
-        </Box>
+        <Heading size="2xl" mb={8}>
+          Campus Gaming Network
+        </Heading>
+        <Text fontSize="3xl" color="gray.60">
+          Connect with other collegiate gamers for casual or competitive gaming
+          at your school or nearby.
+        </Text>
+        <Stack pt={8} spacing={8}>
+          {isAuthenticated ? (
+            <UserCreatedEvents events={props.userCreatedEvents} />
+          ) : null}
+          {isAuthenticated ? (
+            <AttendingEvents events={props.userAttendingEvents} />
+          ) : null}
+          {isAuthenticated ? (
+            <UpcomingSchoolEvents events={props.schoolEvents} />
+          ) : null}
+          <RecentlyCreatedEvents events={props.recentlyCreatedEvents} />
+          <RecentlyCreatedUsers users={props.recentlyCreatedUsers} />
+        </Stack>
       </Article>
     </SiteLayout>
   );

@@ -5,8 +5,12 @@ import { Heading, Text, Stack, List } from "@chakra-ui/react";
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
 
-const UpcomingSchoolEvents = props => {
+const UpcomingSchoolEvents = (props) => {
   const [{ school } = {}] = props.events;
+  const [events, setEvents] = React.useState(props.events || []);
+  const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [
+    events,
+  ]);
 
   if (!Boolean(school)) {
     return null;
@@ -28,10 +32,10 @@ const UpcomingSchoolEvents = props => {
           {school.formattedName}
         </Link>
       </Heading>
-      {Boolean(props.events) && props.events.length > 0 ? (
+      {hasEvents ? (
         <React.Fragment>
           <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {props.events.map(event => (
+            {events.map((event) => (
               <EventListItem
                 key={event.id}
                 event={event}

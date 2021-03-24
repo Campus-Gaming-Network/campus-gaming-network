@@ -9,7 +9,6 @@ import {
   Stack,
   FormControl,
   FormLabel,
-  Box,
   Text,
   Select,
   Button,
@@ -17,7 +16,7 @@ import {
   useToast,
   Heading,
   FormHelperText,
-  FormErrorMessage
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
@@ -47,7 +46,7 @@ import firebase from "src/firebase";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token =
@@ -63,16 +62,16 @@ export const getServerSideProps = async context => {
       return {
         redirect: {
           permanent: false,
-          destination: "/"
-        }
+          destination: "/",
+        },
       };
     }
   } catch (error) {
     return {
       redirect: {
         permanent: false,
-        destination: "/"
-      }
+        destination: "/",
+      },
     };
   }
 
@@ -87,14 +86,14 @@ const initialFormState = {
   lastName: "",
   email: "",
   password: "",
-  school: "",
-  status: ""
+  school: {},
+  status: "",
 };
 
 const formReducer = (state, { field, value }) => {
   return {
     ...state,
-    [field]: value
+    [field]: value,
   };
 };
 
@@ -108,23 +107,26 @@ const Signup = () => {
     formReducer,
     initialFormState
   );
-  const handleFieldChange = React.useCallback(e => {
+  const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
-  const onSchoolSelect = school => {
-    formDispatch({ field: "school", value: school.id || "" });
+  const onSchoolSelect = (school) => {
+    formDispatch({ field: "school", value: school });
   };
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     setIsSubmitting(true);
 
-    const { isValid, errors } = validateSignUp(formState);
+    const { isValid, errors } = validateSignUp({
+      ...formState,
+      school: formState.school.id,
+    });
 
     setErrors(errors);
 
@@ -153,9 +155,10 @@ const Signup = () => {
               ref: firebase
                 .firestore()
                 .collection(COLLECTIONS.SCHOOLS)
-                .doc(formState.school),
-              id: formState.school
-            }
+                .doc(formState.school.id),
+              id: formState.school.id,
+              name: formState.school.name,
+            },
           });
         firebase
           .auth()
@@ -166,17 +169,17 @@ const Signup = () => {
                 title: "Verification email sent.",
                 description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
                 status: "success",
-                isClosable: true
+                isClosable: true,
               });
             },
-            error => {
+            (error) => {
               console.error(error);
             }
           );
         setIsSubmitting(false);
         router.push("/");
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         setError(error.message);
         setIsSubmitting(false);
@@ -185,8 +188,10 @@ const Signup = () => {
   };
 
   return (
-    <SiteLayout meta={{ title: "Sign Up", og: { url: `${PRODUCTION_URL}/signup` } }}>
-      <Article>
+    <SiteLayout
+      meta={{ title: "Sign Up", og: { url: `${PRODUCTION_URL}/signup` } }}
+    >
+      <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -249,7 +254,7 @@ const Signup = () => {
 ////////////////////////////////////////////////////////////////////////////////
 // DetailSection
 
-const DetailSection = React.memo(props => {
+const DetailSection = React.memo((props) => {
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
   const togglePasswordVisibility = () => {
     setIsShowingPassword(!isShowingPassword);
@@ -337,7 +342,7 @@ const DetailSection = React.memo(props => {
 ////////////////////////////////////////////////////////////////////////////////
 // SchoolSection
 
-const SchoolSection = React.memo(props => {
+const SchoolSection = React.memo((props) => {
   return (
     <Stack spacing={6} pt={6}>
       <FormControl isRequired isInvalid={props.errors.school}>
@@ -358,7 +363,7 @@ const SchoolSection = React.memo(props => {
           value={props.status}
           size="lg"
         >
-          {STUDENT_STATUS_OPTIONS.map(status => (
+          {STUDENT_STATUS_OPTIONS.map((status) => (
             <option key={status.value} value={status.value}>
               {startCase(status.label)}
             </option>

@@ -16,8 +16,10 @@ import { PRODUCTION_URL } from "src/constants/other";
 
 const About = () => {
   return (
-    <SiteLayout meta={{ title: "About", og: { url: `${PRODUCTION_URL}/about` } }}>
-      <Article>
+    <SiteLayout
+      meta={{ title: "About", og: { url: `${PRODUCTION_URL}/about` } }}
+    >
+      <Article fullWidthMobile>
         <PageHeading>About Campus Gaming Network</PageHeading>
         <Card>
           <Text>

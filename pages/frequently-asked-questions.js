@@ -19,8 +19,13 @@ import { PRODUCTION_URL } from "src/constants/other";
 
 const FrequentlyAskedQuestions = () => {
   return (
-    <SiteLayout meta={{ title: "Frequently Asked Questions", og: { url: `${PRODUCTION_URL}/frequently-asked-questions` } }}>
-      <Article>
+    <SiteLayout
+      meta={{
+        title: "Frequently Asked Questions",
+        og: { url: `${PRODUCTION_URL}/frequently-asked-questions` },
+      }}
+    >
+      <Article fullWidthMobile>
         <PageHeading>Frequently Asked Questions</PageHeading>
         <Card>
           <dl>
@@ -47,7 +52,7 @@ const FrequentlyAskedQuestions = () => {
 ////////////////////////////////////////////////////////////////////////////////
 // QuestionWrapper
 
-const QuestionWrapper = props => {
+const QuestionWrapper = (props) => {
   return (
     <Box as="dt" flex="1" textAlign="left" fontWeight="bold" fontSize="md">
       {props.children}
@@ -58,7 +63,7 @@ const QuestionWrapper = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // AnswerWrapper
 
-const AnswerWrapper = props => {
+const AnswerWrapper = (props) => {
   return (
     <Box as="dd" flex="1" textAlign="left" fontSize="md" px={2} pb={2}>
       {props.children}
@@ -68,7 +73,7 @@ const AnswerWrapper = props => {
 
 ////////////////////////////////////////////////////////////////////////////////
 // VerifyEmail=
-const IGDBLink = props => {
+const IGDBLink = (props) => {
   return (
     <OutsideLink href="https://www.igdb.com/discover">
       {props.children ? props.children : "Internet Games Database (IGDB)"}
@@ -79,7 +84,7 @@ const IGDBLink = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // GithubLink
 
-const GithubLink = props => {
+const GithubLink = (props) => {
   return (
     <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
       {props.children ? props.children : "GitHub"}
@@ -90,7 +95,7 @@ const GithubLink = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // DiscordLink
 
-const DiscordLink = props => {
+const DiscordLink = (props) => {
   return (
     <OutsideLink href="https://discord.gg/dpYU6TY">
       {props.children ? props.children : "Discord"}
@@ -101,7 +106,7 @@ const DiscordLink = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // GravatarLink
 
-const GravatarLink = props => {
+const GravatarLink = (props) => {
   return (
     <OutsideLink href="https://en.gravatar.com/">
       {props.children ? props.children : "Gravatar"}
@@ -112,7 +117,7 @@ const GravatarLink = props => {
 ////////////////////////////////////////////////////////////////////////////////
 // BuyMeACoffeeLink
 
-const BuyMeACoffeeLink = props => {
+const BuyMeACoffeeLink = (props) => {
   const href = `https://www.buymeacoffee.com/${
     props.page ? props.page : ""
   }`.trim();
@@ -135,7 +140,7 @@ const QUESTIONS = [
         Does Campus Gaming Network cost anything to use?
       </QuestionWrapper>
     ),
-    answer: <AnswerWrapper>No, it is completely free to use.</AnswerWrapper>
+    answer: <AnswerWrapper>No, it is completely free to use.</AnswerWrapper>,
   },
   {
     id: "how-does-campus-gaming-network-make-money",
@@ -154,7 +159,7 @@ const QUESTIONS = [
         </BuyMeACoffeeLink>
         .
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "where-does-my-profile-picture-come-from",
@@ -170,7 +175,7 @@ const QUESTIONS = [
         <GravatarLink /> account tied to your email you are given a default
         randomized profile picture.
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "how-do-i-change-my-profile-picture",
@@ -186,7 +191,7 @@ const QUESTIONS = [
         Campus Gaming Network and any other website that uses the{" "}
         <GravatarLink /> service.
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "will-you-allow-uploading-of-profile-pictures-without-gravatar",
@@ -200,7 +205,7 @@ const QUESTIONS = [
         Maybe sometime in the future, but for right now, to keep costs down we
         are taking advantage of their service.
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "where-does-the-list-of-games-come-from",
@@ -211,7 +216,7 @@ const QUESTIONS = [
       <AnswerWrapper>
         Our list of games comes from the <IGDBLink />
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "i-cant-find-a-certain-game-what-gives",
@@ -228,7 +233,7 @@ const QUESTIONS = [
         </OutsideLink>
         , we have no control over that.
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "is-there-a-mobile-app",
@@ -238,7 +243,7 @@ const QUESTIONS = [
         Not currently, but we plan to develop a native mobile app for both iOS
         and Android in the future.
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "what-happens-if-something-on-the-site-doesnt-work-as-expected",
@@ -260,7 +265,7 @@ const QUESTIONS = [
         , join our <DiscordLink />, or open an issue on our <GithubLink />. We
         will try to reach back and look into the issue as soon as we can.
       </AnswerWrapper>
-    )
+    ),
   },
   {
     id: "who-are-you",
@@ -270,8 +275,8 @@ const QUESTIONS = [
         An avid gamer, software developer, living in Salt Lake City, who wants
         to see more people connected through video games.
       </AnswerWrapper>
-    )
-  }
+    ),
+  },
 ];
 
 export default FrequentlyAskedQuestions;

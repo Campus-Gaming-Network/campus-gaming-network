@@ -21,7 +21,7 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  Spacer
+  Spacer,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import PlacesAutocomplete from "react-places-autocomplete";
@@ -70,20 +70,20 @@ const initialFormState = {
   endTime: "",
   placeId: "",
   isOnlineEvent: false,
-  location: ""
+  location: "",
 };
 
 const formReducer = (state, { field, value }) => {
   return {
     ...state,
-    [field]: value
+    [field]: value,
   };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // EventForm
 
-const EventForm = props => {
+const EventForm = (props) => {
   const { authStatus, user } = useAuth();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [formState, formDispatch] = React.useReducer(
@@ -92,9 +92,9 @@ const EventForm = props => {
   );
   const [
     isDeletingEventAlertOpen,
-    setDeletingEventAlertIsOpen
+    setDeletingEventAlertIsOpen,
   ] = React.useState(false);
-  const handleFieldChange = React.useCallback(e => {
+  const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
   const hasErrors = React.useMemo(() => !isEmpty(props.errors), [props.errors]);
@@ -124,11 +124,11 @@ const EventForm = props => {
     formDispatch({ field: "placeId", value: placeId });
   };
 
-  const setGame = value => {
+  const setGame = (value) => {
     formDispatch({ field: "game", value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     // e.preventDefault();
 
     // setIsSubmitting(true);
@@ -187,9 +187,9 @@ const EventForm = props => {
 
   const url = React.useMemo(() => {
     if (props.state === "edit") {
-        return `${PRODUCTION_URL}/event/${props.event.id}/edit`;
+      return `${PRODUCTION_URL}/event/${props.event.id}/edit`;
     } else {
-        return `${PRODUCTION_URL}/create-event`;
+      return `${PRODUCTION_URL}/create-event`;
     }
   }, [props.state, props.event]);
 
@@ -207,7 +207,7 @@ const EventForm = props => {
 
   return (
     <SiteLayout meta={{ title: pageTitle, og: { url } }}>
-      <Article>
+      <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
@@ -293,10 +293,10 @@ const EventForm = props => {
                     disabled={Boolean(formState.placeId)}
                     isChecked={formState.isOnlineEvent}
                     value={formState.isOnlineEvent}
-                    onChange={e =>
+                    onChange={(e) =>
                       formDispatch({
                         field: "isOnlineEvent",
-                        value: e.target.checked
+                        value: e.target.checked,
                       })
                     }
                   >
@@ -315,7 +315,7 @@ const EventForm = props => {
                 <Stack>
                   <PlacesAutocomplete
                     value={formState.location}
-                    onChange={value => setLocation(value)}
+                    onChange={(value) => setLocation(value)}
                     onSelect={(address, placeId) =>
                       setLocation(address, placeId)
                     }
@@ -328,14 +328,14 @@ const EventForm = props => {
                       getInputProps,
                       suggestions,
                       getSuggestionItemProps,
-                      loading
+                      loading,
                     }) => (
                       <div>
                         <Input
                           {...getInputProps({
                             placeholder: "Add a place or address",
                             className: "location-search-input",
-                            disabled: formState.isOnlineEvent
+                            disabled: formState.isOnlineEvent,
                           })}
                           size="lg"
                         />
@@ -366,13 +366,13 @@ const EventForm = props => {
                                 ? "1px solid #e2e8f0"
                                 : undefined,
                               borderBottomLeftRadius: "0.25rem",
-                              borderBottomRightRadius: "0.25rem"
+                              borderBottomRightRadius: "0.25rem",
                             };
 
                             return (
                               <div
                                 {...getSuggestionItemProps(suggestion, {
-                                  style
+                                  style,
                                 })}
                               >
                                 <Box mr={4}>

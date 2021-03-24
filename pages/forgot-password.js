@@ -14,7 +14,7 @@ import {
   FormControl,
   AlertTitle,
   AlertDescription,
-  FormErrorMessage
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import firebaseAdmin from "src/firebaseAdmin";
@@ -40,7 +40,7 @@ import { COOKIES, PRODUCTION_URL } from "src/constants/other";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token =
@@ -56,16 +56,16 @@ export const getServerSideProps = async context => {
       return {
         redirect: {
           permanent: false,
-          destination: "/"
-        }
+          destination: "/",
+        },
       };
     }
   } catch (error) {
     return {
       redirect: {
         permanent: false,
-        destination: "/"
-      }
+        destination: "/",
+      },
     };
   }
 
@@ -77,7 +77,7 @@ export const getServerSideProps = async context => {
 
 const ForgotPassword = () => {
   const [fields, handleFieldChange] = useFormFields({
-    email: ""
+    email: "",
   });
   const [isSendingEmail, setIsSendingEmail] = React.useState(false);
   const [emailSent, setEmailSent] = React.useState(false);
@@ -85,7 +85,7 @@ const ForgotPassword = () => {
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError(null);
@@ -110,7 +110,7 @@ const ForgotPassword = () => {
     }
   };
 
-  const handleError = error => {
+  const handleError = (error) => {
     console.error(error);
     setError(error.message);
     setIsSendingEmail(false);
@@ -118,8 +118,13 @@ const ForgotPassword = () => {
   };
 
   return (
-    <SiteLayout meta={{ title: "Forgot Password", og: { url: `${PRODUCTION_URL}/forgot-password` } }}>
-      <Article>
+    <SiteLayout
+      meta={{
+        title: "Forgot Password",
+        og: { url: `${PRODUCTION_URL}/forgot-password` },
+      }}
+    >
+      <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />

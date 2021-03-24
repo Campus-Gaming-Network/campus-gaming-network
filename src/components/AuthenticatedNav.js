@@ -11,8 +11,7 @@ import {
   Box,
   Avatar,
   Tooltip,
-  Wrap,
-  WrapItem,
+  MenuGroup,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -133,48 +132,56 @@ const AuthenticatedNav = (props) => {
           </MenuButton>
 
           <MenuList>
-            <MenuItem as={Link} href={`/user/${props.user.id}`}>
-              <Flex alignItems="center">
-                {Boolean(props.user.gravatar) ? (
-                  <Avatar
-                    name={props.user.fullName}
-                    title={props.user.fullName}
-                    src={props.user.gravatarUrl}
-                    mr={2}
-                    size="xs"
-                  />
-                ) : (
-                  <Flex alignItems="center" color="gray.600" mr={2}>
-                    <FontAwesomeIcon icon={faUserCircle} />
-                  </Flex>
-                )}
-                <Text lineHeight="1">Profile</Text>
-              </Flex>
-            </MenuItem>
-            <MenuItem as={Link} href={`/school/${props.school.id}`}>
-              <SchoolLogo
-                schoolId={props.school.id}
-                schoolName={props.school.formattedName}
-                h={6}
-                w={6}
-                htmlHeight={6}
-                htmlWidth={6}
-                mr={2}
-                fallback={
-                  <Flex
-                    alignItems="center"
-                    justifyContent="center"
-                    color="gray.600"
-                    h={6}
-                    w={6}
-                    mr={2}
-                  >
-                    <FontAwesomeIcon icon={faSchool} />
-                  </Flex>
-                }
-              />
-              <Text lineHeight="1">School</Text>
-            </MenuItem>
+            <MenuGroup title={props.user.fullName}>
+              <MenuItem as={Link} href={`/user/${props.user.id}`}>
+                <Flex alignItems="center">
+                  {Boolean(props.user.gravatar) ? (
+                    <Avatar
+                      name={props.user.fullName}
+                      title={props.user.fullName}
+                      src={props.user.gravatarUrl}
+                      mr={2}
+                      size="xs"
+                    />
+                  ) : (
+                    <Flex alignItems="center" color="gray.600" mr={2}>
+                      <FontAwesomeIcon icon={faUserCircle} />
+                    </Flex>
+                  )}
+                  <Text lineHeight="1">Profile</Text>
+                </Flex>
+              </MenuItem>
+              <MenuItem as={Link} href={`/school/${props.school.id}`}>
+                <SchoolLogo
+                  schoolId={props.school.id}
+                  schoolName={props.school.formattedName}
+                  h={6}
+                  w={6}
+                  htmlHeight={6}
+                  htmlWidth={6}
+                  mr={2}
+                  fallback={
+                    <Flex
+                      alignItems="center"
+                      justifyContent="center"
+                      color="gray.600"
+                      h={6}
+                      w={6}
+                      mr={2}
+                    >
+                      <FontAwesomeIcon icon={faSchool} />
+                    </Flex>
+                  }
+                />
+                <Text lineHeight="1">School</Text>
+              </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title="Settings">
+              <MenuItem as={Link} href={"/edit-user"}>
+                Edit Profile
+              </MenuItem>
+            </MenuGroup>
             <MenuDivider />
             <MenuItem
               onClick={handleLogout}

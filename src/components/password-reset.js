@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormControl,
   FormErrorMessage,
-  AlertDescription
+  AlertDescription,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
@@ -34,10 +34,10 @@ import SiteLayout from "src/components/SiteLayout";
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset
 
-const PasswordReset = props => {
+const PasswordReset = (props) => {
   const router = useRouter();
   const [fields, handleFieldChange] = useFormFields({
-    password: ""
+    password: "",
   });
   const [isChangingPassword, setIsChangingPassword] = React.useState(false);
   const [isShowingPassword, setIsShowingPassword] = React.useState(false);
@@ -45,7 +45,7 @@ const PasswordReset = props => {
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError(null);
@@ -69,7 +69,7 @@ const PasswordReset = props => {
     firebase
       .auth()
       .verifyPasswordResetCode(props.oobCode)
-      .then(email => {
+      .then((email) => {
         firebase
           .auth()
           .confirmPasswordReset(props.oobCode, fields.password)
@@ -80,20 +80,20 @@ const PasswordReset = props => {
               .then(() => {
                 router.push("/");
               })
-              .catch(error => {
+              .catch((error) => {
                 handleError(error);
               });
           })
-          .catch(error => {
+          .catch((error) => {
             handleError(error);
           });
       })
-      .catch(error => {
+      .catch((error) => {
         handleError(error);
       });
   };
 
-  const handleError = error => {
+  const handleError = (error) => {
     console.error(error);
     setError(error.message);
     setIsChangingPassword(false);
@@ -105,8 +105,13 @@ const PasswordReset = props => {
   };
 
   return (
-    <SiteLayout meta={{ title: "Password Reset", og: { url: `${PRODUCTION_URL}/password-reset` } }}>
-      <Article>
+    <SiteLayout
+      meta={{
+        title: "Password Reset",
+        og: { url: `${PRODUCTION_URL}/password-reset` },
+      }}
+    >
+      <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
             <AlertIcon />
