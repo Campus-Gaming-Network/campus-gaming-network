@@ -159,6 +159,8 @@ const Signup = () => {
               id: formState.school.id,
               name: formState.school.name,
             },
+            createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+            updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
           });
         firebase
           .auth()
