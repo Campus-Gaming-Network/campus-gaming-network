@@ -3,6 +3,7 @@
 
 import intersection from "lodash.intersection";
 import capitalize from "lodash.capitalize";
+import startCase from "lodash.startcase";
 import md5 from "md5";
 
 // Constants
@@ -39,7 +40,7 @@ export const mapUser = (user) => {
     return undefined;
   }
 
-  const fullName = capitalize(`${user.firstName} ${user.lastName}`.trim());
+  const fullName = startCase(`${user.firstName} ${user.lastName}`.trim());
   const url = `${PRODUCTION_URL}/user/${user.id}`;
 
   return {
