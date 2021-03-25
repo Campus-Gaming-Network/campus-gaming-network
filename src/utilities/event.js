@@ -6,7 +6,7 @@ import { buildDateTime, hasStarted, hasEnded } from "src/utilities/dateTime";
 import { mapSchool } from "src/utilities/school";
 import { PRODUCTION_URL } from "src/constants/other";
 
-export const mapEvent = event => {
+export const mapEvent = (event) => {
   if (!Boolean(event)) {
     return undefined;
   }
@@ -14,7 +14,7 @@ export const mapEvent = event => {
   const startDateTime = buildDateTime(event.startDateTime);
   const endDateTime = buildDateTime(event.endDateTime);
   const metaDescription = `${startDateTime.locale}: ${event.description}`;
-  const url = `${PRODUCTION_URL}/events/${event.id}`;
+  const url = `${PRODUCTION_URL}/event/${event.id}`;
 
   return {
     ...event,
@@ -42,6 +42,6 @@ export const mapEvent = event => {
         description: metaDescription,
         site_name: "Campus Gaming Network",
       },
-    }
+    },
   };
 };
