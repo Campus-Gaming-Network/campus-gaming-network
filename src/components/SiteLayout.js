@@ -85,6 +85,10 @@ const SiteLayout = ({
           content={_meta.description}
           key="description"
         />
+        <meta property="og:image" content={`${PRODUCTION_URL}/logo.png`} />
+        <meta property="og:image:alt" content="Campus Gaming Network" />
+        <meta name="twitter:image" content={`${PRODUCTION_URL}/logo.png`} />
+        <meta name="twitter:image:alt" content="Campus Gaming Network" />
         {/* Schema.org markup for Google+ */}
         <SchemaMeta meta={_meta} />
         {/* Open Graph data */}
@@ -135,10 +139,6 @@ const MetaObject = (props) => {
 
         return <meta key={property} property={property} content={value} />;
       })}
-      <meta property="og:image" content={`${PRODUCTION_URL}/logo.png`} />
-      <meta property="og:image:alt" content="Campus Gaming Network" />
-      <meta name="twitter:image" content={`${PRODUCTION_URL}/logo.png`} />
-      <meta name="twitter:image:alt" content="Campus Gaming Network" />
     </React.Fragment>
   );
 };
