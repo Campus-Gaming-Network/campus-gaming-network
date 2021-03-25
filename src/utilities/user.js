@@ -30,16 +30,16 @@ export const createGravatarRequestUrl = (hash = "", email = "") => {
   return `https://www.gravatar.com/avatar/${hash}?s=100&d=${GRAVATAR.DEFAULT}&r=${GRAVATAR.RA}`;
 };
 
-export const getUserDisplayStatus = status =>
+export const getUserDisplayStatus = (status) =>
   ({ ALUMNI: "Alumni of ", GRAD: "Graduate Student at " }[status] ||
   `${capitalize(status)} at `);
 
-export const mapUser = user => {
+export const mapUser = (user) => {
   if (!Boolean(user)) {
     return undefined;
   }
 
-  const fullName = `${user.firstName} ${user.lastName}`.trim();
+  const fullName = capitalize(`${user.firstName} ${user.lastName}`.trim());
   const url = `${PRODUCTION_URL}/user/${user.id}`;
 
   return {
@@ -49,25 +49,26 @@ export const mapUser = user => {
     fullName: fullName,
     hasAccounts: userHasAccounts(user),
     hasFavoriteGames: Boolean(user.favoriteGames) && user.favoriteGames.length,
-    hasCurrentlyPlaying: Boolean(user.currentlyPlaying) && user.currentlyPlaying.length,
+    hasCurrentlyPlaying:
+      Boolean(user.currentlyPlaying) && user.currentlyPlaying.length,
     displayStatus: getUserDisplayStatus(user.status),
     gravatarUrl: createGravatarRequestUrl(user.gravatar),
     meta: {
       title: fullName,
       og: {
-        url
-      }
+        url,
+      },
     },
   };
 };
 
-export const userHasAccounts = user => {
+export const userHasAccounts = (user) => {
   if (!user) {
     return false;
   }
 
   return (
-    intersection(Object.keys(ACCOUNTS), Object.keys(user)).filter(key =>
+    intersection(Object.keys(ACCOUNTS), Object.keys(user)).filter((key) =>
       Boolean(user[key])
     ).length > 0
   );
