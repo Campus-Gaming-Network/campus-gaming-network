@@ -2,7 +2,6 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 import Head from "next/head";
-import { useRouter } from 'next/router'
 
 // Components
 import Nav from "src/components/Nav";
@@ -15,7 +14,8 @@ import { PRODUCTION_URL } from "src/constants/other";
 
 const DEFAULT_META = {
   title: "Campus Gaming Network",
-  description: "Campus Gaming Network - Connect with other collegiate gamers for casual or competitive gaming at your school or nearby.",
+  description:
+    "Campus Gaming Network - Connect with other collegiate gamers for casual or competitive gaming at your school or nearby.",
   twitter: {
     card: "summary",
     site: "Campus Gaming Network",
@@ -80,7 +80,11 @@ const SiteLayout = ({
           content="width=device-width, initial-scale=1.0, user-scalable=yes"
           key="viewport"
         />
-        <meta name="description" content={_meta.description} key="description" />
+        <meta
+          name="description"
+          content={_meta.description}
+          key="description"
+        />
         {/* Schema.org markup for Google+ */}
         <SchemaMeta meta={_meta} />
         {/* Open Graph data */}
@@ -106,7 +110,11 @@ const SchemaMeta = (props) => {
   return (
     <React.Fragment>
       <meta itemProp="name" content={props.meta.title} key="schema:title" />
-      <meta itemProp="description" content={props.meta.description} key="schema:description" />
+      <meta
+        itemProp="description"
+        content={props.meta.description}
+        key="schema:description"
+      />
     </React.Fragment>
   );
 };
@@ -117,7 +125,7 @@ const SchemaMeta = (props) => {
 const MetaObject = (props) => {
   return (
     <React.Fragment>
-      {Object.keys(props.meta).map(key => {
+      {Object.keys(props.meta).map((key) => {
         const property = `${props.prefix}:${key}`;
         const value = props.meta[key];
 
@@ -125,8 +133,12 @@ const MetaObject = (props) => {
           return null;
         }
 
-        return <meta key={property} property={property} content={value} />
+        return <meta key={property} property={property} content={value} />;
       })}
+      <meta property="og:image" content="${PRODUCTION_URL}/logo.png" />
+      <meta property="og:image:alt" content="Campus Gaming Network" />
+      <meta name="twitter:image" content=" ${PRODUCTION_URL}/logo.png" />
+      <meta name="twitter:image:alt" content="Campus Gaming Network" />
     </React.Fragment>
   );
 };
@@ -139,6 +151,8 @@ const OpenGraphMeta = (props) => <MetaObject prefix="og" meta={props.meta} />;
 ////////////////////////////////////////////////////////////////////////////////
 // TwitterMeta
 
-const TwitterMeta = (props) => <MetaObject prefix="twitter" meta={props.meta} />;
+const TwitterMeta = (props) => (
+  <MetaObject prefix="twitter" meta={props.meta} />
+);
 
 export default SiteLayout;

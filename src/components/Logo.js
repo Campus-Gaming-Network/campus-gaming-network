@@ -14,8 +14,8 @@ const Logo = ({ src, ...rest }) => {
       </VisuallyHidden>
       <Img
         src="/logo.svg"
-        alt="Campus Gaming Network Home"
-        title="Campus Gaming Network Home"
+        alt="Campus Gaming Network"
+        title="Campus Gaming Network"
         {...rest}
       />
     </Link>
