@@ -40,7 +40,9 @@ export const mapUser = (user) => {
     return undefined;
   }
 
-  const fullName = startCase(`${user.firstName} ${user.lastName}`.trim());
+  const fullName = startCase(
+    `${user.firstName} ${user.lastName}`.trim().toLowerCase()
+  );
   const url = `${PRODUCTION_URL}/user/${user.id}`;
 
   return {
