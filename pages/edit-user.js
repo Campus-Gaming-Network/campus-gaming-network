@@ -359,7 +359,9 @@ const EditUser = (props) => {
 
     const data = {
       createdAt: props.user.createdAt,
-      updatedAt: props.user.updatedAt,
+      updatedAt:
+        props.user.updatedAt ||
+        firebase.firestore.Timestamp.fromDate(new Date()),
       id: authUser.uid,
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
