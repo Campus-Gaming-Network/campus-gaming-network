@@ -135,9 +135,9 @@ const MetaObject = (props) => {
 
         return <meta key={property} property={property} content={value} />;
       })}
-      <meta property="og:image" content="${PRODUCTION_URL}/logo.png" />
+      <meta property="og:image" content={`${PRODUCTION_URL}/logo.png`} />
       <meta property="og:image:alt" content="Campus Gaming Network" />
-      <meta name="twitter:image" content=" ${PRODUCTION_URL}/logo.png" />
+      <meta name="twitter:image" content={`${PRODUCTION_URL}/logo.png`} />
       <meta name="twitter:image:alt" content="Campus Gaming Network" />
     </React.Fragment>
   );
