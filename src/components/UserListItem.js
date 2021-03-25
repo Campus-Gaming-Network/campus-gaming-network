@@ -25,7 +25,10 @@ const RecentlyCreatedUsers = (props) => {
       [props.user.bio, props.user.major, props.user.minor].filter((s) => s)
         .length > 0
     );
-  }, [props]);
+  }, [props.user]);
+  const hasSchool = React.useMemo(() => {
+    return Boolean(props.user.school) && Boolean(props.user.school.name);
+  }, [props.user]);
 
   return (
     <React.Fragment>
@@ -79,7 +82,7 @@ const RecentlyCreatedUsers = (props) => {
                     />
                     <Box>
                       <Text fontWeight="bold">{props.user.fullName}</Text>
-                      {Boolean(props.user.school.name) ? (
+                      {hasSchool && Boolean(props.user.status) ? (
                         <Text lineHeight="1.2" fontSize="sm" color="gray.500">
                           {props.user.displayStatus}
                           <Link

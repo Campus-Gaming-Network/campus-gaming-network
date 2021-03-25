@@ -114,6 +114,12 @@ const RSVPDialog = (props) => {
         firstName: props.user.firstName,
         lastName: props.user.lastName,
         gravatar: props.user.gravatar,
+        status: props.user.status,
+        school: {
+          ref: props.user.school.ref,
+          id: props.user.school.id,
+          name: props.user.school.name,
+        },
       },
       event: {
         id: eventDocRef.id,
