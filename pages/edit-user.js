@@ -321,7 +321,8 @@ const EditUser = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // setIsSubmitting(true);
+    setIsSubmitting(true);
+
     const form = {
       ...formState,
       school: formState.school.id,
@@ -329,11 +330,7 @@ const EditUser = (props) => {
       favoriteGames,
     };
 
-    console.log(form);
-
     const { isValid, errors } = validateEditUser(form);
-
-    return;
 
     setErrors(errors);
 
