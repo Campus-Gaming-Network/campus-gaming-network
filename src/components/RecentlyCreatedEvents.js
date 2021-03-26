@@ -3,6 +3,7 @@ import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
 
 // Components
 import EventListItem from "src/components/EventListItem";
+import Slider from "src/components/Slider";
 
 const RecentlyCreatedEvents = (props) => {
   const [events, setEvents] = React.useState(props.events || []);
@@ -17,7 +18,11 @@ const RecentlyCreatedEvents = (props) => {
       </Heading>
       {hasEvents ? (
         <React.Fragment>
-          <List d="flex" flexWrap="wrap" m={-2} p={0}>
+          <Slider
+            settings={{
+              className: events.length < 5 ? "slick--less-slides" : "",
+            }}
+          >
             {events.map((event) => (
               <EventListItem
                 key={event.id}
@@ -25,7 +30,7 @@ const RecentlyCreatedEvents = (props) => {
                 school={event.school}
               />
             ))}
-          </List>
+          </Slider>
         </React.Fragment>
       ) : (
         <Text color="gray.400" fontSize="xl" fontWeight="600">

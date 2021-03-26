@@ -11,11 +11,11 @@ export const getRecentlyCreatedUsers = async () => {
       .firestore()
       .collection("users")
       .orderBy("createdAt", "desc")
-      .limit(50)
+      .limit(40)
       .get();
 
     if (!recentlyCreatedUsersSnapshot.empty) {
-      recentlyCreatedUsersSnapshot.forEach(doc => {
+      recentlyCreatedUsersSnapshot.forEach((doc) => {
         const user = { ...mapUser(doc.data(), doc) };
         users.push(user);
       });

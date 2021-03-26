@@ -22,6 +22,7 @@
     "firebase": "^7.13.1",
     "firebase-admin": "^9.2.0",
     "framer-motion": "^4.0.0",
+    "geofire-common": "^5.2.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.intersection": "^4.4.0",
     "lodash.isdate": "^4.0.1",
@@ -46,7 +47,10 @@
     "react-firebase-hooks": "^2.1.1",
     "react-gravatar": "^2.6.3",
     "react-places-autocomplete": "^7.2.1",
-    "safe-json-stringify": "^1.2.0"
+    "react-slick": "^0.28.1",
+    "safe-json-stringify": "^1.2.0",
+    "slick-carousel": "^1.8.1",
+    "use-position": "^0.0.8"
   },
   "scripts": {
     "dev": "next dev",

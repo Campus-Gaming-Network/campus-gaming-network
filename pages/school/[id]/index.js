@@ -57,6 +57,9 @@ const ReportEntityDialog = dynamic(
     ssr: false,
   }
 );
+const NearbySchools = dynamic(() => import("src/components/NearbySchools"), {
+  ssr: false,
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -260,6 +263,13 @@ const School = (props) => {
             </Heading>
             <UsersList users={props.users} />
           </Stack>
+          {props.school.geohash ? (
+            <NearbySchools
+              latitude={props.school.location._latitude}
+              longitude={props.school.location._longitude}
+              settings={{ slidesToShow: 3 }}
+            />
+          ) : null}
         </Stack>
       </Article>
 

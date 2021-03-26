@@ -2,7 +2,12 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 
-const Article = ({ fullWidthMobile = false, children, ...rest }) => {
+const Article = ({
+  fullWidthDesktop = false,
+  fullWidthMobile = false,
+  children,
+  ...rest
+}) => {
   return (
     <Box
       as="article"
@@ -10,7 +15,11 @@ const Article = ({ fullWidthMobile = false, children, ...rest }) => {
       px={{ base: fullWidthMobile ? 0 : 4, md: 8 }}
       mx="auto"
       fontSize="xl"
-      maxW={{ base: "100%", sm: "xl", md: "3xl" }}
+      maxW={{
+        base: "100%",
+        sm: fullWidthDesktop ? "90%" : "xl",
+        md: fullWidthDesktop ? "90%" : "3xl",
+      }}
       {...rest}
     >
       {children}

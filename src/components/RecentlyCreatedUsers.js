@@ -4,6 +4,7 @@ import { Stack, Heading, Text, List } from "@chakra-ui/react";
 
 // Components
 import UserListItem from "src/components/UserListItem";
+import Slider from "src/components/Slider";
 
 const RecentlyCreatedUsers = (props) => {
   const [users, setUsers] = React.useState(props.users || []);
@@ -18,11 +19,16 @@ const RecentlyCreatedUsers = (props) => {
       </Heading>
       {hasUsers ? (
         <React.Fragment>
-          <List d="flex" flexWrap="wrap" m={-2}>
+          <Slider
+            settings={{
+              slidesToShow: 10,
+              className: users.length < 10 ? "slick--less-slides" : "",
+            }}
+          >
             {users.map((user) => (
               <UserListItem key={user.id} user={user} />
             ))}
-          </List>
+          </Slider>
         </React.Fragment>
       ) : (
         <Text color="gray.400" fontSize="xl" fontWeight="600">

@@ -188,7 +188,7 @@ const SchoolSearch = (props) => {
         />
       </Flex>
       {Boolean(items) ? (
-        <ComboboxPopover>
+        <ComboboxPopover id={`${props.id}--popover` || "school--popover"}>
           {items.length > 0 ? (
             <ComboboxList>
               {items.map((school) => {
@@ -199,14 +199,14 @@ const SchoolSearch = (props) => {
                 return (
                   <ComboboxOption key={school.objectID} value={value}>
                     <Flex align="center">
-                      <Box h={6} w={6} mr={2} rounded="full" bg="gray.100">
+                      <Box h={8} w={8} mr={2} rounded="full" bg="gray.100">
                         {school.savedSearch ? (
                           <Flex
                             align="center"
                             justify="center"
                             color="gray.400"
-                            h={6}
-                            w={6}
+                            h={8}
+                            w={8}
                             mr={2}
                           >
                             <FontAwesomeIcon icon={faHistory} />
@@ -220,8 +220,8 @@ const SchoolSearch = (props) => {
                                 align="center"
                                 justify="center"
                                 color="gray.400"
-                                h={6}
-                                w={6}
+                                h={8}
+                                w={8}
                                 mr={2}
                               >
                                 <FontAwesomeIcon icon={faSchool} />
@@ -230,7 +230,7 @@ const SchoolSearch = (props) => {
                           />
                         )}
                       </Box>
-                      <Text>
+                      <Text fontSize="lg">
                         <ComboboxOptionText />
                       </Text>
                     </Flex>

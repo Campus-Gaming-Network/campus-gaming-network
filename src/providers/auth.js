@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         setAuthStatus("finished");
 
         nookies.destroy(null, COOKIES.AUTH_TOKEN);
-        nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: "/" });
+        nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: COOKIES.PATH });
         return;
       }
 
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       nookies.destroy(null, COOKIES.AUTH_TOKEN);
-      nookies.set(null, COOKIES.AUTH_TOKEN, token, { path: "/" });
+      nookies.set(null, COOKIES.AUTH_TOKEN, token, { path: COOKIES.PATH });
     });
   }, []);
 

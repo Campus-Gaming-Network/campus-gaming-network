@@ -258,8 +258,13 @@ html {
   border-left-color: #cbd5e0;
 }
 
+nav [data-reach-combobox] {
+  max-width: 600px !important;
+  width: 100% !important;
+}
+
 #siteSchoolSearch {
-  width: 100%;
+  width: 100% !important;
   display: flex;
   -moz-box-align: center;
   align-items: center;
@@ -274,27 +279,48 @@ html {
   border-radius: 0.25rem;
   border: 2px solid transparent;
   background-color: rgb(237, 242, 247);
-  max-width: 400px;
+  max-width: 600px !important;
 }
 
 #siteSchoolSearch:hover {
-  background-color: rgb(226, 232, 240);
+  background-color: rgb(226, 232, 240) !important;
 }
 
 #siteSchoolSearch:focus {
-  z-index: 1;
-  border-color: rgb(49, 130, 206);
+  z-index: 1 !important;
+  border-color: rgb(49, 130, 206) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 
-nav [data-reach-combobox] {
-  max-width: 350px;
-  width: 100%;
+#siteSchoolSearch--popover {
+  width: 100% !important;
+  max-width: 600px !important;
+  border-bottom-right-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-color: var(--chakra-colors-gray-200);
 }
 
-nav [data-reach-list] {
-  font-size-adjust: 0.6rem;
+#siteSchoolSearch--popover [data-reach-combobox-option] {
+  padding: 0.75rem 1rem !important;
+}
+
+#siteSchoolSearch--popover [data-reach-list] {
+  font-size-adjust: 0.6rem !important;
 }
 
 .highlight-target:target {
   background-color: lightgoldenrodyellow;
+}
+
+.slick-arrow::before {
+  color: var(--chakra-colors-gray-800) !important;
+}
+
+.slick-arrow.slick-disabled::before {
+  content: "";
+}
+
+.slick--less-slides .slick-track {
+  margin-left: 0;
 }

@@ -8,19 +8,13 @@ import startCase from "lodash.startcase";
 import SchoolLogo from "src/components/SchoolLogo";
 import Link from "src/components/Link";
 
-const EventListItem = props => {
+const EventListItem = (props) => {
   if (!props.event || !props.school) {
     return null;
   }
 
   return (
-    <Box
-      as="li"
-      flexBasis={{ base: "100%", sm: "50%", md: "33.3333%" }}
-      minWidth={{ base: "100%", sm: "50%", md: "33.3333%" }}
-      flexGrow={0}
-      pr={4}
-    >
+    <Box pr={4}>
       <Box
         borderWidth={1}
         rounded="lg"

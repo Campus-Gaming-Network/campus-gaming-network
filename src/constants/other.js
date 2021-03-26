@@ -11,55 +11,55 @@ import {
   faBattleNet,
   faSteam,
   faXbox,
-  faPlaystation
+  faPlaystation,
 } from "@fortawesome/free-brands-svg-icons";
 
 export const PRODUCTION_URL = "https://campusgamingnetwork.com";
 export const ACCOUNTS = {
   website: {
     label: "Website",
-    icon: faGlobe
+    icon: faGlobe,
   },
   twitter: {
     label: "Twitter",
     icon: faTwitter,
-    url: "twitter.com/"
+    url: "twitter.com/",
   },
   twitch: {
     label: "Twitch",
     icon: faTwitch,
-    url: "twitch.tv/"
+    url: "twitch.tv/",
   },
   youtube: {
     label: "YouTube",
     icon: faYoutube,
-    url: "youtube.com/user/"
+    url: "youtube.com/user/",
   },
   skype: {
     label: "Skype",
-    icon: faSkype
+    icon: faSkype,
   },
   discord: {
     label: "Discord",
-    icon: faDiscord
+    icon: faDiscord,
   },
   battlenet: {
     label: "Battle.net",
-    icon: faBattleNet
+    icon: faBattleNet,
   },
   steam: {
     label: "Steam",
     icon: faSteam,
-    url: "steamcommunity.com/id/"
+    url: "steamcommunity.com/id/",
   },
   xbox: {
     label: "Xbox Live",
-    icon: faXbox
+    icon: faXbox,
   },
   psn: {
     label: "PSN",
-    icon: faPlaystation
-  }
+    icon: faPlaystation,
+  },
 };
 export const DEFAULT_USERS_LIST_PAGE_SIZE = 25;
 export const DEFAULT_USERS_SKELETON_LIST_PAGE_SIZE = 5;
@@ -70,15 +70,16 @@ export const GOOGLE_MAPS_QUERY_URL =
 export const GRAVATAR = {
   URL: "https://www.gravatar.com/avatar/",
   RA: "pg",
-  DEFAULT: "retro"
+  DEFAULT: "retro",
 };
 export const MAX_DEFAULT_STRING_LENGTH = 255;
 export const MIN_PASSWORD_LENGTH = 6;
 export const COOKIES = {
+  PATH: "/",
   AUTH_TOKEN:
     process.env.NODE_ENV !== "production"
       ? "cgn_dev.auth_token"
-      : "cgn.auth_token"
+      : "cgn.auth_token",
 };
 export const LOCAL_STORAGE = {
   SCHOOLS:
@@ -86,5 +87,5 @@ export const LOCAL_STORAGE = {
   SCHOOLS_QUERY:
     process.env.NODE_ENV !== "production"
       ? "cgn_dev.schools_query"
-      : "cgn.schools_query"
+      : "cgn.schools_query",
 };

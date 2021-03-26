@@ -4,6 +4,7 @@ import safeJsonStringify from "safe-json-stringify";
 import nookies from "nookies";
 import firebaseAdmin from "src/firebaseAdmin";
 import dynamic from "next/dynamic";
+import { usePosition } from "use-position";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -41,6 +42,9 @@ const UpcomingSchoolEvents = dynamic(
   () => import("src/components/UpcomingSchoolEvents"),
   { ssr: false }
 );
+const NearbySchools = dynamic(() => import("src/components/NearbySchools"), {
+  ssr: false,
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -113,10 +117,11 @@ const Home = (props) => {
     () => Boolean(authUser) && Boolean(authUser.uid),
     [authUser]
   );
+  const { latitude, longitude } = usePosition();
 
   return (
     <SiteLayout>
-      <Article>
+      <Article fullWidthDesktop>
         <Heading size="2xl" mb={8}>
           Campus Gaming Network
         </Heading>
@@ -135,6 +140,7 @@ const Home = (props) => {
             <UpcomingSchoolEvents events={props.schoolEvents} />
           ) : null}
           <RecentlyCreatedEvents events={props.recentlyCreatedEvents} />
+          <NearbySchools latitude={latitude} longitude={longitude} />
           <RecentlyCreatedUsers users={props.recentlyCreatedUsers} />
         </Stack>
       </Article>

@@ -20,11 +20,15 @@ const DEFAULT_META = {
     card: "summary",
     site: "Campus Gaming Network",
     creator: "@CampusGamingNet",
+    image: `${PRODUCTION_URL}/logo.png`,
+    "image:alt": "Campus Gaming Network",
   },
   og: {
     type: "article",
     url: typeof window !== "undefined" ? window.location.href : PRODUCTION_URL,
     site_name: "Campus Gaming Network",
+    image: `${PRODUCTION_URL}/logo.png`,
+    "image:alt": "Campus Gaming Network",
   },
 };
 
@@ -85,10 +89,6 @@ const SiteLayout = ({
           content={_meta.description}
           key="description"
         />
-        <meta property="og:image" content={`${PRODUCTION_URL}/logo.png`} />
-        <meta property="og:image:alt" content="Campus Gaming Network" />
-        <meta name="twitter:image" content={`${PRODUCTION_URL}/logo.png`} />
-        <meta name="twitter:image:alt" content="Campus Gaming Network" />
         {/* Schema.org markup for Google+ */}
         <SchemaMeta meta={_meta} />
         {/* Open Graph data */}
@@ -99,7 +99,15 @@ const SiteLayout = ({
       <BetaWarningBanner />
       <VerifyEmailReminderBanner />
       {!hideNav ? <Nav /> : null}
-      <Box as="main" pb={12} bg="#fdfdfd" minH="100vh" h="100%" {...rest}>
+      <Box
+        as="main"
+        pos="relative"
+        pb={12}
+        bg="#fdfdfd"
+        minH="100vh"
+        h="100%"
+        {...rest}
+      >
         {children}
       </Box>
       {!hideFooter ? <Footer /> : null}
