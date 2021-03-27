@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Stack, Heading, Text, List } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 
 // Components
 import UserListItem from "src/components/UserListItem";
@@ -13,7 +13,7 @@ const RecentlyCreatedUsers = (props) => {
   ]);
 
   return (
-    <Stack as="section" spacing={2} py={4}>
+    <Box as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
         Newest users
       </Heading>
@@ -35,7 +35,7 @@ const RecentlyCreatedUsers = (props) => {
           No users have been recently created
         </Text>
       )}
-    </Stack>
+    </Box>
   );
 };
 

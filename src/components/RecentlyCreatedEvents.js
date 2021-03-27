@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Heading, Text, Stack, List } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 
 // Components
 import EventListItem from "src/components/EventListItem";
@@ -12,7 +12,7 @@ const RecentlyCreatedEvents = (props) => {
   ]);
 
   return (
-    <Stack as="section" spacing={2} py={4}>
+    <Box as="section" spacing={2} py={4}>
       <Heading as="h3" fontSize="xl" pb={4}>
         Newest events
       </Heading>
@@ -37,7 +37,7 @@ const RecentlyCreatedEvents = (props) => {
           No events have been recently created
         </Text>
       )}
-    </Stack>
+    </Box>
   );
 };
 

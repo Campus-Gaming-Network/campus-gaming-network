@@ -81,7 +81,7 @@ const NearbySchools = (props) => {
 
   if (typeof window !== "undefined") {
     return (
-      <Stack as="section" spacing={2} py={4}>
+      <Box as="section" spacing={2} py={4}>
         <Heading as="h3" fontSize="xl" pb={4}>
           Nearby schools
         </Heading>
@@ -178,7 +178,7 @@ const NearbySchools = (props) => {
             There are no schools nearby
           </Text>
         )}
-      </Stack>
+      </Box>
     );
   } else {
     return null;
