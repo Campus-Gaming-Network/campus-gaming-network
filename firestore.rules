@@ -21,6 +21,8 @@ service cloud.firestore {
             'school',
           ];
           let optionalFields = [
+            'createdAt',
+            'updatedAt',
             'major',
             'minor',
             'bio',
@@ -128,6 +130,8 @@ service cloud.firestore {
           'school',
         ];
         let optionalFields = [
+          'createdAt',
+          'updatedAt',
           'description',
           'location',
           'placeId',
@@ -136,7 +140,7 @@ service cloud.firestore {
       }
 
       function canUpdateEvent() {
-        return isSignedIn();
+        return canCreateEvent();
       }
 
       function canDeleteEvent() {
@@ -152,6 +156,7 @@ service cloud.firestore {
 
     match /schools/{schoolId} {
       allow read: if true;
+      // TODO: Allow update if school moderator
       allow write, create, update, delete: if false;
     }
 
