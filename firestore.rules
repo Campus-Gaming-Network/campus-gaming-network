@@ -79,6 +79,7 @@ service cloud.firestore {
             isValidOption("timezone", timezoneOptions) &&
             hasLengthOrNull("hometown", 255) &&
             (val('birthdate') == '' || hasTimestampField('birthdate')) &&
+            hasLengthOrNull("website", 255) &&
             hasLengthOrNull("twitter", 255) &&
             hasLengthOrNull("twitch", 255) &&
             hasLengthOrNull("youtube", 255) &&

@@ -31,18 +31,18 @@ const RecentlyCreatedUsers = (props) => {
 
   return (
     <React.Fragment>
-      <Box
+      <Flex
         shadow="sm"
         borderWidth={1}
         rounded="lg"
         bg="white"
         pos="relative"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
+        direction="column"
+        align="center"
+        justifty="space-between"
         mr={4}
         p={4}
+        height="125px"
       >
         <Avatar
           name={props.user.fullName}
@@ -141,7 +141,7 @@ const RecentlyCreatedUsers = (props) => {
             </PopoverContent>
           </Portal>
         </Popover>
-      </Box>
+      </Flex>
     </React.Fragment>
   );
 };
