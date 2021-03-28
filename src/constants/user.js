@@ -8,6 +8,7 @@ export const BASE_USER = {
   status: "",
   gravatar: "",
   school: {
+    name: "",
     ref: "",
     id: ""
   },
@@ -17,6 +18,7 @@ export const BASE_USER = {
   timezone: "",
   hometown: "",
   birthdate: "",
+  website: "",
   twitter: "",
   twitch: "",
   youtube: "",
