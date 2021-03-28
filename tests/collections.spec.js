@@ -10,20 +10,21 @@ const COLLECTIONS = {
   USERS: "users",
   EVENTS: "events",
   EVENT_RESPONSES: "event-responses",
-  GAME_QUERIES: "game-queries"
+  GAME_QUERIES: "game-queries",
 };
 
 const AUTH_USER = {
   uid: "user-123",
-  email: "support@campusgamingnetwork.com"
+  email: "support@campusgamingnetwork.com",
 };
 
 const SCHOOL = {
   id: "school-123",
-  name: "Campus Gaming University"
+  name: "Campus Gaming University",
 };
 
 const USER = {
+  id: "",
   firstName: "Brandon",
   lastName: "Sansone",
   status: "FRESHMAN",
@@ -35,6 +36,7 @@ const USER = {
   timezone: "",
   hometown: "",
   birthdate: null,
+  website: "",
   twitter: "",
   twitch: "",
   youtube: "",
@@ -45,7 +47,7 @@ const USER = {
   xbox: "",
   psn: "",
   currentlyPlaying: [],
-  favoriteGames: []
+  favoriteGames: [],
 };
 
 const GAME = {
@@ -54,8 +56,8 @@ const GAME = {
   slug: "league-of-legends",
   cover: {
     id: "123",
-    url: "some-url.jpg"
-  }
+    url: "some-url.jpg",
+  },
 };
 
 const EVENT = {
@@ -65,32 +67,32 @@ const EVENT = {
   isOnlineEvent: true,
   startDateTime: Date.now() - 1,
   endDateTime: Date.now(),
-  game: GAME
+  game: GAME,
 };
 
 const EVENT_RESPONSE = {
   response: "YES",
   user: { ...USER },
   event: { ...EVENT },
-  school: { ...SCHOOL }
+  school: { ...SCHOOL },
 };
 
 const GAME_QUERY = "League of Legends";
 
 const GAME_QUERY_RESULTS = {
-  games: [GAME]
+  games: [GAME],
 };
 
 const INITIAL_DATA = {
   [`${COLLECTIONS.SCHOOLS}/${SCHOOL.id}`]: {
-    ...SCHOOL
+    ...SCHOOL,
   },
   [`${COLLECTIONS.GAME_QUERIES}/${GAME.id}`]: {
-    ...GAME
+    ...GAME,
   },
   [`${COLLECTIONS.USERS}/${AUTH_USER.uid}`]: {
-    ...USER
-  }
+    ...USER,
+  },
 };
 
 function getAuthedFirestore(auth) {
@@ -109,7 +111,7 @@ function updateUser(updatedData) {
   return {
     ...USER,
     school: db.collection(COLLECTIONS.SCHOOLS).doc(SCHOOL.id),
-    ...updatedData
+    ...updatedData,
   };
 }
 
@@ -119,7 +121,7 @@ function updateEvent(updatedData) {
   return {
     ...EVENT,
     school: db.collection(COLLECTIONS.SCHOOLS).doc(SCHOOL.id),
-    ...updatedData
+    ...updatedData,
   };
 }
 
@@ -148,13 +150,13 @@ before(async () => {
 after(async () => {
   // Delete all the FirebaseApp instances created during testing
   // Note: this does not affect or clear any data
-  await Promise.all(firebase.apps().map(app => app.delete()));
+  await Promise.all(firebase.apps().map((app) => app.delete()));
 
   // Write the coverage report to a file
   const coverageFile = "firestore-coverage.html";
   const fstream = fs.createWriteStream(coverageFile);
   await new Promise((resolve, reject) => {
-    http.get(COVERAGE_URL, res => {
+    http.get(COVERAGE_URL, (res) => {
       res.pipe(fstream, { end: true });
 
       res.on("end", resolve);
@@ -210,6 +212,7 @@ describe("Users", () => {
       timezone: "America/Denver",
       hometown: "Chicago",
       birthdate: null,
+      website: "website",
       twitter: "twitter",
       twitch: "twitch",
       youtube: "youtube",
@@ -220,7 +223,7 @@ describe("Users", () => {
       xbox: "xbox",
       psn: "psn",
       currentlyPlaying: [GAME, GAME, GAME, GAME, GAME],
-      favoriteGames: [GAME, GAME, GAME, GAME, GAME]
+      favoriteGames: [GAME, GAME, GAME, GAME, GAME],
     });
 
     await firebase.assertSucceeds(userRef.set(updatedUser));
@@ -238,6 +241,7 @@ describe("Users", () => {
       timezone: "",
       hometown: "",
       birthdate: null,
+      website: "",
       twitter: "",
       twitch: "",
       youtube: "",
@@ -248,7 +252,7 @@ describe("Users", () => {
       xbox: "",
       psn: "",
       currentlyPlaying: [],
-      favoriteGames: []
+      favoriteGames: [],
     });
 
     await firebase.assertSucceeds(userRef.set(updatedUser));
@@ -263,7 +267,7 @@ describe("Users", () => {
       firstName: "",
       lastName: "",
       status: "",
-      gravatar: ""
+      gravatar: "",
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -276,7 +280,7 @@ describe("Users", () => {
 
     const updatedUser = updateUser({
       foo: "foo",
-      bar: "bar"
+      bar: "bar",
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -288,7 +292,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      major: "foo".repeat(100)
+      major: "foo".repeat(100),
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -300,7 +304,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      school: null
+      school: null,
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -312,7 +316,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      school: null
+      school: null,
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -325,8 +329,8 @@ describe("Users", () => {
 
     const updatedUser = updateUser({
       school: {
-        blah: null
-      }
+        blah: null,
+      },
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -339,8 +343,8 @@ describe("Users", () => {
 
     const updatedUser = updateUser({
       school: {
-        id: null
-      }
+        id: null,
+      },
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -352,7 +356,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      timezone: "bad timezone"
+      timezone: "bad timezone",
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -364,7 +368,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      currentlyPlaying: [GAME, GAME, GAME, GAME, GAME, GAME]
+      currentlyPlaying: [GAME, GAME, GAME, GAME, GAME, GAME],
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
@@ -376,7 +380,7 @@ describe("Users", () => {
     const userRef = db.collection(COLLECTIONS.USERS).doc(AUTH_USER.uid);
 
     const updatedUser = updateUser({
-      favoriteGames: [GAME, GAME, GAME, GAME, GAME, GAME]
+      favoriteGames: [GAME, GAME, GAME, GAME, GAME, GAME],
     });
 
     await firebase.assertFails(userRef.set(updatedUser));
