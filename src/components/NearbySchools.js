@@ -1,92 +1,41 @@
 import React from "react";
-import { usePosition } from "use-position";
-import {
-  Heading,
-  Text,
-  Stack,
-  List,
-  Box,
-  Flex,
-  ListItem,
-} from "@chakra-ui/react";
-import { geohashQueryBounds, distanceBetween } from "geofire-common";
+import LazyLoad from "react-lazyload";
+import { Heading, Text, Stack, Box, Flex } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
-import firebase from "src/firebase";
+
+// Components
 import SchoolLogo from "src/components/SchoolLogo";
 import Link from "src/components/Link";
 import Slider from "src/components/Slider";
+import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 
-import { mapSchool } from "src/utilities/school";
+import useFetchNearbySchools from "src/hooks/useFetchNearbySchools";
 
 const NearbySchools = (props) => {
-  const [schools, setSchools] = React.useState([]);
+  const [schools, state] = useFetchNearbySchools(
+    props.latitude,
+    props.longitude
+  );
   const hasSchools = React.useMemo(
     () => Boolean(schools) && schools.length > 0,
     [schools]
   );
-  const [fetched, setFetched] = React.useState(false);
 
-  const fetchSchools = () => {
-    const center = [props.latitude, props.longitude];
-    const radiusInM = 5 * 1000;
-    const bounds = geohashQueryBounds(center, radiusInM);
-    const promises = [];
-
-    for (const b of bounds) {
-      const q = firebase
-        .firestore()
-        .collection("schools")
-        .where("geohash", "!=", "")
-        .orderBy("geohash")
-        .startAt(b[0])
-        .endAt(b[1])
-        .limit(25);
-      promises.push(q.get());
-    }
-
-    Promise.all(promises)
-      .then((snapshots) => {
-        const matchingDocs = [];
-
-        for (const snap of snapshots) {
-          for (const doc of snap.docs) {
-            const { longitude, latitude } = doc.get("location");
-            if (Boolean(latitude) && Boolean(longitude)) {
-              const distanceInKm = distanceBetween(
-                [latitude, longitude],
-                center
-              );
-              const distanceInM = distanceInKm * 1000;
-              if (distanceInM <= radiusInM) {
-                matchingDocs.push(mapSchool(doc.data(), doc));
-              }
-            }
-          }
-        }
-
-        return matchingDocs;
-      })
-      .then((matchingDocs) => {
-        setSchools(matchingDocs);
-      });
-  };
-
-  React.useEffect(() => {
-    if (!fetched && Boolean(props.latitude) && Boolean(props.longitude)) {
-      setFetched(true);
-      fetchSchools();
-    }
-  }, [fetched, props.latitude, props.longitude]);
-
-  if (typeof window !== "undefined") {
-    return (
-      <Box as="section" spacing={2} py={4}>
-        <Heading as="h3" fontSize="xl" pb={4}>
-          Nearby schools
-        </Heading>
-        {hasSchools ? (
-          <React.Fragment>
+  return (
+    <LazyLoad once height={160}>
+      {state === "idle" || state === "loading" ? (
+        <SliderSilhouette />
+      ) : (
+        <Box as="section" py={4}>
+          <Heading as="h3" fontSize="xl" pb={4}>
+            Nearby schools
+          </Heading>
+          {!(state === "done" && hasSchools) ? (
+            <Text color="gray.400" fontSize="xl" fontWeight="600">
+              There are no schools nearby
+            </Text>
+          ) : (
             <Slider
               settings={{
                 ...props.settings,
@@ -166,23 +115,11 @@ const NearbySchools = (props) => {
                 );
               })}
             </Slider>
-          </React.Fragment>
-        ) : !(
-            !fetched &&
-            Boolean(props.latitude) &&
-            Boolean(props.longitude)
-          ) ? (
-          <Text>Loading...</Text>
-        ) : (
-          <Text color="gray.400" fontSize="xl" fontWeight="600">
-            There are no schools nearby
-          </Text>
-        )}
-      </Box>
-    );
-  } else {
-    return null;
-  }
+          )}
+        </Box>
+      )}
+    </LazyLoad>
+  );
 };
 
 export default NearbySchools;

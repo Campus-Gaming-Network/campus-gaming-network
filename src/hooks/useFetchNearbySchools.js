@@ -1,32 +1,29 @@
+// Libraries
 import React from "react";
+import { geohashQueryBounds, distanceBetween } from "geofire-common";
 
+// Other
 import firebase from "src/firebase";
+
+// Utilities
 import { mapSchool } from "src/utilities/school";
+
+// Constants
 import { COLLECTIONS } from "src/constants/firebase";
-
-const BASE_STATES = {
-  IDLE: "idle",
-  LOADING: "loading",
-  ERROR: "error",
-  DONE: "done",
-};
-
-const STATES = {
-  ...BASE_STATES,
-  INITIAL: BASE_STATES.IDLE,
-};
+import { STATES } from "src/constants/api";
 
 const useFetchNearbySchools = (latitude, longitude) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [schools, setSchools] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const center = [latitude, longitude];
-  const radiusInMeters = 5 * 1000;
-  const bounds = geohashQueryBounds(center, radiusInMeters);
-  const promises = [];
 
   React.useEffect(() => {
     const fetchNearbySchools = async () => {
+      const center = [latitude, longitude];
+      const radiusInMeters = 5 * 1000;
+      const bounds = geohashQueryBounds(center, radiusInMeters);
+      const promises = [];
+
       setState(STATES.LOADING);
       setSchools(null);
       setError(null);
@@ -73,7 +70,7 @@ const useFetchNearbySchools = (latitude, longitude) => {
           return matchingDocs;
         })
         .then((matchingDocs) => {
-          setIsLoading(STATES.DONE);
+          setState(STATES.DONE);
           setSchools(matchingDocs);
         })
         .catch((error) => {

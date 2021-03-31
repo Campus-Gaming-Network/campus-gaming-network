@@ -1,48 +1,39 @@
+// Libraries
 import React from "react";
-import isEmpty from "lodash.isempty";
 
+// Other
 import firebase from "src/firebase";
-import { mapEvent } from "src/utilities/event";
-import { COLLECTIONS } from "src/constants/firebase";
-import { DEFAULT_EVENTS_LIST_PAGE_SIZE } from "src/constants/other";
 
-const useFetchSchoolEvents = (
-  id,
-  limit = DEFAULT_EVENTS_LIST_PAGE_SIZE,
-  page = 0
-) => {
-  const [isLoading, setIsLoading] = React.useState(true);
+// Utilities
+import { mapEvent } from "src/utilities/event";
+
+// Constants
+import { COLLECTIONS } from "src/constants/firebase";
+import { STATES } from "src/constants/api";
+
+const useFetchSchoolEvents = (id, limit) => {
+  const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const [pages, setPages] = React.useState({});
 
   React.useEffect(() => {
     const fetchSchoolEvents = async () => {
-      setIsLoading(true);
+      setState(STATES.LOADING);
       setEvents(null);
       setError(null);
 
-      if (
-        state.schools[id] &&
-        !isEmpty(state.schools[id]) &&
-        state.schools[id].events &&
-        !isEmpty(state.schools[id].events) &&
-        Boolean(state.schools[id].events[page])
-      ) {
-        console.log(`[CACHE] fetchSchoolEvents...${id}`);
+      console.log(`[API] fetchSchoolEvents...${id}`);
 
-        setEvents(state.schools[id].events[page]);
-        setIsLoading(false);
-      } else {
-        console.log(`[API] fetchSchoolEvents...${id}`);
+      const schoolDocRef = firebase
+        .firestore()
+        .collection(COLLECTIONS.SCHOOLS)
+        .doc(id);
+      const now = new Date();
 
-        const schoolDocRef = firebase
-          .firestore()
-          .collection(COLLECTIONS.SCHOOLS)
-          .doc(id);
-        const now = new Date();
+      let _events = [];
 
-        let query = firebase
+      try {
+        const schoolEventsSnapshot = await firebase
           .firestore()
           .collection(COLLECTIONS.EVENTS)
           .where("school.ref", "==", schoolDocRef)
@@ -50,77 +41,38 @@ const useFetchSchoolEvents = (
             "endDateTime",
             ">=",
             firebase.firestore.Timestamp.fromDate(now)
-          );
+          )
+          .limit(limit)
+          .get();
 
-        if (page > 0) {
-          if (!pages[page]) {
-            query = query.startAfter(pages[page - 1].last);
-          } else {
-            query = query.startAt(pages[page].first);
-          }
+        if (!schoolEventsSnapshot.empty) {
+          schoolEventsSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const event = {
+              ...mapEvent(
+                { id: doc.id, _createdAt: data.createdAt.toDate(), ...data },
+                doc
+              ),
+            };
+            _events.push(event);
+          });
         }
 
-        query
-          .limit(limit)
-          .get()
-          .then(snapshot => {
-            if (!snapshot.empty) {
-              let schoolEvents = [];
-
-              snapshot.forEach(doc => {
-                const data = doc.data();
-                schoolEvents.push(
-                  mapEvent(
-                    {
-                      id: doc.id,
-                      ...data
-                    },
-                    doc
-                  )
-                );
-              });
-
-              setEvents(schoolEvents);
-              setIsLoading(false);
-              setPages(prev => ({
-                ...prev,
-                ...{
-                  [page]: {
-                    first: schoolEvents[0].doc,
-                    last: schoolEvents[schoolEvents.length - 1].doc
-                  }
-                }
-              }));
-            } else {
-              setEvents([]);
-              setIsLoading(false);
-              setPages(prev => ({
-                ...prev,
-                ...{
-                  [page]: {
-                    first: null,
-                    last: null
-                  }
-                }
-              }));
-            }
-          })
-          .catch(error => {
-            console.error({ error });
-            setError(error);
-            setIsLoading(false);
-          });
+        setState(STATES.DONE);
+        setEvents(_events);
+      } catch (error) {
+        console.error({ error });
+        setError(error);
+        setState(STATES.ERROR);
       }
     };
 
     if (id) {
       fetchSchoolEvents();
     }
+  }, [id, limit]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, limit, page, pages]);
-
-  return [events, isLoading, error];
+  return [events, state, error];
 };
 
 export default useFetchSchoolEvents;

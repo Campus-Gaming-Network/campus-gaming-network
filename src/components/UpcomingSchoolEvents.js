@@ -1,55 +1,59 @@
 import React from "react";
-import { Heading, Text, Stack, List } from "@chakra-ui/react";
+import LazyLoad from "react-lazyload";
+import { Heading, Text, Box, List } from "@chakra-ui/react";
+
+// Hooks
+import useFetchSchoolEvents from "src/hooks/useFetchSchoolEvents";
 
 // Components
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
+import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 
 const UpcomingSchoolEvents = (props) => {
-  const [{ school } = {}] = props.events;
-  const [events, setEvents] = React.useState(props.events || []);
+  const [events, state] = useFetchSchoolEvents(props.school.id);
   const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [
     events,
   ]);
 
-  if (!Boolean(school)) {
-    return null;
-  }
-
   return (
-    <Stack as="section" spacing={2} py={4}>
-      <Heading as="h3" fontSize="xl" pb={4}>
-        Upcoming events at{" "}
-        <Link
-          href={`/school/${school.id}`}
-          color="brand.500"
-          fontWeight="bold"
-          isTruncated
-          lineHeight="short"
-          mt={-2}
-          title={school.formattedName}
-        >
-          {school.formattedName}
-        </Link>
-      </Heading>
-      {hasEvents ? (
-        <React.Fragment>
-          <List d="flex" flexWrap="wrap" m={-2} p={0}>
-            {events.map((event) => (
-              <EventListItem
-                key={event.id}
-                event={event}
-                school={event.school}
-              />
-            ))}
-          </List>
-        </React.Fragment>
+    <LazyLoad once height={270}>
+      {state === "idle" || state === "loading" ? (
+        <SliderSilhouette />
       ) : (
-        <Text color="gray.400" fontSize="xl" fontWeight="600">
-          There are no upcoming events at {school.formattedName}
-        </Text>
+        <Box as="section" py={4}>
+          <Heading as="h3" fontSize="xl" pb={4}>
+            Upcoming events at{" "}
+            <Link
+              href={`/school/${props.school.id}`}
+              color="brand.500"
+              fontWeight="bold"
+              isTruncated
+              lineHeight="short"
+              mt={-2}
+              title={props.school.formattedName}
+            >
+              {props.school.formattedName}
+            </Link>
+          </Heading>
+          {!(state === "done" && hasEvents) ? (
+            <Text color="gray.400" fontSize="xl" fontWeight="600">
+              There are no upcoming events at {props.school.formattedName}
+            </Text>
+          ) : (
+            <List d="flex" flexWrap="wrap" m={-2} p={0}>
+              {events.map((event) => (
+                <EventListItem
+                  key={event.id}
+                  event={event}
+                  school={event.school}
+                />
+              ))}
+            </List>
+          )}
+        </Box>
       )}
-    </Stack>
+    </LazyLoad>
   );
 };
 

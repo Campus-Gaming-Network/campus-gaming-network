@@ -22,12 +22,10 @@ import {
   getUserAttendingEvents,
   getUserCreatedEvents,
 } from "src/api/user";
-import { getSchoolEvents } from "src/api/school";
-import { getRecentlyCreatedEvents } from "src/api/events";
-import { getRecentlyCreatedUsers } from "src/api/users";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+import { getSchoolDetails } from "src/api/school";
 
 // Dynamic Components
 const UserCreatedEvents = dynamic(
@@ -52,11 +50,9 @@ const NearbySchools = dynamic(() => import("src/components/NearbySchools"), {
 export const getServerSideProps = async (context) => {
   const data = {
     user: null,
+    school: null,
     userAttendingEvents: [],
     userCreatedEvents: [],
-    schoolEvents: [],
-    recentlyCreatedEvents: [],
-    recentlyCreatedUsers: [],
   };
 
   try {
@@ -77,29 +73,18 @@ export const getServerSideProps = async (context) => {
 
       const [
         userAttendingEventsResponse,
-        schoolEventsResponse,
+        schoolDetailsResponse,
         userCreatedEventsResponse,
       ] = await Promise.all([
         getUserAttendingEvents(user.id),
-        getSchoolEvents(user.school.id),
+        getSchoolDetails(user.school.id),
         getUserCreatedEvents(user.id),
       ]);
 
       data.userAttendingEvents = userAttendingEventsResponse.events;
-      data.schoolEvents = schoolEventsResponse.events;
+      data.school = schoolDetailsResponse.school;
       data.userCreatedEvents = userCreatedEventsResponse.events;
     }
-
-    const [
-      recentlyCreatedEventsResponse,
-      recentlyCreatedUsersResponse,
-    ] = await Promise.all([
-      getRecentlyCreatedEvents(),
-      getRecentlyCreatedUsers(),
-    ]);
-
-    data.recentlyCreatedEvents = recentlyCreatedEventsResponse.events;
-    data.recentlyCreatedUsers = recentlyCreatedUsersResponse.users;
   } catch (error) {
     console.log(error);
     // Do nothing
@@ -130,18 +115,18 @@ const Home = (props) => {
           at your school or nearby.
         </Text>
         <Stack pt={8} spacing={8}>
-          {isAuthenticated ? (
+          {/* {isAuthenticated ? (
             <UserCreatedEvents events={props.userCreatedEvents} />
           ) : null}
           {isAuthenticated ? (
             <AttendingEvents events={props.userAttendingEvents} />
+          ) : null} */}
+          {isAuthenticated && Boolean(props.school) ? (
+            <UpcomingSchoolEvents school={props.school} />
           ) : null}
-          {isAuthenticated ? (
-            <UpcomingSchoolEvents events={props.schoolEvents} />
-          ) : null}
-          <RecentlyCreatedEvents events={props.recentlyCreatedEvents} />
+          <RecentlyCreatedEvents />
           <NearbySchools latitude={latitude} longitude={longitude} />
-          <RecentlyCreatedUsers users={props.recentlyCreatedUsers} />
+          <RecentlyCreatedUsers />
         </Stack>
       </Article>
     </SiteLayout>

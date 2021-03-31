@@ -2,6 +2,7 @@
 // User Constants
 
 export const SLICK_SETTINGS = {
+  lazyLoad: true,
   focusOnSelect: true,
   infinite: false,
   speed: 500,
