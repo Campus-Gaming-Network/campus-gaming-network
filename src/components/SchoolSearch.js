@@ -45,7 +45,9 @@ const SchoolSearch = (props) => {
 
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
   const [isFetching, setIsFetching] = React.useState(false);
-
+  const [focused, setFocused] = React.useState(false);
+  const onFocus = () => setFocused(true);
+  const onBlur = () => setFocused(false);
   const handleChange = (event) => setSearchTerm(event.target.value);
 
   const debouncedSchoolSearch = useDebounce(searchTerm, 250);
@@ -163,6 +165,25 @@ const SchoolSearch = (props) => {
     return results;
   }, [searchTerm, results, savedSearches]);
 
+  React.useEffect(() => {
+    if (!props.withOverlay) {
+      return;
+    }
+
+    const overlay = document.getElementsByClassName("overlay")[0];
+    const isVisible = overlay
+      ?.getAttribute("style")
+      ?.includes("display: initial");
+
+    if (focused) {
+      if (!isVisible) {
+        overlay.style.display = "initial";
+      }
+    } else if (isVisible) {
+      overlay.style = null;
+    }
+  }, [props.withOverlay, focused]);
+
   return (
     <Combobox
       aria-label="School"
@@ -180,6 +201,8 @@ const SchoolSearch = (props) => {
           autocomplete={false}
           // This turns off the browser autocomplete
           autoComplete="off"
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
         <Spinner
           visibility={isFetching ? "visible" : "hidden"}

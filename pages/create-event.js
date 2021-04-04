@@ -25,7 +25,7 @@ import { useAuth } from "src/providers/auth";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token =
@@ -65,7 +65,7 @@ const CreateEvent = () => {
     const { isValid, errors } = validateCreateEvent({
       ...formState,
       startDateTime: DateTime.local(formState.startDateTime),
-      endDateTime: DateTime.local(formState.endDateTime)
+      endDateTime: DateTime.local(formState.endDateTime),
     });
 
     setErrors(errors);
@@ -81,10 +81,10 @@ const CreateEvent = () => {
     // Probably want to save the address and lat/long
     // If we save the placeId, it may be easier to render the map for that place
     geocodeByAddress(formState.location)
-      .then(results => {
+      .then((results) => {
         console.log({ results });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error({ error });
       });
 
@@ -132,30 +132,35 @@ const CreateEvent = () => {
 
     const eventData = {
       creator: {
-        ref: userDocRef,
         id: userDocRef.id,
+        ref: userDocRef,
         firstName: user.firstName,
         lastName: user.lastName,
-        gravatar: user.gravatar
+        gravatar: user.gravatar,
+        status: user.status,
+        school: {
+          ref: user.school.ref,
+          id: user.school.id,
+          name: user.school.name,
+        },
       },
       name: formState.name.trim(),
       description: formState.description.trim(),
       isOnlineEvent: formState.isOnlineEvent,
       startDateTime: startDateTime,
       endDateTime: endDateTime,
-      game: formState.game
+      game: formState.game,
+      school: {
+        ref: schoolDocRef,
+        id: schoolDocRef.id,
+        name: school.name,
+      },
     };
 
     if (!formState.isOnlineEvent) {
       eventData.location = formState.location;
       eventData.placeId = formState.placeId;
     }
-
-    eventData.school = {
-      ref: schoolDocRef,
-      id: schoolDocRef.id,
-      name: school.name
-    };
 
     let eventId;
 
@@ -166,10 +171,10 @@ const CreateEvent = () => {
         ...eventData,
         responses: {
           yes: 0,
-          no: 0
-        }
+          no: 0,
+        },
       })
-      .then(eventDocRef => {
+      .then((eventDocRef) => {
         eventId = eventDocRef.id;
 
         firebase
@@ -188,7 +193,13 @@ const CreateEvent = () => {
             id: userDocRef.id,
             firstName: user.firstName,
             lastName: user.lastName,
-            gravatar: user.gravatar
+            gravatar: user.gravatar,
+            status: user.status,
+            school: {
+              ref: user.school.ref,
+              id: user.school.id,
+              name: user.school.name,
+            },
           },
           event: {
             ref: eventDocRef,
@@ -198,13 +209,13 @@ const CreateEvent = () => {
             startDateTime: startDateTime,
             endDateTime: endDateTime,
             game: formState.game,
-            isOnlineEvent: formState.isOnlineEvent
+            isOnlineEvent: formState.isOnlineEvent,
           },
           school: {
             ref: schoolDocRef,
             id: schoolDocRef.id,
-            name: school.name
-          }
+            name: school.name,
+          },
         };
 
         firebase
@@ -217,7 +228,7 @@ const CreateEvent = () => {
               description:
                 "Your event has been created. You will be redirected...",
               status: "success",
-              isClosable: true
+              isClosable: true,
             });
             setTimeout(() => {
               router.push(`/event/${eventId}`);
@@ -227,13 +238,13 @@ const CreateEvent = () => {
             setIsSubmitting(false);
           });
       })
-      .catch(error => {
+      .catch((error) => {
         setIsSubmitting(false);
         toast({
           title: "An error occurred.",
           description: error.message,
           status: "error",
-          isClosable: true
+          isClosable: true,
         });
       });
   };

@@ -1,30 +1,92 @@
+// Libraries
 import React from "react";
-import LazyLoad from "react-lazyload";
 import { Heading, Text, Stack, Box, Flex } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import { usePosition } from "use-position";
 
 // Components
 import SchoolLogo from "src/components/SchoolLogo";
 import Link from "src/components/Link";
 import Slider from "src/components/Slider";
+import EmptyText from "src/components/EmptyText";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 
+// Hooks
 import useFetchNearbySchools from "src/hooks/useFetchNearbySchools";
+import useLocalStorage from "src/hooks/useLocalStorage";
+
+// Constants
+import { LOCAL_STORAGE } from "src/constants/other";
 
 const NearbySchools = (props) => {
-  const [schools, state] = useFetchNearbySchools(
+  const {
+    latitude: browserLatitude,
+    longitude: browserLongitude,
+    error: geoPositionError,
+  } = usePosition();
+  const [
+    localStorageGeolocation,
+    setGeolocationInLocalStorage,
+  ] = useLocalStorage(LOCAL_STORAGE.GEOLOCATION, null);
+  const latitude = React.useMemo(() => {
+    let _latitude = props.useBrowserLocation
+      ? localStorageGeolocation?.browserLatitude || browserLatitude
+      : props.latitude;
+    // 3 decimal places because if the lat/long changes just slighlty after those decimals
+    // we will request new data but the results wont be that different.
+    _latitude = _latitude?.toFixed(3);
+    return isNaN(_latitude) || !Boolean(_latitude)
+      ? undefined
+      : Number(_latitude);
+  }, [
     props.latitude,
-    props.longitude
-  );
+    localStorageGeolocation?.browserLatitude,
+    browserLatitude,
+  ]);
+  const longitude = React.useMemo(() => {
+    let _longitude = props.useBrowserLocation
+      ? localStorageGeolocation?.browserLongitude || browserLongitude
+      : props.longitude;
+    // 3 decimal places because if the lat/long changes just slighlty after those decimals
+    // we will request new data but the results wont be that different.
+    _longitude = _longitude?.toFixed(3);
+    return isNaN(_longitude) || !Boolean(_longitude)
+      ? undefined
+      : Number(_longitude);
+  }, [
+    props.longitude,
+    localStorageGeolocation?.browserLongitude,
+    browserLongitude,
+  ]);
+  const [schools, state] = useFetchNearbySchools(latitude, longitude);
   const hasSchools = React.useMemo(
     () => Boolean(schools) && schools.length > 0,
     [schools]
   );
 
+  React.useEffect(() => {
+    if (Boolean(localStorageGeolocation)) {
+      if (
+        (Boolean(browserLatitude) &&
+          localStorageGeolocation.browserLatitude !== browserLatitude) ||
+        (Boolean(browserLongitude) &&
+          localStorageGeolocation.browserLongitude !== browserLongitude)
+      ) {
+        setGeolocationInLocalStorage({ browserLatitude, browserLongitude });
+      }
+    } else {
+      setGeolocationInLocalStorage({ browserLatitude, browserLongitude });
+    }
+  }, [browserLatitude, browserLongitude]);
+
+  if (state === "idle" || (props.useBrowserLocation && geoPositionError)) {
+    return null;
+  }
+
   return (
-    <LazyLoad once height={160}>
-      {state === "idle" || state === "loading" ? (
+    <React.Fragment>
+      {state === "loading" ? (
         <SliderSilhouette />
       ) : (
         <Box as="section" py={4}>
@@ -32,9 +94,7 @@ const NearbySchools = (props) => {
             Nearby schools
           </Heading>
           {!(state === "done" && hasSchools) ? (
-            <Text color="gray.400" fontSize="xl" fontWeight="600">
-              There are no schools nearby
-            </Text>
+            <EmptyText>There are no schools nearby</EmptyText>
           ) : (
             <Slider
               settings={{
@@ -44,10 +104,7 @@ const NearbySchools = (props) => {
             >
               {schools.map((school) => {
                 return (
-                  <Box
-                    key={school.id}
-                    w={{ base: "100%", sm: "50%", md: "33.3333%", lg: "20%" }}
-                  >
+                  <Box key={school.id}>
                     <Flex
                       shadow="sm"
                       borderWidth={1}
@@ -118,7 +175,7 @@ const NearbySchools = (props) => {
           )}
         </Box>
       )}
-    </LazyLoad>
+    </React.Fragment>
   );
 };
 

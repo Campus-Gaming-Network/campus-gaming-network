@@ -261,6 +261,7 @@ html {
 nav [data-reach-combobox] {
   max-width: 600px !important;
   width: 100% !important;
+  z-index: 3;
 }
 
 #siteSchoolSearch {
@@ -299,6 +300,7 @@ nav [data-reach-combobox] {
   border-bottom-right-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
   border-color: var(--chakra-colors-gray-200);
+  z-index: 3;
 }
 
 #siteSchoolSearch--popover [data-reach-combobox-option] {
@@ -323,4 +325,16 @@ nav [data-reach-combobox] {
 
 .slick--less-slides .slick-track {
   margin-left: 0;
+}
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  display: none;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.5);
 }

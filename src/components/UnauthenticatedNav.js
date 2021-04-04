@@ -34,6 +34,7 @@ const UnauthenticatedNav = () => {
         name="siteSchoolSearch"
         onSelect={onSchoolSelect}
         clearInputOnSelect
+        withOverlay
       />
 
       <Flex

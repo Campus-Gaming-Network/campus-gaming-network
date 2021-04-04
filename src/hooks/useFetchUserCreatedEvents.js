@@ -5,25 +5,25 @@ import React from "react";
 import firebase from "src/firebase";
 
 // Utilities
-import { mapEventResponse } from "src/utilities/eventResponse";
+import { mapEvent } from "src/utilities/event";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
 
-const useFetchUserEvents = (id, limit) => {
+const useFetchUserCreatedEvents = (id, limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const fetchUserEvents = async () => {
+    const fetchUserCreatedEvents = async () => {
       setState(STATES.LOADING);
       setEvents(null);
       setError(null);
 
       if (process.env.NODE_ENV !== "production") {
-        console.log(`[API] fetchUserEvents...${id}`);
+        console.log(`[API] fetchUserCreatedEvents...${id}`);
       }
 
       const userDocRef = firebase
@@ -35,22 +35,22 @@ const useFetchUserEvents = (id, limit) => {
       let _events = [];
 
       try {
-        const userEventsSnapshot = await firebase
+        const userCreatedEventsSnapshot = await firebaseAdmin
           .firestore()
-          .collection(COLLECTIONS.EVENT_RESPONSES)
-          .where("user.ref", "==", userDocRef)
-          .where("response", "==", "YES")
+          .collection("events")
+          .where("creator", "==", userDocRef)
           .where(
-            "event.endDateTime",
+            "endDateTime",
             ">=",
-            firebase.firestore.Timestamp.fromDate(now)
+            firebaseAdmin.firestore.Timestamp.fromDate(now)
           )
+          .limit(25)
           .get();
-        console.log({ userEventsSnapshot });
-        if (!userEventsSnapshot.empty) {
-          userEventsSnapshot.forEach((doc) => {
+
+        if (!userCreatedEventsSnapshot.empty) {
+          userCreatedEventsSnapshot.forEach((doc) => {
             const data = doc.data();
-            const event = { ...mapEventResponse(data, doc) };
+            const event = mapEvent({ id: doc.id, ...data }, doc);
             _events.push(event);
           });
         }
@@ -65,11 +65,11 @@ const useFetchUserEvents = (id, limit) => {
     };
 
     if (id) {
-      fetchUserEvents();
+      fetchUserCreatedEvents();
     }
   }, [id, limit]);
 
   return [events, state, error];
 };
 
-export default useFetchUserEvents;
+export default useFetchUserCreatedEvents;

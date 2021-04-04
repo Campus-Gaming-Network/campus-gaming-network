@@ -11,6 +11,7 @@ const COLLECTIONS = {
   EVENTS: "events",
   EVENT_RESPONSES: "event-responses",
   GAME_QUERIES: "game-queries",
+  REPORTS: "reports",
 };
 
 const AUTH_USER = {
@@ -35,7 +36,7 @@ const USER = {
   bio: "",
   timezone: "",
   hometown: "",
-  birthdate: null,
+  birthdate: "",
   website: "",
   twitter: "",
   twitch: "",
@@ -48,6 +49,8 @@ const USER = {
   psn: "",
   currentlyPlaying: [],
   favoriteGames: [],
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
 };
 
 const GAME = {
@@ -211,7 +214,7 @@ describe("Users", () => {
       bio: "bio",
       timezone: "America/Denver",
       hometown: "Chicago",
-      birthdate: null,
+      birthdate: "",
       website: "website",
       twitter: "twitter",
       twitch: "twitch",
@@ -240,7 +243,7 @@ describe("Users", () => {
       bio: "",
       timezone: "",
       hometown: "",
-      birthdate: null,
+      birthdate: "",
       website: "",
       twitter: "",
       twitch: "",
@@ -482,12 +485,12 @@ describe("Event Responses", () => {
 });
 
 describe("Game Queries", () => {
-  it("should allow a read to the game-queries collection", async () => {
+  it("should deny a read to the game-queries collection", async () => {
     const db = getAuthedFirestore(null);
 
     const gameQueriesRef = db.collection(COLLECTIONS.GAME_QUERIES);
 
-    await firebase.assertSucceeds(gameQueriesRef.get());
+    await firebase.assertFails(gameQueriesRef.get());
   });
 
   it("should deny a write to game-queries", async () => {

@@ -88,4 +88,5 @@ export const LOCAL_STORAGE = {
     process.env.NODE_ENV !== "production"
       ? "cgn_dev.schools_query"
       : "cgn.schools_query",
+  GEOLOCATION: "cgn.geolocation",
 };

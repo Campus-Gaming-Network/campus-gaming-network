@@ -111,6 +111,7 @@ const SiteLayout = ({
         {children}
       </Box>
       {!hideFooter ? <Footer /> : null}
+      <div className="overlay" />
     </React.Fragment>
   );
 };

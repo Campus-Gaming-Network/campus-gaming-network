@@ -27,7 +27,6 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
-import { getUserDetails, getUserAttendingEvents } from "src/api/user";
 import dynamic from "next/dynamic";
 
 // Constants
@@ -43,12 +42,13 @@ import { ACCOUNTS } from "src/constants/other";
 import SiteLayout from "src/components/SiteLayout";
 import Article from "src/components/Article";
 import Link from "src/components/Link";
-import EventListItem from "src/components/EventListItem";
 import GameCover from "src/components/GameCover";
 import GameLink from "src/components/GameLink";
+import SliderLazyLoad from "src/components/SliderLazyLoad";
 
 // API
 import { getSchoolDetails } from "src/api/school";
+import { getUserDetails, getUserAttendingEvents } from "src/api/user";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -62,6 +62,10 @@ const ReportEntityDialog = dynamic(
   {
     ssr: false,
   }
+);
+const AttendingEvents = dynamic(
+  () => import("src/components/AttendingEvents"),
+  { ssr: false }
 );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -300,17 +304,13 @@ const User = (props) => {
               emptyText={USER_EMPTY_FAVORITE_GAMES_TEXT}
             />
           </Stack>
-          <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
-              Events Attending
-            </Heading>
-            <EventsList events={props.events} />
-          </Stack>
+          <SliderLazyLoad>
+            <AttendingEvents
+              user={props.user}
+              title="Events Attending"
+              emptyText={USER_EMPTY_UPCOMING_EVENTS_TEXT}
+            />
+          </SliderLazyLoad>
         </Stack>
       </Article>
 
@@ -457,48 +457,5 @@ const GameListItem = React.memo((props) => {
     </ListItem>
   );
 });
-
-////////////////////////////////////////////////////////////////////////////////
-// EventsList
-
-const EventsList = (props) => {
-  // const [events, isLoadingEvents] = useFetchUserEvents(props.id);
-  const hasEvents = React.useMemo(
-    () =>
-      Boolean(props.events) && props.events.length && props.events.length > 0,
-    [props.events]
-  );
-
-  // if (isLoadingEvents) {
-  //   return (
-  //     <List d="flex" flexWrap="wrap" m={-2} p={0}>
-  //       {times(DEFAULT_EVENTS_SKELETON_LIST_PAGE_SIZE, index => (
-  //         <Box key={index} w={{ base: "50%", md: "33.3333%" }}>
-  //           <Skeleton
-  //             pos="relative"
-  //             d="flex"
-  //             m={2}
-  //             p={4}
-  //             h={151}
-  //             rounded="lg"
-  //           />
-  //         </Box>
-  //       ))}
-  //     </List>
-  //   );
-  // }
-
-  if (hasEvents) {
-    return (
-      <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {props.events.map((event) => (
-          <EventListItem key={event.id} {...event} />
-        ))}
-      </List>
-    );
-  }
-
-  return <Text color="gray.400">{USER_EMPTY_UPCOMING_EVENTS_TEXT}</Text>;
-};
 
 export default User;

@@ -1,7 +1,6 @@
 // Libraries
 import React from "react";
-import LazyLoad from "react-lazyload";
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 
 // Hooks
 import useFetchRecentlyCreatedEvents from "src/hooks/useFetchRecentlyCreatedEvents";
@@ -10,15 +9,16 @@ import useFetchRecentlyCreatedEvents from "src/hooks/useFetchRecentlyCreatedEven
 import EventListItem from "src/components/EventListItem";
 import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
+import EmptyText from "src/components/EmptyText";
 
-const RecentlyCreatedEvents = (props) => {
+const RecentlyCreatedEvents = () => {
   const [events, state] = useFetchRecentlyCreatedEvents();
   const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [
     events,
   ]);
 
   return (
-    <LazyLoad once height={270}>
+    <React.Fragment>
       {state === "idle" || state === "loading" ? (
         <SliderSilhouette />
       ) : (
@@ -27,9 +27,7 @@ const RecentlyCreatedEvents = (props) => {
             Newest events
           </Heading>
           {!(state === "done" && hasEvents) ? (
-            <Text color="gray.400" fontSize="xl" fontWeight="600">
-              No events have been recently created
-            </Text>
+            <EmptyText>No events have been recently created</EmptyText>
           ) : (
             <Slider
               settings={{
@@ -47,7 +45,7 @@ const RecentlyCreatedEvents = (props) => {
           )}
         </Box>
       )}
-    </LazyLoad>
+    </React.Fragment>
   );
 };
 

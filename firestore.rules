@@ -72,13 +72,13 @@ service cloud.firestore {
             hasLength('status', 1, 15) &&
             hasLength('gravatar', 1, 255) &&
             isValidOption("status", statusOptions) &&
-            hasValidUserSchool() &&
+            hasValidSchool() &&
             hasLengthOrNull("major", 255) &&
             hasLengthOrNull("minor", 255) &&
             hasLengthOrNull("bio", 2500) &&
             isValidOption("timezone", timezoneOptions) &&
             hasLengthOrNull("hometown", 255) &&
-            (val('birthdate') == '' || hasTimestampField('birthdate')) &&
+            (val('birthdate') == '' || isTimestampField('birthdate')) &&
             hasLengthOrNull("website", 255) &&
             hasLengthOrNull("twitter", 255) &&
             hasLengthOrNull("twitch", 255) &&
@@ -116,15 +116,18 @@ service cloud.firestore {
 
     match /events/{eventId} {
       function canCreateEvent() {
-        return isSignedIn();
+        return (
+          isEmailVerified() &&
+          isSignedIn()
+        );
       }
 
       function isValidEvent() {
         let requiredFields = [
           'creator',
-          'host',
           'name',
           'game',
+          'description',
           'startDateTime',
           'endDateTime',
           'isOnlineEvent',
@@ -133,11 +136,21 @@ service cloud.firestore {
         let optionalFields = [
           'createdAt',
           'updatedAt',
-          'description',
           'location',
           'placeId',
         ];
-        return documentFieldsCheckOut(requiredFields, optionalFields);
+        return (
+            documentFieldsCheckOut(requiredFields, optionalFields) &&
+            hasValidCreator() &&
+            hasLength('name', 1, 255) &&
+            hasLength('description', 1, 5000) &&
+            isTimestampField('startDateTime') &&
+            isTimestampField('endDateTime') &&
+            incomingData().startDateTime < incomingData().endDateTime &&
+            hasLengthOrNull('location', 255) &&
+            hasLengthOrNull('placeId', 255) &&
+            hasValidSchool()
+        );
       }
 
       function canUpdateEvent() {
@@ -203,8 +216,7 @@ service cloud.firestore {
     }
 
     match /game-queries/{gameQueryId} {
-      allow read: if true;
-      allow write, update, create, delete: if false;
+      allow read, write, update, create, delete: if false;
     }
 
     match /reports/{reportId} {
@@ -214,14 +226,21 @@ service cloud.firestore {
     ///////////////////////////////////////////////////////////////////////////
     // Shared Functions
 
-      function hasValidUserSchool() {
+      function hasValidCreator() {
+        return (
+          'id' in incomingData().creator.keys() &&
+          exists(/databases/$(database)/documents/users/$(incomingData().creator.id))
+        );
+      }
+
+      function hasValidSchool() {
         return (
           'id' in incomingData().school.keys() &&
           exists(/databases/$(database)/documents/schools/$(incomingData().school.id))
         );
       }
 
-      function hasTimestampField(field) {
+      function isTimestampField(field) {
         return (
           incomingData()[field] is timestamp
         );

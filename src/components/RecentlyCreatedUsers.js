@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import LazyLoad from "react-lazyload";
 import { Box, Heading, Text } from "@chakra-ui/react";
 
 // Hooks
@@ -10,6 +9,7 @@ import useFetchRecentlyCreatedUsers from "src/hooks/useFetchRecentlyCreatedUsers
 import UserListItem from "src/components/UserListItem";
 import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
+import EmptyText from "src/components/EmptyText";
 
 const RecentlyCreatedUsers = () => {
   const [users, state] = useFetchRecentlyCreatedUsers();
@@ -18,7 +18,7 @@ const RecentlyCreatedUsers = () => {
   ]);
 
   return (
-    <LazyLoad once height={200}>
+    <React.Fragment>
       {state === "idle" || state === "loading" ? (
         <SliderSilhouette />
       ) : (
@@ -27,9 +27,7 @@ const RecentlyCreatedUsers = () => {
             Newest users
           </Heading>
           {!(state === "done" && hasUsers) ? (
-            <Text color="gray.400" fontSize="xl" fontWeight="600">
-              No users have been recently created
-            </Text>
+            <EmptyText>No users have been recently created</EmptyText>
           ) : (
             <Slider
               settings={{
@@ -44,7 +42,7 @@ const RecentlyCreatedUsers = () => {
           )}
         </Box>
       )}
-    </LazyLoad>
+    </React.Fragment>
   );
 };
 

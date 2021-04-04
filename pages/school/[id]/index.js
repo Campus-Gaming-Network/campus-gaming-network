@@ -46,6 +46,7 @@ import OutsideLink from "src/components/OutsideLink";
 import EventListItem from "src/components/EventListItem";
 import SchoolLogo from "src/components/SchoolLogo";
 import UserListItem from "src/components/UserListItem";
+import SliderLazyLoad from "src/components/SliderLazyLoad";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -60,6 +61,12 @@ const ReportEntityDialog = dynamic(
 const NearbySchools = dynamic(() => import("src/components/NearbySchools"), {
   ssr: false,
 });
+const UpcomingSchoolEvents = dynamic(
+  () => import("src/components/UpcomingSchoolEvents"),
+  {
+    ssr: false,
+  }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -239,18 +246,13 @@ const School = (props) => {
               )}
             </Flex>
           </Stack>
-          <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-              px={{ base: 4, md: 0 }}
-            >
-              Upcoming Events
-            </Heading>
-            <EventsList events={props.events} />
-          </Stack>
+          <SliderLazyLoad>
+            <UpcomingSchoolEvents
+              school={props.school}
+              title="Upcoming Events"
+              emptyText={SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
+            />
+          </SliderLazyLoad>
           <Stack as="section" spacing={4}>
             <Heading
               as="h3"
@@ -285,35 +287,6 @@ const School = (props) => {
         />
       ) : null}
     </SiteLayout>
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// EventsList
-
-const EventsList = (props) => {
-  // const dispatch = useAppDispatch();
-  // const [page] = React.useState(0);
-  // const [events, isLoadingEvents] = useFetchSchoolEvents(
-  //   props.id,
-  //   undefined,
-  //   page
-  // );
-
-  if (Boolean(props.events) && props.events.length && props.events.length > 0) {
-    return (
-      <List d="flex" flexWrap="wrap" m={-2} p={0}>
-        {props.events.map((event) => (
-          <EventListItem key={event.id} event={event} school={event.school} />
-        ))}
-      </List>
-    );
-  }
-
-  return (
-    <Text mt={4} color="gray.400">
-      {SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
-    </Text>
   );
 };
 

@@ -1,6 +1,5 @@
 import React from "react";
-import LazyLoad from "react-lazyload";
-import { Heading, Text, Box, List } from "@chakra-ui/react";
+import { Heading, Box } from "@chakra-ui/react";
 
 // Hooks
 import useFetchSchoolEvents from "src/hooks/useFetchSchoolEvents";
@@ -8,40 +7,58 @@ import useFetchSchoolEvents from "src/hooks/useFetchSchoolEvents";
 // Components
 import Link from "src/components/Link";
 import EventListItem from "src/components/EventListItem";
+import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
+import EmptyText from "src/components/EmptyText";
 
 const UpcomingSchoolEvents = (props) => {
-  const [events, state] = useFetchSchoolEvents(props.school.id);
+  const [events, state] = useFetchSchoolEvents(props?.school?.id);
   const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [
     events,
   ]);
 
   return (
-    <LazyLoad once height={270}>
+    <React.Fragment>
       {state === "idle" || state === "loading" ? (
         <SliderSilhouette />
       ) : (
         <Box as="section" py={4}>
           <Heading as="h3" fontSize="xl" pb={4}>
-            Upcoming events at{" "}
-            <Link
-              href={`/school/${props.school.id}`}
-              color="brand.500"
-              fontWeight="bold"
-              isTruncated
-              lineHeight="short"
-              mt={-2}
-              title={props.school.formattedName}
-            >
-              {props.school.formattedName}
-            </Link>
+            {Boolean(props.title) ? (
+              props.title
+            ) : (
+              <React.Fragment>
+                Upcoming events at{" "}
+                <Link
+                  href={`/school/${props.school.id}`}
+                  color="brand.500"
+                  fontWeight="bold"
+                  isTruncated
+                  lineHeight="short"
+                  mt={-2}
+                  title={props.school.formattedName}
+                >
+                  {props.school.formattedName}
+                </Link>
+              </React.Fragment>
+            )}
           </Heading>
           {!(state === "done" && hasEvents) ? (
-            <Text color="gray.400" fontSize="xl" fontWeight="600">
-              There are no upcoming events at {props.school.formattedName}
-            </Text>
+            <EmptyText>
+              {Boolean(props.emptyText) ? (
+                props.emptyText
+              ) : (
+                <React.Fragment>
+                  There are no upcoming events at {props.school.formattedName}
+                </React.Fragment>
+              )}
+            </EmptyText>
           ) : (
-            <List d="flex" flexWrap="wrap" m={-2} p={0}>
+            <Slider
+              settings={{
+                className: events.length < 5 ? "slick--less-slides" : "",
+              }}
+            >
               {events.map((event) => (
                 <EventListItem
                   key={event.id}
@@ -49,11 +66,11 @@ const UpcomingSchoolEvents = (props) => {
                   school={event.school}
                 />
               ))}
-            </List>
+            </Slider>
           )}
         </Box>
       )}
-    </LazyLoad>
+    </React.Fragment>
   );
 };
 

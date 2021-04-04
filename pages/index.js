@@ -1,31 +1,29 @@
 import React from "react";
-import { Box, Heading, Text, Stack } from "@chakra-ui/react";
+import { Heading, Text, Stack } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import nookies from "nookies";
-import firebaseAdmin from "src/firebaseAdmin";
 import dynamic from "next/dynamic";
-import { usePosition } from "use-position";
+
+// Other
+import firebaseAdmin from "src/firebaseAdmin";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import Article from "src/components/Article";
 import RecentlyCreatedEvents from "src/components/RecentlyCreatedEvents";
 import RecentlyCreatedUsers from "src/components/RecentlyCreatedUsers";
+import SliderLazyLoad from "src/components/SliderLazyLoad";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES } from "src/constants/other";
 
 // API
-import {
-  getUserDetails,
-  getUserAttendingEvents,
-  getUserCreatedEvents,
-} from "src/api/user";
+import { getUserDetails } from "src/api/user";
+import { getSchoolDetails } from "src/api/school";
 
 // Providers
 import { useAuth } from "src/providers/auth";
-import { getSchoolDetails } from "src/api/school";
 
 // Dynamic Components
 const UserCreatedEvents = dynamic(
@@ -51,39 +49,27 @@ export const getServerSideProps = async (context) => {
   const data = {
     user: null,
     school: null,
-    userAttendingEvents: [],
-    userCreatedEvents: [],
   };
 
   try {
     const cookies = nookies.get(context);
-    const token =
-      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
-        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-        : null;
-    const authStatus =
-      Boolean(token) && Boolean(token.uid)
-        ? AUTH_STATUS.AUTHENTICATED
-        : AUTH_STATUS.UNAUTHENTICATED;
+    const token = cookies?.[COOKIES.AUTH_TOKEN]
+      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+      : null;
+    const authStatus = token?.uid
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
       const { user } = await getUserDetails(token.uid);
 
       data.user = user;
 
-      const [
-        userAttendingEventsResponse,
-        schoolDetailsResponse,
-        userCreatedEventsResponse,
-      ] = await Promise.all([
-        getUserAttendingEvents(user.id),
+      const [schoolDetailsResponse] = await Promise.all([
         getSchoolDetails(user.school.id),
-        getUserCreatedEvents(user.id),
       ]);
 
-      data.userAttendingEvents = userAttendingEventsResponse.events;
       data.school = schoolDetailsResponse.school;
-      data.userCreatedEvents = userCreatedEventsResponse.events;
     }
   } catch (error) {
     console.log(error);
@@ -98,11 +84,9 @@ export const getServerSideProps = async (context) => {
 
 const Home = (props) => {
   const { authUser } = useAuth();
-  const isAuthenticated = React.useMemo(
-    () => Boolean(authUser) && Boolean(authUser.uid),
-    [authUser]
-  );
-  const { latitude, longitude } = usePosition();
+  const isAuthenticated = React.useMemo(() => Boolean(authUser?.uid), [
+    authUser,
+  ]);
 
   return (
     <SiteLayout>
@@ -115,18 +99,30 @@ const Home = (props) => {
           at your school or nearby.
         </Text>
         <Stack pt={8} spacing={8}>
-          {/* {isAuthenticated ? (
-            <UserCreatedEvents events={props.userCreatedEvents} />
+          {isAuthenticated ? (
+            <SliderLazyLoad>
+              <UserCreatedEvents user={props.user} />
+            </SliderLazyLoad>
           ) : null}
           {isAuthenticated ? (
-            <AttendingEvents events={props.userAttendingEvents} />
-          ) : null} */}
-          {isAuthenticated && Boolean(props.school) ? (
-            <UpcomingSchoolEvents school={props.school} />
+            <SliderLazyLoad>
+              <AttendingEvents user={props.user} />
+            </SliderLazyLoad>
           ) : null}
-          <RecentlyCreatedEvents />
-          <NearbySchools latitude={latitude} longitude={longitude} />
-          <RecentlyCreatedUsers />
+          {isAuthenticated && Boolean(props.school) ? (
+            <SliderLazyLoad>
+              <UpcomingSchoolEvents school={props.school} />
+            </SliderLazyLoad>
+          ) : null}
+          <SliderLazyLoad>
+            <RecentlyCreatedEvents />
+          </SliderLazyLoad>
+          <SliderLazyLoad>
+            <NearbySchools useBrowserLocation />
+          </SliderLazyLoad>
+          <SliderLazyLoad>
+            <RecentlyCreatedUsers />
+          </SliderLazyLoad>
         </Stack>
       </Article>
     </SiteLayout>

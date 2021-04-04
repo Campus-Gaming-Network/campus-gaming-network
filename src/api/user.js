@@ -3,7 +3,7 @@ import { mapUser } from "src/utilities/user";
 import { mapEvent } from "src/utilities/event";
 import { mapEventResponse } from "src/utilities/eventResponse";
 
-export const getUserDetails = async id => {
+export const getUserDetails = async (id) => {
   let user = null;
 
   try {
@@ -33,10 +33,7 @@ export const getUserAttendingEvents = async (
   let events = [];
 
   try {
-    const userDocRef = firebaseAdmin
-      .firestore()
-      .collection("users")
-      .doc(id);
+    const userDocRef = firebaseAdmin.firestore().collection("users").doc(id);
 
     let query = firebaseAdmin
       .firestore()
@@ -58,7 +55,7 @@ export const getUserAttendingEvents = async (
     const eventsSnapshot = await query.limit(limit).get();
 
     if (!eventsSnapshot.empty) {
-      eventsSnapshot.forEach(doc => {
+      eventsSnapshot.forEach((doc) => {
         const event = mapEventResponse(doc.data(), doc);
         events.push(event);
       });
@@ -98,8 +95,8 @@ export const getUserEventResponse = async (eventId, userId) => {
         ...{
           id: doc.id,
           ref: doc,
-          ...doc.data()
-        }
+          ...doc.data(),
+        },
       };
     }
 
@@ -109,7 +106,7 @@ export const getUserEventResponse = async (eventId, userId) => {
   }
 };
 
-export const getUserCreatedEvents = async userId => {
+export const getUserCreatedEvents = async (userId) => {
   const now = new Date();
   let events = [];
 
@@ -128,10 +125,11 @@ export const getUserCreatedEvents = async userId => {
         ">=",
         firebaseAdmin.firestore.Timestamp.fromDate(now)
       )
-      .limit(25);
+      .limit(25)
+      .get();
 
     if (!userCreatedEventsSnapshot.empty) {
-      userCreatedEventsSnapshot.forEach(doc => {
+      userCreatedEventsSnapshot.forEach((doc) => {
         const data = doc.data();
         const event = mapEvent({ id: doc.id, ...data }, doc);
         events.push(event);

@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { useRouter } from "next/router";
 import {
@@ -15,12 +16,10 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserCircle,
-  faSignOutAlt,
-  faSchool,
-} from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faSchool } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarAlt } from "@fortawesome/free-regular-svg-icons";
+
+// Components
 import NavWrapper from "src/components/NavWrapper";
 import SchoolSearch from "src/components/SchoolSearch";
 import SchoolLogo from "src/components/SchoolLogo";
@@ -69,6 +68,7 @@ const AuthenticatedNav = (props) => {
         name="siteSchoolSearch"
         onSelect={onSchoolSelect}
         clearInputOnSelect
+        withOverlay
       />
 
       <Flex
@@ -183,10 +183,7 @@ const AuthenticatedNav = (props) => {
               </MenuItem>
             </MenuGroup>
             <MenuDivider />
-            <MenuItem
-              onClick={handleLogout}
-              icon={<FontAwesomeIcon icon={faSignOutAlt} />}
-            >
+            <MenuItem onClick={handleLogout}>
               <Text lineHeight="1">Log out</Text>
             </MenuItem>
           </MenuList>

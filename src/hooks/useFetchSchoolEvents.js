@@ -22,7 +22,9 @@ const useFetchSchoolEvents = (id, limit) => {
       setEvents(null);
       setError(null);
 
-      console.log(`[API] fetchSchoolEvents...${id}`);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[API] fetchSchoolEvents...${id}`);
+      }
 
       const schoolDocRef = firebase
         .firestore()

@@ -28,7 +28,7 @@ const useFetchNearbySchools = (latitude, longitude) => {
       setSchools(null);
       setError(null);
 
-      console.log("[API] fetchNearbySchools...");
+      console.log(`[API] fetchNearbySchools...(${latitude}, ${longitude})`);
 
       for (const b of bounds) {
         const query = firebase
