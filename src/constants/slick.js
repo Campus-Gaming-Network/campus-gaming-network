@@ -3,11 +3,11 @@
 
 export const SLICK_SETTINGS = {
   lazyLoad: true,
-  focusOnSelect: true,
+  focusOnSelect: false,
   infinite: false,
   speed: 500,
   slidesToShow: 5,
-  slidesToScroll: 1,
+  slidesToScroll: 3,
   rows: 1,
   responsive: [
     {
@@ -23,4 +23,5 @@ export const SLICK_SETTINGS = {
       },
     },
   ],
+  swipeToSlide: true,
 };

@@ -1,17 +1,28 @@
 import React from "react";
 import { Stack, Skeleton, HStack, Box } from "@chakra-ui/react";
+import Slider from "src/components/Slider";
 
 const SliderSilhouette = () => {
   return (
     <Stack spacing={4}>
       <Skeleton width="125px" height="35px" />
-      <HStack>
-        <Skeleton width="230px" height="200px" />
-        <Skeleton width="230px" height="200px" />
-        <Skeleton width="230px" height="200px" />
-        <Skeleton width="230px" height="200px" />
-        <Skeleton width="230px" height="200px" />
-      </HStack>
+      <Slider settings={{ arrows: false }}>
+        <Box>
+          <Skeleton mr={4} height="200px" />
+        </Box>
+        <Box>
+          <Skeleton mr={4} height="200px" />
+        </Box>
+        <Box>
+          <Skeleton mr={4} height="200px" />
+        </Box>
+        <Box>
+          <Skeleton mr={4} height="200px" />
+        </Box>
+        <Box>
+          <Skeleton height="200px" />
+        </Box>
+      </Slider>
     </Stack>
   );
 };
