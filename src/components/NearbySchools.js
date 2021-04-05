@@ -11,6 +11,7 @@ import Link from "src/components/Link";
 import Slider from "src/components/Slider";
 import EmptyText from "src/components/EmptyText";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
+import SliderCard from "src/components/SliderCard";
 
 // Hooks
 import useFetchNearbySchools from "src/hooks/useFetchNearbySchools";
@@ -104,19 +105,8 @@ const NearbySchools = (props) => {
             >
               {schools.map((school) => {
                 return (
-                  <Box key={school.id}>
-                    <Flex
-                      shadow="sm"
-                      borderWidth={1}
-                      rounded="lg"
-                      bg="white"
-                      pos="relative"
-                      align="center"
-                      mr={4}
-                      mb={4}
-                      p={4}
-                      h={70}
-                    >
+                  <SliderCard key={school.id} h={70}>
+                    <Flex align="center" height="100%">
                       <SchoolLogo
                         rounded="full"
                         bg="white"
@@ -168,7 +158,7 @@ const NearbySchools = (props) => {
                         </Link>
                       </Stack>
                     </Flex>
-                  </Box>
+                  </SliderCard>
                 );
               })}
             </Slider>

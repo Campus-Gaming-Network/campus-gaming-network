@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 
 // Hooks
 import useFetchRecentlyCreatedUsers from "src/hooks/useFetchRecentlyCreatedUsers";

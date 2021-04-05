@@ -24,4 +24,6 @@ export const SLICK_SETTINGS = {
     },
   ],
   swipeToSlide: true,
+  variableWidth: false,
+  arrows: true,
 };
