@@ -7,7 +7,7 @@ export const SLICK_SETTINGS = {
   infinite: false,
   speed: 500,
   slidesToShow: 5,
-  slidesToScroll: 3,
+  slidesToScroll: 2,
   rows: 1,
   responsive: [
     {
