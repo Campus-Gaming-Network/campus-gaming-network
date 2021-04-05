@@ -33,6 +33,20 @@ const RecentlyCreatedUsers = () => {
               settings={{
                 slidesToShow: 10,
                 className: users.length < 10 ? "slick--less-slides" : "",
+                responsive: [
+                  {
+                    breakpoint: 1024,
+                    settings: {
+                      slidesToShow: 5,
+                    },
+                  },
+                  {
+                    breakpoint: 600,
+                    settings: {
+                      slidesToShow: 3,
+                    },
+                  },
+                ],
               }}
             >
               {users.map((user) => (
