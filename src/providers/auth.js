@@ -29,6 +29,17 @@ export const AuthProvider = ({ children }) => {
   const [school, setSchool] = React.useState(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
+  const clearAuth = () => {
+    setAuthStatus("unauthenticated");
+    setIsAuthenticated(false);
+    setAuthUser(null);
+    setUser(null);
+    setSchool(null);
+
+    nookies.destroy(null, COOKIES.AUTH_TOKEN);
+    nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: COOKIES.PATH });
+  };
+
   React.useEffect(() => {
     setAuthStatus("authenticating");
 
@@ -41,16 +52,7 @@ export const AuthProvider = ({ children }) => {
 
       if (!authUser) {
         console.log(`no token found...`);
-
-        setAuthStatus("unauthenticated");
-        setIsAuthenticated(false);
-        setAuthUser(null);
-        setUser(null);
-        setSchool(null);
-        setAuthStatus("finished");
-
-        nookies.destroy(null, COOKIES.AUTH_TOKEN);
-        nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: COOKIES.PATH });
+        clearAuth();
         return;
       }
 
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }) => {
       if (Boolean(authUser) && Boolean(authUser.uid)) {
         setAuthStatus("authenticated");
         setIsAuthenticated(true);
+
         let userDoc;
 
         try {
@@ -87,7 +90,6 @@ export const AuthProvider = ({ children }) => {
 
             if (schoolDoc.exists) {
               setSchool({ ...mapSchool(schoolDoc.data(), schoolDoc) });
-              setAuthStatus("finished");
             }
           } catch (error) {
             console.log("err->", error);
@@ -115,15 +117,9 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(handle);
   }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{ authStatus, authUser, user, school, isAuthenticated }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = { authStatus, authUser, user, school, isAuthenticated };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => {
-  return React.useContext(AuthContext);
-};
+export const useAuth = () => React.useContext(AuthContext);

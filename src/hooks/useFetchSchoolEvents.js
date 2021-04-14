@@ -11,7 +11,7 @@ import { mapEvent } from "src/utilities/event";
 import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
 
-const useFetchSchoolEvents = (id, limit) => {
+const useFetchSchoolEvents = (id) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -44,7 +44,7 @@ const useFetchSchoolEvents = (id, limit) => {
             ">=",
             firebase.firestore.Timestamp.fromDate(now)
           )
-          .limit(limit)
+          .limit(25)
           .get();
 
         if (!schoolEventsSnapshot.empty) {
@@ -72,7 +72,7 @@ const useFetchSchoolEvents = (id, limit) => {
     if (id) {
       fetchSchoolEvents();
     }
-  }, [id, limit]);
+  }, [id]);
 
   return [events, state, error];
 };

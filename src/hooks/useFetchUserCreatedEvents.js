@@ -11,7 +11,7 @@ import { mapEvent } from "src/utilities/event";
 import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
 
-const useFetchUserCreatedEvents = (id, limit) => {
+const useFetchUserCreatedEvents = (id) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -35,14 +35,14 @@ const useFetchUserCreatedEvents = (id, limit) => {
       let _events = [];
 
       try {
-        const userCreatedEventsSnapshot = await firebaseAdmin
+        const userCreatedEventsSnapshot = await firebase
           .firestore()
           .collection("events")
           .where("creator", "==", userDocRef)
           .where(
             "endDateTime",
             ">=",
-            firebaseAdmin.firestore.Timestamp.fromDate(now)
+            firebase.firestore.Timestamp.fromDate(now)
           )
           .limit(25)
           .get();
@@ -67,7 +67,7 @@ const useFetchUserCreatedEvents = (id, limit) => {
     if (id) {
       fetchUserCreatedEvents();
     }
-  }, [id, limit]);
+  }, [id]);
 
   return [events, state, error];
 };

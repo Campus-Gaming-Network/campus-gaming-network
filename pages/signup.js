@@ -167,6 +167,14 @@ const Signup = () => {
           .currentUser.sendEmailVerification()
           .then(
             () => {
+              firebase
+                .auth()
+                .currentUser.getIdToken(true)
+                .then(() => {
+                  setIsSubmitting(false);
+                  router.push("/");
+                });
+
               toast({
                 title: "Verification email sent.",
                 description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
@@ -178,8 +186,6 @@ const Signup = () => {
               console.error(error);
             }
           );
-        setIsSubmitting(false);
-        router.push("/");
       })
       .catch((error) => {
         console.error(error);
