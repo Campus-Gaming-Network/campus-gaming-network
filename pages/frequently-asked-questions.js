@@ -86,7 +86,7 @@ const IGDBLink = (props) => {
 
 const GithubLink = (props) => {
   return (
-    <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
+    <OutsideLink href="https://github.com/Campus-Gaming-Network/campus-gaming-network">
       {props.children ? props.children : "GitHub"}
     </OutsideLink>
   );

@@ -6,7 +6,7 @@ import {
   List,
   ListItem,
   Text,
-  Flex
+  Flex,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMugHot } from "@fortawesome/free-solid-svg-icons";
@@ -90,7 +90,7 @@ const Footer = () => {
             </ListItem>
             <ListItem fontSize="md">
               Contribute on{" "}
-              <OutsideLink href="https://github.com/bsansone/campus-gaming-network">
+              <OutsideLink href="https://github.com/Campus-Gaming-Network/campus-gaming-network">
                 GitHub
               </OutsideLink>
             </ListItem>
