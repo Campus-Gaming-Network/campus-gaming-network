@@ -1,9 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Event Utilities
 
-import { googleMapsLink } from "src/utilities/other";
+// Utilities
+import { googleMapsLink, cleanObjectOfBadWords } from "src/utilities/other";
 import { buildDateTime, hasStarted, hasEnded } from "src/utilities/dateTime";
 import { mapSchool } from "src/utilities/school";
+
+// Constants
 import { PRODUCTION_URL } from "src/constants/other";
 
 export const mapEvent = (event) => {
@@ -16,7 +19,7 @@ export const mapEvent = (event) => {
   const metaDescription = `${startDateTime.locale}: ${event.description}`;
   const url = `${PRODUCTION_URL}/event/${event.id}`;
 
-  return {
+  return cleanObjectOfBadWords({
     ...event,
     url,
     startDateTime,
@@ -43,5 +46,5 @@ export const mapEvent = (event) => {
         site_name: "Campus Gaming Network",
       },
     },
-  };
+  });
 };

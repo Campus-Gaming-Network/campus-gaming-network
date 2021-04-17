@@ -12,6 +12,7 @@ import { GRAVATAR, ACCOUNTS, PRODUCTION_URL } from "src/constants/other";
 // Utilities
 import { mapSchool } from "src/utilities/school";
 import { buildDateTime } from "src/utilities/dateTime";
+import { cleanObjectOfBadWords } from "src/utilities/other";
 
 export const createGravatarHash = (email = "") => {
   const trimmedEmail = email.trim();
@@ -45,11 +46,11 @@ export const mapUser = (user) => {
   );
   const url = `${PRODUCTION_URL}/user/${user.id}`;
 
-  return {
+  return cleanObjectOfBadWords({
     ...user,
     birthdate: buildDateTime(user.birthdate),
     school: mapSchool(user.school),
-    fullName: fullName,
+    fullName,
     hasAccounts: userHasAccounts(user),
     hasFavoriteGames: Boolean(user.favoriteGames) && user.favoriteGames.length,
     hasCurrentlyPlaying:
@@ -62,7 +63,7 @@ export const mapUser = (user) => {
         url,
       },
     },
-  };
+  });
 };
 
 export const userHasAccounts = (user) => {

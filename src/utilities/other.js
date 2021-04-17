@@ -3,9 +3,14 @@
 
 // Libraries
 import React from "react";
+import Filter from "bad-words";
 
 // Constans
 import { GOOGLE_MAPS_QUERY_URL } from "src/constants/other";
+
+const badWordFilter = new Filter();
+
+export const cleanBadWords = (text) => badWordFilter.clean(text);
 
 export const useFormFields = (initialState) => {
   const [fields, setValues] = React.useState(initialState);
@@ -67,4 +72,18 @@ export const sanitizePrivateProperties = (obj = {}) => {
   }
 
   return obj;
+};
+
+export const cleanObjectOfBadWords = (obj = {}) => {
+  const _obj = { ...obj };
+
+  for (const prop in _obj) {
+    if (typeof _obj[prop] === "object") {
+      cleanObjectOfBadWords(_obj[prop]);
+    } else if (typeof _obj[prop] === "string") {
+      cleanBadWords(_obj[prop]);
+    }
+  }
+
+  return _obj;
 };

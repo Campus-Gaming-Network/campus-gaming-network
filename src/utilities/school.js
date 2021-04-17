@@ -5,20 +5,26 @@
 import startCase from "lodash.startcase";
 
 // Utilities
-import { googleMapsLink, isValidUrl } from "src/utilities/other";
+import {
+  googleMapsLink,
+  isValidUrl,
+  cleanObjectOfBadWords,
+} from "src/utilities/other";
 
 // Constants
 import { PRODUCTION_URL } from "src/constants/other";
 
-export const mapSchool = school => {
+export const mapSchool = (school) => {
   if (!Boolean(school)) {
     return undefined;
   }
 
-  const formattedName = Boolean(school.name) ? startCase(school.name.toLowerCase()) : undefined
+  const formattedName = Boolean(school.name)
+    ? startCase(school.name.toLowerCase())
+    : undefined;
   const url = `${PRODUCTION_URL}/school/${school.id}`;
 
-  return {
+  return cleanObjectOfBadWords({
     ...school,
     formattedName: formattedName,
     formattedAddress: Boolean(school.address)
@@ -31,13 +37,13 @@ export const mapSchool = school => {
       Boolean(school.address) && Boolean(school.city) && Boolean(school.state)
         ? googleMapsLink(`${school.address} ${school.city}, ${school.state}`)
         : undefined,
-      meta: {
-        title: formattedName,
-        og: {
-          url
-        }
+    meta: {
+      title: formattedName,
+      og: {
+        url,
       },
-  };
+    },
+  });
 };
 
 export const getSchoolLogoPath = (schoolId, extension = "png") =>
