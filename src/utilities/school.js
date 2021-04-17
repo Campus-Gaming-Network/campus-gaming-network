@@ -26,7 +26,7 @@ export const mapSchool = (school) => {
 
   return cleanObjectOfBadWords({
     ...school,
-    formattedName: formattedName,
+    formattedName,
     formattedAddress: Boolean(school.address)
       ? startCase(school.address.toLowerCase())
       : undefined,

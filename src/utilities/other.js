@@ -80,12 +80,16 @@ export const cleanObjectOfBadWords = (obj = {}) => {
   for (const prop in _obj) {
     // Assuming a private property starts with an underscore.
     // In the case of Firebase ref properties, they do.
-    if (prop.startsWith("_")) {
-      if (typeof _obj[prop] === "object") {
-        cleanObjectOfBadWords(_obj[prop]);
-      } else if (typeof _obj[prop] === "string") {
-        cleanBadWords(_obj[prop]);
-      }
+    if (
+      !prop.startsWith("_") &&
+      typeof _obj[prop] === "string" &&
+      _obj[prop].trim() !== ""
+    ) {
+      cleanBadWords(_obj[prop]);
+    } else if (
+      ["meta", "school", "user", "event", "twitter", "og"].includes(prop)
+    ) {
+      cleanObjectOfBadWords(_obj[prop]);
     }
   }
 
