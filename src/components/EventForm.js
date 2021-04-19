@@ -193,7 +193,7 @@ const EventForm = (props) => {
     }
   }, [props.state, props.event]);
 
-  if (authStatus !== "finished") {
+  if (authStatus === "authenticating") {
     return (
       <SiteLayout meta={{ title: pageTitle, og: { url } }}>
         <FormSilhouette />
