@@ -43,6 +43,7 @@ import Article from "src/components/Article";
 import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
 import UserListItem from "src/components/UserListItem";
+import Time from "src/components/Time";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -273,21 +274,13 @@ const Event = (props) => {
               <Text as="span" color="gray.600" mr={2} fontSize="lg">
                 <FontAwesomeIcon icon={faClock} />
               </Text>
-              <Text
-                as="time"
-                dateTime={props.event.startDateTime.locale}
-                title={props.event.startDateTime.locale}
-              >
+              <Time dateTime={props.event.startDateTime.locale}>
                 {props.event.startDateTime.locale}
-              </Text>{" "}
+              </Time>{" "}
               to{" "}
-              <Text
-                as="time"
-                dateTime={props.event.endDateTime.locale}
-                title={props.event.endDateTime.locale}
-              >
+              <Time dateTime={props.event.endDateTime.locale}>
                 {props.event.endDateTime.locale}
-              </Text>
+              </Time>
             </Box>
             <Box>
               {props.event.isOnlineEvent ? (

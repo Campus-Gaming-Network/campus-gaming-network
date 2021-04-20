@@ -147,13 +147,17 @@ const CreateEvent = () => {
       name: formState.name.trim(),
       description: formState.description.trim(),
       isOnlineEvent: formState.isOnlineEvent,
-      startDateTime: startDateTime,
-      endDateTime: endDateTime,
+      startDateTime,
+      endDateTime,
       game: formState.game,
       school: {
         ref: schoolDocRef,
         id: schoolDocRef.id,
         name: school.name,
+      },
+      responses: {
+        yes: 0,
+        no: 0,
       },
     };
 
@@ -167,13 +171,7 @@ const CreateEvent = () => {
     firebase
       .firestore()
       .collection(COLLECTIONS.EVENTS)
-      .add({
-        ...eventData,
-        responses: {
-          yes: 0,
-          no: 0,
-        },
-      })
+      .add(eventData)
       .then((eventDocRef) => {
         eventId = eventDocRef.id;
 
