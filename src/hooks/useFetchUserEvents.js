@@ -46,7 +46,7 @@ const useFetchUserEvents = (id, limit) => {
             firebase.firestore.Timestamp.fromDate(now)
           )
           .get();
-        console.log({ userEventsSnapshot });
+
         if (!userEventsSnapshot.empty) {
           userEventsSnapshot.forEach((doc) => {
             const data = doc.data();

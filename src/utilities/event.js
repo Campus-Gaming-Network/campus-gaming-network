@@ -3,27 +3,29 @@
 
 // Utilities
 import { googleMapsLink, cleanObjectOfBadWords } from "src/utilities/other";
-import { buildDateTime, hasStarted, hasEnded } from "src/utilities/dateTime";
+import { hasStarted, hasEnded } from "src/utilities/dateTime";
 import { mapSchool } from "src/utilities/school";
 
 // Constants
-import { PRODUCTION_URL } from "src/constants/other";
+import {
+  PRODUCTION_URL,
+  CGN_TWITTER_HANDLE,
+  SITE_NAME,
+} from "src/constants/other";
 
 export const mapEvent = (event) => {
   if (!Boolean(event)) {
     return undefined;
   }
 
-  const startDateTime = buildDateTime(event.startDateTime);
-  const endDateTime = buildDateTime(event.endDateTime);
-  const metaDescription = `${startDateTime.locale}: ${event.description}`;
+  const metaDescription = `${event.startDateTime.toDate()}: ${
+    event.description
+  }`;
   const url = `${PRODUCTION_URL}/event/${event.id}`;
 
   return cleanObjectOfBadWords({
     ...event,
     url,
-    startDateTime,
-    endDateTime,
     googleMapsAddressLink: googleMapsLink(event.location),
     hasStarted: hasStarted(event.startDateTime, event.endDateTime),
     hasEnded: hasEnded(event.endDateTime),
@@ -33,17 +35,17 @@ export const mapEvent = (event) => {
       description: metaDescription.substring(0, 155),
       twitter: {
         card: "summary",
-        site: "Campus Gaming Network",
+        site: SITE_NAME,
         title: event.name,
         description: metaDescription.substring(0, 200),
-        creator: "@CampusGamingNet",
+        creator: CGN_TWITTER_HANDLE,
       },
       og: {
         title: event.name,
         type: "article",
         url,
         description: metaDescription,
-        site_name: "Campus Gaming Network",
+        site_name: SITE_NAME,
       },
     },
   });

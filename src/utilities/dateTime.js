@@ -15,7 +15,7 @@ export const hasStarted = (startDateTime, endDateTime) => {
   ).contains(DateTime.local());
 };
 
-export const hasEnded = endDateTime => {
+export const hasEnded = (endDateTime) => {
   if (!Boolean(endDateTime)) {
     return undefined;
   }
@@ -25,7 +25,7 @@ export const hasEnded = endDateTime => {
   );
 };
 
-export const formatCalendarDateTime = dateTime => {
+export const formatCalendarDateTime = (dateTime) => {
   if (!Boolean(dateTime)) {
     return undefined;
   }
@@ -33,7 +33,7 @@ export const formatCalendarDateTime = dateTime => {
   return DateTime.fromISO(dateTime.toDate().toISOString()).toRelativeCalendar();
 };
 
-export const buildDateTime = dateTime => {
+export const buildDateTime = (dateTime) => {
   if (!Boolean(dateTime)) {
     return undefined;
   }
@@ -43,7 +43,7 @@ export const buildDateTime = dateTime => {
   // TODO: Move to constants
   const localeFormat = {
     ...DateTime.DATETIME_FULL,
-    ...{ month: "long", day: "numeric" }
+    ...{ month: "long", day: "numeric" },
   };
 
   return {
@@ -51,8 +51,25 @@ export const buildDateTime = dateTime => {
     base: _dateTime,
     iso: _dateTimeISO,
     locale: DateTime.fromISO(_dateTimeISO).toLocaleString(localeFormat),
-    relative: DateTime.fromISO(_dateTimeISO).toRelativeCalendar()
+    relative: DateTime.fromISO(_dateTimeISO).toRelativeCalendar(),
   };
+};
+
+export const firebaseToLocaleString = (dateTime) => {
+  if (!Boolean(dateTime)) {
+    return undefined;
+  }
+
+  const seconds = dateTime._seconds || dateTime.seconds;
+
+  if (!Boolean(seconds) || typeof seconds !== "number") {
+    return undefined;
+  }
+
+  return DateTime.fromSeconds(seconds).toLocaleString({
+    ...DateTime.DATETIME_FULL,
+    ...{ month: "long", day: "numeric" },
+  });
 };
 
 export const getYears = (
@@ -66,7 +83,7 @@ export const getYears = (
     return years;
   }
 
-  years = [...range(min, max).map(year => year.toString())];
+  years = [...range(min, max).map((year) => year.toString())];
 
   if (options.reverse) {
     years = [...years.reverse()];

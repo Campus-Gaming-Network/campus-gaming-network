@@ -90,3 +90,5 @@ export const LOCAL_STORAGE = {
       : "cgn.schools_query",
   GEOLOCATION: "cgn.geolocation",
 };
+export const CGN_TWITTER_HANDLE = "@CampusGamingNet";
+export const SITE_NAME = "Campus Gaming Network";

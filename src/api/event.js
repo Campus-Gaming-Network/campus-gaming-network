@@ -7,7 +7,7 @@ import { mapUser } from "src/utilities/user";
 // Constants
 import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
 
-export const getEventDetails = async id => {
+export const getEventDetails = async (id) => {
   let event = null;
 
   try {
@@ -18,7 +18,8 @@ export const getEventDetails = async id => {
       .get();
 
     if (eventDoc.exists) {
-      event = { ...mapEvent(eventDoc.data()) };
+      const data = eventDoc.data();
+      event = mapEvent({ id: eventDoc.id, ...data }, eventDoc);
     }
 
     return { event };
@@ -35,10 +36,7 @@ export const getEventUsers = async (
   let users = [];
 
   try {
-    const eventDocRef = firebaseAdmin
-      .firestore()
-      .collection("events")
-      .doc(id);
+    const eventDocRef = firebaseAdmin.firestore().collection("events").doc(id);
 
     let query = firebaseAdmin
       .firestore()
@@ -57,7 +55,7 @@ export const getEventUsers = async (
     const eventUsersSnapshot = await query.limit(limit).get();
 
     if (!eventUsersSnapshot.empty) {
-      eventUsersSnapshot.forEach(doc => {
+      eventUsersSnapshot.forEach((doc) => {
         const data = doc.data();
         const user = mapUser({ id: data.user.id, ...data.user });
         users.push(user);

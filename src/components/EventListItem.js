@@ -1,13 +1,13 @@
 import React from "react";
-import { Box, Text, Flex, Stack, Badge } from "@chakra-ui/react";
+import { Text, Flex, Stack, Badge } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
-import startCase from "lodash.startcase";
 
 // Components
 import SchoolLogo from "src/components/SchoolLogo";
 import Link from "src/components/Link";
 import SliderCard from "src/components/SliderCard";
+import Time from "src/components/Time";
 
 const EventListItem = (props) => {
   if (!props.event || !props.school) {
@@ -27,6 +27,7 @@ const EventListItem = (props) => {
                 textTransform="uppercase"
                 fontWeight="bold"
                 isTruncated
+                title="Event ended"
               >
                 Event ended
               </Text>
@@ -38,22 +39,19 @@ const EventListItem = (props) => {
                 textTransform="uppercase"
                 fontWeight="bold"
                 isTruncated
+                title="Happening now"
               >
                 Happening now
               </Text>
             ) : (
-              <Text
+              <Time
                 d="inline"
-                as="time"
                 color="blue.500"
                 fontWeight="bold"
-                dateTime={props.event.startDateTime.locale}
-                title={props.event.startDateTime.locale}
+                dateTime={props.event.startDateTime}
                 fontSize="sm"
                 isTruncated
-              >
-                {startCase(props.event.startDateTime.relative)}
-              </Text>
+              />
             )}
             <SchoolLogo
               schoolId={props.school.id}

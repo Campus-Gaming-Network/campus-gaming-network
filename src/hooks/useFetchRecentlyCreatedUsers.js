@@ -21,7 +21,9 @@ const useFetchRecentlyCreatedUsers = (limit) => {
       setUsers(null);
       setError(null);
 
-      console.log("[API] fetchRecentlyCreatedUsers...");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[API] fetchRecentlyCreatedUsers...");
+      }
 
       let _users = [];
 

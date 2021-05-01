@@ -6,6 +6,7 @@ import {
   faCheck,
   faFlag,
   faEllipsisH,
+  faPencilAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Stack,
@@ -45,6 +46,7 @@ import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
 import GameLink from "src/components/GameLink";
 import SliderLazyLoad from "src/components/SliderLazyLoad";
+import ButtonLink from "src/components/ButtonLink";
 
 // API
 import { getSchoolDetails } from "src/api/school";
@@ -113,37 +115,47 @@ const User = (props) => {
 
   return (
     <SiteLayout meta={props.user.meta}>
-      <Article>
-        {isAuthenticatedUser ? (
-          <Box
-            mb={10}
-            textAlign="center"
-            display="flex"
-            justifyContent="center"
+      {isAuthenticatedUser ? (
+        <Box pos="absolute" right={6} top={6}>
+          <Link
+            fontWeight="bold"
+            href="/edit-user"
+            p={2}
+            d="block"
+            bg="white"
+            rounded="lg"
+            boxShadow="sm"
           >
-            <Link
-              href="/edit-user"
-              fontWeight="bold"
-              width="100%"
-              borderRadius="md"
-              bg="gray.100"
-              _focus={{ bg: "gray.200", boxShadow: "outline" }}
-              _hover={{ bg: "gray.200" }}
-              p={8}
+            <Text as="span" pr={2}>
+              <FontAwesomeIcon icon={faPencilAlt} size="sm" />
+            </Text>
+            Edit Your Profile
+          </Link>
+        </Box>
+      ) : null}
+      <Box bg="gray.200" h="150px" />
+      <Article>
+        <Flex align="center" justify="center">
+          <Box mt={{ base: -50, sm: -100, md: -135 }}>
+            <Box
+              p={1}
+              bg="white"
+              rounded="full"
+              boxShadow="sm"
+              borderWidth={2}
+              borderStyle="solid"
             >
-              Edit Your Profile
-            </Link>
+              <Avatar
+                name={props.user.fullName}
+                title={props.user.fullName}
+                src={props.user.gravatarUrl}
+                size="2xl"
+              />
+            </Box>
           </Box>
-        ) : null}
+        </Flex>
         <Flex as="header" align="center" justify="space-between">
-          <Avatar
-            name={props.user.fullName}
-            title={props.user.fullName}
-            src={props.user.gravatarUrl}
-            mr={2}
-            size="2xl"
-          />
-          <Box pl={12}>
+          <Box>
             <Heading
               as="h2"
               fontSize="5xl"

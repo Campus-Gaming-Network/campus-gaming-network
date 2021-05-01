@@ -24,6 +24,7 @@ const SchoolLogo = React.memo(
         src={getSchoolLogoUrl(schoolId, "webp")}
         fallbackSrc={getSchoolLogoUrl(schoolId, "jpg")}
         alt={schoolName}
+        title={schoolName}
         loading="lazy"
         bg="white"
         onError={handleError}

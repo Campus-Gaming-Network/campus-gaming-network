@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import {
   Flex,
   Text,
+  Button,
   Menu,
   MenuButton,
   MenuList,
@@ -12,11 +13,18 @@ import {
   Box,
   Avatar,
   Tooltip,
+  Stack,
   MenuGroup,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faSchool } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserCircle,
+  faSchool,
+  faPlus,
+  faTrophy,
+  faUserFriends,
+} from "@fortawesome/free-solid-svg-icons";
 import { faCalendarAlt } from "@fortawesome/free-regular-svg-icons";
 
 // Components
@@ -77,25 +85,86 @@ const AuthenticatedNav = (props) => {
         flexGrow={{ base: 0, md: 1 }}
         justifyContent={{ base: "flex-start", md: "flex-end" }}
       >
-        <ButtonLink
-          href="/create-event"
-          colorScheme="brand"
-          size="sm"
-          mr={4}
-          disabled={!authUser.emailVerified}
-        >
+        <Menu>
           <Tooltip
-            label="Event creation is disabled until email is verified."
+            label="Creation is disabled until email is verified."
             isDisabled={authUser.emailVerified}
           >
-            <Flex align="center" justify="center">
-              <Box mr={2}>
-                <FontAwesomeIcon icon={faCalendarAlt} />
-              </Box>
-              <Text>Create event</Text>
-            </Flex>
+            <MenuButton
+              as={Button}
+              isDisabled={!authUser.emailVerified}
+              leftIcon={<FontAwesomeIcon icon={faPlus} />}
+              colorScheme="brand"
+              h="32px"
+              mr={2}
+            >
+              Create
+            </MenuButton>
           </Tooltip>
-        </ButtonLink>
+          <MenuList>
+            <MenuGroup title="Create" fontSize="xl" fontWeight={800}>
+              <MenuItem
+                as={Link}
+                href="/create-event"
+                icon={
+                  <Flex
+                    align="center"
+                    justify="center"
+                    bg="gray.200"
+                    rounded="full"
+                    p={2}
+                    fontSize="lg"
+                  >
+                    <FontAwesomeIcon icon={faCalendarAlt} />
+                  </Flex>
+                }
+              >
+                <Text fontWeight={600}>Event</Text>
+                <Text>Bring collegiate gamers together.</Text>
+              </MenuItem>
+              <MenuItem
+                as={Link}
+                href="/create-tournament"
+                isDisabled
+                icon={
+                  <Flex
+                    align="center"
+                    justify="center"
+                    bg="gray.200"
+                    rounded="full"
+                    p={2}
+                    fontSize="lg"
+                  >
+                    <FontAwesomeIcon icon={faTrophy} />
+                  </Flex>
+                }
+              >
+                <Text fontWeight={600}>Tournament</Text>
+                <Text>Coming soon!</Text>
+              </MenuItem>
+              <MenuItem
+                as={Link}
+                href="/create-team"
+                isDisabled
+                icon={
+                  <Flex
+                    align="center"
+                    justify="center"
+                    bg="gray.200"
+                    rounded="full"
+                    p={2}
+                    fontSize="lg"
+                  >
+                    <FontAwesomeIcon icon={faUserFriends} />
+                  </Flex>
+                }
+              >
+                <Text fontWeight={600}>Team</Text>
+                <Text>Coming soon!</Text>
+              </MenuItem>
+            </MenuGroup>
+          </MenuList>
+        </Menu>
 
         <Menu>
           <MenuButton

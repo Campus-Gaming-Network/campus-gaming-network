@@ -110,7 +110,7 @@ const School = (props) => {
 
   return (
     <SiteLayout meta={props.school.meta}>
-      <Box bg="gray.100" h="150px" />
+      <Box bg="gray.200" h="150px" />
       <Article>
         <Flex align="center" justify="center">
           <Box mt={{ base: -50, sm: -100, md: -150 }}>
@@ -118,6 +118,7 @@ const School = (props) => {
               rounded="full"
               bg="white"
               shadow="sm"
+              p={1}
               borderWidth={2}
               borderStyle="solid"
               schoolId={props.school.id}

@@ -10,7 +10,7 @@ import VerifyEmailReminderBanner from "src/components/banners/VerifyEmailReminde
 import BetaWarningBanner from "./banners/BetaWarningBanner";
 
 // Constants
-import { PRODUCTION_URL } from "src/constants/other";
+import { PRODUCTION_URL, CGN_TWITTER_HANDLE } from "src/constants/other";
 
 const DEFAULT_META = {
   title: "Campus Gaming Network",
@@ -19,7 +19,7 @@ const DEFAULT_META = {
   twitter: {
     card: "summary",
     site: "Campus Gaming Network",
-    creator: "@CampusGamingNet",
+    creator: CGN_TWITTER_HANDLE,
     image: `${PRODUCTION_URL}/logo.png`,
     "image:alt": "Campus Gaming Network",
   },

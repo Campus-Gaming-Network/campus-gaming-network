@@ -29,12 +29,16 @@ const useFetchEventUsers = (
         !isEmpty(state.events[id].users) &&
         Boolean(state.events[id].users[page])
       ) {
-        console.log(`[CACHE] fetchEventUsers...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[CACHE] fetchEventUsers...${id}`);
+        }
 
         setUsers(state.events[id].users[page]);
         setIsLoading(false);
       } else {
-        console.log(`[API] fetchEventUsers...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[API] fetchEventUsers...${id}`);
+        }
 
         const eventDocRef = firebase
           .firestore()
@@ -58,46 +62,46 @@ const useFetchEventUsers = (
         query
           .limit(limit)
           .get()
-          .then(snapshot => {
+          .then((snapshot) => {
             if (!snapshot.empty) {
               let eventUsers = [];
 
-              snapshot.forEach(doc => {
+              snapshot.forEach((doc) => {
                 const data = doc.data();
                 eventUsers.push(
                   mapUser({
                     id: data.user.id,
-                    ...data.user
+                    ...data.user,
                   })
                 );
               });
 
               setUsers(eventUsers);
               setIsLoading(false);
-              setPages(prev => ({
+              setPages((prev) => ({
                 ...prev,
                 ...{
                   [page]: {
                     first: eventUsers[0].doc,
-                    last: eventUsers[eventUsers.length - 1].doc
-                  }
-                }
+                    last: eventUsers[eventUsers.length - 1].doc,
+                  },
+                },
               }));
             } else {
               setUsers([]);
               setIsLoading(false);
-              setPages(prev => ({
+              setPages((prev) => ({
                 ...prev,
                 ...{
                   [page]: {
                     first: null,
-                    last: null
-                  }
-                }
+                    last: null,
+                  },
+                },
               }));
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.error({ error });
             setError(error);
             setIsLoading(false);

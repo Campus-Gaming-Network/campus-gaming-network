@@ -22,7 +22,9 @@ const useFetchRecentlyCreatedEvents = (limit) => {
       setEvents(null);
       setError(null);
 
-      console.log("[API] fetchRecentlyCreatedEvents...");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[API] fetchRecentlyCreatedEvents...");
+      }
 
       const now = new Date();
 

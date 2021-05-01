@@ -33,15 +33,17 @@ const useFetchSchools = () => {
 
   React.useEffect(() => {
     const fetchSchools = async () => {
-      console.log("[API] fetchSchools...");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[API] fetchSchools...");
+      }
 
       firestore
         .collection(COLLECTIONS.SCHOOLS)
         .get()
-        .then(snapshot => {
+        .then((snapshot) => {
           const schools = keyBy(
             sortBy(
-              snapshot.docs.map(doc => mapSchool(doc.data(), doc)),
+              snapshot.docs.map((doc) => mapSchool(doc.data(), doc)),
               ["name"]
             ),
             "id"
@@ -50,7 +52,7 @@ const useFetchSchools = () => {
           setSchools(schools);
           saveToLocalStorage();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error({ error });
           setError(error);
           setIsLoading(false);

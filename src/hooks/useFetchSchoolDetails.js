@@ -5,7 +5,7 @@ import firebase from "src/firebase";
 import { mapSchool } from "src/utilities/school";
 import { COLLECTIONS } from "src/constants/firebase";
 
-const useFetchSchoolDetails = id => {
+const useFetchSchoolDetails = (id) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [school, setSchool] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -17,25 +17,29 @@ const useFetchSchoolDetails = id => {
       setError(null);
 
       if (state.schools[id] && !isEmpty(state.schools[id])) {
-        console.log(`[CACHE] fetchSchoolDetails...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[CACHE] fetchSchoolDetails...${id}`);
+        }
 
         setSchool(state.schools[id]);
         setIsLoading(false);
       } else {
-        console.log(`[API] fetchSchoolDetails...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[API] fetchSchoolDetails...${id}`);
+        }
 
         firebase
           .firestore()
           .collection(COLLECTIONS.SCHOOLS)
           .doc(id)
           .get()
-          .then(doc => {
+          .then((doc) => {
             if (doc.exists) {
               setSchool(mapSchool(doc.data(), doc));
             }
             setIsLoading(false);
           })
-          .catch(error => {
+          .catch((error) => {
             console.error({ error });
             setError(error);
             setIsLoading(false);

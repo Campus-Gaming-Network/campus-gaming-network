@@ -5,7 +5,7 @@ import firebase from "src/firebase";
 import { mapEvent } from "src/utilities/event";
 import { COLLECTIONS } from "src/constants/firebase";
 
-const useFetchEventDetails = id => {
+const useFetchEventDetails = (id) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [event, setEvent] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -17,25 +17,29 @@ const useFetchEventDetails = id => {
       setError(null);
 
       if (state.events[id] && !isEmpty(state.events[id])) {
-        console.log(`[CACHE] fetchEventDetails...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[CACHE] fetchEventDetails...${id}`);
+        }
 
         setEvent(state.events[id]);
         setIsLoading(false);
       } else {
-        console.log(`[API] fetchEventDetails...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[API] fetchEventDetails...${id}`);
+        }
 
         firebase
           .firestore()
           .collection(COLLECTIONS.EVENTS)
           .doc(id)
           .get()
-          .then(doc => {
+          .then((doc) => {
             if (doc.exists) {
               setEvent(mapEvent(doc.data(), doc));
             }
             setIsLoading(false);
           })
-          .catch(error => {
+          .catch((error) => {
             console.error({ error });
             setError(error);
             setIsLoading(false);

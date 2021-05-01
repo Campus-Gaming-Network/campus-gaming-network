@@ -29,7 +29,12 @@ export const AuthProvider = ({ children }) => {
   const [school, setSchool] = React.useState(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
+  React.useEffect(() => console.log(`authStatus -> ${authStatus}`), [
+    authStatus,
+  ]);
+
   const clearAuth = () => {
+    console.log("clearing auth...");
     setAuthStatus("unauthenticated");
     setIsAuthenticated(false);
     setAuthUser(null);
@@ -48,15 +53,15 @@ export const AuthProvider = ({ children }) => {
     }
 
     return firebase.auth().onIdTokenChanged(async (authUser) => {
-      console.log(`token changed!`);
+      console.log("token changed!");
 
       if (!authUser) {
-        console.log(`no token found...`);
+        console.log("no token found...");
         clearAuth();
         return;
       }
 
-      console.log(`updating token...`);
+      console.log("updating token...");
 
       const token = await authUser.getIdToken();
 
@@ -106,7 +111,7 @@ export const AuthProvider = ({ children }) => {
   // force refresh the token every 10 minutes
   React.useEffect(() => {
     const handle = setInterval(async () => {
-      console.log(`refreshing token...`);
+      console.log("refreshing token...");
 
       const authUser = firebase.auth().currentUser;
 

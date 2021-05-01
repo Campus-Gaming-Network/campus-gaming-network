@@ -7,8 +7,12 @@ import {
   ComboboxPopover,
   ComboboxList,
   ComboboxOption,
+  ComboboxOptionText,
 } from "@reach/combobox";
 import uniqBy from "lodash.uniqby";
+
+// Components
+import GameCover from "src/components/GameCover";
 
 // Hooks
 import useDebounce from "src/hooks/useDebounce";
@@ -115,7 +119,23 @@ const GameSearch = (props) => {
           {gamesResults.length > 0 ? (
             <ComboboxList>
               {gamesResults.map((game) => {
-                return <ComboboxOption key={game.id} value={game.name} />;
+                return (
+                  <ComboboxOption key={game.id} value={game.name}>
+                    <Flex align="center">
+                      <GameCover
+                        url={game.cover?.url || null}
+                        name={game.name}
+                        mr={2}
+                        h={12}
+                        w={12}
+                        shadow="none"
+                      />
+                      <Text fontSize="lg">
+                        <ComboboxOptionText />
+                      </Text>
+                    </Flex>
+                  </ComboboxOption>
+                );
               })}
             </ComboboxList>
           ) : (

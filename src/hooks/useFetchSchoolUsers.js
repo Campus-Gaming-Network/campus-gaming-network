@@ -29,12 +29,16 @@ const useFetchSchoolUsers = (
         !isEmpty(state.schools[id].users) &&
         Boolean(state.schools[id].users[page])
       ) {
-        console.log(`[CACHE] fetchSchoolUsers...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[CACHE] fetchSchoolUsers...${id}`);
+        }
 
         setUsers(state.schools[id].users[page]);
         setIsLoading(false);
       } else {
-        console.log(`[API] fetchSchoolUsers...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[API] fetchSchoolUsers...${id}`);
+        }
 
         const schoolDocRef = firebase
           .firestore()
@@ -57,40 +61,40 @@ const useFetchSchoolUsers = (
         query
           .limit(limit)
           .get()
-          .then(snapshot => {
+          .then((snapshot) => {
             if (!snapshot.empty) {
               let schoolUsers = [];
 
-              snapshot.forEach(doc => {
+              snapshot.forEach((doc) => {
                 schoolUsers.push(mapUser(doc.data(), doc));
               });
 
               setUsers(schoolUsers);
               setIsLoading(false);
-              setPages(prev => ({
+              setPages((prev) => ({
                 ...prev,
                 ...{
                   [page]: {
                     first: schoolUsers[0].doc,
-                    last: schoolUsers[schoolUsers.length - 1].doc
-                  }
-                }
+                    last: schoolUsers[schoolUsers.length - 1].doc,
+                  },
+                },
               }));
             } else {
               setUsers([]);
               setIsLoading(false);
-              setPages(prev => ({
+              setPages((prev) => ({
                 ...prev,
                 ...{
                   [page]: {
                     first: null,
-                    last: null
-                  }
-                }
+                    last: null,
+                  },
+                },
               }));
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.error({ error });
             setError(error);
             setIsLoading(false);

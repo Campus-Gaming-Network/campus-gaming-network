@@ -13,7 +13,9 @@ const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
       setEventResponse(null);
       setError(null);
 
-      console.log("[API] fetchUserEventResponse...");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[API] fetchUserEventResponse...");
+      }
 
       const eventDocRef = firebase
         .firestore()
@@ -31,20 +33,20 @@ const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
         .where("user.ref", "==", userDocRef)
         .limit(1)
         .get()
-        .then(snapshot => {
+        .then((snapshot) => {
           if (!snapshot.empty) {
             const [doc] = snapshot.docs;
             setEventResponse({
               id: doc.id,
               ref: doc,
-              ...doc.data()
+              ...doc.data(),
             });
             setIsLoading(false);
           } else {
             setIsLoading(false);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error({ error });
           setError(error);
           setIsLoading(false);

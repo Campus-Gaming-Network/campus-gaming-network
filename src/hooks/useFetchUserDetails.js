@@ -5,7 +5,7 @@ import firebase from "src/firebase";
 import { mapUser } from "src/utilities/user";
 import { COLLECTIONS } from "src/constants/firebase";
 
-const useFetchUserDetails = id => {
+const useFetchUserDetails = (id) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [user, setUser] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -17,25 +17,29 @@ const useFetchUserDetails = id => {
       setError(null);
 
       if (state.users[id] && !isEmpty(state.users[id])) {
-        console.log(`[CACHE] fetchUserDetails...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[CACHE] fetchUserDetails...${id}`);
+        }
 
         setUser(state.users[id]);
         setIsLoading(false);
       } else {
-        console.log(`[API] fetchUserDetails...${id}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[API] fetchUserDetails...${id}`);
+        }
 
         firebase
           .firestore()
           .collection(COLLECTIONS.USERS)
           .doc(id)
           .get()
-          .then(doc => {
+          .then((doc) => {
             if (doc.exists) {
               setUser(mapUser(doc.data(), doc));
             }
             setIsLoading(false);
           })
-          .catch(error => {
+          .catch((error) => {
             console.error({ error });
             setError(error);
             setIsLoading(false);

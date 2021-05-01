@@ -392,8 +392,6 @@ const EditUser = (props) => {
       favoriteGames: favoriteGames || [],
     };
 
-    console.log({ data });
-
     firebase
       .firestore()
       .collection(COLLECTIONS.USERS)

@@ -15,9 +15,7 @@ import {
   Heading,
   Text,
   List,
-  ListItem,
   Flex,
-  Avatar,
   Menu,
   MenuButton,
   MenuList,
@@ -43,7 +41,6 @@ import Article from "src/components/Article";
 import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
 import UserListItem from "src/components/UserListItem";
-import Time from "src/components/Time";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -63,6 +60,9 @@ const ReportEntityDialog = dynamic(
   }
 );
 const RSVPDialog = dynamic(() => import("src/components/dialogs/RSVPDialog"), {
+  ssr: false,
+});
+const Time = dynamic(() => import("src/components/Time"), {
   ssr: false,
 });
 const EventResponseAlert = dynamic(() =>
@@ -274,13 +274,8 @@ const Event = (props) => {
               <Text as="span" color="gray.600" mr={2} fontSize="lg">
                 <FontAwesomeIcon icon={faClock} />
               </Text>
-              <Time dateTime={props.event.startDateTime.locale}>
-                {props.event.startDateTime.locale}
-              </Time>{" "}
-              to{" "}
-              <Time dateTime={props.event.endDateTime.locale}>
-                {props.event.endDateTime.locale}
-              </Time>
+              <Time dateTime={props.event.startDateTime} /> to{" "}
+              <Time dateTime={props.event.endDateTime} />
             </Box>
             <Box>
               {props.event.isOnlineEvent ? (

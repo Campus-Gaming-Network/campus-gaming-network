@@ -16,7 +16,7 @@ const Nav = () => {
     school,
   ]);
 
-  if (authStatus === "authenticating") {
+  if (authStatus === "authenticating" || authStatus === "idle") {
     return <NavSilhouette />;
   }
 
