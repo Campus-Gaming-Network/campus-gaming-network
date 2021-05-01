@@ -83,6 +83,7 @@ export const getServerSideProps = async (context) => {
 
   const { school } = await getSchoolDetails(user.school.id);
   const data = {
+    params: context.params,
     user,
     school,
     events,

@@ -85,7 +85,12 @@ export const getServerSideProps = async (context) => {
     return { notFound: true };
   }
 
-  const data = { school, users, events };
+  const data = {
+    params: context.params,
+    school,
+    users,
+    events,
+  };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
 };

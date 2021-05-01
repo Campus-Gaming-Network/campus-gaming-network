@@ -6,6 +6,7 @@ import { mapUser } from "src/utilities/user";
 
 // Constants
 import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
+import { COLLECTIONS } from "src/constants/firebase";
 
 export const getEventDetails = async (id) => {
   let event = null;
@@ -65,5 +66,23 @@ export const getEventUsers = async (
     return { users };
   } catch (error) {
     return { users, error };
+  }
+};
+
+export const incrementEventPageViews = async (id) => {
+  const eventRef = firebaseAdmin
+    .firestore()
+    .collection(COLLECTIONS.EVENTS)
+    .doc(id);
+
+  try {
+    await eventRef.set(
+      { pageViews: firebaseAdmin.firestore.FieldValue.increment(1) },
+      { merge: true }
+    );
+
+    return { status: "success" };
+  } catch (error) {
+    return { status: "error", error };
   }
 };

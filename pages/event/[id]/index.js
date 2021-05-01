@@ -46,7 +46,11 @@ import UserListItem from "src/components/UserListItem";
 import { useAuth } from "src/providers/auth";
 
 // API
-import { getEventDetails, getEventUsers } from "src/api/event";
+import {
+  getEventDetails,
+  getEventUsers,
+  incrementEventPageViews,
+} from "src/api/event";
 import { getUserDetails, getUserEventResponse } from "src/api/user";
 
 // Other
@@ -80,6 +84,7 @@ export const getServerSideProps = async (context) => {
   const [eventDetailsResponse, usersResponse] = await Promise.all([
     getEventDetails(context.params.id),
     getEventUsers(context.params.id),
+    incrementEventPageViews(context.params.id),
   ]);
   const { event } = eventDetailsResponse;
   const { users } = usersResponse;
@@ -89,6 +94,7 @@ export const getServerSideProps = async (context) => {
   }
 
   const data = {
+    params: context.params,
     event,
     users,
     eventResponse: null,
