@@ -114,7 +114,7 @@ const GameSearch = (props) => {
           ml={2}
         />
       </Flex>
-      {gamesResults && (
+      {Boolean(gamesResults) && Boolean(searchTerm) ? (
         <ComboboxPopover>
           {gamesResults.length > 0 ? (
             <ComboboxList>
@@ -139,12 +139,12 @@ const GameSearch = (props) => {
               })}
             </ComboboxList>
           ) : (
-            <Text as="span" ma={8} d="block">
+            <Text as="span" d="block">
               No results found
             </Text>
           )}
         </ComboboxPopover>
-      )}
+      ) : null}
     </Combobox>
   );
 };

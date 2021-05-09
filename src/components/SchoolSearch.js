@@ -210,7 +210,7 @@ const SchoolSearch = (props) => {
           ml={2}
         />
       </Flex>
-      {Boolean(items) ? (
+      {Boolean(items) && Boolean(searchTerm) ? (
         <ComboboxPopover id={`${props.id}--popover` || "school--popover"}>
           {items.length > 0 ? (
             <ComboboxList>
