@@ -25,6 +25,8 @@ export const mapEvent = (event) => {
 
   return cleanObjectOfBadWords({
     ...event,
+    createdAt: event.createdAt?.toDate(),
+    updatedAt: event.updatedAt?.toDate(),
     url,
     googleMapsAddressLink: googleMapsLink(event.location),
     hasStarted: hasStarted(event.startDateTime, event.endDateTime),

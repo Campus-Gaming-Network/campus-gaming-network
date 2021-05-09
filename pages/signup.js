@@ -27,7 +27,7 @@ import nookies from "nookies";
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
 import { COLLECTIONS } from "src/constants/firebase";
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES, PRODUCTION_URL } from "src/constants/other";
+import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
 
 // Utilities
 import { createGravatarHash } from "src/utilities/user";
@@ -59,20 +59,10 @@ export const getServerSideProps = async (context) => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/",
-        },
-      };
+      return REDIRECT_HOME;
     }
   } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/",
-      },
-    };
+    return REDIRECT_HOME;
   }
 
   return { props: {} };
@@ -118,7 +108,7 @@ const Signup = () => {
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsSubmitting(true);
@@ -136,11 +126,47 @@ const Signup = () => {
       return;
     }
 
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(formState.email, formState.password)
-      .then(({ user }) => {
-        firebase
+    let user;
+
+    try {
+      const response = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(formState.email, formState.password);
+
+      if (response?.user) {
+        user = response.user;
+      }
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
+      setIsSubmitting(false);
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    if (Boolean(user)) {
+      try {
+        await firebase.auth().currentUser.sendEmailVerification();
+        await firebase.auth().currentUser.getIdToken(true);
+
+        toast({
+          title: "Verification email sent.",
+          description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
+          status: "success",
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Verification email error.",
+          description: `There was an issue sending a verification email to ${formState.email}. Please contact us at support@campusgamingnetwork.com, sorry for the inconvenience.`,
+          status: "error",
+          isClosable: true,
+        });
+      }
+
+      try {
+        await firebase
           .firestore()
           .collection(COLLECTIONS.USERS)
           .doc(user.uid)
@@ -162,37 +188,31 @@ const Signup = () => {
             createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
             updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
           });
-        firebase
-          .auth()
-          .currentUser.sendEmailVerification()
-          .then(
-            () => {
-              firebase
-                .auth()
-                .currentUser.getIdToken(true)
-                .then(() => {
-                  setIsSubmitting(false);
-                  router.push("/");
-                });
 
-              toast({
-                title: "Verification email sent.",
-                description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
-                status: "success",
-                isClosable: true,
-              });
-            },
-            (error) => {
-              console.error(error);
-            }
-          );
-      })
-      .catch((error) => {
+        toast({
+          title: "Account creation successful.",
+          description:
+            "Your account has successfully been created, welcome to Campus Gaming Network!",
+          status: "success",
+          isClosable: true,
+        });
+
+        router.push("/");
+      } catch (error) {
         console.error(error);
-        setError(error.message);
+        setError(
+          "There was an issue creating your user. Please contact us at support@campusgamingnetwork.com, sorry for the inconvenience."
+        );
         setIsSubmitting(false);
         window.scrollTo(0, 0);
-      });
+      }
+    } else {
+      setError(
+        "There was an issue when creating your account. Please contact us at support@campusgamingnetwork.com, sorry for the inconvenience."
+      );
+      setIsSubmitting(false);
+      window.scrollTo(0, 0);
+    }
   };
 
   return (

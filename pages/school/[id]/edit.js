@@ -15,7 +15,7 @@ import {
   Text,
   useToast,
   FormHelperText,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import { useDropzone } from "react-dropzone";
 import nookies from "nookies";
@@ -25,7 +25,12 @@ import safeJsonStringify from "safe-json-stringify";
 import { SCHOOL_ACCOUNTS } from "src/constants/school";
 import { DROPZONE_STYLES } from "src/constants/styles";
 import { COLLECTIONS } from "src/constants/firebase";
-import { ACCOUNTS, COOKIES, PRODUCTION_URL } from "src/constants/other";
+import {
+  ACCOUNTS,
+  COOKIES,
+  PRODUCTION_URL,
+  NOT_FOUND,
+} from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
@@ -39,7 +44,7 @@ import Article from "src/components/Article";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   let cookies;
   let token;
   let authStatus;
@@ -56,20 +61,20 @@ export const getServerSideProps = async context => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
-      return { notFound: true };
+      return NOT_FOUND;
     }
   } catch (error) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const { school } = await getSchoolDetails(context.params.id);
 
   if (!Boolean(school)) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const data = {
-    school
+    school,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -84,49 +89,49 @@ const initialFormState = {
   website: "",
   phone: "",
   logo: "",
-  file: null
+  file: null,
 };
 
 const formReducer = (state, { field, value }) => {
   return {
     ...state,
-    [field]: value
+    [field]: value,
   };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // EditSchool
 
-const EditSchool = props => {
+const EditSchool = (props) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [state, dispatch] = React.useReducer(formReducer, initialFormState);
   const toast = useToast();
-  const handleFieldChange = React.useCallback(e => {
+  const handleFieldChange = React.useCallback((e) => {
     dispatch({ field: e.target.name, value: e.target.value });
   }, []);
 
   const prefillForm = () => {
     dispatch({
       field: "description",
-      value: props.school.description || initialFormState.description
+      value: props.school.description || initialFormState.description,
     });
     dispatch({
       field: "website",
-      value: props.school.website || initialFormState.website
+      value: props.school.website || initialFormState.website,
     });
     dispatch({
       field: "email",
-      value: props.school.email || initialFormState.email
+      value: props.school.email || initialFormState.email,
     });
     dispatch({
       field: "phone",
-      value: props.school.phone || initialFormState.phone
+      value: props.school.phone || initialFormState.phone,
     });
     setHasPrefilledForm(true);
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsSubmitting(true);
@@ -135,7 +140,7 @@ const EditSchool = props => {
       description: state.description,
       website: state.website,
       email: state.email,
-      phone: state.phone
+      phone: state.phone,
     };
 
     if (state.file) {
@@ -146,7 +151,7 @@ const EditSchool = props => {
 
       uploadTask.on(
         "state_changed",
-        snapshot => {
+        (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
@@ -163,25 +168,25 @@ const EditSchool = props => {
               break;
           }
         },
-        error => {
+        (error) => {
           toast({
             title: "An error occurred.",
             description: error,
             status: "error",
-            isClosable: true
+            isClosable: true,
           });
         },
         () => {
           // Handle successful uploads on complete
           // For instance, get the download URL: https://storage.googleapis.com/...
-          uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             console.log("File available at", downloadURL);
           });
           toast({
             title: "Logo updated.",
             description: "Your school logo has been updated.",
             status: "success",
-            isClosable: true
+            isClosable: true,
           });
         }
       );
@@ -198,16 +203,16 @@ const EditSchool = props => {
           title: "School updated.",
           description: "Your school has been updated.",
           status: "success",
-          isClosable: true
+          isClosable: true,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setIsSubmitting(false);
         toast({
           title: "An error occurred.",
           description: error.message,
           status: "error",
-          isClosable: true
+          isClosable: true,
         });
       });
 
@@ -219,7 +224,12 @@ const EditSchool = props => {
   }
 
   return (
-    <SiteLayout meta={{ title: `Edit ${props.school.formattedName}`, og: { url: `${PRODUCTION_URL}/school/${props.school.id}/edit` } }}>
+    <SiteLayout
+      meta={{
+        title: `Edit ${props.school.formattedName}`,
+        og: { url: `${PRODUCTION_URL}/school/${props.school.id}/edit` },
+      }}
+    >
       <Article>
         <Stack as="form" spacing={32} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">
@@ -251,7 +261,7 @@ const EditSchool = props => {
             {...Object.keys(ACCOUNTS).reduce(
               (acc, cur) => ({
                 ...acc,
-                [cur]: state[cur]
+                [cur]: state[cur],
               }),
               {}
             )}
@@ -272,14 +282,14 @@ const EditSchool = props => {
   );
 };
 
-const DetailSection = React.memo(props => {
+const DetailSection = React.memo((props) => {
   const [thumbnail, setThumbnail] = React.useState(null);
   const {
     getRootProps,
     getInputProps,
     isDragActive,
     isDragAccept,
-    isDragReject
+    isDragReject,
   } = useDropzone({
     multiple: false,
     accept: "image/jpeg, image/png",
@@ -294,18 +304,18 @@ const DetailSection = React.memo(props => {
       console.log({ file });
       const test = {
         ...file,
-        preview: URL.createObjectURL(file)
+        preview: URL.createObjectURL(file),
       };
       console.log({ test });
       props.dispatch({
         field: "file",
-        value: file
+        value: file,
       });
       setThumbnail({
         ...file,
-        preview: URL.createObjectURL(file)
+        preview: URL.createObjectURL(file),
       });
-    }
+    },
   });
 
   const style = React.useMemo(
@@ -313,7 +323,7 @@ const DetailSection = React.memo(props => {
       ...DROPZONE_STYLES.BASE,
       ...(isDragActive ? DROPZONE_STYLES.ACTIVE : {}),
       ...(isDragAccept ? DROPZONE_STYLES.ACCEPT : {}),
-      ...(isDragReject ? DROPZONE_STYLES.REJECT : {})
+      ...(isDragReject ? DROPZONE_STYLES.REJECT : {}),
     }),
     [isDragActive, isDragReject, isDragAccept]
   );
@@ -434,7 +444,7 @@ const DetailSection = React.memo(props => {
   );
 });
 
-const SocialAccountsSection = React.memo(props => {
+const SocialAccountsSection = React.memo((props) => {
   return (
     <Card as="fieldset" p={0} mb={32}>
       <Box pos="absolute" top="-5rem">
@@ -446,7 +456,7 @@ const SocialAccountsSection = React.memo(props => {
         </Text>
       </Box>
       <Stack spacing={6} p={8}>
-        {Object.keys(SCHOOL_ACCOUNTS).map(id => {
+        {Object.keys(SCHOOL_ACCOUNTS).map((id) => {
           const account = SCHOOL_ACCOUNTS[id];
 
           return (

@@ -17,7 +17,7 @@ import { cleanObjectOfBadWords } from "src/utilities/other";
 export const createGravatarHash = (email = "") => {
   const trimmedEmail = email.trim();
 
-  if (!trimmedEmail) {
+  if (!Boolean(trimmedEmail)) {
     return undefined;
   }
 
@@ -25,7 +25,7 @@ export const createGravatarHash = (email = "") => {
 };
 
 export const createGravatarRequestUrl = (hash = "", email = "") => {
-  if (!hash && Boolean(email)) {
+  if (!Boolean(hash) && Boolean(email)) {
     hash = createGravatarHash(email);
   }
 
@@ -48,13 +48,14 @@ export const mapUser = (user) => {
 
   return cleanObjectOfBadWords({
     ...user,
+    createdAt: user.createdAt?.toDate(),
+    updatedAt: user.updatedAt?.toDate(),
     birthdate: buildDateTime(user.birthdate),
     school: mapSchool(user.school),
     fullName,
     hasAccounts: userHasAccounts(user),
-    hasFavoriteGames: Boolean(user.favoriteGames) && user.favoriteGames.length,
-    hasCurrentlyPlaying:
-      Boolean(user.currentlyPlaying) && user.currentlyPlaying.length,
+    hasFavoriteGames: Boolean(user.favoriteGames?.length),
+    hasCurrentlyPlaying: Boolean(user.currentlyPlaying?.length),
     displayStatus: getUserDisplayStatus(user.status),
     gravatarUrl: createGravatarRequestUrl(user.gravatar),
     meta: {

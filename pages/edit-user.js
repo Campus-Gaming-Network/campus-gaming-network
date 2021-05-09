@@ -38,7 +38,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import safeJsonStringify from "safe-json-stringify";
 import dynamic from "next/dynamic";
 
 // Constants
@@ -50,13 +49,16 @@ import {
 } from "src/constants/user";
 import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "src/constants/dateTime";
 import { COLLECTIONS } from "src/constants/firebase";
-import { ACCOUNTS, COOKIES, PRODUCTION_URL } from "src/constants/other";
+import {
+  ACCOUNTS,
+  COOKIES,
+  PRODUCTION_URL,
+  NOT_FOUND,
+} from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
 import firebase from "src/firebase";
-import { getUserDetails } from "src/api/user";
-import { getSchoolDetails } from "src/api/school";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -76,6 +78,7 @@ import { move } from "src/utilities/other";
 import { validateEditUser } from "src/utilities/validation";
 import { useAuth } from "src/providers/auth";
 
+// Dynamic Components
 const DeleteAccountDialog = dynamic(
   () => import("src/components/dialogs/DeleteAccountDialog"),
   { ssr: false }
@@ -101,26 +104,13 @@ export const getServerSideProps = async (context) => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
-      return { notFound: true };
+      return NOT_FOUND;
     }
   } catch (error) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
-  const { user } = await getUserDetails(token.uid);
-
-  if (!Boolean(user)) {
-    return { notFound: true };
-  }
-
-  const { school } = await getSchoolDetails(user.school.id);
-
-  const data = {
-    user,
-    school,
-  };
-
-  return { props: JSON.parse(safeJsonStringify(data)) };
+  return { props: {} };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +154,7 @@ const formReducer = (state, { field, value }) => {
 // EditUser
 
 const EditUser = (props) => {
-  const { authStatus, authUser } = useAuth();
+  const { isAuthenticating, authUser, user, school } = useAuth();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [
@@ -195,44 +185,44 @@ const EditUser = (props) => {
   const prefillForm = () => {
     formDispatch({
       field: "firstName",
-      value: props.user.firstName || initialFormState.firstName,
+      value: user.firstName || initialFormState.firstName,
     });
     formDispatch({
       field: "lastName",
-      value: props.user.lastName || initialFormState.lastName,
+      value: user.lastName || initialFormState.lastName,
     });
     formDispatch({
       field: "school",
-      value: props.user.school || initialFormState.school,
+      value: user.school || initialFormState.school,
     });
     formDispatch({
       field: "status",
-      value: props.user.status || initialFormState.status,
+      value: user.status || initialFormState.status,
     });
     formDispatch({
       field: "major",
-      value: props.user.major || initialFormState.major,
+      value: user.major || initialFormState.major,
     });
     formDispatch({
       field: "minor",
-      value: props.user.minor || initialFormState.minor,
+      value: user.minor || initialFormState.minor,
     });
     formDispatch({
       field: "bio",
-      value: props.user.bio || initialFormState.bio,
+      value: user.bio || initialFormState.bio,
     });
     formDispatch({
       field: "timezone",
-      value: props.user.timezone || initialFormState.timezone,
+      value: user.timezone || initialFormState.timezone,
     });
     formDispatch({
       field: "hometown",
-      value: props.user.hometown || initialFormState.hometown,
+      value: user.hometown || initialFormState.hometown,
     });
 
-    if (Boolean(props.user.birthdate)) {
+    if (Boolean(user.birthdate)) {
       const [birthMonth, birthDay, birthYear] = DateTime.fromISO(
-        props.user.birthdate.iso
+        user.birthdate.iso
       )
         .toFormat(DASHED_DATE)
         .split("-");
@@ -247,46 +237,46 @@ const EditUser = (props) => {
 
     formDispatch({
       field: "website",
-      value: props.user.website || initialFormState.website,
+      value: user.website || initialFormState.website,
     });
     formDispatch({
       field: "twitter",
-      value: props.user.twitter || initialFormState.twitter,
+      value: user.twitter || initialFormState.twitter,
     });
     formDispatch({
       field: "twitch",
-      value: props.user.twitch || initialFormState.twitch,
+      value: user.twitch || initialFormState.twitch,
     });
     formDispatch({
       field: "youtube",
-      value: props.user.youtube || initialFormState.youtube,
+      value: user.youtube || initialFormState.youtube,
     });
     formDispatch({
       field: "skype",
-      value: props.user.skype || initialFormState.skype,
+      value: user.skype || initialFormState.skype,
     });
     formDispatch({
       field: "discord",
-      value: props.user.discord || initialFormState.discord,
+      value: user.discord || initialFormState.discord,
     });
     formDispatch({
       field: "battlenet",
-      value: props.user.battlenet || initialFormState.battlenet,
+      value: user.battlenet || initialFormState.battlenet,
     });
     formDispatch({
       field: "steam",
-      value: props.user.steam || initialFormState.steam,
+      value: user.steam || initialFormState.steam,
     });
     formDispatch({
       field: "xbox",
-      value: props.user.xbox || initialFormState.xbox,
+      value: user.xbox || initialFormState.xbox,
     });
     formDispatch({
       field: "psn",
-      value: props.user.psn || initialFormState.psn,
+      value: user.psn || initialFormState.psn,
     });
-    setCurrentGames(props.user.currentlyPlaying || []);
-    setFavoriteGames(props.user.favoriteGames || []);
+    setCurrentGames(user.currentlyPlaying || []);
+    setFavoriteGames(user.favoriteGames || []);
     setHasPrefilledForm(true);
   };
 
@@ -358,15 +348,14 @@ const EditUser = (props) => {
     }
 
     const data = {
-      createdAt: props.user.createdAt,
+      createdAt: user.createdAt,
       updatedAt:
-        props.user.updatedAt ||
-        firebase.firestore.Timestamp.fromDate(new Date()),
+        user.updatedAt || firebase.firestore.Timestamp.fromDate(new Date()),
       id: authUser.uid,
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
       status: formState.status,
-      gravatar: props.user.gravatar,
+      gravatar: user.gravatar,
       hometown: formState.hometown.trim(),
       birthdate: birthdate,
       major: formState.major.trim(),
@@ -395,7 +384,7 @@ const EditUser = (props) => {
     firebase
       .firestore()
       .collection(COLLECTIONS.USERS)
-      .doc(props.user.id)
+      .doc(user.id)
       .update(data)
       .then(() => {
         setIsSubmitting(false);
@@ -417,7 +406,7 @@ const EditUser = (props) => {
       });
   };
 
-  if (authStatus !== "finished") {
+  if (isAuthenticating) {
     return (
       <SiteLayout
         meta={{
@@ -433,6 +422,8 @@ const EditUser = (props) => {
   if (!hasPrefilledForm) {
     prefillForm();
   }
+
+  console.log({ user, school });
 
   return (
     <SiteLayout
@@ -500,7 +491,7 @@ const EditUser = (props) => {
             handleFieldChange={handleFieldChange}
             errors={errors}
             onSchoolSelect={onSchoolSelect}
-            schoolName={props.school.formattedName}
+            schoolName={school.formattedName}
             status={formState.status}
             major={formState.major}
             minor={formState.minor}
@@ -550,7 +541,7 @@ const EditUser = (props) => {
       </Article>
 
       <DeleteAccountDialog
-        user={props.user}
+        user={user}
         isOpen={isDeletingAccountAlertOpen}
         onClose={closeDeleteAccountDialog}
       />

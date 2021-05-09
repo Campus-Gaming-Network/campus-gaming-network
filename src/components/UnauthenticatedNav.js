@@ -9,6 +9,9 @@ import Logo from "src/components/Logo";
 import Link from "src/components/Link";
 import ButtonLink from "src/components/ButtonLink";
 
+////////////////////////////////////////////////////////////////////////////////
+// UnauthenticatedNav
+
 const UnauthenticatedNav = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);

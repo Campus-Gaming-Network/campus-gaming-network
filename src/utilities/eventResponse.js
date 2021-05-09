@@ -14,6 +14,8 @@ export const mapEventResponse = (eventResponse) => {
 
   return cleanObjectOfBadWords({
     ...eventResponse,
+    createdAt: eventResponse.createdAt?.toDate(),
+    updatedAt: eventResponse.updatedAt?.toDate(),
     school: mapSchool(eventResponse.school),
     user: mapUser(eventResponse.user),
     event: mapEvent(eventResponse.event),

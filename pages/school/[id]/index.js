@@ -38,6 +38,7 @@ import {
   SCHOOL_EMPTY_USERS_TEXT,
   SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT,
 } from "src/constants/school";
+import { NOT_FOUND } from "src/constants/other";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -82,7 +83,7 @@ export const getServerSideProps = async (context) => {
   const { events } = eventsResponse;
 
   if (!Boolean(school)) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const data = {

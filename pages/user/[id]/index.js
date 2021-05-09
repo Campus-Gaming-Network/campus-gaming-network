@@ -37,7 +37,7 @@ import {
   USER_EMPTY_ACCOUNTS_TEXT,
   USER_EMPTY_UPCOMING_EVENTS_TEXT,
 } from "src/constants/user";
-import { ACCOUNTS } from "src/constants/other";
+import { ACCOUNTS, NOT_FOUND } from "src/constants/other";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -78,7 +78,7 @@ export const getServerSideProps = async (context) => {
   const { events } = await getUserAttendingEvents(context.params.id);
 
   if (!Boolean(user)) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const { school } = await getSchoolDetails(user.school.id);

@@ -31,7 +31,7 @@ import {
   EVENT_EMPTY_LOCATION_TEXT,
   EVENT_EMPTY_USERS_TEXT,
 } from "src/constants/event";
-import { COOKIES } from "src/constants/other";
+import { COOKIES, NOT_FOUND } from "src/constants/other";
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Components
@@ -90,7 +90,7 @@ export const getServerSideProps = async (context) => {
   const { users } = usersResponse;
 
   if (!Boolean(event)) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const data = {
@@ -136,7 +136,7 @@ export const getServerSideProps = async (context) => {
     data.isEventCreator = isEventCreator;
     data.canChangeEventResponse = canChangeEventResponse;
   } catch (error) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   return { props: JSON.parse(safeJsonStringify(data)) };

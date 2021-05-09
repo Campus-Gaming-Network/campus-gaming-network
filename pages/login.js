@@ -36,7 +36,7 @@ import Link from "src/components/Link";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES, PRODUCTION_URL } from "src/constants/other";
+import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -54,20 +54,10 @@ export const getServerSideProps = async (context) => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/",
-        },
-      };
+      return REDIRECT_HOME;
     }
   } catch (error) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/",
-      },
-    };
+    return REDIRECT_HOME;
   }
 
   return { props: {} };

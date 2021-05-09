@@ -22,3 +22,9 @@ export const CALLABLES = {
   SEARCH_SCHOOLS: "searchSchools",
   REPORT_ENTITY: "reportEntity",
 };
+
+export const AUTH_ACTION = {
+  VERIFY_EMAIL: "verifyEmail",
+  RESET_PASSWORD: "resetPassword",
+};
+export const AUTH_ACTIONS = Object.values(AUTH_ACTION);

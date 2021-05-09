@@ -10,17 +10,13 @@ import UnauthenticatedNav from "src/components/UnauthenticatedNav";
 import { useAuth } from "src/providers/auth";
 
 const Nav = () => {
-  const { authStatus, user, school, isAuthenticated } = useAuth();
-  const hasUserData = React.useMemo(() => Boolean(user) && Boolean(school), [
-    user,
-    school,
-  ]);
+  const { isAuthenticated, isAuthenticating, user, school } = useAuth();
 
-  if (authStatus === "authenticating" || authStatus === "idle") {
+  if (isAuthenticating) {
     return <NavSilhouette />;
   }
 
-  if (isAuthenticated && hasUserData) {
+  if (isAuthenticated) {
     return <AuthenticatedNav user={user} school={school} />;
   }
 

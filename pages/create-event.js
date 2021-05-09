@@ -4,11 +4,11 @@ import { useToast } from "@chakra-ui/react";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
-import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 
 // Other
 import firebase from "src/firebase";
+import firebaseAdmin from "src/firebaseAdmin";
 
 // Utilities
 import { validateCreateEvent } from "src/utilities/validation";
@@ -17,9 +17,12 @@ import { validateCreateEvent } from "src/utilities/validation";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DASHED_DATE_TIME } from "src/constants/dateTime";
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES } from "src/constants/other";
+import { COOKIES, NOT_FOUND } from "src/constants/other";
 
+// Components
 import EventForm from "src/components/EventForm";
+
+// Providers
 import { useAuth } from "src/providers/auth";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,10 +41,10 @@ export const getServerSideProps = async (context) => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
-      return { notFound: true };
+      return NOT_FOUND;
     }
   } catch (error) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   return { props: {} };

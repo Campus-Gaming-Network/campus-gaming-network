@@ -5,13 +5,14 @@ import { Box } from "@chakra-ui/react";
 // Hooks
 import useScript from "src/hooks/useScript";
 
-// Source: https://dev.twitch.tv/docs/embed/everything
-const TWITCH_EMBED_SCRIPT_URL = "https://embed.twitch.tv/embed/v1.js";
+// Constants
+import { TWITCH_EMBED_SCRIPT_URL } from "src/constants/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // TwitchEmbed
 
 const TwitchEmbed = ({
+  id = null,
   allowfullscreen = true,
   autoplay = false,
   channel = "",
@@ -27,7 +28,10 @@ const TwitchEmbed = ({
   ...rest
 }) => {
   const scriptStatus = useScript(TWITCH_EMBED_SCRIPT_URL);
-  const embedId = React.useMemo(() => `twitch-embed-${channel}`, [channel]);
+  const embedId = React.useMemo(() => id || `twitch-embed-${channel}`, [
+    id,
+    channel,
+  ]);
 
   React.useEffect(() => {
     if (scriptStatus === "ready") {
@@ -43,7 +47,7 @@ const TwitchEmbed = ({
         theme,
         time,
         video,
-        width
+        width,
       });
     }
   }, [
@@ -60,7 +64,7 @@ const TwitchEmbed = ({
     video,
     width,
     embedId,
-    scriptStatus
+    scriptStatus,
   ]);
 
   if (!Boolean(channel)) {

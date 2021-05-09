@@ -92,3 +92,12 @@ export const LOCAL_STORAGE = {
 };
 export const CGN_TWITTER_HANDLE = "@CampusGamingNet";
 export const SITE_NAME = "Campus Gaming Network";
+export const REDIRECT_HOME = {
+  redirect: {
+    permanent: false,
+    destination: "/",
+  },
+};
+export const NOT_FOUND = { notFound: true };
+// Source: https://dev.twitch.tv/docs/embed/everything
+export const TWITCH_EMBED_SCRIPT_URL = "https://embed.twitch.tv/embed/v1.js";

@@ -26,6 +26,8 @@ export const mapSchool = (school) => {
 
   return cleanObjectOfBadWords({
     ...school,
+    createdAt: school.createdAt?.toDate(),
+    updatedAt: school.updatedAt?.toDate(),
     formattedName,
     formattedAddress: Boolean(school.address)
       ? startCase(school.address.toLowerCase())

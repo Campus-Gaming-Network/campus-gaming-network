@@ -84,7 +84,7 @@ const formReducer = (state, { field, value }) => {
 // EventForm
 
 const EventForm = (props) => {
-  const { authStatus, user } = useAuth();
+  const { isAuthenticating, user } = useAuth();
   const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
   const [formState, formDispatch] = React.useReducer(
     formReducer,
@@ -193,7 +193,7 @@ const EventForm = (props) => {
     }
   }, [props.state, props.event]);
 
-  if (authStatus === "authenticating" || authStatus === "idle") {
+  if (isAuthenticating) {
     return (
       <SiteLayout meta={{ title: pageTitle, og: { url } }}>
         <FormSilhouette />

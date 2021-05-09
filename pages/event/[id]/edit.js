@@ -18,7 +18,7 @@ import { validateCreateEvent } from "src/utilities/validation";
 import { COLLECTIONS } from "src/constants/firebase";
 import { DASHED_DATE_TIME } from "src/constants/dateTime";
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES } from "src/constants/other";
+import { COOKIES, NOT_FOUND } from "src/constants/other";
 
 import { getEventDetails } from "src/api/event";
 
@@ -27,7 +27,7 @@ import EventForm from "src/components/EventForm";
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = async (context) => {
   let token;
 
   try {
@@ -42,29 +42,29 @@ export const getServerSideProps = async context => {
         : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
-      return { notFound: true };
+      return NOT_FOUND;
     }
   } catch (error) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const { event } = await getEventDetails(context.params.id);
 
   if (!Boolean(event)) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const { user } = await getUserDetails(token.uid);
 
   if (!Boolean(user)) {
-    return { notFound: true };
+    return NOT_FOUND;
   }
 
   const { school } = await getSchoolDetails(user.school.id);
 
   const data = {
     user,
-    school
+    school,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -73,7 +73,7 @@ export const getServerSideProps = async context => {
 ////////////////////////////////////////////////////////////////////////////////
 // EditEvent
 
-const EditEvent = props => {
+const EditEvent = (props) => {
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const toast = useToast();
@@ -86,7 +86,7 @@ const EditEvent = props => {
     const { isValid, errors } = validateCreateEvent({
       ...formState,
       startDateTime: DateTime.local(formState.startDateTime),
-      endDateTime: DateTime.local(formState.endDateTime)
+      endDateTime: DateTime.local(formState.endDateTime),
     });
 
     setErrors(errors);
@@ -102,10 +102,10 @@ const EditEvent = props => {
     // Probably want to save the address and lat/long
     // If we save the placeId, it may be easier to render the map for that place
     geocodeByAddress(formState.location)
-      .then(results => {
+      .then((results) => {
         console.log({ results });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error({ error });
       });
 
@@ -158,7 +158,7 @@ const EditEvent = props => {
       isOnlineEvent: formState.isOnlineEvent,
       startDateTime: startDateTime,
       endDateTime: endDateTime,
-      game: formState.game
+      game: formState.game,
     };
 
     if (!formState.isOnlineEvent) {
@@ -176,19 +176,19 @@ const EditEvent = props => {
           title: "Event updated.",
           description: "Your event has been updated. You will be redirected...",
           status: "success",
-          isClosable: true
+          isClosable: true,
         });
         setTimeout(() => {
           router.push(`/event/${props.id}`);
         }, 2000);
       })
-      .catch(error => {
+      .catch((error) => {
         setIsSubmitting(false);
         toast({
           title: "An error occurred.",
           description: error.message,
           status: "error",
-          isClosable: true
+          isClosable: true,
         });
       });
   };
