@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 
 // Constants
@@ -6,7 +7,10 @@ import { IGDB_GAME_URL } from "src/constants/igdb";
 // Components
 import OutsideLink from "src/components/OutsideLink";
 
-const GameLink = React.memo(props => {
+////////////////////////////////////////////////////////////////////////////////
+// GameLink
+
+const GameLink = React.memo((props) => {
   if (!props.slug || !props.name) {
     return null;
   }

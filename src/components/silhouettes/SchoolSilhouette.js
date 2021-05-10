@@ -1,5 +1,9 @@
+// Libraries
 import React from "react";
 import { Stack, Box } from "@chakra-ui/react";
+
+////////////////////////////////////////////////////////////////////////////////
+// SchoolSilhouette
 
 const SchoolSilhouette = () => {
   return (

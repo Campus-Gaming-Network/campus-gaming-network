@@ -101,3 +101,12 @@ export const REDIRECT_HOME = {
 export const NOT_FOUND = { notFound: true };
 // Source: https://dev.twitch.tv/docs/embed/everything
 export const TWITCH_EMBED_SCRIPT_URL = "https://embed.twitch.tv/embed/v1.js";
+export const DISCORD_LINK = "https://discord.gg/dpYU6TY";
+export const GITHUB_LINK =
+  "https://github.com/Campus-Gaming-Network/campus-gaming-network";
+export const FACEBOOK_LINK = "https://www.facebook.com/campusgamingnetwork/";
+export const TWITTER_LINK = "https://twitter.com/CampusGamingNet";
+export const INSTAGRAM_LINK = "https://www.instagram.com/campusgamingnetwork/";
+export const SUPPORT_EMAIL = "support@campusgamingnetwork.com";
+export const BUY_ME_A_COFFEE_LINK = "https://www.buymeacoffee.com/cgnbrandon";
+export const BASE_ERROR_MESSAGE = `Please contact us at ${SUPPORT_EMAIL}, we are sorry for the inconvenience.`;

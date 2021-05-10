@@ -2,6 +2,9 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 
+////////////////////////////////////////////////////////////////////////////////
+// Card
+
 const Card = ({ children, ...rest }) => {
   return (
     <Box

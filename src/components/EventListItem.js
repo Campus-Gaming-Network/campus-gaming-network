@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Text, Flex, Stack, Badge } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,6 +9,9 @@ import SchoolLogo from "src/components/SchoolLogo";
 import Link from "src/components/Link";
 import SliderCard from "src/components/SliderCard";
 import Time from "src/components/Time";
+
+////////////////////////////////////////////////////////////////////////////////
+// EventListItem
 
 const EventListItem = (props) => {
   if (!props.event || !props.school) {
@@ -88,7 +92,7 @@ const EventListItem = (props) => {
           </Link>
           <Link
             href={`/school/${props.school.id}`}
-            color="gray.400"
+            color="gray.500"
             fontWeight={600}
             fontSize="sm"
             isTruncated
@@ -103,12 +107,10 @@ const EventListItem = (props) => {
               Online event
             </Badge>
           ) : null}
-          {Boolean(props.event.responses) &&
-          props.event.responses.yes &&
-          props.event.responses.yes > 0 ? (
+          {Boolean(props.event.responses?.yes?.length) > 0 ? (
             <Text
               fontSize="xs"
-              color="gray.400"
+              color="gray.500"
               fontWeight={600}
               flexShrink={0}
             >

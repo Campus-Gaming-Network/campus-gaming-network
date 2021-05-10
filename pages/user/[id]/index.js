@@ -47,6 +47,7 @@ import GameCover from "src/components/GameCover";
 import GameLink from "src/components/GameLink";
 import SliderLazyLoad from "src/components/SliderLazyLoad";
 import ButtonLink from "src/components/ButtonLink";
+import EmptyText from "src/components/EmptyText";
 
 // API
 import { getSchoolDetails } from "src/api/school";
@@ -226,12 +227,7 @@ const User = (props) => {
             {Boolean(props.user.bio) ? <Text>{props.user.bio}</Text> : null}
           </Box>
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <Heading as="h3" fontSize="xl" textTransform="uppercase">
               Information
             </Heading>
             <Flex as="dl" flexWrap="wrap" w="100%">
@@ -243,9 +239,9 @@ const User = (props) => {
                   {props.user.hometown}
                 </Text>
               ) : (
-                <Text as="dd" w="50%" color="gray.400">
+                <EmptyText as="dd" w="50%">
                   Nothing set
-                </Text>
+                </EmptyText>
               )}
               <Text as="dt" w="50%" fontWeight="bold">
                 Major
@@ -255,9 +251,9 @@ const User = (props) => {
                   {props.user.major}
                 </Text>
               ) : (
-                <Text as="dd" w="50%" color="gray.400">
+                <EmptyText as="dd" w="50%">
                   Nothing set
-                </Text>
+                </EmptyText>
               )}
               <Text as="dt" w="50%" fontWeight="bold">
                 Minor
@@ -267,19 +263,14 @@ const User = (props) => {
                   {props.user.minor}
                 </Text>
               ) : (
-                <Text as="dd" w="50%" color="gray.400">
+                <EmptyText as="dd" w="50%">
                   Nothing set
-                </Text>
+                </EmptyText>
               )}
             </Flex>
           </Stack>
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <Heading as="h3" fontSize="xl" textTransform="uppercase">
               Accounts
             </Heading>
             <AccountsList user={props.user} />
@@ -290,12 +281,7 @@ const User = (props) => {
             </Stack>
           ) : null}
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <Heading as="h3" fontSize="xl" textTransform="uppercase">
               Currently Playing
             </Heading>
             <GameList
@@ -304,12 +290,7 @@ const User = (props) => {
             />
           </Stack>
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <Heading as="h3" fontSize="xl" textTransform="uppercase">
               Favorite Games
             </Heading>
             <GameList
@@ -366,7 +347,7 @@ const AccountsList = (props) => {
     );
   }
 
-  return <Text color="gray.400">{USER_EMPTY_ACCOUNTS_TEXT}</Text>;
+  return <EmptyText>{USER_EMPTY_ACCOUNTS_TEXT}</EmptyText>;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +423,7 @@ const AccountsListItem = (props) => {
 
 const GameList = (props) => {
   if (!props.games || props.games.length === 0) {
-    return <Text color="gray.400">{props.emptyText || "No games"}</Text>;
+    return <EmptyText>{props.emptyText || "No games"}</EmptyText>;
   }
 
   return (

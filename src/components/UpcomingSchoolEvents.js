@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Heading, Box } from "@chakra-ui/react";
 
@@ -10,6 +11,9 @@ import EventListItem from "src/components/EventListItem";
 import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
+
+////////////////////////////////////////////////////////////////////////////////
+// UpcomingSchoolEvents
 
 const UpcomingSchoolEvents = (props) => {
   const [events, state] = useFetchSchoolEvents(props?.school?.id);

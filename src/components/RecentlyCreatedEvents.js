@@ -11,6 +11,9 @@ import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
 
+////////////////////////////////////////////////////////////////////////////////
+// RecentlyCreatedEvents
+
 const RecentlyCreatedEvents = () => {
   const [events, state] = useFetchRecentlyCreatedEvents();
   const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [

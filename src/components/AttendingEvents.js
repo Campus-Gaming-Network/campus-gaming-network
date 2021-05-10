@@ -10,6 +10,9 @@ import EventListItem from "src/components/EventListItem";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
 
+////////////////////////////////////////////////////////////////////////////////
+// AttendingEvents
+
 const AttendingEvents = (props) => {
   const [events, state] = useFetchUserEvents(props?.user?.id);
   const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [

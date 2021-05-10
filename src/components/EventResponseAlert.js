@@ -1,5 +1,9 @@
+// Libraries
 import React from "react";
 import { Stack, Button, Text, Alert } from "@chakra-ui/react";
+
+////////////////////////////////////////////////////////////////////////////////
+// EventResponseAlert
 
 const EventResponseAlert = (props) => {
   return (

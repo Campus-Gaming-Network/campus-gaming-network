@@ -1,35 +1,15 @@
 // Libraries
 import React from "react";
-import {
-  Box,
-  Text,
-  Avatar,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  Flex,
-  VisuallyHidden,
-  Portal,
-} from "@chakra-ui/react";
-import capitalize from "lodash.capitalize";
+import { Box, Avatar, Flex } from "@chakra-ui/react";
 
 // Components
 import Link from "src/components/Link";
 import SliderCard from "src/components/SliderCard";
 
-const RecentlyCreatedUsers = (props) => {
-  const hasBodyInformation = React.useMemo(() => {
-    return (
-      [props.user.bio, props.user.major, props.user.minor].filter((s) => s)
-        .length > 0
-    );
-  }, [props.user]);
-  const hasSchool = React.useMemo(() => {
-    return Boolean(props.user.school) && Boolean(props.user.school.name);
-  }, [props.user]);
+////////////////////////////////////////////////////////////////////////////////
+// RecentlyCreatedUsers
 
+const RecentlyCreatedUsers = (props) => {
   return (
     <React.Fragment>
       <SliderCard h="125px">

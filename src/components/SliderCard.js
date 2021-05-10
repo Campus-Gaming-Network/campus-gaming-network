@@ -1,5 +1,9 @@
+// Libraries
 import React from "react";
 import { Box } from "@chakra-ui/react";
+
+////////////////////////////////////////////////////////////////////////////////
+// SliderCard
 
 const SliderCard = ({ children, ...rest }) => {
   return (

@@ -4,11 +4,10 @@ import { useToast } from "@chakra-ui/react";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
-import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import safeJsonStringify from "safe-json-stringify";
 
 // Other
+import firebaseAdmin from "src/firebaseAdmin";
 import firebase from "src/firebase";
 
 // Utilities
@@ -20,8 +19,13 @@ import { DASHED_DATE_TIME } from "src/constants/dateTime";
 import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
 
+// API
 import { getEventDetails } from "src/api/event";
 
+// Providers
+import { useAuth } from "src/providers/auth";
+
+// Components
 import EventForm from "src/components/EventForm";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,26 +58,14 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  const { user } = await getUserDetails(token.uid);
-
-  if (!Boolean(user)) {
-    return NOT_FOUND;
-  }
-
-  const { school } = await getSchoolDetails(user.school.id);
-
-  const data = {
-    user,
-    school,
-  };
-
-  return { props: JSON.parse(safeJsonStringify(data)) };
+  return { props: {} };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // EditEvent
 
 const EditEvent = (props) => {
+  const { user } = useAuth();
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const toast = useToast();
@@ -145,11 +137,11 @@ const EditEvent = (props) => {
     const schoolDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.SCHOOLS)
-      .doc(props.user.school.id);
+      .doc(user.school.id);
     const userDocRef = firebase
       .firestore()
       .collection(COLLECTIONS.USERS)
-      .doc(props.user.id);
+      .doc(user.id);
 
     const eventData = {
       creator: userDocRef,
@@ -159,12 +151,9 @@ const EditEvent = (props) => {
       startDateTime: startDateTime,
       endDateTime: endDateTime,
       game: formState.game,
+      location: formState.location,
+      placeId: formState.placeId,
     };
-
-    if (!formState.isOnlineEvent) {
-      eventData.location = formState.location;
-      eventData.placeId = formState.placeId;
-    }
 
     firebase
       .firestore()

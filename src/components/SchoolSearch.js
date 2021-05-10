@@ -33,6 +33,9 @@ import firebase from "src/firebase";
 
 let savedSearches = [];
 
+////////////////////////////////////////////////////////////////////////////////
+// SchoolSearch
+
 const SchoolSearch = (props) => {
   const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
     LOCAL_STORAGE.SCHOOLS,

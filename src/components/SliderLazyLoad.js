@@ -1,5 +1,9 @@
+// Libraries
 import React from "react";
 import LazyLoad from "react-lazyload";
+
+////////////////////////////////////////////////////////////////////////////////
+// SliderLazyLoad
 
 const SliderLazyLoad = (props) => {
   return (

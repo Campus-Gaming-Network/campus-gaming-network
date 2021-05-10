@@ -11,6 +11,9 @@ import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
 
+////////////////////////////////////////////////////////////////////////////////
+// RecentlyCreatedUsers
+
 const RecentlyCreatedUsers = () => {
   const [users, state] = useFetchRecentlyCreatedUsers();
   const hasUsers = React.useMemo(() => Boolean(users) && users.length > 0, [

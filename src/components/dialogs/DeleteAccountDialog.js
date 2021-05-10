@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import {
   Button,
@@ -24,6 +25,9 @@ import { COLLECTIONS } from "src/constants/firebase";
 
 // Utilities
 import { validateDeleteAccount } from "src/utilities/validation";
+
+////////////////////////////////////////////////////////////////////////////
+// DeleteAccountDialog
 
 const DeleteAccountDialog = (props) => {
   const router = useRouter();

@@ -9,6 +9,9 @@ import UnauthenticatedNav from "src/components/UnauthenticatedNav";
 // Providers
 import { useAuth } from "src/providers/auth";
 
+////////////////////////////////////////////////////////////////////////////////
+// Nav
+
 const Nav = () => {
   const { isAuthenticated, isAuthenticating, user, school } = useAuth();
 

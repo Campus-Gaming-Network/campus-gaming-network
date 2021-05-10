@@ -1,9 +1,13 @@
+// Libraries
 import React from "react";
 import { Box, Flex } from "@chakra-ui/react";
 
 // Components
 import NavWrapper from "src/components/NavWrapper";
 import Logo from "src/components/Logo";
+
+////////////////////////////////////////////////////////////////////////////////
+// NavSilhouette
 
 const NavSilhouette = () => {
   return (

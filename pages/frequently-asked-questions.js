@@ -12,7 +12,12 @@ import OutsideLink from "src/components/OutsideLink";
 import SiteLayout from "src/components/SiteLayout";
 
 // Constants
-import { PRODUCTION_URL } from "src/constants/other";
+import {
+  PRODUCTION_URL,
+  DISCORD_LINK,
+  GITHUB_LINK,
+  SUPPORT_EMAIL,
+} from "src/constants/other";
 
 ////////////////////////////////////////////////////////////////////////////////
 // FrequentlyAskedQuestions
@@ -33,7 +38,12 @@ const FrequentlyAskedQuestions = () => {
               return (
                 <Box key={index} id={item.id} class="highlight-target">
                   <Flex align="center" px={2} pt={2}>
-                    <Link href={`#${item.id}`} color="gray.400" mr={2}>
+                    <Link
+                      href={`#${item.id}`}
+                      color="gray.400"
+                      mr={2}
+                      title="Set page anchor to this question."
+                    >
                       <FontAwesomeIcon icon={faLink} size="xs" />
                     </Link>
                     {item.question}
@@ -86,7 +96,7 @@ const IGDBLink = (props) => {
 
 const GithubLink = (props) => {
   return (
-    <OutsideLink href="https://github.com/Campus-Gaming-Network/campus-gaming-network">
+    <OutsideLink href={GITHUB_LINK}>
       {props.children ? props.children : "GitHub"}
     </OutsideLink>
   );
@@ -97,7 +107,7 @@ const GithubLink = (props) => {
 
 const DiscordLink = (props) => {
   return (
-    <OutsideLink href="https://discord.gg/dpYU6TY">
+    <OutsideLink href={DISCORD_LINK}>
       {props.children ? props.children : "Discord"}
     </OutsideLink>
   );
@@ -256,11 +266,11 @@ const QUESTIONS = [
       <AnswerWrapper>
         You can email us at{" "}
         <Link
-          href="mailto:support@campusgamingnetwork.com"
+          href={`mailto:${SUPPORT_EMAIL}`}
           color="brand.500"
           fontWeight={600}
         >
-          support@campusgamingnetwork.com
+          {SUPPORT_EMAIL}
         </Link>
         , join our <DiscordLink />, or open an issue on our <GithubLink />. We
         will try to reach back and look into the issue as soon as we can.

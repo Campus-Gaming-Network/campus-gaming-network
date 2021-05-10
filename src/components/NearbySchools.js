@@ -20,6 +20,9 @@ import useLocalStorage from "src/hooks/useLocalStorage";
 // Constants
 import { LOCAL_STORAGE } from "src/constants/other";
 
+////////////////////////////////////////////////////////////////////////////////
+// NearbySchools
+
 const NearbySchools = (props) => {
   const {
     latitude: browserLatitude,
@@ -140,7 +143,7 @@ const NearbySchools = (props) => {
                       <Stack spacing={0}>
                         <Text
                           fontWeight={600}
-                          color="gray.400"
+                          color="gray.500"
                           fontSize="0.65rem"
                         >
                           {school.city}, {school.state}

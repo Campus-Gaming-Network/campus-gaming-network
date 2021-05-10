@@ -16,7 +16,7 @@ const COLLECTIONS = {
 
 const AUTH_USER = {
   uid: "user-123",
-  email: "support@campusgamingnetwork.com",
+  email: "test@campusgamingnetwork.com",
 };
 
 const SCHOOL = {

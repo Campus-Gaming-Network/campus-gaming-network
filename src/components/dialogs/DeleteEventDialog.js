@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import {
   Button,
@@ -17,6 +18,9 @@ import firebase from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
+
+////////////////////////////////////////////////////////////////////////////
+// DeleteEventDialog
 
 const DeleteEventDialog = (props) => {
   const router = useRouter();

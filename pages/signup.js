@@ -27,7 +27,12 @@ import nookies from "nookies";
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
 import { COLLECTIONS } from "src/constants/firebase";
 import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
+import {
+  COOKIES,
+  PRODUCTION_URL,
+  REDIRECT_HOME,
+  BASE_ERROR_MESSAGE,
+} from "src/constants/other";
 
 // Utilities
 import { createGravatarHash } from "src/utilities/user";
@@ -159,7 +164,7 @@ const Signup = () => {
         console.error(error);
         toast({
           title: "Verification email error.",
-          description: `There was an issue sending a verification email to ${formState.email}. Please contact us at support@campusgamingnetwork.com, sorry for the inconvenience.`,
+          description: `There was an issue sending a verification email to ${formState.email}. ${BASE_ERROR_MESSAGE}`,
           status: "error",
           isClosable: true,
         });
@@ -201,14 +206,14 @@ const Signup = () => {
       } catch (error) {
         console.error(error);
         setError(
-          "There was an issue creating your user. Please contact us at support@campusgamingnetwork.com, sorry for the inconvenience."
+          `There was an issue creating your user. ${BASE_ERROR_MESSAGE}`
         );
         setIsSubmitting(false);
         window.scrollTo(0, 0);
       }
     } else {
       setError(
-        "There was an issue when creating your account. Please contact us at support@campusgamingnetwork.com, sorry for the inconvenience."
+        `There was an issue when creating your account. ${BASE_ERROR_MESSAGE}`
       );
       setIsSubmitting(false);
       window.scrollTo(0, 0);

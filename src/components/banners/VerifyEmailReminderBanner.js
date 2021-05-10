@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import {
   Alert,
@@ -5,11 +6,17 @@ import {
   AlertDescription,
   Text,
   Button,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 
+// Other
 import firebase from "src/firebase";
+
+// Providers
 import { useAuth } from "src/providers/auth";
+
+////////////////////////////////////////////////////////////////////////////////
+// VerifyEmailReminderBanner
 
 const VerifyEmailReminderBanner = () => {
   const { authUser } = useAuth();
@@ -34,17 +41,17 @@ const VerifyEmailReminderBanner = () => {
             title: "Verification email sent.",
             description: `A verification email has been sent to ${email}. Please check your inbox and follow the instructions in the email.`,
             status: "success",
-            isClosable: true
+            isClosable: true,
           });
           setSendingStatus("sent");
         },
-        error => {
+        (error) => {
           console.error(error);
           toast({
             title: "Error sending verification email.",
             description: `There was an error sending the verification email to ${email}. Please contact support.`,
             status: "error",
-            isClosable: true
+            isClosable: true,
           });
           setSendingStatus("error");
         }

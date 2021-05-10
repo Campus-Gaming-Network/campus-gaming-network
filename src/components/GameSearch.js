@@ -25,6 +25,9 @@ import firebase from "src/firebase";
 
 const CACHED_GAMES = {};
 
+////////////////////////////////////////////////////////////////////////////////
+// GameSearch
+
 const GameSearch = (props) => {
   const [searchTerm, setSearchTerm] = React.useState(props.gameName || "");
   const [isFetching, setIsFetching] = React.useState(false);

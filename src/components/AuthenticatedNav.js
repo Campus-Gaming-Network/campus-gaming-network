@@ -41,6 +41,9 @@ import firebase from "src/firebase";
 // Providers
 import { useAuth } from "src/providers/auth";
 
+////////////////////////////////////////////////////////////////////////////////
+// AuthenticatedNav
+
 const AuthenticatedNav = (props) => {
   const { authUser } = useAuth();
   const router = useRouter();

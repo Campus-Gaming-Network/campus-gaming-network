@@ -1,8 +1,12 @@
+// Libraries
 import React from "react";
 import { Img } from "@chakra-ui/react";
 
 // Utilities
 import { getSchoolLogoUrl } from "src/utilities/school";
+
+////////////////////////////////////////////////////////////////////////////////
+// SchoolLogo
 
 const SchoolLogo = React.memo(
   ({ schoolId, schoolName, fallback, src, ...rest }) => {

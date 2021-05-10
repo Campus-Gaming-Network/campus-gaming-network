@@ -190,9 +190,8 @@ const School = (props) => {
           <Stack as="section" spacing={4}>
             <Heading
               as="h3"
-              fontSize="sm"
+              fontSize="xl"
               textTransform="uppercase"
-              color="gray.500"
               px={{ base: 4, md: 0 }}
             >
               Information
@@ -208,9 +207,9 @@ const School = (props) => {
                   </OutsideLink>
                 </Text>
               ) : (
-                <Text as="dd" w="50%" color="gray.400">
+                <EmptyText as="dd" w="50%">
                   Nothing set
-                </Text>
+                </EmptyText>
               )}
               <Text as="dt" w="50%" fontWeight="bold">
                 Website
@@ -230,9 +229,9 @@ const School = (props) => {
                   )}
                 </Text>
               ) : (
-                <Text as="dd" w="50%" color="gray.400">
+                <EmptyText as="dd" w="50%">
                   Nothing set
-                </Text>
+                </EmptyText>
               )}
               <Text as="dt" w="50%" fontWeight="bold">
                 Address
@@ -247,9 +246,9 @@ const School = (props) => {
                   </OutsideLink>
                 </Text>
               ) : (
-                <Text as="dd" w="50%" color="gray.400">
+                <EmptyText as="dd" w="50%">
                   Nothing set
-                </Text>
+                </EmptyText>
               )}
             </Flex>
           </Stack>
@@ -263,9 +262,8 @@ const School = (props) => {
           <Stack as="section" spacing={4}>
             <Heading
               as="h3"
-              fontSize="sm"
+              fontSize="xl"
               textTransform="uppercase"
-              color="gray.500"
               px={{ base: 4, md: 0 }}
             >
               Members
@@ -370,11 +368,7 @@ const UsersList = (props) => {
     );
   }
 
-  return (
-    <Text mt={4} color="gray.400">
-      {SCHOOL_EMPTY_USERS_TEXT}
-    </Text>
-  );
+  return <EmptyText mt={4}>{SCHOOL_EMPTY_USERS_TEXT}</EmptyText>;
 };
 
 export default School;

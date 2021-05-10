@@ -1,8 +1,9 @@
+// Libraries
 import React from "react";
 import { Image, Flex, Text } from "@chakra-ui/react";
 
-// TODO: We should show a placeholder image
-// if no cover exists and we have a name
+////////////////////////////////////////////////////////////////////////////////
+// GameCover
 
 const GameCover = React.memo(({ url, name, ...rest }) => {
   if (!name) {

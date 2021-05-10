@@ -2,6 +2,9 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 
+////////////////////////////////////////////////////////////////////////////////
+// Article
+
 const Article = ({
   fullWidthDesktop = false,
   fullWidthMobile = false,

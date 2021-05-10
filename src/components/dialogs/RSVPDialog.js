@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import {
   Button,
@@ -20,6 +21,9 @@ import { COLLECTIONS } from "src/constants/firebase";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+
+////////////////////////////////////////////////////////////////////////////
+// RSVPDialog
 
 const RSVPDialog = (props) => {
   const { authUser } = useAuth();

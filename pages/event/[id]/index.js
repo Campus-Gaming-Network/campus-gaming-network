@@ -41,6 +41,7 @@ import Article from "src/components/Article";
 import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
 import UserListItem from "src/components/UserListItem";
+import EmptyText from "src/components/EmptyText";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -323,28 +324,18 @@ const Event = (props) => {
             </Stack>
           ) : null}
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h2"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <Heading as="h3" fontSize="xl" textTransform="uppercase">
               Event Details
             </Heading>
             {Boolean(props.event.description) &&
             props.event.description.trim().length > 0 ? (
               <Text>{props.event.description}</Text>
             ) : (
-              <Text color="gray.400">No event description provided</Text>
+              <EmptyText>No event description provided</EmptyText>
             )}
           </Stack>
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h4"
-              fontSize="sm"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <Heading as="h4" fontSize="xl" textTransform="uppercase">
               Attendees
             </Heading>
             <UsersList users={props.users} />
@@ -398,11 +389,7 @@ const UsersList = (props) => {
     );
   }
 
-  return (
-    <Text mt={4} color="gray.400">
-      {EVENT_EMPTY_USERS_TEXT}
-    </Text>
-  );
+  return <EmptyText mt={4}>{EVENT_EMPTY_USERS_TEXT}</EmptyText>;
 };
 
 export default Event;

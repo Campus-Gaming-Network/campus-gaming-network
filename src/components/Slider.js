@@ -1,9 +1,13 @@
+// Libraries
 import React from "react";
 import SlickSlider from "react-slick";
 import { Box } from "@chakra-ui/react";
 
 // Constants
 import { SLICK_SETTINGS } from "src/constants/slick";
+
+////////////////////////////////////////////////////////////////////////////////
+// Slider
 
 const Slider = ({ settings = {}, children }) => {
   const _settings = React.useMemo(() => {

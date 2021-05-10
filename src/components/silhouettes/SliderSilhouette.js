@@ -1,6 +1,10 @@
+// Libraries
 import React from "react";
-import { Stack, Skeleton, HStack, Box } from "@chakra-ui/react";
+import { Stack, Skeleton, Box } from "@chakra-ui/react";
 import Slider from "src/components/Slider";
+
+////////////////////////////////////////////////////////////////////////////
+// SliderSilhouette
 
 const SliderSilhouette = () => {
   return (

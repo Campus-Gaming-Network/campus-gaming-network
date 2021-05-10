@@ -153,6 +153,8 @@ const CreateEvent = () => {
       startDateTime,
       endDateTime,
       game: formState.game,
+      location: formState.location,
+      placeId: formState.placeId,
       school: {
         ref: schoolDocRef,
         id: schoolDocRef.id,
@@ -163,11 +165,6 @@ const CreateEvent = () => {
         no: 0,
       },
     };
-
-    if (!formState.isOnlineEvent) {
-      eventData.location = formState.location;
-      eventData.placeId = formState.placeId;
-    }
 
     let eventId;
 

@@ -11,6 +11,9 @@ import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
 
+////////////////////////////////////////////////////////////////////////////////
+// UserCreatedEvents
+
 const UserCreatedEvents = (props) => {
   const id = React.useMemo(() => props?.user?.id, [props]);
   const [events, state] = useFetchUserCreatedEvents(id);

@@ -15,13 +15,27 @@ import { faHeart, faMugHot } from "@fortawesome/free-solid-svg-icons";
 import Link from "src/components/Link";
 import OutsideLink from "src/components/OutsideLink";
 
+// Constants
+import {
+  DISCORD_LINK,
+  GITHUB_LINK,
+  FACEBOOK_LINK,
+  TWITTER_LINK,
+  INSTAGRAM_LINK,
+  BUY_ME_A_COFFEE_LINK,
+  SUPPORT_EMAIL,
+} from "src/constants/other";
+
+////////////////////////////////////////////////////////////////////////////////
+// Footer
+
 const Footer = () => {
   return (
     <React.Fragment>
       <Box borderTopWidth={1} bg="white" py={4} textAlign="center">
         <Text fontSize="lg">
           Enjoying the site?{" "}
-          <OutsideLink href="https://www.buymeacoffee.com/cgnbrandon">
+          <OutsideLink href={BUY_ME_A_COFFEE_LINK}>
             Buy me a coffee.
           </OutsideLink>
         </Text>
@@ -62,9 +76,7 @@ const Footer = () => {
               </Link>
             </ListItem>
             <ListItem fontSize="md">
-              <ChakraLink href="mailto:support@campusgamingnetwork.com">
-                Email us
-              </ChakraLink>
+              <ChakraLink href={`mailto:${SUPPORT_EMAIL}`}>Email us</ChakraLink>
             </ListItem>
           </List>
           <List
@@ -83,32 +95,17 @@ const Footer = () => {
               Community
             </ListItem>
             <ListItem fontSize="md">
-              Join our{" "}
-              <OutsideLink href="https://discord.gg/dpYU6TY">
-                Discord
-              </OutsideLink>
+              Join our <OutsideLink href={DISCORD_LINK}>Discord</OutsideLink>
             </ListItem>
             <ListItem fontSize="md">
-              Contribute on{" "}
-              <OutsideLink href="https://github.com/Campus-Gaming-Network/campus-gaming-network">
-                GitHub
-              </OutsideLink>
+              Contribute on <OutsideLink href={GITHUB_LINK}>GitHub</OutsideLink>
             </ListItem>
             <ListItem fontSize="md">
-              Like on{" "}
-              <OutsideLink href="https://www.facebook.com/campusgamingnetwork/">
-                Facebook
-              </OutsideLink>{" "}
-              and{" "}
-              <OutsideLink href="https://www.instagram.com/campusgamingnetwork/">
-                Instagram
-              </OutsideLink>
+              Like on <OutsideLink href={FACEBOOK_LINK}>Facebook</OutsideLink>{" "}
+              and <OutsideLink href={INSTAGRAM_LINK}>Instagram</OutsideLink>
             </ListItem>
             <ListItem fontSize="md">
-              Follow on{" "}
-              <OutsideLink href="https://twitter.com/CampusGamingNet">
-                Twitter
-              </OutsideLink>
+              Follow on <OutsideLink href={TWITTER_LINK}>Twitter</OutsideLink>
             </ListItem>
           </List>
           <List

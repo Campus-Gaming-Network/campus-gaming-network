@@ -1,5 +1,9 @@
+// Libraries
 import React from "react";
 import { Button } from "@chakra-ui/react";
+
+////////////////////////////////////////////////////////////////////////////////
+// EventResponseAttendButton
 
 const EventResponseAttendButton = (props) => {
   return (

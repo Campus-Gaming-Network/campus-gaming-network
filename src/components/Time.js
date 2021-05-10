@@ -5,6 +5,9 @@ import { Text } from "@chakra-ui/react";
 // Utilities
 import { firebaseToLocaleString } from "src/utilities/dateTime";
 
+////////////////////////////////////////////////////////////////////////////////
+// Time
+
 const Time = ({ children, dateTime, ...rest }) => {
   const _dateTime = React.useMemo(() => firebaseToLocaleString(dateTime), [
     dateTime,

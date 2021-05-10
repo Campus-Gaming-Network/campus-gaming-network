@@ -27,6 +27,9 @@ import { sanitizePrivateProperties } from "src/utilities/other";
 import { CALLABLES } from "src/constants/firebase";
 const MAX_REASON_LENGTH = 5000;
 
+////////////////////////////////////////////////////////////////////////////
+// ReportEntityDialog
+
 const ReportEntityDialog = (props) => {
   const toast = useToast();
   const cancelRef = React.useRef();

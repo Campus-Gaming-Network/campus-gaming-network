@@ -1,8 +1,12 @@
+// Libraries
 import React from "react";
 import { Box } from "@chakra-ui/react";
 
 // Components
 import Link from "src/components/Link";
+
+////////////////////////////////////////////////////////////////////////////////
+// EditEventLink
 
 const EditEventLink = (props) => {
   return (

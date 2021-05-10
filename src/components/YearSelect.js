@@ -1,3 +1,4 @@
+// Libraries
 import React from "react";
 import { Select } from "@chakra-ui/react";
 
@@ -6,6 +7,9 @@ import { CURRENT_YEAR } from "src/constants/dateTime";
 
 // Utilities
 import { getYears } from "src/utilities/dateTime";
+
+////////////////////////////////////////////////////////////////////////////////
+// YearSelect
 
 const YearSelect = ({
   children,
@@ -16,7 +20,7 @@ const YearSelect = ({
 }) => {
   const OPTIONS = React.useMemo(
     () =>
-      getYears(min, max, { reverse: reverseOptions }).map(year => (
+      getYears(min, max, { reverse: reverseOptions }).map((year) => (
         <option key={year} value={year}>
           {year}
         </option>
