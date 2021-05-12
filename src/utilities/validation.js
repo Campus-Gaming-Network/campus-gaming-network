@@ -86,10 +86,16 @@ export const validateSignUp = (form) => {
 
   if (isNilOrEmpty(firstName)) {
     errors.firstName = "First name is required.";
+  } else if (
+    isGreaterThan(firstName.trim().length, MAX_DEFAULT_STRING_LENGTH)
+  ) {
+    errors.firstName = `First name is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(lastName)) {
     errors.lastName = "Last name is required.";
+  } else if (isGreaterThan(lastName.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
+    errors.lastName = `Last name is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(email)) {
@@ -195,9 +201,7 @@ export const validateCreateEvent = (form) => {
 
   if (isNilOrEmpty(description)) {
     errors.description = "Description is required.";
-  }
-
-  if (isGreaterThan(description.trim().length, MAX_DESCRIPTION_LENGTH)) {
+  } else if (isGreaterThan(description.trim().length, MAX_DESCRIPTION_LENGTH)) {
     errors.description = `Description is too long (maximum is ${MAX_DESCRIPTION_LENGTH.toLocaleString()} characters).`;
   }
 
@@ -380,10 +384,16 @@ export const validateEditUser = (form) => {
 
   if (isNilOrEmpty(firstName)) {
     errors.firstName = "First name is required.";
+  } else if (
+    isGreaterThan(firstName.trim().length, MAX_DEFAULT_STRING_LENGTH)
+  ) {
+    errors.firstName = `First name is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(lastName)) {
     errors.lastName = "Last name is required.";
+  } else if (isGreaterThan(lastName.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
+    errors.lastName = `Last name is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(school)) {
@@ -561,6 +571,44 @@ export const validateReportEntity = (form) => {
 
   if (isNilOrEmpty(reason)) {
     errors.reason = "Reason is required.";
+  }
+
+  return validate("validateReportEntity", form, errors);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Validate Create Team
+
+export const validateCreateTeam = (form) => {
+  const { name, shortName, description, website } = form;
+  const errors = {};
+
+  if (isNilOrEmpty(name)) {
+    errors.name = "Name is required.";
+  } else if (isGreaterThan(name.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
+    errors.name = `Name is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
+  }
+
+  if (
+    !isNilOrEmpty(shortName) &&
+    // TOOD: Convert 10 to constant
+    isGreaterThan(shortName.trim().length, 10)
+  ) {
+    errors.shortName = `Short name is too long (maximum is 10 characters).`;
+  }
+
+  if (
+    !isNilOrEmpty(description) &&
+    isGreaterThan(description.trim().length, MAX_DESCRIPTION_LENGTH)
+  ) {
+    errors.description = `Description is too long (maximum is ${MAX_DESCRIPTION_LENGTH.toLocaleString()} characters).`;
+  }
+
+  if (
+    !isNilOrEmpty(website) &&
+    isGreaterThan(website.trim().length, MAX_DEFAULT_STRING_LENGTH)
+  ) {
+    errors.website = `Website is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   return validate("validateReportEntity", form, errors);
