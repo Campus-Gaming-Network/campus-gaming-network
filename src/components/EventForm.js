@@ -48,6 +48,7 @@ import { PRODUCTION_URL } from "src/constants/other";
 // Providers
 import { useAuth } from "src/providers/auth";
 
+// Dynamic Components
 const DeleteEventDialog = dynamic(
   () => import("src/components/dialogs/DeleteEventDialog"),
   { ssr: false }

@@ -223,6 +223,29 @@ service cloud.firestore {
       allow read, write, create, update, delete: if false;
     }
 
+    match /teams/{teamId} {
+      function canCreateTeam() {
+        return (
+          isEmailVerified() &&
+          isSignedIn()
+        );
+      }
+
+      function canUpdateTeam() {
+        return canCreateTeam();
+      }
+
+      function canDeleteTeam() {
+        return false;
+      }
+
+      allow read: if true;
+      allow create: if canCreateTeam();
+      allow update: if canUpdateTeam();
+      allow delete: if canDeleteTeam();
+      allow write: if false;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Shared Functions
 
