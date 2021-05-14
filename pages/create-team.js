@@ -15,6 +15,9 @@ import { validateCreateTeam } from "src/utilities/validation";
 import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
 
+// Components
+import TeamForm from "src/components/TeamForm";
+
 // Providers
 import { useAuth } from "src/providers/auth";
 
@@ -55,7 +58,16 @@ const CreateTeam = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const toast = useToast();
 
-  return null;
+  const handleSubmit = async (e, formState) => {};
+
+  return (
+    <TeamForm
+      state="create"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      errors={errors}
+    />
+  );
 };
 
 export default CreateTeam;

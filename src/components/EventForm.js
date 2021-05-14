@@ -220,9 +220,7 @@ const EventForm = (props) => {
         ) : null}
         <Stack as="form" spacing={6} onSubmit={handleSubmit}>
           <Flex alignItems="center" flexWrap="wrap">
-            <PageHeading>
-              {props.state === "edit" ? "Edit Event" : "Create an Event"}
-            </PageHeading>
+            <PageHeading>{pageTitle}</PageHeading>
             <Spacer />
             {props.state === "edit" ? (
               <Button
