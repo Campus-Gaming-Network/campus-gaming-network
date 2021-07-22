@@ -246,6 +246,11 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    match /teams-auth/{teamId} {
+      // TODO: Only team lead can read and update
+      allow read, write, create, update, delete: if false;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Shared Functions
 

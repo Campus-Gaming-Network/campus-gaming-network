@@ -30,12 +30,6 @@ import FormSilhouette from "src/components/silhouettes/FormSilhouette";
 import Article from "src/components/Article";
 import PageHeading from "src/components/PageHeading";
 import Card from "src/components/Card";
-import GameSearch from "src/components/GameSearch";
-import GameCover from "src/components/GameCover";
-import MonthSelect from "src/components/MonthSelect";
-import DaySelect from "src/components/DaySelect";
-import YearSelect from "src/components/YearSelect";
-import TimeSelect from "src/components/TimeSelect";
 
 // Constants
 import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";

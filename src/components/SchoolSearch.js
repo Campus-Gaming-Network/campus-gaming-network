@@ -79,7 +79,7 @@ const SchoolSearch = (props) => {
   };
 
   const fetchSchools = (searchTerm) => {
-    const value = searchTerm ? searchTerm.trim().toLowerCase() : "";
+    const value = searchTerm?.trim().toLowerCase() || "";
     const cachedQueryResults = localStorageSchoolQueries
       ? localStorageSchoolQueries[value]
       : null;

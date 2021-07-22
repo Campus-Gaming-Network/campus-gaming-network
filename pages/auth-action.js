@@ -3,7 +3,8 @@ import React from "react";
 import safeJsonStringify from "safe-json-stringify";
 
 // Constants
-import { REDIRECT_HOME, AUTH_ACTION, AUTH_ACTIONS } from "src/constants/other";
+import { AUTH_ACTION, AUTH_ACTIONS } from "src/constants/firebase";
+import { REDIRECT_HOME } from "src/constants/other";
 
 // Components
 import Empty from "src/components/Empty";

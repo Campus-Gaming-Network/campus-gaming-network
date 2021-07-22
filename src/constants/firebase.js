@@ -17,6 +17,7 @@ export const COLLECTIONS = {
   EVENT_RESPONSES: "event-responses",
   GAME_QUERIES: "game-queries",
   TEAMS: "teams",
+  TEAMS_AUTH: "teams-auth",
 };
 export const CALLABLES = {
   SEARCH_GAMES: "searchGames",
