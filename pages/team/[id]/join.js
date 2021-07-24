@@ -16,35 +16,49 @@ import {
   Flex,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import isEmpty from "lodash.isempty";
+import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
+import { DateTime } from "luxon";
 import { useRouter } from "next/router";
-import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
+import safeJsonStringify from "safe-json-stringify";
+import isEmpty from "lodash.isempty";
+
+// Other
+import firebaseAdmin from "src/firebaseAdmin";
+import firebase from "src/firebase";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
-import { validateLogIn } from "src/utilities/validation";
+import { validateCreateEvent } from "src/utilities/validation";
 
-// Other
-import firebase from "src/firebase";
+// Constants
+import { COLLECTIONS } from "src/constants/firebase";
+import { DASHED_DATE_TIME } from "src/constants/dateTime";
+import { AUTH_STATUS } from "src/constants/auth";
+import { COOKIES, NOT_FOUND } from "src/constants/other";
+
+// API
+import { getTeamDetails } from "src/api/team";
+
+// Providers
+import { useAuth } from "src/providers/auth";
 
 // Components
+// import EventForm from "src/components/EventForm";
 import SiteLayout from "src/components/SiteLayout";
 import Card from "src/components/Card";
 import Article from "src/components/Article";
 import Link from "src/components/Link";
 
-// Constants
-import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
-
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
+  let token;
+
   try {
     const cookies = nookies.get(context);
-    const token =
+    token =
       Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
         ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
         : null;
@@ -53,25 +67,35 @@ export const getServerSideProps = async (context) => {
         ? AUTH_STATUS.AUTHENTICATED
         : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-      return REDIRECT_HOME;
-    }
+    // if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
+    //   return NOT_FOUND;
+    // }
   } catch (error) {
-    return REDIRECT_HOME;
+    return NOT_FOUND;
   }
 
-  return { props: {} };
+  const { team } = await getTeamDetails(context.params.id);
+
+  if (!Boolean(team)) {
+    return NOT_FOUND;
+  }
+
+  const data = {
+    params: context.params,
+    team,
+  };
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// Login
+// JoinTeam
 
-const Login = () => {
-  const router = useRouter();
+const JoinTeam = (props) => {
   const [fields, handleFieldChange] = useFormFields({
-    email: "",
     password: "",
   });
+  const { user } = useAuth();
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -79,38 +103,10 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    setError(null);
-    setIsLoading(true);
-
-    const { isValid, errors } = validateLogIn(fields);
-
-    setErrors(errors);
-
-    if (!isValid) {
-      setIsLoading(false);
-      window.scrollTo(0, 0);
-      return;
-    }
-
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(fields.email, fields.password)
-      .then(() => {
-        router.push("/");
-      })
-      .catch((error) => {
-        console.error(error);
-        setError(error.message);
-        setIsLoading(false);
-        window.scrollTo(0, 0);
-      });
   };
 
   return (
-    <SiteLayout
-      meta={{ title: "Login", og: { url: `${PRODUCTION_URL}/login` } }}
-    >
+    <SiteLayout>
       <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
@@ -123,9 +119,8 @@ const Login = () => {
         ) : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">
-            Welcome back!
+            Join team {props.team.name}
           </Heading>
-          <Text color="gray.500">Log in to your account</Text>
           <Divider borderColor="gray.300" mt={12} mb={10} />
           {error ? (
             <Alert status="error" mb={12} rounded="lg">
@@ -134,21 +129,6 @@ const Login = () => {
             </Alert>
           ) : null}
           <Stack spacing={6}>
-            <FormControl isRequired isInvalid={errors.email}>
-              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-                Email
-              </FormLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="jdoe123@gmail.com"
-                onChange={handleFieldChange}
-                value={fields.email}
-                size="lg"
-              />
-              <FormErrorMessage>{errors.email}</FormErrorMessage>
-            </FormControl>
             <FormControl isRequired isInvalid={errors.password}>
               <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
                 Password
@@ -172,26 +152,15 @@ const Login = () => {
             w="full"
             isDisabled={isLoading}
             isLoading={isLoading}
-            loadingText="Logging in..."
+            loadingText="Joining team..."
             my={12}
           >
-            Log In
+            Join Team
           </Button>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Text>
-              Don’t have an account?{" "}
-              <Link href="/signup" color="brand.500" fontWeight={600}>
-                Create one
-              </Link>
-            </Text>
-            <Link href="/forgot-password" color="brand.500" fontWeight={600}>
-              Forgot your password?
-            </Link>
-          </Flex>
         </Card>
       </Article>
     </SiteLayout>
   );
 };
 
-export default Login;
+export default JoinTeam;

@@ -51,7 +51,11 @@ import EmptyText from "src/components/EmptyText";
 
 // API
 import { getSchoolDetails } from "src/api/school";
-import { getUserDetails, getUserAttendingEvents } from "src/api/user";
+import {
+  getUserDetails,
+  getUserAttendingEvents,
+  getUserTeams,
+} from "src/api/user";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -75,8 +79,14 @@ const AttendingEvents = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const { user } = await getUserDetails(context.params.id);
-  const { events } = await getUserAttendingEvents(context.params.id);
+  const [userResponse, eventsResponse, teamsResponse] = await Promise.all([
+    getUserDetails(context.params.id),
+    getUserAttendingEvents(context.params.id),
+    getUserTeams(context.params.id),
+  ]);
+  const { user } = userResponse;
+  const { events } = eventsResponse;
+  const { teams } = teamsResponse;
 
   if (!Boolean(user)) {
     return NOT_FOUND;
@@ -88,6 +98,7 @@ export const getServerSideProps = async (context) => {
     user,
     school,
     events,
+    teams,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -305,6 +316,12 @@ const User = (props) => {
               emptyText={USER_EMPTY_UPCOMING_EVENTS_TEXT}
             />
           </SliderLazyLoad>
+          <h2>Teams:</h2>
+          <List>
+            {props?.teams?.map((team) => (
+              <ListItem key={team.id}>{team.team.name}</ListItem>
+            ))}
+          </List>
         </Stack>
       </Article>
 

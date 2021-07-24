@@ -87,19 +87,7 @@ const CreateTeam = () => {
       .doc(user.id);
 
     const teamData = {
-      creator: {
-        id: userDocRef.id,
-        ref: userDocRef,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        gravatar: user.gravatar,
-        status: user.status,
-        school: {
-          ref: user.school.ref,
-          id: user.school.id,
-          name: user.school.name,
-        },
-      },
+      creator: { id: user.id },
       name: formState.name?.trim(),
       shortName: formState.shortName?.trim(),
       description: formState.description?.trim(),
@@ -114,26 +102,68 @@ const CreateTeam = () => {
       .add(teamData)
       .then((teamDocRef) => {
         teamId = teamDocRef.id;
-
         firebase
           .firestore()
           .collection(COLLECTIONS.TEAMS)
           .doc(teamId)
           .update({ id: teamId })
           .then(() => {
+            const teammateData = {
+              user: {
+                id: user.id,
+                ref: userDocRef,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                gravatar: user.gravatar,
+                status: user.status,
+                school: {
+                  ref: user.school.ref,
+                  id: user.school.id,
+                  name: user.school.name,
+                },
+              },
+              team: {
+                id: teamId,
+                ref: teamDocRef,
+                name: teamData.name,
+                shortName: teamData.shortName,
+              },
+            };
+
+            firebase
+              .firestore()
+              .collection(COLLECTIONS.TEAMMATES)
+              .add(teammateData)
+              .then(() => {
+                toast({
+                  title: "Team created.",
+                  description:
+                    "Your team has been created. You will be redirected...",
+                  status: "success",
+                  isClosable: true,
+                });
+                setTimeout(() => {
+                  router.push(`/team/${teamId}`);
+                }, 2000);
+              })
+              .catch((error) => {
+                setIsSubmitting(false);
+                toast({
+                  title: "An error occurred.",
+                  description: error.message,
+                  status: "error",
+                  isClosable: true,
+                });
+              });
+          })
+          .catch((error) => {
+            setIsSubmitting(false);
             toast({
-              title: "Team created.",
-              description:
-                "Your team has been created. You will be redirected...",
-              status: "success",
+              title: "An error occurred.",
+              description: error.message,
+              status: "error",
               isClosable: true,
             });
-            setTimeout(() => {
-              router.push(`/team/${teamId}`);
-            }, 2000);
-          })
-          .catch(() => {
-            setIsSubmitting(false);
           });
       })
       .catch((error) => {

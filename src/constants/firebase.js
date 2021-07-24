@@ -18,6 +18,7 @@ export const COLLECTIONS = {
   GAME_QUERIES: "game-queries",
   TEAMS: "teams",
   TEAMS_AUTH: "teams-auth",
+  TEAMMATES: "teammates",
 };
 export const CALLABLES = {
   SEARCH_GAMES: "searchGames",
