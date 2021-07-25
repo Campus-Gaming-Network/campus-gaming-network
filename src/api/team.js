@@ -1,5 +1,6 @@
 import firebaseAdmin from "src/firebaseAdmin";
 import { mapTeam } from "src/utilities/team";
+import { mapTeammate } from "src/utilities/teammate";
 
 export const getTeamDetails = async (id) => {
   let team = null;
@@ -22,12 +23,31 @@ export const getTeamDetails = async (id) => {
   }
 };
 
-export const getTeamUsers = async (id, limit = 25, page = 0) => {
-  let users = [];
+export const getTeamUsers = async (teamId, limit = 25, page = 0) => {
+  let teammates = [];
 
   try {
-    return { users };
+    const teamsDocRef = firebaseAdmin
+      .firestore()
+      .collection("teams")
+      .doc(teamId);
+    const teammatesSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("teammates")
+      .where("team.ref", "==", teamsDocRef)
+      .limit(limit)
+      .get();
+
+    if (!teammatesSnapshot.empty) {
+      teammatesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        const teammate = mapTeammate({ id: doc.id, ...data });
+        teammates.push(teammate);
+      });
+    }
+
+    return { teammates };
   } catch (error) {
-    return { users, error };
+    return { teammates, error };
   }
 };

@@ -39,6 +39,7 @@ import { COOKIES, NOT_FOUND } from "src/constants/other";
 
 // API
 import { getTeamDetails } from "src/api/team";
+import { getTeammateDetails } from "src/api/teammate";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -67,9 +68,9 @@ export const getServerSideProps = async (context) => {
         ? AUTH_STATUS.AUTHENTICATED
         : AUTH_STATUS.UNAUTHENTICATED;
 
-    // if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
-    //   return NOT_FOUND;
-    // }
+    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
+      return NOT_FOUND;
+    }
   } catch (error) {
     return NOT_FOUND;
   }
@@ -77,6 +78,13 @@ export const getServerSideProps = async (context) => {
   const { team } = await getTeamDetails(context.params.id);
 
   if (!Boolean(team)) {
+    return NOT_FOUND;
+  }
+
+  const { teammate } = await getTeammateDetails(context.params.id, token.uid);
+
+  // User is already part of the team.
+  if (Boolean(teammate)) {
     return NOT_FOUND;
   }
 
