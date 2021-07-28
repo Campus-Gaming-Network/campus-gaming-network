@@ -46,6 +46,7 @@ import { InfoIcon, WarningIcon } from "@chakra-ui/icons";
 
 export const getServerSideProps = async (context) => {
   let token;
+  let authStatus;
 
   try {
     const cookies = nookies.get(context);
@@ -53,7 +54,7 @@ export const getServerSideProps = async (context) => {
       Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
         ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
         : null;
-    const authStatus =
+    authStatus =
       Boolean(token) && Boolean(token.uid)
         ? AUTH_STATUS.AUTHENTICATED
         : AUTH_STATUS.UNAUTHENTICATED;
@@ -67,12 +68,11 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  const { teammate } = await getTeammateDetails(context.params.id, token.uid);
+  let teammate;
 
-  // User is already part of the team.
-  // if (Boolean(teammate)) {
-  //   return NOT_FOUND;
-  // }
+  if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    let { teammate } = await getTeammateDetails(context.params.id, token.uid);
+  }
 
   const data = {
     params: context.params,
@@ -90,7 +90,7 @@ const JoinTeam = (props) => {
   const [fields, handleFieldChange] = useFormFields({
     password: "",
   });
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticating, isAuthenticated } = useAuth();
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -116,19 +116,19 @@ const JoinTeam = (props) => {
             </AlertDescription>
           </Alert>
         ) : null}
-        {!isAuthenticated ? (
+        {!isAuthenticating && !isAuthenticated ? (
           <Alert status="warning" mb={4} rounded="lg">
-            <WarningIcon />
+            <AlertIcon />
             <AlertDescription>
-              You must be logged in to join a team.
+              You must be logged in to join this team.
             </AlertDescription>
           </Alert>
         ) : null}
         {props.alreadyJoinedTeam ? (
           <Alert status="info" mb={4} rounded="lg">
-            <InfoIcon />
+            <AlertIcon />
             <AlertDescription>
-              You are already apart of the team.
+              You are already apart of this team.
             </AlertDescription>
           </Alert>
         ) : null}
@@ -156,7 +156,10 @@ const JoinTeam = (props) => {
                 onChange={handleFieldChange}
                 value={fields.password}
                 size="lg"
-                disabled={props.alreadyJoinedTeam || !isAuthenticated}
+                disabled={
+                  props.alreadyJoinedTeam ||
+                  (!isAuthenticating && !isAuthenticated)
+                }
               />
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>
@@ -167,7 +170,9 @@ const JoinTeam = (props) => {
             size="lg"
             w="full"
             isDisabled={
-              isLoading || props.alreadyJoinedTeam || !isAuthenticated
+              isLoading ||
+              props.alreadyJoinedTeam ||
+              (!isAuthenticating && !isAuthenticated)
             }
             isLoading={isLoading}
             loadingText="Joining team..."
