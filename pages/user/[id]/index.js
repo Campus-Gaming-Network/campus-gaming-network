@@ -51,11 +51,7 @@ import EmptyText from "src/components/EmptyText";
 
 // API
 import { getSchoolDetails } from "src/api/school";
-import {
-  getUserDetails,
-  getUserAttendingEvents,
-  getUserTeams,
-} from "src/api/user";
+import { getUserDetails, getUserTeams } from "src/api/user";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -79,13 +75,11 @@ const AttendingEvents = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [userResponse, eventsResponse, teamsResponse] = await Promise.all([
+  const [userResponse, teamsResponse] = await Promise.all([
     getUserDetails(context.params.id),
-    getUserAttendingEvents(context.params.id),
     getUserTeams(context.params.id),
   ]);
   const { user } = userResponse;
-  const { events } = eventsResponse;
   const { teams } = teamsResponse;
 
   if (!Boolean(user)) {
@@ -97,7 +91,6 @@ export const getServerSideProps = async (context) => {
     params: context.params,
     user,
     school,
-    events,
     teams,
   };
 
@@ -316,12 +309,25 @@ const User = (props) => {
               emptyText={USER_EMPTY_UPCOMING_EVENTS_TEXT}
             />
           </SliderLazyLoad>
-          <h2>Teams:</h2>
-          <List>
-            {props?.teams?.map((team) => (
-              <ListItem key={team.id}>{team.team.name}</ListItem>
-            ))}
-          </List>
+          <Stack as="section" spacing={4}>
+            <Heading as="h3" fontSize="xl" textTransform="uppercase">
+              Teams
+            </Heading>
+            <List>
+              {props?.teams?.map((team) => (
+                <ListItem key={team.team.id}>
+                  <Link
+                    href={`/team/${team.team.id}`}
+                    color="brand.500"
+                    fontWeight={600}
+                  >
+                    {team.team.name}{" "}
+                    {team.team.shortName ? `(${team.team.shortName})` : ""}
+                  </Link>
+                </ListItem>
+              ))}
+            </List>
+          </Stack>
         </Stack>
       </Article>
 

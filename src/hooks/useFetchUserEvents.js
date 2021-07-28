@@ -50,7 +50,7 @@ const useFetchUserEvents = (id, limit) => {
         if (!userEventsSnapshot.empty) {
           userEventsSnapshot.forEach((doc) => {
             const data = doc.data();
-            const event = { ...mapEventResponse(data, doc) };
+            const event = { ...mapEventResponse(data) };
             _events.push(event);
           });
         }

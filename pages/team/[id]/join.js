@@ -4,36 +4,26 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  Box,
   Input,
   Stack,
   FormControl,
   FormLabel,
-  Text,
   Button,
   Heading,
   Divider,
-  Flex,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
-import { DateTime } from "luxon";
-import { useRouter } from "next/router";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
 import isEmpty from "lodash.isempty";
 
 // Other
 import firebaseAdmin from "src/firebaseAdmin";
-import firebase from "src/firebase";
 
 // Utilities
-import { useFormFields } from "src/utilities/other";
-import { validateCreateEvent } from "src/utilities/validation";
+import { noop, useFormFields } from "src/utilities/other";
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { DASHED_DATE_TIME } from "src/constants/dateTime";
 import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
 
@@ -45,11 +35,11 @@ import { getTeammateDetails } from "src/api/teammate";
 import { useAuth } from "src/providers/auth";
 
 // Components
-// import EventForm from "src/components/EventForm";
 import SiteLayout from "src/components/SiteLayout";
 import Card from "src/components/Card";
 import Article from "src/components/Article";
-import Link from "src/components/Link";
+import { reactRouterV3Instrumentation } from "@sentry/react";
+import { InfoIcon, WarningIcon } from "@chakra-ui/icons";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -67,12 +57,8 @@ export const getServerSideProps = async (context) => {
       Boolean(token) && Boolean(token.uid)
         ? AUTH_STATUS.AUTHENTICATED
         : AUTH_STATUS.UNAUTHENTICATED;
-
-    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
-      return NOT_FOUND;
-    }
   } catch (error) {
-    return NOT_FOUND;
+    noop();
   }
 
   const { team } = await getTeamDetails(context.params.id);
@@ -84,13 +70,14 @@ export const getServerSideProps = async (context) => {
   const { teammate } = await getTeammateDetails(context.params.id, token.uid);
 
   // User is already part of the team.
-  if (Boolean(teammate)) {
-    return NOT_FOUND;
-  }
+  // if (Boolean(teammate)) {
+  //   return NOT_FOUND;
+  // }
 
   const data = {
     params: context.params,
     team,
+    alreadyJoinedTeam: Boolean(teammate),
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -103,7 +90,7 @@ const JoinTeam = (props) => {
   const [fields, handleFieldChange] = useFormFields({
     password: "",
   });
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -111,6 +98,10 @@ const JoinTeam = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (props.alreadyJoinedTeam || !isAuthenticated) {
+      return;
+    }
   };
 
   return (
@@ -122,6 +113,22 @@ const JoinTeam = (props) => {
             <AlertDescription>
               There are errors in the form below. Please review and correct
               before submitting again.
+            </AlertDescription>
+          </Alert>
+        ) : null}
+        {!isAuthenticated ? (
+          <Alert status="warning" mb={4} rounded="lg">
+            <WarningIcon />
+            <AlertDescription>
+              You must be logged in to join a team.
+            </AlertDescription>
+          </Alert>
+        ) : null}
+        {props.alreadyJoinedTeam ? (
+          <Alert status="info" mb={4} rounded="lg">
+            <InfoIcon />
+            <AlertDescription>
+              You are already apart of the team.
             </AlertDescription>
           </Alert>
         ) : null}
@@ -149,6 +156,7 @@ const JoinTeam = (props) => {
                 onChange={handleFieldChange}
                 value={fields.password}
                 size="lg"
+                disabled={props.alreadyJoinedTeam || !isAuthenticated}
               />
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>
@@ -158,7 +166,9 @@ const JoinTeam = (props) => {
             type="submit"
             size="lg"
             w="full"
-            isDisabled={isLoading}
+            isDisabled={
+              isLoading || props.alreadyJoinedTeam || !isAuthenticated
+            }
             isLoading={isLoading}
             loadingText="Joining team..."
             my={12}

@@ -44,7 +44,7 @@ export const getServerSideProps = async (context) => {
 
 const Team = (props) => {
   return (
-    <SiteLayout>
+    <SiteLayout meta={props.team.meta}>
       <Box bg="gray.200" h="150px" />
       <Article>
         <Stack spacing={10}>
@@ -56,7 +56,7 @@ const Team = (props) => {
             pt={8}
           >
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
-              {props.team.name}
+              {props.team.name} ({props.team.memberCount || 0})
             </Heading>
           </Flex>
           <Box as="section" pt={4}>
