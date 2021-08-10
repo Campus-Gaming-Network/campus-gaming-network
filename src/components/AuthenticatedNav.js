@@ -26,6 +26,7 @@ import {
   faUserFriends,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarAlt } from "@fortawesome/free-regular-svg-icons";
+import { signOut } from "firebase/auth";
 
 // Components
 import NavWrapper from "src/components/NavWrapper";
@@ -36,7 +37,7 @@ import Link from "src/components/Link";
 import ButtonLink from "src/components/ButtonLink";
 
 // Other
-import firebase from "src/firebase";
+import { auth } from "src/firebase";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -54,10 +55,7 @@ const AuthenticatedNav = (props) => {
   };
 
   const handleLogout = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => router.push("/"));
+    signOut(auth).then(() => router.push("/"));
   };
 
   const onSchoolSelect = (selectedSchool) => {

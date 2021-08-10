@@ -13,6 +13,7 @@ import {
   ComboboxOptionText,
 } from "@reach/combobox";
 import keyBy from "lodash.keyby";
+import { httpsCallable } from "firebase/functions";
 
 // Components
 import SchoolLogo from "src/components/SchoolLogo";
@@ -29,7 +30,7 @@ import { CALLABLES } from "src/constants/firebase";
 import { LOCAL_STORAGE } from "src/constants/other";
 
 // Other
-import firebase from "src/firebase";
+import { functions } from "src/firebase";
 
 let savedSearches = [];
 
@@ -93,9 +94,7 @@ const SchoolSearch = (props) => {
       );
     }
 
-    const searchSchools = firebase
-      .functions()
-      .httpsCallable(CALLABLES.SEARCH_SCHOOLS);
+    const searchSchools = httpsCallable(functions, CALLABLES.SEARCH_SCHOOLS);
 
     return searchSchools({ query: value }).then((result) => {
       if (

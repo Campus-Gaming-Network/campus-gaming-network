@@ -12,9 +12,10 @@ import {
   AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { doc, deleteDoc } from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
@@ -33,11 +34,7 @@ const DeleteTeamDialog = (props) => {
     setIsSubmitting(true);
 
     try {
-      await firebase
-        .firestore()
-        .collection(COLLECTIONS.TEAMS)
-        .doc(props.team.id)
-        .delete();
+      await deleteDoc(doc(db, COLLECTIONS.TEAMS, props.team.id));
 
       props.onClose();
       setIsSubmitting(false);

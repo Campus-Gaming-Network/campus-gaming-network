@@ -22,6 +22,12 @@ import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  getIdToken,
+} from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
@@ -46,7 +52,7 @@ import SchoolSearch from "src/components/SchoolSearch";
 import SiteLayout from "src/components/SiteLayout";
 
 // Other
-import firebase from "src/firebase";
+import { auth } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -134,9 +140,11 @@ const Signup = () => {
     let user;
 
     try {
-      const response = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(formState.email, formState.password);
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        formState.email,
+        formState.password
+      );
 
       if (response?.user) {
         user = response.user;
@@ -151,8 +159,8 @@ const Signup = () => {
 
     if (Boolean(user)) {
       try {
-        await firebase.auth().currentUser.sendEmailVerification();
-        await firebase.auth().currentUser.getIdToken(true);
+        await sendEmailVerification(auth.currentUser);
+        await getIdToken(auth.currentUser, true);
 
         toast({
           title: "Verification email sent.",
@@ -171,28 +179,21 @@ const Signup = () => {
       }
 
       try {
-        await firebase
-          .firestore()
-          .collection(COLLECTIONS.USERS)
-          .doc(user.uid)
-          .set({
-            ...BASE_USER,
-            id: user.uid,
-            firstName: formState.firstName,
-            lastName: formState.lastName,
-            status: formState.status,
-            gravatar: createGravatarHash(formState.email),
-            school: {
-              ref: firebase
-                .firestore()
-                .collection(COLLECTIONS.SCHOOLS)
-                .doc(formState.school.id),
-              id: formState.school.id,
-              name: formState.school.name,
-            },
-            createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
-            updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
-          });
+        await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+          ...BASE_USER,
+          id: user.uid,
+          firstName: formState.firstName,
+          lastName: formState.lastName,
+          status: formState.status,
+          gravatar: createGravatarHash(formState.email),
+          school: {
+            ref: doc(db, COLLECTIONS.SCHOOLS, formState.school.id),
+            id: formState.school.id,
+            name: formState.school.name,
+          },
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
 
         toast({
           title: "Account creation successful.",

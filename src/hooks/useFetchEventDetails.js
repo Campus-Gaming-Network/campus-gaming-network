@@ -1,8 +1,15 @@
+// Libraries
 import React from "react";
 import isEmpty from "lodash.isempty";
+import { getDoc, doc } from "firebase/firestore";
 
-import firebase from "src/firebase";
+// Other
+import { db } from "src/firebase";
+
+// Utilities
 import { mapEvent } from "src/utilities/event";
+
+// Constants
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchEventDetails = (id) => {
@@ -28,11 +35,7 @@ const useFetchEventDetails = (id) => {
           console.log(`[API] fetchEventDetails...${id}`);
         }
 
-        firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENTS)
-          .doc(id)
-          .get()
+        getDoc(doc(db, COLLECTIONS.EVENTS, id))
           .then((doc) => {
             if (doc.exists) {
               setEvent(mapEvent(doc.data(), doc));

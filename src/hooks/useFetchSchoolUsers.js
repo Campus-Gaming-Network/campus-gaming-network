@@ -1,14 +1,21 @@
+// Libraries
 import React from "react";
 import isEmpty from "lodash.isempty";
+import { doc, collection, query, where, getDocs } from "firebase/firestore";
 
-import firebase from "src/firebase";
+// Other
+import { db } from "src/firebase";
+
+// Utilities
 import { mapUser } from "src/utilities/user";
+
+// Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
 
 const useFetchSchoolUsers = (
   id,
-  limit = DEFAULT_USERS_LIST_PAGE_SIZE,
+  _limit = DEFAULT_USERS_LIST_PAGE_SIZE,
   page = 0
 ) => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -40,27 +47,22 @@ const useFetchSchoolUsers = (
           console.log(`[API] fetchSchoolUsers...${id}`);
         }
 
-        const schoolDocRef = firebase
-          .firestore()
-          .collection(COLLECTIONS.SCHOOLS)
-          .doc(id);
-
-        let query = firebase
-          .firestore()
-          .collection(COLLECTIONS.USERS)
-          .where("school.ref", "==", schoolDocRef);
+        let queryArgs = [
+          collection(COLLECTIONS.USERS),
+          where("school.ref", "==", doc(db, COLLECTIONS.SCHOOLS, id)),
+        ];
 
         if (page > 0) {
           if (!pages[page]) {
-            query = query.startAfter(pages[page - 1].last);
+            queryArgs.push(startAfter(pages[page - 1].last));
           } else {
-            query = query.startAt(pages[page].first);
+            queryArgs.push(startAt(pages[page].first));
           }
         }
 
-        query
-          .limit(limit)
-          .get()
+        queryArgs.push(limit(_limit));
+
+        getDocs(query(...queryArgs))
           .then((snapshot) => {
             if (!snapshot.empty) {
               let schoolUsers = [];
@@ -107,7 +109,7 @@ const useFetchSchoolUsers = (
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, limit, page, pages]);
+  }, [id, _limit, page, pages]);
 
   return [users, isLoading, error];
 };

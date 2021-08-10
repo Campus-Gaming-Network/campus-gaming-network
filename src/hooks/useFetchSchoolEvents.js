@@ -1,8 +1,17 @@
 // Libraries
 import React from "react";
+import {
+  doc,
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+  Timestamp,
+} from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Utilities
 import { mapEvent } from "src/utilities/event";
@@ -26,26 +35,17 @@ const useFetchSchoolEvents = (id) => {
         console.log(`[API] fetchSchoolEvents...${id}`);
       }
 
-      const schoolDocRef = firebase
-        .firestore()
-        .collection(COLLECTIONS.SCHOOLS)
-        .doc(id);
-      const now = new Date();
-
       let _events = [];
 
       try {
-        const schoolEventsSnapshot = await firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENTS)
-          .where("school.ref", "==", schoolDocRef)
-          .where(
-            "endDateTime",
-            ">=",
-            firebase.firestore.Timestamp.fromDate(now)
+        const schoolEventsSnapshot = await getDocs(
+          query(
+            collection(db, COLLECTIONS.EVENTS),
+            where("school.ref", "==", doc(db, COLLECTIONS.SCHOOLS, id)),
+            where("endDateTime", ">=", Timestamp.fromDate(new Date())),
+            limit(25)
           )
-          .limit(25)
-          .get();
+        );
 
         if (!schoolEventsSnapshot.empty) {
           schoolEventsSnapshot.forEach((doc) => {

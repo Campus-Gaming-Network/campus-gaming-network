@@ -48,6 +48,7 @@ import EventListItem from "src/components/EventListItem";
 import SchoolLogo from "src/components/SchoolLogo";
 import UserListItem from "src/components/UserListItem";
 import SliderLazyLoad from "src/components/SliderLazyLoad";
+import EmptyText from "src/components/EmptyText";
 
 // Providers
 import { useAuth } from "src/providers/auth";

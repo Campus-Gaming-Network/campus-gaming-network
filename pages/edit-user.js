@@ -39,6 +39,7 @@ import {
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import dynamic from "next/dynamic";
+import { getFirestore, doc, updateDoc, Timestamp } from "firebase/firestore";
 
 // Constants
 import {
@@ -58,7 +59,7 @@ import {
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -330,10 +331,7 @@ const EditUser = (props) => {
       return;
     }
 
-    const schoolDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.SCHOOLS)
-      .doc(formState.school.id);
+    const schoolDocRef = doc(db, COLLECTIONS.SCHOOLS, formState.school.id);
 
     let birthdate = "";
 
@@ -342,15 +340,12 @@ const EditUser = (props) => {
         `${formState.birthMonth}-${formState.birthDay}-${formState.birthYear}`,
         DASHED_DATE
       );
-      birthdate = firebase.firestore.Timestamp.fromDate(
-        new Date(formattedBirthdate)
-      );
+      birthdate = Timestamp.fromDate(new Date(formattedBirthdate));
     }
 
     const data = {
       createdAt: user.createdAt,
-      updatedAt:
-        user.updatedAt || firebase.firestore.Timestamp.fromDate(new Date()),
+      updatedAt: user.updatedAt || serverTimestamp(),
       id: authUser.uid,
       firstName: formState.firstName.trim(),
       lastName: formState.lastName.trim(),
@@ -381,11 +376,7 @@ const EditUser = (props) => {
       favoriteGames: favoriteGames || [],
     };
 
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.USERS)
-      .doc(user.id)
-      .update(data)
+    updateDoc(doc(db, COLLECTIONS.USERS, user.id), data)
       .then(() => {
         setIsSubmitting(false);
         toast({
@@ -422,8 +413,6 @@ const EditUser = (props) => {
   if (!hasPrefilledForm) {
     prefillForm();
   }
-
-  console.log({ user, school });
 
   return (
     <SiteLayout

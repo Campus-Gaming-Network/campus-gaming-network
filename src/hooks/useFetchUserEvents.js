@@ -1,8 +1,16 @@
 // Libraries
 import React from "react";
+import {
+  doc,
+  collection,
+  query,
+  where,
+  getDocs,
+  Timestamp,
+} from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Utilities
 import { mapEventResponse } from "src/utilities/eventResponse";
@@ -26,26 +34,17 @@ const useFetchUserEvents = (id, limit) => {
         console.log(`[API] fetchUserEvents...${id}`);
       }
 
-      const userDocRef = firebase
-        .firestore()
-        .collection(COLLECTIONS.USERS)
-        .doc(id);
-      const now = new Date();
-
       let _events = [];
 
       try {
-        const userEventsSnapshot = await firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENT_RESPONSES)
-          .where("user.ref", "==", userDocRef)
-          .where("response", "==", "YES")
-          .where(
-            "event.endDateTime",
-            ">=",
-            firebase.firestore.Timestamp.fromDate(now)
+        const userEventsSnapshot = await getDocs(
+          query(
+            collection(db, COLLECTIONS.EVENT_RESPONSES),
+            where("user.ref", "==", doc(db, COLLECTIONS.USERS, id)),
+            where("response", "==", "YES"),
+            where("endDateTime", ">=", Timestamp.fromDate(new Date()))
           )
-          .get();
+        );
 
         if (!userEventsSnapshot.empty) {
           userEventsSnapshot.forEach((doc) => {

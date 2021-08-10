@@ -17,7 +17,8 @@ import {
   AlertDialogOverlay,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
-import firebase from "src/firebase";
+import { doc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 
 // Utilities
 import { validateReportEntity } from "src/utilities/validation";
@@ -25,6 +26,10 @@ import { sanitizePrivateProperties } from "src/utilities/other";
 
 // Constants
 import { CALLABLES } from "src/constants/firebase";
+
+// Other
+import { db, functions } from "src/firebase";
+
 const MAX_REASON_LENGTH = 5000;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -56,10 +61,7 @@ const ReportEntityDialog = (props) => {
     const reportData = {
       entity: {
         ...props.entity,
-        ref: firebase
-          .firestore()
-          .collection(COLLECTIONS[props.entity.type])
-          .doc(props.entity.id),
+        ref: doc(db, COLLECTIONS[props.entity.type], props.entity.id),
       },
       reason,
       metadata: safeJsonStringify({
@@ -70,9 +72,7 @@ const ReportEntityDialog = (props) => {
     };
 
     try {
-      const reportEntity = firebase
-        .functions()
-        .httpsCallable(CALLABLES.REPORT_ENTITY);
+      const reportEntity = httpsCallable(functions, CALLABLES.REPORT_ENTITY);
       await reportEntity(reportData);
       props.onClose();
       setIsSubmitting(false);

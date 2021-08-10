@@ -15,13 +15,18 @@ import {
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
+import {
+  verifyPasswordResetCode,
+  confirmPasswordReset,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
 import { validatePasswordReset } from "src/utilities/validation";
 
 // Other
-import firebase from "src/firebase";
+import { auth } from "src/firebase";
 
 // Constants
 import { PRODUCTION_URL } from "src/constants/other";
@@ -66,17 +71,11 @@ const PasswordReset = (props) => {
       return;
     }
 
-    firebase
-      .auth()
-      .verifyPasswordResetCode(props.oobCode)
+    verifyPasswordResetCode(auth, props.oobCode)
       .then((email) => {
-        firebase
-          .auth()
-          .confirmPasswordReset(props.oobCode, fields.password)
+        confirmPasswordReset(auth, props.oobCode, fields.password)
           .then(() => {
-            firebase
-              .auth()
-              .signInWithEmailAndPassword(email, fields.password)
+            signInWithEmailAndPassword(auth, email, fields.password)
               .then(() => {
                 router.push("/");
               })

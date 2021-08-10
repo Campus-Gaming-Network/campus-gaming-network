@@ -1,22 +1,26 @@
-import firebase from "firebase/app";
-
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/functions";
-import "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { initializeAuth, browserSessionPersistence } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 
 import { FIREBASE_CONFIG } from "src/constants/firebase";
 
-if (typeof window !== "undefined" && !firebase.apps.length) {
+let app;
+let db;
+let auth;
+let functions;
+
+if (typeof window !== "undefined" && !app?.apps.length) {
   try {
-    firebase.initializeApp(FIREBASE_CONFIG);
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    app = initializeApp(FIREBASE_CONFIG);
+    auth = initializeAuth(app, { persistence: [browserSessionPersistence] });
+    db = getFirestore(app);
+    functions = getFunctions(app);
   } catch (error) {
     if (!/already exists/.test(error.message)) {
       console.error("Firebase initialization error", error.stack);
-      or;
     }
   }
 }
 
-export default firebase;
+export { db, auth, functions };

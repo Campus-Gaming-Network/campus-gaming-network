@@ -231,11 +231,11 @@ const User = (props) => {
             {Boolean(props.user.bio) ? <Text>{props.user.bio}</Text> : null}
           </Box>
           <Stack as="section" spacing={4}>
-            <Heading as="h3" fontSize="xl" textTransform="uppercase">
+            <Heading as="h3" fontSize="xl">
               Information
             </Heading>
             <Flex as="dl" flexWrap="wrap" w="100%">
-              <Text as="dt" w="50%" fontWeight="bold">
+              <Text as="dt" w="50%" fontWeight="bold" fontSize="md">
                 Hometown
               </Text>
               {Boolean(props.user.hometown) ? (
@@ -247,7 +247,7 @@ const User = (props) => {
                   Nothing set
                 </EmptyText>
               )}
-              <Text as="dt" w="50%" fontWeight="bold">
+              <Text as="dt" w="50%" fontWeight="bold" fontSize="md">
                 Major
               </Text>
               {Boolean(props.user.major) ? (
@@ -259,7 +259,7 @@ const User = (props) => {
                   Nothing set
                 </EmptyText>
               )}
-              <Text as="dt" w="50%" fontWeight="bold">
+              <Text as="dt" w="50%" fontWeight="bold" fontSize="md">
                 Minor
               </Text>
               {Boolean(props.user.minor) ? (
@@ -274,7 +274,7 @@ const User = (props) => {
             </Flex>
           </Stack>
           <Stack as="section" spacing={4}>
-            <Heading as="h3" fontSize="xl" textTransform="uppercase">
+            <Heading as="h3" fontSize="xl">
               Accounts
             </Heading>
             <AccountsList user={props.user} />
@@ -285,7 +285,7 @@ const User = (props) => {
             </Stack>
           ) : null}
           <Stack as="section" spacing={4}>
-            <Heading as="h3" fontSize="xl" textTransform="uppercase">
+            <Heading as="h3" fontSize="xl">
               Currently Playing
             </Heading>
             <GameList
@@ -294,7 +294,7 @@ const User = (props) => {
             />
           </Stack>
           <Stack as="section" spacing={4}>
-            <Heading as="h3" fontSize="xl" textTransform="uppercase">
+            <Heading as="h3" fontSize="xl">
               Favorite Games
             </Heading>
             <GameList
@@ -310,7 +310,7 @@ const User = (props) => {
             />
           </SliderLazyLoad>
           <Stack as="section" spacing={4}>
-            <Heading as="h3" fontSize="xl" textTransform="uppercase">
+            <Heading as="h3" fontSize="xl">
               Teams
             </Heading>
             <List>
@@ -320,6 +320,7 @@ const User = (props) => {
                     href={`/team/${team.team.id}`}
                     color="brand.500"
                     fontWeight={600}
+                    fontSize="md"
                   >
                     {team.team.name}{" "}
                     {team.team.shortName ? `(${team.team.shortName})` : ""}

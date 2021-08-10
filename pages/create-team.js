@@ -3,9 +3,10 @@ import React from "react";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import { doc, updateDoc, setDoc, collection } from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
 
 // Utilities
@@ -81,13 +82,10 @@ const CreateTeam = () => {
     //   return;
     // }
 
-    const userDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.USERS)
-      .doc(user.id);
+    const userDocRef = doc(db, COLLECTIONS.USERS, user.id);
 
     const teamData = {
-      creator: { id: user.id },
+      creator: { id: user.id, ref: userDocRef },
       name: formState.name?.trim(),
       shortName: formState.shortName?.trim(),
       description: formState.description?.trim(),
@@ -96,17 +94,11 @@ const CreateTeam = () => {
 
     let teamId;
 
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.TEAMS)
-      .add(teamData)
+    setDoc(doc(collection(db, COLLECTIONS.TEAMS)), teamData)
       .then((teamDocRef) => {
         teamId = teamDocRef.id;
-        firebase
-          .firestore()
-          .collection(COLLECTIONS.TEAMS)
-          .doc(teamId)
-          .update({ id: teamId })
+
+        updateDoc(doc(db, COLLECTIONS.TEAMS, teamId), { id: teamId })
           .then(() => {
             const teammateData = {
               user: {
@@ -130,10 +122,7 @@ const CreateTeam = () => {
               },
             };
 
-            firebase
-              .firestore()
-              .collection(COLLECTIONS.TEAMMATES)
-              .add(teammateData)
+            setDoc(doc(collection(db, COLLECTIONS.TEAMMATES)), teammateData)
               .then(() => {
                 toast({
                   title: "Team created.",

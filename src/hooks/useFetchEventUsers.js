@@ -1,14 +1,21 @@
+// Libraries
 import React from "react";
 import isEmpty from "lodash.isempty";
+import { doc, collection, query, where, getDocs } from "firebase/firestore";
 
-import firebase from "src/firebase";
+// Other
+import { db } from "src/firebase";
+
+// Utilities
 import { mapUser } from "src/utilities/user";
+
+// Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
 
 const useFetchEventUsers = (
   id,
-  limit = DEFAULT_USERS_LIST_PAGE_SIZE,
+  _limit = DEFAULT_USERS_LIST_PAGE_SIZE,
   page = 0
 ) => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -40,28 +47,23 @@ const useFetchEventUsers = (
           console.log(`[API] fetchEventUsers...${id}`);
         }
 
-        const eventDocRef = firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENTS)
-          .doc(id);
-
-        let query = firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENT_RESPONSES)
-          .where("event.ref", "==", eventDocRef)
-          .where("response", "==", "YES");
+        let queryArgs = [
+          collection(COLLECTIONS.EVENT_RESPONSES),
+          where("event.ref", "==", doc(db, COLLECTIONS.EVENTS, id)),
+          where("response", "==", "YES"),
+        ];
 
         if (page > 0) {
           if (!pages[page]) {
-            query = query.startAfter(pages[page - 1].last);
+            queryArgs.push(startAfter(pages[page - 1].last));
           } else {
-            query = query.startAt(pages[page].first);
+            queryArgs.push(startAt(pages[page].first));
           }
         }
 
-        query
-          .limit(limit)
-          .get()
+        queryArgs.push(limit(_limit));
+
+        getDocs(query(...queryArgs))
           .then((snapshot) => {
             if (!snapshot.empty) {
               let eventUsers = [];

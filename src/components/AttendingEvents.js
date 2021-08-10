@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Heading, Box, List } from "@chakra-ui/react";
+import { Heading, Stack, List } from "@chakra-ui/react";
 
 // Hooks
 import useFetchUserEvents from "src/hooks/useFetchUserEvents";
@@ -24,8 +24,16 @@ const AttendingEvents = (props) => {
       {state === "idle" || state === "loading" ? (
         <SliderSilhouette />
       ) : (
-        <Box as="section" py={4}>
-          <Heading as="h3" fontSize="xl" pb={4}>
+        <Stack
+          as="section"
+          spacing={4}
+          bg="white"
+          p={6}
+          shadow="md"
+          rounded="md"
+          borderWidth={1}
+        >
+          <Heading as="h3" fontSize="2xl">
             {Boolean(props.title) ? props.title : "Events you're attending"}
           </Heading>
           {!(state === "done" && hasEvents) ? (
@@ -41,7 +49,7 @@ const AttendingEvents = (props) => {
               ))}
             </List>
           )}
-        </Box>
+        </Stack>
       )}
     </React.Fragment>
   );

@@ -4,7 +4,6 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  Box,
   Input,
   Stack,
   FormControl,
@@ -20,13 +19,14 @@ import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
 import { validateLogIn } from "src/utilities/validation";
 
 // Other
-import firebase from "src/firebase";
+import { auth } from "src/firebase";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -93,9 +93,7 @@ const Login = () => {
       return;
     }
 
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(fields.email, fields.password)
+    signInWithEmailAndPassword(auth, fields.email, fields.password)
       .then(() => {
         router.push("/");
       })

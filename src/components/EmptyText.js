@@ -7,7 +7,7 @@ import { Text } from "@chakra-ui/react";
 
 const EmptyText = ({ children, color, ...rest }) => {
   return (
-    <Text color="gray.600" fontSize="xl" {...rest}>
+    <Text color="gray.600" fontSize="md" {...rest}>
       {children}
     </Text>
   );

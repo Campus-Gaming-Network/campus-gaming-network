@@ -5,9 +5,16 @@ import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import {
+  doc,
+  updateDoc,
+  setDoc,
+  collection,
+  Timestamp,
+} from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
 
 // Utilities
@@ -104,9 +111,7 @@ const CreateEvent = () => {
         `${formState.startMonth}-${formState.startDay}-${formState.startYear} ${formState.startTime}`,
         DASHED_DATE_TIME
       );
-      startDateTime = firebase.firestore.Timestamp.fromDate(
-        new Date(formattedStartdate)
-      );
+      startDateTime = Timestamp.fromDate(new Date(formattedStartdate));
     }
 
     if (
@@ -119,19 +124,11 @@ const CreateEvent = () => {
         `${formState.endMonth}-${formState.endDay}-${formState.endYear} ${formState.endTime}`,
         DASHED_DATE_TIME
       );
-      endDateTime = firebase.firestore.Timestamp.fromDate(
-        new Date(formattedEnddate)
-      );
+      endDateTime = Timestamp.fromDate(new Date(formattedEnddate));
     }
 
-    const schoolDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.SCHOOLS)
-      .doc(school.id);
-    const userDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.USERS)
-      .doc(user.id);
+    const schoolDocRef = doc(db, COLLECTIONS.SCHOOLS, school.id);
+    const userDocRef = doc(db, COLLECTIONS.USERS, user.id);
 
     const eventData = {
       creator: {
@@ -168,21 +165,15 @@ const CreateEvent = () => {
 
     let eventId;
 
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.EVENTS)
-      .add(eventData)
+    setDoc(doc(collection(db, COLLECTIONS.EVENTS)), eventData)
       .then((eventDocRef) => {
         eventId = eventDocRef.id;
 
-        firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENTS)
-          .doc(eventId)
-          .update({ id: eventId })
-          .catch(() => {
-            setIsSubmitting(false);
-          });
+        updateDoc(doc(db, COLLECTIONS.EVENTS, eventId), {
+          id: eventId,
+        }).catch(() => {
+          setIsSubmitting(false);
+        });
 
         const eventResponseData = {
           response: "YES",
@@ -216,10 +207,10 @@ const CreateEvent = () => {
           },
         };
 
-        firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENT_RESPONSES)
-          .add(eventResponseData)
+        setDoc(
+          db(collection(db, COLLECTIONS.EVENT_RESPONSES)),
+          eventResponseData
+        )
           .then(() => {
             toast({
               title: "Event created.",

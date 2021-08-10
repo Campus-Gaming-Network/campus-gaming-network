@@ -11,9 +11,10 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from "@chakra-ui/react";
+import { doc, updateDoc, setDoc, collection } from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Constants
 import { EVENT_RESPONSES } from "src/constants/eventResponse";
@@ -41,10 +42,7 @@ const RSVPDialog = (props) => {
     const data = getResponseFormData(response);
 
     if (!hasResponded) {
-      firebase
-        .firestore()
-        .collection(COLLECTIONS.EVENT_RESPONSES)
-        .add(data)
+      setDoc(doc(collection(db, COLLECTIONS.EVENT_RESPONSES)), data)
         .then(() => {
           props.onClose();
           setIsSubmitting(false);
@@ -67,11 +65,9 @@ const RSVPDialog = (props) => {
           });
         });
     } else {
-      firebase
-        .firestore()
-        .collection(COLLECTIONS.EVENT_RESPONSES)
-        .doc(props.eventResponse.id)
-        .update({ response })
+      updateDoc(doc(db, COLLECTIONS.EVENT_RESPONSES, props.eventResponse.id), {
+        response,
+      })
         .then(() => {
           props.onClose();
           setIsSubmitting(false);
@@ -97,18 +93,9 @@ const RSVPDialog = (props) => {
   };
 
   const getResponseFormData = (response) => {
-    const userDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.USERS)
-      .doc(authUser.uid);
-    const eventDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.EVENTS)
-      .doc(props.event.id);
-    const schoolDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.SCHOOLS)
-      .doc(props.event.school.id);
+    const userDocRef = doc(db, COLLECTIONS.USERS, authUser.uid);
+    const eventDocRef = doc(db, COLLECTIONS.EVENTS, props.event.id);
+    const schoolDocRef = doc(db, COLLECTIONS.SCHOOLS, props.event.school.id);
 
     const data = {
       response,

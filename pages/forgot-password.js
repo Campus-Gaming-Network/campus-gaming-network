@@ -19,6 +19,7 @@ import {
 import isEmpty from "lodash.isempty";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
@@ -31,7 +32,7 @@ import Link from "src/components/Link";
 import SiteLayout from "src/components/SiteLayout";
 
 // Other
-import firebase from "src/firebase";
+import { auth } from "src/firebase";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
@@ -93,7 +94,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      await firebase.auth().sendPasswordResetEmail(fields.email);
+      await sendPasswordResetEmail(auth, fields.email);
       setEmailSent(true);
     } catch (error) {
       handleError(error);

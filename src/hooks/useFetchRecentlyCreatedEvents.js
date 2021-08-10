@@ -1,8 +1,16 @@
 // Libraries
 import React from "react";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  Timestamp,
+} from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Utilities
 import { mapEvent } from "src/utilities/event";
@@ -26,22 +34,17 @@ const useFetchRecentlyCreatedEvents = (limit) => {
         console.log("[API] fetchRecentlyCreatedEvents...");
       }
 
-      const now = new Date();
-
       let _events = [];
 
       try {
-        const recentlyCreatedEventsSnapshot = await firebase
-          .firestore()
-          .collection(COLLECTIONS.EVENTS)
-          .where(
-            "endDateTime",
-            ">=",
-            firebase.firestore.Timestamp.fromDate(now)
+        const recentlyCreatedEventsSnapshot = await getDocs(
+          query(
+            collection(db, COLLECTIONS.EVENTS),
+            where("endDateTime", ">=", Timestamp.fromDate(new Date())),
+            orderBy("endDateTime"),
+            orderBy("createdAt", "desc")
           )
-          .orderBy("endDateTime")
-          .orderBy("createdAt", "desc")
-          .get();
+        );
 
         if (!recentlyCreatedEventsSnapshot.empty) {
           recentlyCreatedEventsSnapshot.forEach((doc) => {

@@ -1,8 +1,15 @@
+// Libraries
 import React from "react";
 import isEmpty from "lodash.isempty";
+import { getDoc, doc } from "firebase/firestore";
 
-import firebase from "src/firebase";
+// Other
+import { db } from "src/firebase";
+
+// Utilities
 import { mapSchool } from "src/utilities/school";
+
+// Constants
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchSchoolDetails = (id) => {
@@ -28,11 +35,7 @@ const useFetchSchoolDetails = (id) => {
           console.log(`[API] fetchSchoolDetails...${id}`);
         }
 
-        firebase
-          .firestore()
-          .collection(COLLECTIONS.SCHOOLS)
-          .doc(id)
-          .get()
+        getDoc(doc(db, COLLECTIONS.SCHOOLS, id))
           .then((doc) => {
             if (doc.exists) {
               setSchool(mapSchool(doc.data(), doc));

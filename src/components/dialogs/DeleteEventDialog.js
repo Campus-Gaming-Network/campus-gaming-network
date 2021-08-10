@@ -12,9 +12,10 @@ import {
   AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { doc, deleteDoc } from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
@@ -33,11 +34,7 @@ const DeleteEventDialog = (props) => {
     setIsSubmitting(true);
 
     try {
-      await firebase
-        .firestore()
-        .collection(COLLECTIONS.EVENTS)
-        .doc(props.event.id)
-        .delete();
+      await deleteDoc(doc(db, COLLECTIONS.EVENTS, props.event.id));
 
       props.onClose();
       setIsSubmitting(false);

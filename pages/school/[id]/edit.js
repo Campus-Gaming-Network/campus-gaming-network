@@ -20,6 +20,7 @@ import {
 import { useDropzone } from "react-dropzone";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
+import { doc, updateDoc } from "firebase/firestore";
 
 // Constants
 import { SCHOOL_ACCOUNTS } from "src/constants/school";
@@ -192,11 +193,7 @@ const EditSchool = (props) => {
       );
     }
 
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.SCHOOLS)
-      .doc(props.school.id)
-      .update(data)
+    updateDoc(doc(db, COLLECTIONS.SCHOOLS, props.school.id), data)
       .then(() => {
         setIsSubmitting(false);
         toast({
