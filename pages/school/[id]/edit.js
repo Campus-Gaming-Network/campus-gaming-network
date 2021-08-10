@@ -35,7 +35,7 @@ import {
 import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
-import firebase from "src/firebase";
+// import firebase from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
 
 // Components
@@ -134,6 +134,8 @@ const EditSchool = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    return;
 
     setIsSubmitting(true);
 
