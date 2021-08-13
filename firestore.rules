@@ -203,7 +203,7 @@ service cloud.firestore {
       }
 
       function canUpdateEventResponse() {
-        return true;
+        return false;
         // return (
         //   canCreateEventResponse(incomingData) &&
         // );
