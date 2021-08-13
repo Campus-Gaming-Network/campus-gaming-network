@@ -24,15 +24,7 @@ const AttendingEvents = (props) => {
       {state === "idle" || state === "loading" ? (
         <SliderSilhouette />
       ) : (
-        <Stack
-          as="section"
-          spacing={4}
-          bg="white"
-          p={6}
-          shadow="md"
-          rounded="md"
-          borderWidth={1}
-        >
+        <Stack as="section" spacing={4} bg="white">
           <Heading as="h3" fontSize="2xl">
             {Boolean(props.title) ? props.title : "Events you're attending"}
           </Heading>

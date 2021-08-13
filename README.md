@@ -1,10 +1,25 @@
 # Campus Gaming Network
 
-## Starting the dev server
+## Development Requirements (In Progress)
+
+- Node LTS
+- NPM LTS
+- Firebase
+  - Account
+  - Project
+  - CLI
+- .env.local (based off of .env.sample)
+  - serviceAccountKey_dev.json
+  - Google Maps API key
+  - Sentry
+  - NextJS
+  - Firebase
+
+## Starting the development server
 
 `npm run dev`
 
-## Analyze build
+## Analyze production build
 
 `npm run analyze`
 
