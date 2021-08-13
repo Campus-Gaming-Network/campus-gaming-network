@@ -21,26 +21,26 @@ import { db } from "src/firebase";
 import { COLLECTIONS } from "src/constants/firebase";
 
 ////////////////////////////////////////////////////////////////////////////
-// DeleteEventDialog
+// DeleteTeamDialog
 
-const DeleteEventDialog = (props) => {
+const DeleteTeamDialog = (props) => {
   const router = useRouter();
   const toast = useToast();
   const cancelRef = React.useRef();
-  const deleteEventRef = React.useRef();
+  const deleteTeamRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const onDeleteEventConfirm = async () => {
+  const onDeleteTeamConfirm = async () => {
     setIsSubmitting(true);
 
     try {
-      await deleteDoc(doc(db, COLLECTIONS.EVENTS, props.event.id));
+      await deleteDoc(doc(db, COLLECTIONS.TEAMS, props.team.id));
 
       props.onClose();
       setIsSubmitting(false);
       toast({
-        title: "Event deleted.",
-        description: `Event ${props.event.name} has been deleted. You will be redirected...`,
+        title: "Team deleted.",
+        description: `Team ${props.team.name} has been deleted. You will be redirected...`,
         status: "success",
         isClosable: true,
       });
@@ -68,12 +68,12 @@ const DeleteEventDialog = (props) => {
     >
       <AlertDialogOverlay />
       <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-        <AlertDialogHeader>Delete Event</AlertDialogHeader>
+        <AlertDialogHeader>Delete Team</AlertDialogHeader>
 
         <AlertDialogBody>
-          Are you sure you want to delete the event{" "}
+          Are you sure you want to delete the team{" "}
           <Text as="span" fontWeight="bold">
-            {props.event ? props.event.name : ""}
+            {props.team ? props.team.name : ""}
           </Text>
           ?
         </AlertDialogBody>
@@ -85,11 +85,11 @@ const DeleteEventDialog = (props) => {
             </Button>
           ) : (
             <React.Fragment>
-              <Button ref={deleteEventRef} onClick={props.onClose}>
+              <Button ref={deleteTeamRef} onClick={props.onClose}>
                 No, nevermind
               </Button>
-              <Button colorScheme="red" onClick={onDeleteEventConfirm} ml={3}>
-                Yes, I want to delete the event
+              <Button colorScheme="red" onClick={onDeleteTeamConfirm} ml={3}>
+                Yes, I want to delete the team
               </Button>
             </React.Fragment>
           )}
@@ -99,4 +99,4 @@ const DeleteEventDialog = (props) => {
   );
 };
 
-export default DeleteEventDialog;
+export default DeleteTeamDialog;

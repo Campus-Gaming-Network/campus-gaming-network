@@ -1,5 +1,18 @@
+// Libraries
 import React from "react";
-import firebase from "src/firebase";
+import {
+  doc,
+  collection,
+  query,
+  where,
+  getDocs,
+  Timestamp,
+} from "firebase/firestore";
+
+// Other
+import { db } from "src/firebase";
+
+// Constants
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
@@ -17,22 +30,16 @@ const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
         console.log("[API] fetchUserEventResponse...");
       }
 
-      const eventDocRef = firebase
-        .firestore()
-        .collection(COLLECTIONS.EVENTS)
-        .doc(eventId);
-      const userDocRef = firebase
-        .firestore()
-        .collection(COLLECTIONS.USERS)
-        .doc(userId);
-
-      firebase
-        .firestore()
-        .collection(COLLECTIONS.EVENT_RESPONSES)
-        .where("event.ref", "==", eventDocRef)
-        .where("user.ref", "==", userDocRef)
-        .limit(1)
-        .get()
+      getDocs(
+        query(
+          collection(db, COLLECTIONS.EVENT_RESPONSES),
+          where("event.ref", "==", doc(db, COLLECTIONS.EVENTS, eventId)),
+          where("user.ref", "==", doc(db, COLLECTIONS.USERS, userId)),
+          where("response", "==", "YES"),
+          where("endDateTime", ">=", Timestamp.fromDate(new Date())),
+          limit(1)
+        )
+      )
         .then((snapshot) => {
           if (!snapshot.empty) {
             const [doc] = snapshot.docs;

@@ -16,9 +16,11 @@ import {
   AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { signOut } from "firebase/auth";
+import { doc, deleteDoc } from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { auth } from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
@@ -56,12 +58,7 @@ const DeleteAccountDialog = (props) => {
     setIsSubmitting(true);
 
     try {
-      await firebase
-        .firestore()
-        .collection(COLLECTIONS.USERS)
-        .doc(props.user.id)
-        .delete();
-
+      await deleteDoc(doc(db, COLLECTIONS.USERS, props.user.id));
       props.onClose();
       setIsSubmitting(false);
       toast({
@@ -71,10 +68,7 @@ const DeleteAccountDialog = (props) => {
         isClosable: true,
       });
       setTimeout(() => {
-        firebase
-          .auth()
-          .signOut()
-          .then(() => router.push("/"));
+        signOut(auth).then(() => router.push("/"));
       }, 2000);
     } catch (error) {
       console.error(error);

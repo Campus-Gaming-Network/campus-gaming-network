@@ -8,9 +8,10 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
+import { sendEmailVerification } from "firebase/auth";
 
 // Other
-import firebase from "src/firebase";
+import { auth } from "src/firebase";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -25,37 +26,36 @@ const VerifyEmailReminderBanner = () => {
   const email = hasAuthUser ? authUser.email : null;
   const [sendingStatus, setSendingStatus] = React.useState("idle");
 
-  const sendEmailVerification = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
     if (!email || sendingStatus === "sending") {
       return;
     }
 
     setSendingStatus("sending");
 
-    firebase
-      .auth()
-      .currentUser.sendEmailVerification()
-      .then(
-        () => {
-          toast({
-            title: "Verification email sent.",
-            description: `A verification email has been sent to ${email}. Please check your inbox and follow the instructions in the email.`,
-            status: "success",
-            isClosable: true,
-          });
-          setSendingStatus("sent");
-        },
-        (error) => {
-          console.error(error);
-          toast({
-            title: "Error sending verification email.",
-            description: `There was an error sending the verification email to ${email}. Please contact support.`,
-            status: "error",
-            isClosable: true,
-          });
-          setSendingStatus("error");
-        }
-      );
+    sendEmailVerification(auth.currentUser).then(
+      () => {
+        toast({
+          title: "Verification email sent.",
+          description: `A verification email has been sent to ${email}. Please check your inbox and follow the instructions in the email.`,
+          status: "success",
+          isClosable: true,
+        });
+        setSendingStatus("sent");
+      },
+      (error) => {
+        console.error(error);
+        toast({
+          title: "Error sending verification email.",
+          description: `There was an error sending the verification email to ${email}. Please contact support.`,
+          status: "error",
+          isClosable: true,
+        });
+        setSendingStatus("error");
+      }
+    );
   };
 
   if (!email || (hasAuthUser && authUser.emailVerified)) {
@@ -65,7 +65,7 @@ const VerifyEmailReminderBanner = () => {
   return (
     <Alert status="info">
       <AlertIcon />
-      <AlertDescription>
+      <AlertDescription as="form" onSubmit={handleSubmit}>
         <Text>
           Your email{" "}
           <Text as="span" fontWeight="bold">
@@ -74,7 +74,7 @@ const VerifyEmailReminderBanner = () => {
           is not yet verified. Please verify your email address.{" "}
           <Button
             verticalAlign="baseline"
-            onClick={sendEmailVerification}
+            type="submit"
             colorScheme="blue"
             variant="link"
           >

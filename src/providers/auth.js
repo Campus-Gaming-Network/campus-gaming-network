@@ -3,9 +3,11 @@
 
 import React from "react";
 import nookies from "nookies";
+import { onIdTokenChanged } from "firebase/auth";
+import { getDoc, doc } from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db, auth } from "src/firebase";
 
 // Constants
 import { COOKIES } from "src/constants/other";
@@ -72,7 +74,7 @@ export const AuthProvider = ({ children }) => {
       window.nookies = nookies;
     }
 
-    return firebase.auth().onIdTokenChanged(async (authUser) => {
+    return onIdTokenChanged(auth, async (authUser) => {
       console.log("[AUTH] Token changed!");
 
       if (!Boolean(authUser)) {
@@ -99,11 +101,7 @@ export const AuthProvider = ({ children }) => {
         let userDoc;
 
         try {
-          userDoc = await firebase
-            .firestore()
-            .collection("users")
-            .doc(authUser.uid)
-            .get();
+          userDoc = await getDoc(doc(db, "users", authUser.uid));
         } catch (error) {
           console.error(`[AUTH] Error getting user.`, error);
           clearAuth();
@@ -114,11 +112,9 @@ export const AuthProvider = ({ children }) => {
           setUser({ ...mapUser(userDoc.data(), userDoc) });
 
           try {
-            const schoolDoc = await firebase
-              .firestore()
-              .collection("schools")
-              .doc(userDoc.data().school.id)
-              .get();
+            const schoolDoc = await getDoc(
+              doc(db, "schools", userDoc.data().school.id)
+            );
 
             if (schoolDoc.exists) {
               setSchool({ ...mapSchool(schoolDoc.data(), schoolDoc) });
@@ -152,7 +148,7 @@ export const AuthProvider = ({ children }) => {
     const handle = setInterval(async () => {
       console.log("[AUTH] Refreshing token.");
 
-      const authUser = firebase.auth().currentUser;
+      const authUser = auth.currentUser;
 
       if (Boolean(authUser)) {
         try {

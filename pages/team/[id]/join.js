@@ -8,70 +8,89 @@ import {
   Stack,
   FormControl,
   FormLabel,
-  Text,
   Button,
   Heading,
   Divider,
-  Flex,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import isEmpty from "lodash.isempty";
-import { useRouter } from "next/router";
-import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import { signInWithEmailAndPassword } from "firebase/auth";
-
-// Utilities
-import { useFormFields } from "src/utilities/other";
-import { validateLogIn } from "src/utilities/validation";
+import safeJsonStringify from "safe-json-stringify";
+import isEmpty from "lodash.isempty";
 
 // Other
-import { auth } from "src/firebase";
+import firebaseAdmin from "src/firebaseAdmin";
+
+// Utilities
+import { noop, useFormFields } from "src/utilities/other";
+
+// Constants
+import { AUTH_STATUS } from "src/constants/auth";
+import { COOKIES, NOT_FOUND } from "src/constants/other";
+
+// API
+import { getTeamDetails } from "src/api/team";
+import { getTeammateDetails } from "src/api/teammate";
+
+// Providers
+import { useAuth } from "src/providers/auth";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import Card from "src/components/Card";
 import Article from "src/components/Article";
-import Link from "src/components/Link";
-
-// Constants
-import { AUTH_STATUS } from "src/constants/auth";
-import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
+import { reactRouterV3Instrumentation } from "@sentry/react";
+import { InfoIcon, WarningIcon } from "@chakra-ui/icons";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
+  let token;
+  let authStatus;
+
   try {
     const cookies = nookies.get(context);
-    const token =
+    token =
       Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
         ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
         : null;
-    const authStatus =
+    authStatus =
       Boolean(token) && Boolean(token.uid)
         ? AUTH_STATUS.AUTHENTICATED
         : AUTH_STATUS.UNAUTHENTICATED;
-
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-      return REDIRECT_HOME;
-    }
   } catch (error) {
-    return REDIRECT_HOME;
+    noop();
   }
 
-  return { props: {} };
+  const { team } = await getTeamDetails(context.params.id);
+
+  if (!Boolean(team)) {
+    return NOT_FOUND;
+  }
+
+  let teammate;
+
+  if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    let { teammate } = await getTeammateDetails(context.params.id, token.uid);
+  }
+
+  const data = {
+    params: context.params,
+    team,
+    alreadyJoinedTeam: Boolean(teammate),
+  };
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// Login
+// JoinTeam
 
-const Login = () => {
-  const router = useRouter();
+const JoinTeam = (props) => {
   const [fields, handleFieldChange] = useFormFields({
-    email: "",
     password: "",
   });
+  const { user, isAuthenticating, isAuthenticated } = useAuth();
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -80,35 +99,13 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setError(null);
-    setIsLoading(true);
-
-    const { isValid, errors } = validateLogIn(fields);
-
-    setErrors(errors);
-
-    if (!isValid) {
-      setIsLoading(false);
-      window.scrollTo(0, 0);
+    if (props.alreadyJoinedTeam || !isAuthenticated) {
       return;
     }
-
-    signInWithEmailAndPassword(auth, fields.email, fields.password)
-      .then(() => {
-        router.push("/");
-      })
-      .catch((error) => {
-        console.error(error);
-        setError(error.message);
-        setIsLoading(false);
-        window.scrollTo(0, 0);
-      });
   };
 
   return (
-    <SiteLayout
-      meta={{ title: "Login", og: { url: `${PRODUCTION_URL}/login` } }}
-    >
+    <SiteLayout>
       <Article fullWidthMobile>
         {hasErrors ? (
           <Alert status="error" mb={4} rounded="lg">
@@ -119,11 +116,26 @@ const Login = () => {
             </AlertDescription>
           </Alert>
         ) : null}
+        {!isAuthenticating && !isAuthenticated ? (
+          <Alert status="warning" mb={4} rounded="lg">
+            <AlertIcon />
+            <AlertDescription>
+              You must be logged in to join this team.
+            </AlertDescription>
+          </Alert>
+        ) : null}
+        {props.alreadyJoinedTeam ? (
+          <Alert status="info" mb={4} rounded="lg">
+            <AlertIcon />
+            <AlertDescription>
+              You are already apart of this team.
+            </AlertDescription>
+          </Alert>
+        ) : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">
-            Welcome back!
+            Join team {props.team.name}
           </Heading>
-          <Text color="gray.500">Log in to your account</Text>
           <Divider borderColor="gray.300" mt={12} mb={10} />
           {error ? (
             <Alert status="error" mb={12} rounded="lg">
@@ -132,21 +144,6 @@ const Login = () => {
             </Alert>
           ) : null}
           <Stack spacing={6}>
-            <FormControl isRequired isInvalid={errors.email}>
-              <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
-                Email
-              </FormLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="jdoe123@gmail.com"
-                onChange={handleFieldChange}
-                value={fields.email}
-                size="lg"
-              />
-              <FormErrorMessage>{errors.email}</FormErrorMessage>
-            </FormControl>
             <FormControl isRequired isInvalid={errors.password}>
               <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
                 Password
@@ -159,6 +156,10 @@ const Login = () => {
                 onChange={handleFieldChange}
                 value={fields.password}
                 size="lg"
+                disabled={
+                  props.alreadyJoinedTeam ||
+                  (!isAuthenticating && !isAuthenticated)
+                }
               />
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>
@@ -168,28 +169,21 @@ const Login = () => {
             type="submit"
             size="lg"
             w="full"
-            isDisabled={isLoading}
+            isDisabled={
+              isLoading ||
+              props.alreadyJoinedTeam ||
+              (!isAuthenticating && !isAuthenticated)
+            }
             isLoading={isLoading}
-            loadingText="Logging in..."
+            loadingText="Joining team..."
             my={12}
           >
-            Log In
+            Join Team
           </Button>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Text>
-              Don’t have an account?{" "}
-              <Link href="/signup" color="brand.500" fontWeight={600}>
-                Create one
-              </Link>
-            </Text>
-            <Link href="/forgot-password" color="brand.500" fontWeight={600}>
-              Forgot your password?
-            </Link>
-          </Flex>
         </Card>
       </Article>
     </SiteLayout>
   );
 };
 
-export default Login;
+export default JoinTeam;

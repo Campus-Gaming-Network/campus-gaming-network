@@ -2,6 +2,7 @@ import firebaseAdmin from "src/firebaseAdmin";
 import { mapUser } from "src/utilities/user";
 import { mapEvent } from "src/utilities/event";
 import { mapEventResponse } from "src/utilities/eventResponse";
+import { mapTeam } from "src/utilities/team";
 
 export const getUserDetails = async (id) => {
   let user = null;
@@ -14,7 +15,7 @@ export const getUserDetails = async (id) => {
       .get();
 
     if (userDoc.exists) {
-      user = { ...mapUser(userDoc.data(), userDoc) };
+      user = { ...mapUser(userDoc.data()) };
     }
 
     return { user };
@@ -56,7 +57,7 @@ export const getUserAttendingEvents = async (
 
     if (!eventsSnapshot.empty) {
       eventsSnapshot.forEach((doc) => {
-        const event = mapEventResponse(doc.data(), doc);
+        const event = mapEventResponse(doc.data());
         events.push(event);
       });
     }
@@ -131,7 +132,7 @@ export const getUserCreatedEvents = async (userId) => {
     if (!userCreatedEventsSnapshot.empty) {
       userCreatedEventsSnapshot.forEach((doc) => {
         const data = doc.data();
-        const event = mapEvent({ id: doc.id, ...data }, doc);
+        const event = mapEvent({ id: doc.id, ...data });
         events.push(event);
       });
     }
@@ -139,5 +140,34 @@ export const getUserCreatedEvents = async (userId) => {
     return { events };
   } catch (error) {
     return { events, error };
+  }
+};
+
+export const getUserTeams = async (userId) => {
+  let teams = [];
+
+  try {
+    const userDocRef = firebaseAdmin
+      .firestore()
+      .collection("users")
+      .doc(userId);
+    const teammatesSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("teammates")
+      .where("user.ref", "==", userDocRef)
+      .limit(25)
+      .get();
+
+    if (!teammatesSnapshot.empty) {
+      teammatesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        const team = mapTeam({ id: doc.id, ...data });
+        teams.push(team);
+      });
+    }
+
+    return { teams };
+  } catch (error) {
+    return { teams, error };
   }
 };

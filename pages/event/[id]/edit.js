@@ -5,10 +5,11 @@ import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import { getFirestore, doc, updateDoc, Timestamp } from "firebase/firestore";
 
 // Other
 import firebaseAdmin from "src/firebaseAdmin";
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Utilities
 import { validateCreateEvent } from "src/utilities/validation";
@@ -114,9 +115,7 @@ const EditEvent = (props) => {
         `${formState.startMonth}-${formState.startDay}-${formState.startYear} ${formState.startTime}`,
         DASHED_DATE_TIME
       );
-      startDateTime = firebase.firestore.Timestamp.fromDate(
-        new Date(formattedStartdate)
-      );
+      startDateTime = Timestamp.fromDate(new Date(formattedStartdate));
     }
 
     if (
@@ -129,22 +128,11 @@ const EditEvent = (props) => {
         `${formState.endMonth}-${formState.endDay}-${formState.endYear} ${formState.endTime}`,
         DASHED_DATE_TIME
       );
-      endDateTime = firebase.firestore.Timestamp.fromDate(
-        new Date(formattedEnddate)
-      );
+      endDateTime = Timestamp.fromDate(new Date(formattedEnddate));
     }
 
-    const schoolDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.SCHOOLS)
-      .doc(user.school.id);
-    const userDocRef = firebase
-      .firestore()
-      .collection(COLLECTIONS.USERS)
-      .doc(user.id);
-
     const eventData = {
-      creator: userDocRef,
+      creator: doc(db, COLLECTIONS.USERS, user.id),
       name: formState.name.trim(),
       description: formState.description.trim(),
       isOnlineEvent: formState.isOnlineEvent,
@@ -155,11 +143,7 @@ const EditEvent = (props) => {
       placeId: formState.placeId,
     };
 
-    firebase
-      .firestore()
-      .collection(COLLECTIONS.EVENTS)
-      .doc(props.id)
-      .update(eventData)
+    updateDoc(doc(db, COLLECTIONS.EVENTS, props.id), eventData)
       .then(() => {
         toast({
           title: "Event updated.",

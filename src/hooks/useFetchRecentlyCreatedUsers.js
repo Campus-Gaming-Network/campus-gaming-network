@@ -1,7 +1,9 @@
+// Libraries
 import React from "react";
+import { collection, query, limit, getDocs, orderBy } from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Utilities
 import { mapUser } from "src/utilities/user";
@@ -10,7 +12,7 @@ import { mapUser } from "src/utilities/user";
 import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
 
-const useFetchRecentlyCreatedUsers = (limit) => {
+const useFetchRecentlyCreatedUsers = (_limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -28,12 +30,13 @@ const useFetchRecentlyCreatedUsers = (limit) => {
       let _users = [];
 
       try {
-        const recentlyCreatedUsersSnapshot = await firebase
-          .firestore()
-          .collection(COLLECTIONS.USERS)
-          .orderBy("createdAt", "desc")
-          .limit(25)
-          .get();
+        const recentlyCreatedUsersSnapshot = await getDocs(
+          query(
+            collection(db, COLLECTIONS.USERS),
+            orderBy("createdAt", "desc"),
+            limit(25)
+          )
+        );
 
         if (!recentlyCreatedUsersSnapshot.empty) {
           recentlyCreatedUsersSnapshot.forEach((doc) => {
@@ -53,7 +56,7 @@ const useFetchRecentlyCreatedUsers = (limit) => {
     };
 
     fetchRecentlyCreatedUsers();
-  }, [limit]);
+  }, [_limit]);
 
   return [users, state, error];
 };

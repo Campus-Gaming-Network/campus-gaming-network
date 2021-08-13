@@ -1,9 +1,19 @@
 // Libraries
 import React from "react";
 import { geohashQueryBounds, distanceBetween } from "geofire-common";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  startAt,
+  orderBy,
+  limit,
+  endAt,
+} from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Utilities
 import { mapSchool } from "src/utilities/school";
@@ -33,16 +43,16 @@ const useFetchNearbySchools = (latitude, longitude) => {
       }
 
       for (const b of bounds) {
-        const query = firebase
-          .firestore()
-          .collection(COLLECTIONS.SCHOOLS)
-          .where("geohash", "!=", "")
-          .orderBy("geohash")
-          .startAt(b[0])
-          .endAt(b[1])
-          .limit(25);
+        const q = query(
+          collection(db, COLLECTIONS.SCHOOLS),
+          where("geohash", "!=", ""),
+          orderBy("geohash"),
+          startAt(b[0]),
+          endAt(b[1]),
+          limit(25)
+        );
 
-        promises.push(query.get());
+        promises.push(getDocs(q));
       }
 
       Promise.all(promises)

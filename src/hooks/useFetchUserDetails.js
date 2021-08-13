@@ -1,8 +1,15 @@
+// Libraries
 import React from "react";
 import isEmpty from "lodash.isempty";
+import { getDoc, doc } from "firebase/firestore";
 
-import firebase from "src/firebase";
+// Other
+import { db } from "src/firebase";
+
+// Utilities
 import { mapUser } from "src/utilities/user";
+
+// Constants
 import { COLLECTIONS } from "src/constants/firebase";
 
 const useFetchUserDetails = (id) => {
@@ -28,11 +35,7 @@ const useFetchUserDetails = (id) => {
           console.log(`[API] fetchUserDetails...${id}`);
         }
 
-        firebase
-          .firestore()
-          .collection(COLLECTIONS.USERS)
-          .doc(id)
-          .get()
+        getDoc(doc(db, COLLECTIONS.USERS, id))
           .then((doc) => {
             if (doc.exists) {
               setUser(mapUser(doc.data(), doc));

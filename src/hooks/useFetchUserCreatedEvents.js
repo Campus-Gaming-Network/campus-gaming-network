@@ -1,8 +1,17 @@
 // Libraries
 import React from "react";
+import {
+  doc,
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+  Timestamp,
+} from "firebase/firestore";
 
 // Other
-import firebase from "src/firebase";
+import { db } from "src/firebase";
 
 // Utilities
 import { mapEvent } from "src/utilities/event";
@@ -26,26 +35,17 @@ const useFetchUserCreatedEvents = (id) => {
         console.log(`[API] fetchUserCreatedEvents...${id}`);
       }
 
-      const userDocRef = firebase
-        .firestore()
-        .collection(COLLECTIONS.USERS)
-        .doc(id);
-      const now = new Date();
-
       let _events = [];
 
       try {
-        const userCreatedEventsSnapshot = await firebase
-          .firestore()
-          .collection("events")
-          .where("creator", "==", userDocRef)
-          .where(
-            "endDateTime",
-            ">=",
-            firebase.firestore.Timestamp.fromDate(now)
+        const userCreatedEventsSnapshot = await getDocs(
+          query(
+            collection(db, COLLECTIONS.EVENTS),
+            where("creator", "==", doc(db, COLLECTIONS.USERS, id)),
+            where("endDateTime", ">=", Timestamp.fromDate(new Date())),
+            limit(25)
           )
-          .limit(25)
-          .get();
+        );
 
         if (!userCreatedEventsSnapshot.empty) {
           userCreatedEventsSnapshot.forEach((doc) => {

@@ -62,3 +62,5 @@ firestore-coverage.html
 .next
 
 .vercel
+
+.firebase-debug.log.icloud

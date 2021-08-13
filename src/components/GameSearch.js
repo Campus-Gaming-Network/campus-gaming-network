@@ -10,6 +10,7 @@ import {
   ComboboxOptionText,
 } from "@reach/combobox";
 import uniqBy from "lodash.uniqby";
+import { httpsCallable } from "firebase/functions";
 
 // Components
 import GameCover from "src/components/GameCover";
@@ -21,7 +22,7 @@ import useDebounce from "src/hooks/useDebounce";
 import { CALLABLES } from "src/constants/firebase";
 
 // Other
-import firebase from "src/firebase";
+import { functions } from "src/firebase";
 
 const CACHED_GAMES = {};
 
@@ -64,9 +65,7 @@ const GameSearch = (props) => {
       return Promise.resolve(CACHED_GAMES[value]);
     }
 
-    const searchGames = firebase
-      .functions()
-      .httpsCallable(CALLABLES.SEARCH_GAMES);
+    const searchGames = httpsCallable(functions, CALLABLES.SEARCH_GAMES);
 
     return searchGames({ query: value }).then((result) => {
       CACHED_GAMES[value] = result.data.games;
