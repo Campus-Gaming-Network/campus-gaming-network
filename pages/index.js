@@ -26,6 +26,10 @@ const UpcomingSchoolEvents = dynamic(
   () => import("src/components/UpcomingSchoolEvents"),
   { ssr: false }
 );
+const SchoolLogoSlider = dynamic(
+  () => import("src/components/SchoolLogoSlider"),
+  { ssr: false }
+);
 const NearbySchools = dynamic(() => import("src/components/NearbySchools"), {
   ssr: false,
 });
@@ -77,6 +81,7 @@ const Home = () => {
           <SliderLazyLoad>
             <RecentlyCreatedEvents />
           </SliderLazyLoad>
+          <SchoolLogoSlider />
           <SliderLazyLoad>
             <NearbySchools useBrowserLocation />
           </SliderLazyLoad>
