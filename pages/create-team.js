@@ -3,7 +3,7 @@ import React from "react";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { doc, updateDoc, setDoc, collection } from "firebase/firestore";
+import { doc, updateDoc, collection, addDoc } from "firebase/firestore";
 
 // Other
 import { db } from "src/firebase";
@@ -27,10 +27,6 @@ import { useAuth } from "src/providers/auth";
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  if (process.env.NODE_ENV === "production") {
-    return NOT_FOUND;
-  }
-
   try {
     const cookies = nookies.get(context);
     const token =
@@ -62,6 +58,16 @@ const CreateTeam = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const toast = useToast();
 
+  const handleSubmitError = (error) => {
+    setIsSubmitting(false);
+    toast({
+      title: "An error occurred.",
+      description: error.message,
+      status: "error",
+      isClosable: true,
+    });
+  };
+
   const handleSubmit = async (e, formState) => {
     e.preventDefault();
 
@@ -92,78 +98,60 @@ const CreateTeam = () => {
       website: formState.website?.trim(),
     };
 
-    let teamId;
+    let teamDocRef;
 
-    setDoc(doc(collection(db, COLLECTIONS.TEAMS)), teamData)
-      .then((teamDocRef) => {
-        teamId = teamDocRef.id;
+    try {
+      teamDocRef = await addDoc(collection(db, COLLECTIONS.TEAMS), teamData);
+    } catch (error) {
+      handleSubmitError(error);
+    }
 
-        updateDoc(doc(db, COLLECTIONS.TEAMS, teamId), { id: teamId })
-          .then(() => {
-            const teammateData = {
-              user: {
-                id: user.id,
-                ref: userDocRef,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                gravatar: user.gravatar,
-                status: user.status,
-                school: {
-                  ref: user.school.ref,
-                  id: user.school.id,
-                  name: user.school.name,
-                },
-              },
-              team: {
-                id: teamId,
-                ref: teamDocRef,
-                name: teamData.name,
-                shortName: teamData.shortName,
-              },
-            };
+    if (Boolean(teamDocRef)) {
+      try {
+        await updateDoc(doc(db, COLLECTIONS.TEAMS, teamDocRef.id), {
+          id: teamDocRef.id,
+        });
+      } catch (error) {
+        handleSubmitError(error);
+      }
 
-            setDoc(doc(collection(db, COLLECTIONS.TEAMMATES)), teammateData)
-              .then(() => {
-                toast({
-                  title: "Team created.",
-                  description:
-                    "Your team has been created. You will be redirected...",
-                  status: "success",
-                  isClosable: true,
-                });
-                setTimeout(() => {
-                  router.push(`/team/${teamId}`);
-                }, 2000);
-              })
-              .catch((error) => {
-                setIsSubmitting(false);
-                toast({
-                  title: "An error occurred.",
-                  description: error.message,
-                  status: "error",
-                  isClosable: true,
-                });
-              });
-          })
-          .catch((error) => {
-            setIsSubmitting(false);
-            toast({
-              title: "An error occurred.",
-              description: error.message,
-              status: "error",
-              isClosable: true,
-            });
-          });
-      })
-      .catch((error) => {
-        setIsSubmitting(false);
+      const teammateData = {
+        user: {
+          id: user.id,
+          ref: userDocRef,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          gravatar: user.gravatar,
+          status: user.status,
+          school: {
+            ref: user.school.ref,
+            id: user.school.id,
+            name: user.school.name,
+          },
+        },
+        team: {
+          id: teamDocRef.id,
+          ref: teamDocRef,
+          name: teamData.name,
+          shortName: teamData.shortName,
+        },
+      };
+
+      try {
+        await addDoc(collection(db, COLLECTIONS.TEAMMATES), teammateData);
         toast({
-          title: "An error occurred.",
-          description: error.message,
-          status: "error",
+          title: "Team created.",
+          description: "Your team has been created. You will be redirected...",
+          status: "success",
           isClosable: true,
         });
-      });
+        setTimeout(() => {
+          router.push(`/team/${teamDocRef.id}`);
+        }, 2000);
+      } catch (error) {
+        handleSubmitError(error);
+      }
+    }
   };
 
   return (

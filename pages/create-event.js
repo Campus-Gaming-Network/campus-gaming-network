@@ -8,7 +8,7 @@ import nookies from "nookies";
 import {
   doc,
   updateDoc,
-  setDoc,
+  addDoc,
   collection,
   Timestamp,
 } from "firebase/firestore";
@@ -66,6 +66,16 @@ const CreateEvent = () => {
   const [errors, setErrors] = React.useState({});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const toast = useToast();
+
+  const handleSubmitError = (error) => {
+    setIsSubmitting(false);
+    toast({
+      title: "An error occurred.",
+      description: error.message,
+      status: "error",
+      isClosable: true,
+    });
+  };
 
   const handleSubmit = async (e, formState) => {
     e.preventDefault();
@@ -163,79 +173,73 @@ const CreateEvent = () => {
       },
     };
 
-    let eventId;
+    let eventDocRef;
 
-    setDoc(doc(collection(db, COLLECTIONS.EVENTS)), eventData)
-      .then((eventDocRef) => {
-        eventId = eventDocRef.id;
+    try {
+      eventDocRef = await addDoc(collection(db, COLLECTIONS.EVENTS), eventData);
+    } catch (error) {
+      handleSubmitError(error);
+    }
 
-        updateDoc(doc(db, COLLECTIONS.EVENTS, eventId), {
-          id: eventId,
-        }).catch(() => {
-          setIsSubmitting(false);
+    if (Boolean(eventDocRef)) {
+      try {
+        await updateDoc(doc(db, COLLECTIONS.EVENTS, eventDocRef.id), {
+          id: eventDocRef.id,
         });
+      } catch (error) {
+        handleSubmitError(error);
+      }
 
-        const eventResponseData = {
-          response: "YES",
-          user: {
-            ref: userDocRef,
-            id: userDocRef.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            gravatar: user.gravatar,
-            status: user.status,
-            school: {
-              ref: user.school.ref,
-              id: user.school.id,
-              name: user.school.name,
-            },
-          },
-          event: {
-            ref: eventDocRef,
-            id: eventDocRef.id,
-            name: formState.name.trim(),
-            description: formState.description.trim(),
-            startDateTime: startDateTime,
-            endDateTime: endDateTime,
-            game: formState.game,
-            isOnlineEvent: formState.isOnlineEvent,
-          },
+      const eventResponseData = {
+        response: "YES",
+        user: {
+          ref: userDocRef,
+          id: userDocRef.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          gravatar: user.gravatar,
+          status: user.status,
           school: {
-            ref: schoolDocRef,
-            id: schoolDocRef.id,
-            name: school.name,
+            ref: user.school.ref,
+            id: user.school.id,
+            name: user.school.name,
           },
-        };
+        },
+        event: {
+          ref: eventDocRef,
+          id: eventDocRef.id,
+          name: formState.name.trim(),
+          description: formState.description.trim(),
+          startDateTime: startDateTime,
+          endDateTime: endDateTime,
+          game: formState.game,
+          isOnlineEvent: formState.isOnlineEvent,
+        },
+        school: {
+          ref: schoolDocRef,
+          id: schoolDocRef.id,
+          name: school.name,
+        },
+      };
 
-        setDoc(
-          db(collection(db, COLLECTIONS.EVENT_RESPONSES)),
+      try {
+        await addDoc(
+          collection(db, COLLECTIONS.EVENT_RESPONSES),
           eventResponseData
-        )
-          .then(() => {
-            toast({
-              title: "Event created.",
-              description:
-                "Your event has been created. You will be redirected...",
-              status: "success",
-              isClosable: true,
-            });
-            setTimeout(() => {
-              router.push(`/event/${eventId}`);
-            }, 2000);
-          })
-          .catch(() => {
-            setIsSubmitting(false);
-          });
-      })
-      .catch((error) => {
-        setIsSubmitting(false);
+        );
         toast({
-          title: "An error occurred.",
-          description: error.message,
-          status: "error",
+          title: "Event created.",
+          description: "Your event has been created. You will be redirected...",
+          status: "success",
           isClosable: true,
         });
-      });
+        setTimeout(() => {
+          router.push(`/event/${eventDocRef.id}`);
+        }, 2000);
+      } catch (error) {
+        handleSubmitError(error);
+      }
+    }
   };
 
   return (

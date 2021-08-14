@@ -20,7 +20,7 @@ import { signOut } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 
 // Other
-import { auth } from "src/firebase";
+import { auth, db } from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";

@@ -11,7 +11,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from "@chakra-ui/react";
-import { doc, updateDoc, setDoc, collection } from "firebase/firestore";
+import { doc, updateDoc, addDoc, collection } from "firebase/firestore";
 
 // Other
 import { db } from "src/firebase";
@@ -36,59 +36,53 @@ const RSVPDialog = (props) => {
     props.eventResponse,
   ]);
 
+  const handleSubmitError = (error) => {
+    props.onClose();
+    setIsSubmitting(false);
+    toast({
+      title: "An error occurred.",
+      description: error.message,
+      status: "error",
+      isClosable: true,
+    });
+  };
+
   const onAttendingAlertConfirm = async (response) => {
     setIsSubmitting(true);
 
     const data = getResponseFormData(response);
 
     if (!hasResponded) {
-      setDoc(doc(collection(db, COLLECTIONS.EVENT_RESPONSES)), data)
-        .then(() => {
-          props.onClose();
-          setIsSubmitting(false);
-          toast({
-            title: "RSVP created.",
-            description: "Your RSVP has been created.",
-            status: "success",
-            isClosable: true,
-          });
-          window.location.reload();
-        })
-        .catch((error) => {
-          props.onClose();
-          setIsSubmitting(false);
-          toast({
-            title: "An error occurred.",
-            description: error.message,
-            status: "error",
-            isClosable: true,
-          });
+      try {
+        await addDoc(collection(db, COLLECTIONS.EVENT_RESPONSES), data);
+        toast({
+          title: "RSVP created.",
+          description: "Your RSVP has been created.",
+          status: "success",
+          isClosable: true,
         });
+        window.location.reload();
+      } catch (error) {
+        handleSubmitError(error);
+      }
     } else {
-      updateDoc(doc(db, COLLECTIONS.EVENT_RESPONSES, props.eventResponse.id), {
-        response,
-      })
-        .then(() => {
-          props.onClose();
-          setIsSubmitting(false);
-          toast({
-            title: "RSVP updated.",
-            description: "Your RSVP has been updated.",
-            status: "success",
-            isClosable: true,
-          });
-          window.location.reload();
-        })
-        .catch((error) => {
-          props.onClose();
-          setIsSubmitting(false);
-          toast({
-            title: "An error occurred.",
-            description: error.message,
-            status: "error",
-            isClosable: true,
-          });
+      try {
+        await updateDoc(
+          doc(db, COLLECTIONS.EVENT_RESPONSES, props.eventResponse.id),
+          {
+            response,
+          }
+        );
+        toast({
+          title: "RSVP updated.",
+          description: "Your RSVP has been updated.",
+          status: "success",
+          isClosable: true,
         });
+        window.location.reload();
+      } catch (error) {
+        handleSubmitError(error);
+      }
     }
   };
 

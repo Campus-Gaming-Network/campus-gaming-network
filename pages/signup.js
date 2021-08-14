@@ -52,7 +52,7 @@ import SchoolSearch from "src/components/SchoolSearch";
 import SiteLayout from "src/components/SiteLayout";
 
 // Other
-import { auth } from "src/firebase";
+import { auth, db } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -203,7 +203,9 @@ const Signup = () => {
           isClosable: true,
         });
 
-        router.push("/");
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       } catch (error) {
         console.error(error);
         setError(
