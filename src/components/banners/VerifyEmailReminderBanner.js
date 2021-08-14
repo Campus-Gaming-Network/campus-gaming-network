@@ -26,7 +26,7 @@ const VerifyEmailReminderBanner = () => {
   const email = hasAuthUser ? authUser.email : null;
   const [sendingStatus, setSendingStatus] = React.useState("idle");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || sendingStatus === "sending") {
@@ -35,27 +35,26 @@ const VerifyEmailReminderBanner = () => {
 
     setSendingStatus("sending");
 
-    sendEmailVerification(auth.currentUser).then(
-      () => {
-        toast({
-          title: "Verification email sent.",
-          description: `A verification email has been sent to ${email}. Please check your inbox and follow the instructions in the email.`,
-          status: "success",
-          isClosable: true,
-        });
-        setSendingStatus("sent");
-      },
-      (error) => {
-        console.error(error);
-        toast({
-          title: "Error sending verification email.",
-          description: `There was an error sending the verification email to ${email}. Please contact support.`,
-          status: "error",
-          isClosable: true,
-        });
-        setSendingStatus("error");
-      }
-    );
+    try {
+      await sendEmailVerification(auth.currentUser);
+      toast({
+        title: "Verification email sent.",
+        description: `A verification email has been sent to ${email}. Please check your inbox and follow the instructions in the email.`,
+        status: "success",
+        isClosable: true,
+      });
+      setSendingStatus("sent");
+    } catch (error) {
+      toast({
+        title: "Error sending verification email.",
+        description:
+          error.message ||
+          `There was an error sending the verification email to ${email}. Please contact support.`,
+        status: "error",
+        isClosable: true,
+      });
+      setSendingStatus("error");
+    }
   };
 
   if (!email || (hasAuthUser && authUser.emailVerified)) {
