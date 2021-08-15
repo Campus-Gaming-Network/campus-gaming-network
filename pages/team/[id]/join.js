@@ -11,13 +11,17 @@ import {
   Button,
   Heading,
   Divider,
+  useToast,
   FormErrorMessage,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
 import isEmpty from "lodash.isempty";
+import { httpsCallable } from "firebase/functions";
 
 // Other
+import { db, functions } from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
 
 // Utilities
@@ -26,6 +30,7 @@ import { noop, useFormFields } from "src/utilities/other";
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { COLLECTIONS, CALLABLES } from "src/constants/firebase";
 
 // API
 import { getTeamDetails } from "src/api/team";
@@ -38,8 +43,6 @@ import { useAuth } from "src/providers/auth";
 import SiteLayout from "src/components/SiteLayout";
 import Card from "src/components/Card";
 import Article from "src/components/Article";
-import { reactRouterV3Instrumentation } from "@sentry/react";
-import { InfoIcon, WarningIcon } from "@chakra-ui/icons";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -71,7 +74,8 @@ export const getServerSideProps = async (context) => {
   let teammate;
 
   if (authStatus === AUTH_STATUS.AUTHENTICATED) {
-    let { teammate } = await getTeammateDetails(context.params.id, token.uid);
+    const response = await getTeammateDetails(context.params.id, token.uid);
+    teammate = response?.teammate;
   }
 
   const data = {
@@ -87,20 +91,67 @@ export const getServerSideProps = async (context) => {
 // JoinTeam
 
 const JoinTeam = (props) => {
+  const router = useRouter();
+  const toast = useToast();
   const [fields, handleFieldChange] = useFormFields({
     password: "",
   });
   const { user, isAuthenticating, isAuthenticated } = useAuth();
   const [error, setError] = React.useState(null);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
+  const [isShowingPassword, setIsShowingPassword] = React.useState(false);
+  const togglePasswordVisibility = () => {
+    setIsShowingPassword(!isShowingPassword);
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmitError = (error) => {
+    setIsSubmitting(false);
+    toast({
+      title: "An error occurred.",
+      description: error.message,
+      status: "error",
+      isClosable: true,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (props.alreadyJoinedTeam || !isAuthenticated) {
       return;
+    }
+
+    setIsSubmitting(true);
+
+    const data = {
+      teamId: props.team.id,
+      password: fields?.password.trim(),
+    };
+
+    const joinTeam = httpsCallable(functions, CALLABLES.JOIN_TEAM);
+
+    try {
+      const result = await joinTeam(data);
+      console.log("result", result);
+      if (result.data.teamId) {
+        toast({
+          title: "Team joined.",
+          description: `You have joined "${props.team.name}". You will be redirected...`,
+          status: "success",
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push(`/team/${result.data.teamId}`);
+        }, 2000);
+      } else {
+        handleSubmitError({
+          message: "There was an error joining the team. Please try again.",
+        });
+      }
+    } catch (error) {
+      handleSubmitError(error);
     }
   };
 
@@ -132,9 +183,13 @@ const JoinTeam = (props) => {
             </AlertDescription>
           </Alert>
         ) : null}
-        <Card as="form" p={12} onSubmit={handleSubmit}>
+        <Card
+          as="form"
+          p={12}
+          onSubmit={!props.alreadyJoinedTeam ? handleSubmit : null}
+        >
           <Heading as="h2" size="2xl">
-            Join team {props.team.name}
+            Join team "{props.team.name}"
           </Heading>
           <Divider borderColor="gray.300" mt={12} mb={10} />
           {error ? (
@@ -151,7 +206,7 @@ const JoinTeam = (props) => {
               <Input
                 id="password"
                 name="password"
-                type="password"
+                type={isShowingPassword ? "text" : "password"}
                 placeholder="******************"
                 onChange={handleFieldChange}
                 value={fields.password}
@@ -161,6 +216,15 @@ const JoinTeam = (props) => {
                   (!isAuthenticating && !isAuthenticated)
                 }
               />
+              <Button
+                onClick={togglePasswordVisibility}
+                fontSize="sm"
+                fontStyle="italic"
+                variant="link"
+                fontWeight="normal"
+              >
+                {isShowingPassword ? "Hide" : "Show"} password
+              </Button>
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>
           </Stack>
@@ -170,11 +234,11 @@ const JoinTeam = (props) => {
             size="lg"
             w="full"
             isDisabled={
-              isLoading ||
+              isSubmitting ||
               props.alreadyJoinedTeam ||
               (!isAuthenticating && !isAuthenticated)
             }
-            isLoading={isLoading}
+            isLoading={isSubmitting}
             loadingText="Joining team..."
             my={12}
           >

@@ -90,6 +90,10 @@ const TeamForm = (props) => {
         : MAX_DESCRIPTION_LENGTH,
     [formState.description]
   );
+  const [isShowingPassword, setIsShowingPassword] = React.useState(false);
+  const togglePasswordVisibility = () => {
+    setIsShowingPassword(!isShowingPassword);
+  };
 
   const openDeleteTeamDialog = () => {
     setDeletingTeamAlertIsOpen(true);
@@ -273,12 +277,21 @@ const TeamForm = (props) => {
                 <Input
                   id="password"
                   name="password"
-                  type="password"
+                  type={isShowingPassword ? "text" : "password"}
                   placeholder="******************"
                   onChange={handleFieldChange}
                   value={formState.password}
                   size="lg"
                 />
+                <Button
+                  onClick={togglePasswordVisibility}
+                  fontSize="sm"
+                  fontStyle="italic"
+                  variant="link"
+                  fontWeight="normal"
+                >
+                  {isShowingPassword ? "Hide" : "Show"} password
+                </Button>
                 <FormErrorMessage>{props.errors.password}</FormErrorMessage>
               </FormControl>
             </Stack>

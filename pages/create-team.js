@@ -3,7 +3,6 @@ import React from "react";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { doc, updateDoc, collection, addDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
 // Other
@@ -74,10 +73,8 @@ const CreateTeam = () => {
     setIsSubmitting(true);
 
     // TODO
-    // const { isValid, errors } = validateCreateEvent({
+    // const { isValid, errors } = validateCreateTeam({
     //   ...formState,
-    //   startDateTime: DateTime.local(formState.startDateTime),
-    //   endDateTime: DateTime.local(formState.endDateTime),
     // });
 
     // setErrors(errors);
@@ -99,18 +96,22 @@ const CreateTeam = () => {
     const createTeam = httpsCallable(functions, CALLABLES.CREATE_TEAM);
 
     try {
-      const {
-        result: { teamId },
-      } = await createTeam(teamData);
-      toast({
-        title: "Team created.",
-        description: "Your team has been created. You will be redirected...",
-        status: "success",
-        isClosable: true,
-      });
-      setTimeout(() => {
-        router.push(`/team/${teamId}`);
-      }, 2000);
+      const result = await createTeam(teamData);
+      if (result.data.teamId) {
+        toast({
+          title: "Team created.",
+          description: "Your team has been created. You will be redirected...",
+          status: "success",
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push(`/team/${result.data.teamId}`);
+        }, 2000);
+      } else {
+        handleSubmitError({
+          message: "There was an error creating the team. Please try again.",
+        });
+      }
     } catch (error) {
       handleSubmitError(error);
     }
