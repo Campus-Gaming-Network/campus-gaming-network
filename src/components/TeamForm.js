@@ -52,6 +52,7 @@ const initialFormState = {
   shortName: "",
   description: "",
   website: "",
+  password: "",
 };
 
 const formReducer = (state, { field, value }) => {
@@ -264,6 +265,21 @@ const TeamForm = (props) => {
                   size="lg"
                 />
                 <FormErrorMessage>{props.errors.website}</FormErrorMessage>
+              </FormControl>
+              <FormControl isRequired isInvalid={props.errors.password}>
+                <FormLabel htmlFor="website" fontSize="lg" fontWeight="bold">
+                  Join Password
+                </FormLabel>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="******************"
+                  onChange={handleFieldChange}
+                  value={formState.password}
+                  size="lg"
+                />
+                <FormErrorMessage>{props.errors.password}</FormErrorMessage>
               </FormControl>
             </Stack>
           </Card>

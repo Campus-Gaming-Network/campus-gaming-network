@@ -59,6 +59,20 @@ const settings = {
   speed: 5000,
   autoplaySpeed: 5000,
   pauseOnHover: false,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 5,
+      },
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 5,
+      },
+    },
+  ],
 };
 
 const SchoolLogoSlider = () => {

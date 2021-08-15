@@ -24,6 +24,8 @@ export const CALLABLES = {
   SEARCH_GAMES: "searchGames",
   SEARCH_SCHOOLS: "searchSchools",
   REPORT_ENTITY: "reportEntity",
+  CREATE_TEAM: "createTeam",
+  JOIN_TEAM: "joinTeam",
 };
 
 export const AUTH_ACTION = {

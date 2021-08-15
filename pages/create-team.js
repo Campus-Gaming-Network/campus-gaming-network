@@ -4,9 +4,10 @@ import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { doc, updateDoc, collection, addDoc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 
 // Other
-import { db } from "src/firebase";
+import { db, functions } from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
 
 // Utilities
@@ -15,7 +16,7 @@ import { validateCreateTeam } from "src/utilities/validation";
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { COLLECTIONS } from "src/constants/firebase";
+import { COLLECTIONS, CALLABLES } from "src/constants/firebase";
 
 // Components
 import TeamForm from "src/components/TeamForm";
@@ -52,7 +53,6 @@ export const getServerSideProps = async (context) => {
 // CreateTeam
 
 const CreateTeam = () => {
-  const { user, school } = useAuth();
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -88,69 +88,31 @@ const CreateTeam = () => {
     //   return;
     // }
 
-    const userDocRef = doc(db, COLLECTIONS.USERS, user.id);
-
     const teamData = {
-      creator: { id: user.id, ref: userDocRef },
       name: formState.name?.trim(),
       shortName: formState.shortName?.trim(),
       description: formState.description?.trim(),
       website: formState.website?.trim(),
+      password: formState.password?.trim(),
     };
 
-    let teamDocRef;
+    const createTeam = httpsCallable(functions, CALLABLES.CREATE_TEAM);
 
     try {
-      teamDocRef = await addDoc(collection(db, COLLECTIONS.TEAMS), teamData);
+      const {
+        result: { teamId },
+      } = await createTeam(teamData);
+      toast({
+        title: "Team created.",
+        description: "Your team has been created. You will be redirected...",
+        status: "success",
+        isClosable: true,
+      });
+      setTimeout(() => {
+        router.push(`/team/${teamId}`);
+      }, 2000);
     } catch (error) {
       handleSubmitError(error);
-    }
-
-    if (Boolean(teamDocRef)) {
-      try {
-        await updateDoc(doc(db, COLLECTIONS.TEAMS, teamDocRef.id), {
-          id: teamDocRef.id,
-        });
-      } catch (error) {
-        handleSubmitError(error);
-      }
-
-      const teammateData = {
-        user: {
-          id: user.id,
-          ref: userDocRef,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          gravatar: user.gravatar,
-          status: user.status,
-          school: {
-            ref: user.school.ref,
-            id: user.school.id,
-            name: user.school.name,
-          },
-        },
-        team: {
-          id: teamDocRef.id,
-          ref: teamDocRef,
-          name: teamData.name,
-          shortName: teamData.shortName,
-        },
-      };
-
-      try {
-        await addDoc(collection(db, COLLECTIONS.TEAMMATES), teammateData);
-        toast({
-          title: "Team created.",
-          description: "Your team has been created. You will be redirected...",
-          status: "success",
-          isClosable: true,
-        });
-        setTimeout(() => {
-          router.push(`/team/${teamDocRef.id}`);
-        }, 2000);
-      } catch (error) {
-        handleSubmitError(error);
-      }
     }
   };
 
