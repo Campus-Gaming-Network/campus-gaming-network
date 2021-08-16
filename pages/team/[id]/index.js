@@ -76,7 +76,7 @@ const Team = (props) => {
             <Heading as="h4" fontSize="xl">
               Team members
             </Heading>
-            <UsersList users={props.teammates} />
+            <UsersList team={props.team} users={props.teammates} />
           </Stack>
         </Stack>
       </Article>
@@ -97,7 +97,11 @@ const UsersList = (props) => {
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
           {props.users.map(({ user }) => (
-            <UserListItem key={user.id} user={user} />
+            <UserListItem
+              key={user.id}
+              user={user}
+              teamLeader={Boolean(props.team?.roles?.leader[user.id])}
+            />
           ))}
         </List>
       </React.Fragment>
