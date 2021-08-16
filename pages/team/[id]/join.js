@@ -21,7 +21,7 @@ import isEmpty from "lodash.isempty";
 import { httpsCallable } from "firebase/functions";
 
 // Other
-import { db, functions } from "src/firebase";
+import { functions } from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
 
 // Utilities
@@ -30,7 +30,7 @@ import { noop, useFormFields } from "src/utilities/other";
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { COLLECTIONS, CALLABLES } from "src/constants/firebase";
+import { CALLABLES } from "src/constants/firebase";
 
 // API
 import { getTeamDetails } from "src/api/team";
@@ -96,7 +96,7 @@ const JoinTeam = (props) => {
   const [fields, handleFieldChange] = useFormFields({
     password: "",
   });
-  const { user, isAuthenticating, isAuthenticated } = useAuth();
+  const { isAuthenticating, isAuthenticated } = useAuth();
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -134,7 +134,6 @@ const JoinTeam = (props) => {
 
     try {
       const result = await joinTeam(data);
-      console.log("result", result);
       if (result.data.teamId) {
         toast({
           title: "Team joined.",
