@@ -7,11 +7,12 @@ import {
   Text,
   Flex,
   VisuallyHidden,
+  List,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 
 // API
-import { getTeamDetails } from "src/api/team";
+import { getTeamDetails, getTeamUsers } from "src/api/team";
 
 // Constants
 import { NOT_FOUND } from "src/constants/other";
@@ -19,13 +20,19 @@ import { NOT_FOUND } from "src/constants/other";
 // Components
 import SiteLayout from "src/components/SiteLayout";
 import Article from "src/components/Article";
+import UserListItem from "src/components/UserListItem";
+import EmptyText from "src/components/EmptyText";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [teamResponse] = await Promise.all([getTeamDetails(context.params.id)]);
+  const [teamResponse, teamUsersResponse] = await Promise.all([
+    getTeamDetails(context.params.id),
+    getTeamUsers(context.params.id),
+  ]);
   const { team } = teamResponse;
+  const { teammates } = teamUsersResponse;
 
   if (!Boolean(team)) {
     return NOT_FOUND;
@@ -34,6 +41,7 @@ export const getServerSideProps = async (context) => {
   const data = {
     params: context.params,
     team,
+    teammates,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -43,6 +51,7 @@ export const getServerSideProps = async (context) => {
 // Team
 
 const Team = (props) => {
+  console.log(props);
   return (
     <SiteLayout meta={props.team.meta}>
       <Box bg="gray.200" h="150px" />
@@ -63,10 +72,39 @@ const Team = (props) => {
             <VisuallyHidden as="h2">Description</VisuallyHidden>
             <Text>{props.team.description}</Text>
           </Box>
+          <Stack as="section" spacing={4}>
+            <Heading as="h4" fontSize="xl">
+              Team members
+            </Heading>
+            <UsersList users={props.teammates} />
+          </Stack>
         </Stack>
       </Article>
     </SiteLayout>
   );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// UsersList
+
+const UsersList = (props) => {
+  const hasUsers = React.useMemo(() => {
+    return Boolean(props.users) && props.users.length > 0;
+  }, [props.users]);
+
+  if (hasUsers) {
+    return (
+      <React.Fragment>
+        <List display="flex" flexWrap="wrap" mx={-2}>
+          {props.users.map(({ user }) => (
+            <UserListItem key={user.id} user={user} />
+          ))}
+        </List>
+      </React.Fragment>
+    );
+  }
+
+  return <EmptyText mt={4}>This team currently has no users.</EmptyText>;
 };
 
 export default Team;

@@ -2,14 +2,14 @@ import firebaseAdmin from "src/firebaseAdmin";
 import { mapTeam } from "src/utilities/team";
 import { mapTeammate } from "src/utilities/teammate";
 
-export const getTeamDetails = async (id) => {
+export const getTeamDetails = async (teamId) => {
   let team = null;
 
   try {
     const teamDoc = await firebaseAdmin
       .firestore()
       .collection("teams")
-      .doc(id)
+      .doc(teamId)
       .get();
 
     if (teamDoc.exists) {

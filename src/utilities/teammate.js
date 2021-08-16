@@ -2,6 +2,8 @@
 // Teammate Utilities
 
 // Utilities
+import { mapUser } from "src/utilities/user";
+import { mapTeam } from "src/utilities/team";
 import { cleanObjectOfBadWords } from "src/utilities/other";
 
 export const mapTeammate = (teammate) => {
@@ -11,5 +13,9 @@ export const mapTeammate = (teammate) => {
 
   return cleanObjectOfBadWords({
     ...teammate,
+    createdAt: teammate.createdAt?.toDate(),
+    updatedAt: teammate.updatedAt?.toDate(),
+    user: mapUser(teammate.user),
+    team: mapTeam(teammate.team),
   });
 };

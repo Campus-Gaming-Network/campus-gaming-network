@@ -2,8 +2,10 @@
 User-agent: *
 Disallow: /edit-user
 Disallow: /create-event
+Disallow: /create-team
 Disallow: /auth-action
 Disallow: /verify-email
 Disallow: /user/*/edit
 Disallow: /event/*/edit
 Disallow: /school/*/edit
+Disallow: /team/*/join
