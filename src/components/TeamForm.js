@@ -115,6 +115,34 @@ const TeamForm = (props) => {
     setHasPrefilledForm(true);
   };
 
+  const options = [
+    {
+      props: {
+        children: "Promote to Leader",
+        icon: <FontAwesomeIcon icon={faCrown} />,
+      },
+    },
+    {
+      props: {
+        children: "Promote to Officer",
+        icon: <FontAwesomeIcon icon={faMedal} />,
+      },
+    },
+    {
+      props: {
+        children: "Demote",
+        icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
+      },
+    },
+    {
+      props: {
+        children: "Kick from team",
+        icon: <FontAwesomeIcon icon={faBan} />,
+        color: "red.500",
+      },
+    },
+  ];
+
   const url = React.useMemo(() => {
     if (props.state === "edit") {
       return `${PRODUCTION_URL}/team/${props.team.id}/edit`;
@@ -271,7 +299,7 @@ const TeamForm = (props) => {
                 <FormErrorMessage>{props.errors.website}</FormErrorMessage>
               </FormControl>
               <FormControl isRequired isInvalid={props.errors.password}>
-                <FormLabel htmlFor="website" fontSize="lg" fontWeight="bold">
+                <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
                   Join Password
                 </FormLabel>
                 <Input

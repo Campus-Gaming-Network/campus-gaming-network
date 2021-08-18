@@ -7,21 +7,47 @@ import {
   Text,
   Tooltip,
   VisuallyHidden,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCrown } from "@fortawesome/free-solid-svg-icons";
+import { faCrown, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Link from "src/components/Link";
 import SliderCard from "src/components/SliderCard";
 
 ////////////////////////////////////////////////////////////////////////////////
-// RecentlyCreatedUsers
+// UserListItem
 
-const RecentlyCreatedUsers = (props) => {
+const UserListItem = (props) => {
   return (
     <React.Fragment>
       <SliderCard h="125px" w="150px">
+        {props.options ? (
+          <Box pos="absolute" top={2} right={2}>
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                size="sm"
+                icon={<FontAwesomeIcon icon={faEllipsisV} />}
+                aria-label="Options"
+                variant="ghost"
+              />
+              <Portal>
+                <MenuList fontSize="md">
+                  {props.options.map((option) => (
+                    <MenuItem {...option.props} />
+                  ))}
+                </MenuList>
+              </Portal>
+            </Menu>
+          </Box>
+        ) : null}
         <Flex direction="column" align="center" justify="space-between">
           <Avatar
             name={props.user.fullName}
@@ -71,4 +97,4 @@ const RecentlyCreatedUsers = (props) => {
   );
 };
 
-export default RecentlyCreatedUsers;
+export default UserListItem;
