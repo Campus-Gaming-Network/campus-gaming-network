@@ -224,24 +224,13 @@ service cloud.firestore {
     }
 
     match /teams/{teamId} {
-      function canCreateTeam() {
-        return (
-          isEmailVerified() &&
-          isSignedIn()
-        );
-      }
-
-      function canUpdateTeam() {
-        return canCreateTeam();
-      }
-
       function canDeleteTeam() {
-        return false;
+        return incomingData().roles.leader.id === requestingUser();
       }
 
       allow read: if true;
-      allow create: if canCreateTeam();
-      allow update: if canUpdateTeam();
+      allow create: if false;
+      allow update: if false;
       allow delete: if canDeleteTeam();
       allow write: if false;
     }

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeAuth, browserSessionPersistence } from "firebase/auth";
+import { initializeAuth, indexedDBLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 
@@ -13,7 +13,7 @@ let functions;
 if (typeof window !== "undefined" && !app?.apps.length) {
   try {
     app = initializeApp(FIREBASE_CONFIG);
-    auth = initializeAuth(app, { persistence: [browserSessionPersistence] });
+    auth = initializeAuth(app, { persistence: indexedDBLocalPersistence });
     db = getFirestore(app);
     functions = getFunctions(app);
   } catch (error) {

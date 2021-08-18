@@ -34,7 +34,7 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
           query(
             collection(db, COLLECTIONS.USERS),
             orderBy("createdAt", "desc"),
-            limit(25)
+            limit(_limit)
           )
         );
 

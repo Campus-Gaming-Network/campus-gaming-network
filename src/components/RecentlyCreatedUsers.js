@@ -1,13 +1,12 @@
 // Libraries
 import React from "react";
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, Wrap, WrapItem } from "@chakra-ui/react";
 
 // Hooks
 import useFetchRecentlyCreatedUsers from "src/hooks/useFetchRecentlyCreatedUsers";
 
 // Components
 import UserListItem from "src/components/UserListItem";
-import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
 
@@ -15,7 +14,7 @@ import EmptyText from "src/components/EmptyText";
 // RecentlyCreatedUsers
 
 const RecentlyCreatedUsers = () => {
-  const [users, state] = useFetchRecentlyCreatedUsers();
+  const [users, state] = useFetchRecentlyCreatedUsers(100);
   const hasUsers = React.useMemo(() => Boolean(users) && users.length > 0, [
     users,
   ]);
@@ -32,30 +31,13 @@ const RecentlyCreatedUsers = () => {
           {!(state === "done" && hasUsers) ? (
             <EmptyText>No users have been recently created</EmptyText>
           ) : (
-            <Slider
-              settings={{
-                slidesToShow: 10,
-                className: users.length < 10 ? "slick--less-slides" : "",
-                responsive: [
-                  {
-                    breakpoint: 1024,
-                    settings: {
-                      slidesToShow: 5,
-                    },
-                  },
-                  {
-                    breakpoint: 600,
-                    settings: {
-                      slidesToShow: 3,
-                    },
-                  },
-                ],
-              }}
-            >
+            <Wrap>
               {users.map((user) => (
-                <UserListItem key={user.id} user={user} />
+                <WrapItem key={user.id}>
+                  <UserListItem user={user} />
+                </WrapItem>
               ))}
-            </Slider>
+            </Wrap>
           )}
         </Box>
       )}

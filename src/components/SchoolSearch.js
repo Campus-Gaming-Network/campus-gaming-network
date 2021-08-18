@@ -81,18 +81,18 @@ const SchoolSearch = (props) => {
 
   const fetchSchools = (searchTerm) => {
     const value = searchTerm?.trim().toLowerCase() || "";
-    const cachedQueryResults = localStorageSchoolQueries
-      ? localStorageSchoolQueries[value]
-      : null;
+    // const cachedQueryResults = localStorageSchoolQueries
+    //   ? localStorageSchoolQueries[value]
+    //   : null;
 
-    if (cachedQueryResults && cachedQueryResults.length > 0) {
-      return Promise.resolve(
-        Object.entries(localStorageSchools)
-          .filter((entry) => cachedQueryResults.includes(entry[0]))
-          .map((entry) => entry[1])
-          .slice(0, 10)
-      );
-    }
+    // if (cachedQueryResults && cachedQueryResults.length > 0) {
+    //   return Promise.resolve(
+    //     Object.entries(localStorageSchools)
+    //       .filter((entry) => cachedQueryResults.includes(entry[0]))
+    //       .map((entry) => entry[1])
+    //       .slice(0, 10)
+    //   );
+    // }
 
     const searchSchools = httpsCallable(functions, CALLABLES.SEARCH_SCHOOLS);
 

@@ -21,7 +21,7 @@ import SliderCard from "src/components/SliderCard";
 const RecentlyCreatedUsers = (props) => {
   return (
     <React.Fragment>
-      <SliderCard h={props.teamLeader ? "135px" : "125px"}>
+      <SliderCard h="125px" w="150px">
         <Flex direction="column" align="center" justify="space-between">
           <Avatar
             name={props.user.fullName}
@@ -44,7 +44,22 @@ const RecentlyCreatedUsers = (props) => {
           </Box>
           {props.teamLeader ? (
             <Tooltip label="Team leader">
-              <Text as="span" color="yellow.500" d="block">
+              <Text
+                as="span"
+                color="yellow.500"
+                d="flex"
+                fontSize="xs"
+                pos="absolute"
+                top="-11px"
+                align="center"
+                justify="center"
+                rounded="full"
+                shadow="sm"
+                borderWidth={1}
+                bg="white"
+                px="2px"
+                py="3px"
+              >
                 <FontAwesomeIcon icon={faCrown} />
                 <VisuallyHidden>Team leader</VisuallyHidden>
               </Text>

@@ -22,6 +22,7 @@ import SiteLayout from "src/components/SiteLayout";
 import Article from "src/components/Article";
 import UserListItem from "src/components/UserListItem";
 import EmptyText from "src/components/EmptyText";
+import Link from "src/components/Link";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -51,11 +52,24 @@ export const getServerSideProps = async (context) => {
 // Team
 
 const Team = (props) => {
-  console.log(props);
   return (
     <SiteLayout meta={props.team.meta}>
       <Box bg="gray.200" h="150px" />
       <Article>
+        <Box mb={10} textAlign="center" display="flex" justifyContent="center">
+          <Link
+            href={`/team/${props.team.id}/edit`}
+            fontWeight="bold"
+            width="100%"
+            borderRadius="md"
+            bg="gray.100"
+            _focus={{ bg: "gray.200", boxShadow: "outline" }}
+            _hover={{ bg: "gray.200" }}
+            p={8}
+          >
+            Edit Team
+          </Link>
+        </Box>
         <Stack spacing={10}>
           <Flex
             as="header"
@@ -100,7 +114,7 @@ const UsersList = (props) => {
             <UserListItem
               key={user.id}
               user={user}
-              teamLeader={Boolean(props.team?.roles?.leader[user.id])}
+              teamLeader={props.team?.roles?.leader?.id === user.id}
             />
           ))}
         </List>
