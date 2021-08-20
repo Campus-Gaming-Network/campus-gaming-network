@@ -8,14 +8,29 @@ import {
   Flex,
   VisuallyHidden,
   List,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import nookies from "nookies";
+import {
+  faEllipsisV,
+  faFlag,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import dynamic from "next/dynamic";
 
 // API
 import { getTeamDetails, getTeamUsers } from "src/api/team";
+import { getUserTeammateDetails } from "src/api/user";
 
 // Constants
-import { NOT_FOUND } from "src/constants/other";
+import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { AUTH_STATUS } from "src/constants/auth";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -23,6 +38,20 @@ import Article from "src/components/Article";
 import UserListItem from "src/components/UserListItem";
 import EmptyText from "src/components/EmptyText";
 import Link from "src/components/Link";
+
+// Other
+import firebaseAdmin from "src/firebaseAdmin";
+
+// Providers
+import { useAuth } from "src/providers/auth";
+
+// Dynamic Components
+const ReportEntityDialog = dynamic(
+  () => import("src/components/dialogs/ReportEntityDialog"),
+  {
+    ssr: false,
+  }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -43,7 +72,30 @@ export const getServerSideProps = async (context) => {
     params: context.params,
     team,
     teammates,
+    isPartOfTeam: false,
   };
+
+  try {
+    const cookies = nookies.get(context);
+    const token =
+      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
+        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+        : null;
+    const authStatus =
+      Boolean(token) && Boolean(token.uid)
+        ? AUTH_STATUS.AUTHENTICATED
+        : AUTH_STATUS.UNAUTHENTICATED;
+
+    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+      const [userTeammateResponse] = await Promise.all([
+        getUserTeammateDetails(context.params.id, token.uid),
+      ]);
+      const { teammate } = userTeammateResponse;
+      data.isPartOfTeam = Boolean(teammate);
+    }
+  } catch (error) {
+    return NOT_FOUND;
+  }
 
   return { props: JSON.parse(safeJsonStringify(data)) };
 };
@@ -52,6 +104,20 @@ export const getServerSideProps = async (context) => {
 // Team
 
 const Team = (props) => {
+  const { isAuthenticated } = useAuth();
+  const [
+    isReportingUserDialogOpen,
+    setReportingUserDialogIsOpen,
+  ] = React.useState(false);
+
+  const openReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(true);
+  };
+
+  const closeReportEntityDialog = () => {
+    setReportingUserDialogIsOpen(false);
+  };
+
   return (
     <SiteLayout meta={props.team.meta}>
       <Box bg="gray.200" h="150px" />
@@ -81,6 +147,31 @@ const Team = (props) => {
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
               {props.team.name} ({props.team.memberCount || 0})
             </Heading>
+            <Box>
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  size="sm"
+                  icon={<FontAwesomeIcon icon={faEllipsisV} />}
+                  aria-label="Options"
+                />
+                <MenuList fontSize="md">
+                  <MenuItem
+                    color="red.500"
+                    fontWeight="bold"
+                    icon={<FontAwesomeIcon icon={faSignOutAlt} />}
+                  >
+                    Leave team
+                  </MenuItem>
+                  <MenuItem
+                    onClick={openReportEntityDialog}
+                    icon={<FontAwesomeIcon icon={faFlag} />}
+                  >
+                    Report team
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
           </Flex>
           <Box as="section" pt={4}>
             <VisuallyHidden as="h2">Description</VisuallyHidden>
@@ -94,6 +185,18 @@ const Team = (props) => {
           </Stack>
         </Stack>
       </Article>
+
+      {isAuthenticated ? (
+        <ReportEntityDialog
+          entity={{
+            type: "teams",
+            id: props.team.id,
+          }}
+          pageProps={props}
+          isOpen={isReportingUserDialogOpen}
+          onClose={closeReportEntityDialog}
+        />
+      ) : null}
     </SiteLayout>
   );
 };

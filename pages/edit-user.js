@@ -445,7 +445,6 @@ const EditUser = (props) => {
                   onClick={openDeleteAccountDialog}
                   fontWeight="bold"
                   color="red.500"
-                  aria-label="Options"
                 >
                   Delete account
                 </MenuItem>

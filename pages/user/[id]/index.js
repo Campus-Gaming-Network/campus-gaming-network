@@ -5,7 +5,7 @@ import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import {
   faCheck,
   faFlag,
-  faEllipsisH,
+  faEllipsisV,
   faPencilAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -199,7 +199,7 @@ const User = (props) => {
                 <MenuButton
                   as={IconButton}
                   size="sm"
-                  icon={<FontAwesomeIcon icon={faEllipsisH} />}
+                  icon={<FontAwesomeIcon icon={faEllipsisV} />}
                   aria-label="Options"
                 />
                 <MenuList fontSize="md">

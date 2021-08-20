@@ -3,6 +3,7 @@ import { mapUser } from "src/utilities/user";
 import { mapEvent } from "src/utilities/event";
 import { mapEventResponse } from "src/utilities/eventResponse";
 import { mapTeam } from "src/utilities/team";
+import { mapTeammate } from "src/utilities/teammate";
 
 export const getUserDetails = async (id) => {
   let user = null;
@@ -169,5 +170,38 @@ export const getUserTeams = async (userId) => {
     return { teams };
   } catch (error) {
     return { teams, error };
+  }
+};
+
+export const getUserTeammateDetails = async (teamId, userId) => {
+  let teammate = null;
+
+  try {
+    const teamDocRef = firebaseAdmin
+      .firestore()
+      .collection("teams")
+      .doc(teamId);
+    const userDocRef = firebaseAdmin
+      .firestore()
+      .collection("users")
+      .doc(userId);
+
+    const teammatesSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("teammates")
+      .where("event.ref", "==", teamDocRef)
+      .where("user.ref", "==", userDocRef)
+      .limit(1)
+      .get();
+
+    if (!teammatesSnapshot.empty) {
+      const [doc] = teammatesSnapshot.docs;
+      const data = doc.data();
+      teammate = mapTeammate({ id: doc.id, ...data });
+    }
+
+    return { teammate };
+  } catch (error) {
+    return { teammate, error };
   }
 };
