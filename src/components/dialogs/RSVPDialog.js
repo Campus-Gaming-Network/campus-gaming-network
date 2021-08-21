@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useBoolean,
 } from "@chakra-ui/react";
 import { doc, updateDoc, addDoc, collection } from "firebase/firestore";
 
@@ -31,14 +32,14 @@ const RSVPDialog = (props) => {
   const toast = useToast();
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
   const hasResponded = React.useMemo(() => Boolean(props.eventResponse), [
     props.eventResponse,
   ]);
 
   const handleSubmitError = (error) => {
     props.onClose();
-    setIsSubmitting(false);
+    setIsSubmitting.off();
     toast({
       title: "An error occurred.",
       description: error.message,
@@ -48,7 +49,7 @@ const RSVPDialog = (props) => {
   };
 
   const onAttendingAlertConfirm = async (response) => {
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const data = getResponseFormData(response);
 

@@ -12,6 +12,7 @@ import {
   FormControl,
   FormErrorMessage,
   AlertDescription,
+  useBoolean,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
@@ -35,6 +36,7 @@ import { PRODUCTION_URL } from "src/constants/other";
 import Article from "src/components/Article";
 import Card from "src/components/Card";
 import SiteLayout from "src/components/SiteLayout";
+import FormErrorAlert from "src/components/FormErrorAlert";
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset
@@ -44,8 +46,8 @@ const PasswordReset = (props) => {
   const [fields, handleFieldChange] = useFormFields({
     password: "",
   });
-  const [isChangingPassword, setIsChangingPassword] = React.useState(false);
-  const [isShowingPassword, setIsShowingPassword] = React.useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useBoolean();
+  const [isShowingPassword, setIsShowingPassword] = useBoolean();
   const [error, setError] = React.useState(null);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
@@ -59,14 +61,14 @@ const PasswordReset = (props) => {
       return;
     }
 
-    setIsChangingPassword(true);
+    setIsChangingPassword.on();
 
     const { isValid, errors } = validatePasswordReset(fields);
 
     setErrors(errors);
 
     if (!isValid) {
-      setIsChangingPassword(false);
+      setIsChangingPassword.off();
       window.scrollTo(0, 0);
       return;
     }
@@ -95,12 +97,8 @@ const PasswordReset = (props) => {
   const handleError = (error) => {
     console.error(error);
     setError(error.message);
-    setIsChangingPassword(false);
+    setIsChangingPassword.off();
     window.scrollTo(0, 0);
-  };
-
-  const togglePasswordVisibility = () => {
-    setIsShowingPassword(!isShowingPassword);
   };
 
   return (
@@ -111,15 +109,7 @@ const PasswordReset = (props) => {
       }}
     >
       <Article fullWidthMobile>
-        {hasErrors ? (
-          <Alert status="error" mb={4} rounded="lg">
-            <AlertIcon />
-            <AlertDescription>
-              There are errors in the form below. Please review and correct
-              before submitting again.
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        {hasErrors ? <FormErrorAlert /> : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl" mb={4}>
             Change Your Password
@@ -146,7 +136,7 @@ const PasswordReset = (props) => {
                 size="lg"
               />
               <Button
-                onClick={togglePasswordVisibility}
+                onClick={setIsShowingPassword.toggle}
                 fontSize="sm"
                 fontStyle="italic"
                 variant="link"

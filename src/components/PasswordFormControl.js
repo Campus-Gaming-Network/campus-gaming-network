@@ -6,16 +6,14 @@ import {
   Input,
   Button,
   FormErrorMessage,
+  useBoolean,
 } from "@chakra-ui/react";
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordFormControl
 
 const PasswordFormControl = (props) => {
-  const [isShowingPassword, setIsShowingPassword] = React.useState(false);
-  const togglePasswordVisibility = () => {
-    setIsShowingPassword(!isShowingPassword);
-  };
+  const [isShowingPassword, setIsShowingPassword] = useBoolean();
 
   return (
     <FormControl isRequired isInvalid={props.errors.password}>
@@ -33,7 +31,7 @@ const PasswordFormControl = (props) => {
       />
       {props.withVisibilityToggle ? (
         <Button
-          onClick={togglePasswordVisibility}
+          onClick={setIsShowingPassword.toggle}
           fontSize="sm"
           fontStyle="italic"
           variant="link"

@@ -15,6 +15,7 @@ import {
   Tooltip,
   Stack,
   MenuGroup,
+  useBoolean,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -48,11 +49,7 @@ import { useAuth } from "src/providers/auth";
 const AuthenticatedNav = (props) => {
   const { authUser } = useAuth();
   const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const [isMenuOpen, setIsMenuOpen] = useBoolean();
 
   const handleLogout = () => {
     signOut(auth).then(() => router.push("/"));

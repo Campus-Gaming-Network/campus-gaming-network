@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Img } from "@chakra-ui/react";
+import { Img, useBoolean } from "@chakra-ui/react";
 
 // Utilities
 import { getSchoolLogoUrl } from "src/utilities/school";
@@ -10,9 +10,9 @@ import { getSchoolLogoUrl } from "src/utilities/school";
 
 const SchoolLogo = React.memo(
   ({ schoolId, schoolName, fallback, src, ...rest }) => {
-    const [hasError, setHasError] = React.useState(false);
+    const [hasError, setHasError] = useBoolean();
     const handleError = () => {
-      setHasError(true);
+      setHasError.on();
     };
 
     if (hasError && Boolean(fallback)) {

@@ -1,7 +1,7 @@
 // Libraries
 import React from "react";
 import startCase from "lodash.startcase";
-import { Text, Spinner, Flex, Box } from "@chakra-ui/react";
+import { Text, Spinner, Flex, Box, useBoolean } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool, faHistory } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -48,10 +48,8 @@ const SchoolSearch = (props) => {
   ] = useLocalStorage(LOCAL_STORAGE.SCHOOLS_QUERY, null);
 
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
-  const [isFetching, setIsFetching] = React.useState(false);
-  const [focused, setFocused] = React.useState(false);
-  const onFocus = () => setFocused(true);
-  const onBlur = () => setFocused(false);
+  const [isFetching, setIsFetching] = useBoolean();
+  const [focused, setFocused] = useBoolean();
   const handleChange = (event) => setSearchTerm(event.target.value);
 
   const debouncedSchoolSearch = useDebounce(searchTerm, 250);
@@ -64,12 +62,12 @@ const SchoolSearch = (props) => {
 
       if (_debouncedSchoolSearch !== "" && _debouncedSchoolSearch.length > 3) {
         let isFresh = true;
-        setIsFetching(true);
+        setIsFetching.on();
 
         fetchSchools(debouncedSchoolSearch).then((schools) => {
           if (isFresh) {
             setSchools(schools);
-            setIsFetching(false);
+            setIsFetching.off();
           }
         });
         return () => (isFresh = false);
@@ -203,8 +201,8 @@ const SchoolSearch = (props) => {
           autocomplete={false}
           // This turns off the browser autocomplete
           autoComplete="off"
-          onFocus={onFocus}
-          onBlur={onBlur}
+          onFocus={setFocused.on()}
+          onBlur={setFocused.off()}
         />
         <Spinner
           visibility={isFetching ? "visible" : "hidden"}

@@ -13,7 +13,6 @@ import {
   Text,
   FormErrorMessage,
   Flex,
-  Avatar,
   Spacer,
   VisuallyHidden,
   useBoolean,
@@ -37,8 +36,8 @@ import { PRODUCTION_URL } from "src/constants/other";
 import { useAuth } from "src/providers/auth";
 
 // Dynamic Components
-const DeleteTeamDialog = dynamic(
-  () => import("src/components/dialogs/DeleteTeamDialog"),
+const DeleteTournamentDialog = dynamic(
+  () => import("src/components/dialogs/DeleteTournamentDialog"),
   { ssr: false }
 );
 
@@ -47,10 +46,7 @@ const DeleteTeamDialog = dynamic(
 
 const initialFormState = {
   name: "",
-  shortName: "",
   description: "",
-  website: "",
-  password: "",
 };
 
 const formReducer = (state, { field, value }) => {
@@ -61,25 +57,30 @@ const formReducer = (state, { field, value }) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// TeamForm
+// TournamentForm
 
-const TeamForm = (props) => {
-  const { isAuthenticating, user } = useAuth();
+const TournamentForm = (props) => {
+  const { isAuthenticating } = useAuth();
   const [hasPrefilledForm, setHasPrefilledForm] = useBoolean();
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
   );
-  const [isDeletingTeamAlertOpen, setDeletingTeamAlertIsOpen] = useBoolean();
+  const [
+    isDeletingTournamentAlertOpen,
+    setDeletingTournamentAlertIsOpen,
+  ] = useBoolean();
   const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
   const hasErrors = React.useMemo(() => !isEmpty(props.errors), [props.errors]);
   const pageTitle = React.useMemo(
-    () => (props.state === "edit" ? `Edit ${props.team.name}` : "Create Team"),
-    [props.state, props.team]
+    () =>
+      props.state === "edit"
+        ? `Edit ${props.tournament.name}`
+        : "Create Tournament",
+    [props.state, props.tournament]
   );
-  const [isShowingPassword, setIsShowingPassword] = useBoolean();
 
   const handleSubmit = (e) => {
     props.onSubmit(e, formState);
@@ -87,47 +88,17 @@ const TeamForm = (props) => {
 
   const prefillForm = () => {
     formDispatch({ field: "name", value: props.team.name });
-    formDispatch({ field: "shortName", value: props.team.shortName });
     formDispatch({ field: "description", value: props.team.description });
-    formDispatch({ field: "website", value: props.team.website });
     setHasPrefilledForm.on();
   };
 
-  const options = [
-    {
-      props: {
-        children: "Promote to Leader",
-        icon: <FontAwesomeIcon icon={faCrown} />,
-      },
-    },
-    {
-      props: {
-        children: "Promote to Officer",
-        icon: <FontAwesomeIcon icon={faMedal} />,
-      },
-    },
-    {
-      props: {
-        children: "Demote",
-        icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
-      },
-    },
-    {
-      props: {
-        children: "Kick from team",
-        icon: <FontAwesomeIcon icon={faBan} />,
-        color: "red.500",
-      },
-    },
-  ];
-
   const url = React.useMemo(() => {
     if (props.state === "edit") {
-      return `${PRODUCTION_URL}/team/${props.team.id}/edit`;
+      return `${PRODUCTION_URL}/tournament/${props.tournament.id}/edit`;
     } else {
-      return `${PRODUCTION_URL}/create-team`;
+      return `${PRODUCTION_URL}/create-tournament`;
     }
-  }, [props.state, props.team]);
+  }, [props.state, props.tournament]);
 
   if (isAuthenticating) {
     return (
@@ -154,9 +125,9 @@ const TeamForm = (props) => {
                 variant="ghost"
                 colorScheme="red"
                 size="lg"
-                onClick={setDeletingTeamAlertIsOpen.on}
+                onClick={setDeletingTournamentAlertIsOpen.on}
               >
-                Delete team
+                Delete tournament
               </Button>
             ) : null}
           </Flex>
@@ -167,27 +138,9 @@ const TeamForm = (props) => {
               </Text>
             </VisuallyHidden>
             <Stack spacing={6} p={8}>
-              <Box>
-                <Text fontSize="lg" fontWeight="bold" pb={2}>
-                  Team Creator
-                </Text>
-                <Flex>
-                  {user.gravatar ? (
-                    <Avatar
-                      name={user.fullName}
-                      title={user.fullName}
-                      src={user.gravatarUrl}
-                      size="sm"
-                    />
-                  ) : null}
-                  <Text ml={4} as="span" alignSelf="center">
-                    {user.fullName}
-                  </Text>
-                </Flex>
-              </Box>
               <FormControl isRequired isInvalid={props.errors.name}>
                 <FormLabel htmlFor="name" fontSize="lg" fontWeight="bold">
-                  Team Name
+                  Tournament Name
                 </FormLabel>
                 <Input
                   id="name"
@@ -200,22 +153,6 @@ const TeamForm = (props) => {
                   size="lg"
                 />
                 <FormErrorMessage>{props.errors.name}</FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={props.errors.shortName}>
-                <FormLabel htmlFor="shortName" fontSize="lg" fontWeight="bold">
-                  Short name / Abbreviation
-                </FormLabel>
-                <Input
-                  id="shortName"
-                  name="shortName"
-                  type="text"
-                  placeholder="C9"
-                  maxLength="10"
-                  onChange={handleFieldChange}
-                  value={formState.shortName}
-                  size="lg"
-                />
-                <FormErrorMessage>{props.errors.shortName}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={props.errors.description}>
                 <FormLabel
@@ -230,60 +167,20 @@ const TeamForm = (props) => {
                   name="description"
                   onChange={handleFieldChange}
                   value={formState.description}
-                  placeholder="Tell people what your team is about."
+                  placeholder="Tell people what your tournament is about."
                   size="lg"
                   resize="vertical"
                   maxLength="5000"
                   h="150px"
                 />
                 <FormHelperText id="description-helper-text">
-                  Describe your team in fewer than{" "}
+                  Describe your tournament in fewer than{" "}
                   {MAX_DESCRIPTION_LENGTH.toLocaleString()} characters.{" "}
                   <CharacterCounter
                     value={formState.description}
                     maxLength={MAX_DESCRIPTION_LENGTH}
                   />
                 </FormHelperText>
-              </FormControl>
-              <FormControl isInvalid={props.errors.website}>
-                <FormLabel htmlFor="website" fontSize="lg" fontWeight="bold">
-                  Website
-                </FormLabel>
-                <Input
-                  id="website"
-                  name="website"
-                  type="text"
-                  placeholder="https://cloud9.gg/"
-                  maxLength="255"
-                  onChange={handleFieldChange}
-                  value={formState.website}
-                  size="lg"
-                />
-                <FormErrorMessage>{props.errors.website}</FormErrorMessage>
-              </FormControl>
-              <FormControl isRequired isInvalid={props.errors.password}>
-                <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
-                  Join Password
-                </FormLabel>
-                <Input
-                  id="password"
-                  name="password"
-                  type={isShowingPassword ? "text" : "password"}
-                  placeholder="******************"
-                  onChange={handleFieldChange}
-                  value={formState.password}
-                  size="lg"
-                />
-                <Button
-                  onClick={setIsShowingPassword.toggle}
-                  fontSize="sm"
-                  fontStyle="italic"
-                  variant="link"
-                  fontWeight="normal"
-                >
-                  {isShowingPassword ? "Hide" : "Show"} password
-                </Button>
-                <FormErrorMessage>{props.errors.password}</FormErrorMessage>
               </FormControl>
             </Stack>
           </Card>
@@ -298,22 +195,22 @@ const TeamForm = (props) => {
               {props.isSubmitting
                 ? "Submitting..."
                 : props.state === "edit"
-                ? "Edit Team"
-                : "Create Team"}
+                ? "Edit Tournament"
+                : "Create Tournament"}
             </Button>
           </Box>
         </Stack>
       </Article>
 
       {props.state === "edit" ? (
-        <DeleteTeamDialog
-          event={props.team}
-          isOpen={isDeletingTeamAlertOpen}
-          onClose={setDeletingTeamAlertIsOpen.off}
+        <DeleteTournamentDialog
+          event={props.tournament}
+          isOpen={isDeletingTournamentAlertOpen}
+          onClose={setDeletingTournamentAlertIsOpen.off}
         />
       ) : null}
     </SiteLayout>
   );
 };
 
-export default TeamForm;
+export default TournamentForm;

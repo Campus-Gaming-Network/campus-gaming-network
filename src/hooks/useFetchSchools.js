@@ -1,6 +1,7 @@
 import React from "react";
 import sortBy from "lodash.sortby";
 import keyBy from "lodash.keyby";
+import { useBoolean } from "@chakra-ui/react";
 
 // Other
 import { firestore } from "src/firebase";
@@ -15,14 +16,14 @@ const useFetchSchools = () => {
     "cgn.schools",
     null
   );
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useBoolean();
   const [schools, setSchools] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   const saveToLocalStorage = React.useCallback(() => {
     setSchoolsInLocalStorage(schools);
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading.off();
       // Wait some random amount of time before setting to false
       // because I dont know of a way to check if the localstorage
       // has finished being set or not. This is to ensure we dont
@@ -55,12 +56,12 @@ const useFetchSchools = () => {
         .catch((error) => {
           console.error({ error });
           setError(error);
-          setIsLoading(false);
+          setIsLoading.off();
         });
     };
 
     if (!isLoading && !localStorageSchools) {
-      setIsLoading(true);
+      setIsLoading.on();
       fetchSchools();
     } else if (!schools && localStorageSchools) {
       setSchools(localStorageSchools);

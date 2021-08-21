@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box, Flex, Button } from "@chakra-ui/react";
+import { Box, Flex, Button, useBoolean } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 // Components
@@ -15,11 +15,7 @@ import ButtonLink from "src/components/ButtonLink";
 
 const UnauthenticatedNav = () => {
   const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const [isMenuOpen, setIsMenuOpen] = useBoolean();
 
   const onSchoolSelect = (selectedSchool) => {
     if (selectedSchool && selectedSchool.id) {

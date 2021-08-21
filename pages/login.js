@@ -14,6 +14,7 @@ import {
   Divider,
   Flex,
   FormErrorMessage,
+  useBoolean,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
@@ -33,6 +34,7 @@ import SiteLayout from "src/components/SiteLayout";
 import Card from "src/components/Card";
 import Article from "src/components/Article";
 import Link from "src/components/Link";
+import FormErrorAlert from "src/components/FormErrorAlert";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
@@ -73,7 +75,7 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = React.useState(null);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useBoolean();
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
@@ -81,14 +83,14 @@ const Login = () => {
     e.preventDefault();
 
     setError(null);
-    setIsLoading(true);
+    setIsLoading.on();
 
     const { isValid, errors } = validateLogIn(fields);
 
     setErrors(errors);
 
     if (!isValid) {
-      setIsLoading(false);
+      setIsLoading.off();
       window.scrollTo(0, 0);
       return;
     }
@@ -100,7 +102,7 @@ const Login = () => {
       .catch((error) => {
         console.error(error);
         setError(error.message);
-        setIsLoading(false);
+        setIsLoading.off();
         window.scrollTo(0, 0);
       });
   };
@@ -110,15 +112,7 @@ const Login = () => {
       meta={{ title: "Login", og: { url: `${PRODUCTION_URL}/login` } }}
     >
       <Article fullWidthMobile>
-        {hasErrors ? (
-          <Alert status="error" mb={4} rounded="lg">
-            <AlertIcon />
-            <AlertDescription>
-              There are errors in the form below. Please review and correct
-              before submitting again.
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        {hasErrors ? <FormErrorAlert /> : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">
             Welcome back!

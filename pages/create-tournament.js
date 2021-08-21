@@ -4,17 +4,12 @@ import { useBoolean, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { httpsCallable } from "firebase/functions";
-import safeJsonStringify from "safe-json-stringify";
-
-// API
-import { getTeamDetails, getTeamUsers } from "src/api/team";
 
 // Other
 import { db, functions } from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
 
 // Utilities
-import { validateCreateTeam } from "src/utilities/validation";
 
 // Constants
 import { AUTH_STATUS } from "src/constants/auth";
@@ -22,7 +17,7 @@ import { COOKIES, NOT_FOUND } from "src/constants/other";
 import { COLLECTIONS, CALLABLES } from "src/constants/firebase";
 
 // Components
-import TeamForm from "src/components/TeamForm";
+import TournamentForm from "src/components/TournamentForm";
 
 // Providers
 import { useAuth } from "src/providers/auth";
@@ -49,45 +44,37 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  const [teamResponse, teamUsersResponse] = await Promise.all([
-    getTeamDetails(context.params.id),
-    getTeamUsers(context.params.id),
-  ]);
-  const { team } = teamResponse;
-  const { teammates } = teamUsersResponse;
-
-  if (!Boolean(team)) {
-    return NOT_FOUND;
-  }
-
-  if (team.roles.leader.id !== token.uid) {
-    return NOT_FOUND;
-  }
-
-  const data = {
-    params: context.params,
-    team,
-    teammates,
-  };
-
-  return { props: JSON.parse(safeJsonStringify(data)) };
+  return { props: {} };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// EditTeam
+// CreateTournament
 
-const EditTeam = (props) => {
+const CreateTournament = () => {
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const [isSubmitting, setIsSubmitting] = useBoolean();
   const toast = useToast();
 
-  const handleSubmit = () => {};
+  const handleSubmitError = (error) => {
+    setIsSubmitting.off();
+    toast({
+      title: "An error occurred.",
+      description: error.message,
+      status: "error",
+      isClosable: true,
+    });
+  };
+
+  const handleSubmit = async (e, formState) => {
+    e.preventDefault();
+
+    setIsSubmitting.on();
+  };
 
   return (
-    <TeamForm
-      state="edit"
-      team={props.team}
+    <TournamentForm
+      state="create"
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
       errors={errors}
@@ -95,4 +82,4 @@ const EditTeam = (props) => {
   );
 };
 
-export default EditTeam;
+export default CreateTournament;

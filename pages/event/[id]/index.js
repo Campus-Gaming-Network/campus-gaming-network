@@ -21,6 +21,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  useBoolean,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import safeJsonStringify from "safe-json-stringify";
@@ -148,25 +149,18 @@ export const getServerSideProps = async (context) => {
 
 const Event = (props) => {
   const { authUser, isAuthenticated } = useAuth();
-  const [isRSVPAlertOpen, setIsRSVPAlertOpen] = React.useState(false);
+  const [isRSVPAlertOpen, setIsRSVPAlertOpen] = useBoolean();
   const [
     isReportingUserDialogOpen,
     setReportingUserDialogIsOpen,
-  ] = React.useState(false);
-
-  const openReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(true);
-  };
-
-  const closeReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(false);
-  };
+  ] = useBoolean();
 
   const openRSVPDialog = () => {
-    setIsRSVPAlertOpen(props.canChangeEventResponse);
-  };
-  const closeRSVPDialog = () => {
-    setIsRSVPAlertOpen(false);
+    if (props.canChangeEventResponse) {
+      setIsRSVPAlertOpen.on();
+    } else {
+      setIsRSVPAlertOpen.off();
+    }
   };
 
   return (
@@ -213,7 +207,7 @@ const Event = (props) => {
                   />
                   <MenuList fontSize="md">
                     <MenuItem
-                      onClick={openReportEntityDialog}
+                      onClick={setReportingUserDialogIsOpen.on}
                       icon={<FontAwesomeIcon icon={faFlag} />}
                     >
                       Report event
@@ -350,7 +344,7 @@ const Event = (props) => {
           event={props.event}
           eventResponse={props.eventResponse}
           isOpen={isRSVPAlertOpen}
-          onClose={closeRSVPDialog}
+          onClose={setIsRSVPAlertOpen.off}
         />
       ) : null}
 
@@ -362,7 +356,7 @@ const Event = (props) => {
           }}
           pageProps={props}
           isOpen={isReportingUserDialogOpen}
-          onClose={closeReportEntityDialog}
+          onClose={setReportingUserDialogIsOpen.off}
         />
       ) : null}
     </SiteLayout>

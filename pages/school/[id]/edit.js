@@ -16,6 +16,7 @@ import {
   useToast,
   FormHelperText,
   Image,
+  useBoolean,
 } from "@chakra-ui/react";
 import { useDropzone } from "react-dropzone";
 import nookies from "nookies";
@@ -104,8 +105,8 @@ const formReducer = (state, { field, value }) => {
 // EditSchool
 
 const EditSchool = (props) => {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
+  const [hasPrefilledForm, setHasPrefilledForm] = useBoolean();
   const [state, dispatch] = React.useReducer(formReducer, initialFormState);
   const toast = useToast();
   const handleFieldChange = React.useCallback((e) => {
@@ -129,7 +130,7 @@ const EditSchool = (props) => {
       field: "phone",
       value: props.school.phone || initialFormState.phone,
     });
-    setHasPrefilledForm(true);
+    setHasPrefilledForm.on();
   };
 
   const handleSubmit = async (e) => {
@@ -137,7 +138,7 @@ const EditSchool = (props) => {
 
     return;
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const data = {
       description: state.description,
@@ -197,7 +198,7 @@ const EditSchool = (props) => {
 
     updateDoc(doc(db, COLLECTIONS.SCHOOLS, props.school.id), data)
       .then(() => {
-        setIsSubmitting(false);
+        setIsSubmitting.off();
         toast({
           title: "School updated.",
           description: "Your school has been updated.",
@@ -206,7 +207,7 @@ const EditSchool = (props) => {
         });
       })
       .catch((error) => {
-        setIsSubmitting(false);
+        setIsSubmitting.off();
         toast({
           title: "An error occurred.",
           description: error.message,
@@ -215,7 +216,7 @@ const EditSchool = (props) => {
         });
       });
 
-    setIsSubmitting(false);
+    setIsSubmitting.off();
   };
 
   if (!hasPrefilledForm) {

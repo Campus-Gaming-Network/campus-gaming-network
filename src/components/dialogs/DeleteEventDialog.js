@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useBoolean,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { doc, deleteDoc } from "firebase/firestore";
@@ -28,16 +29,16 @@ const DeleteEventDialog = (props) => {
   const toast = useToast();
   const cancelRef = React.useRef();
   const deleteEventRef = React.useRef();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
 
   const onDeleteEventConfirm = async () => {
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     try {
       await deleteDoc(doc(db, COLLECTIONS.EVENTS, props.event.id));
 
       props.onClose();
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       toast({
         title: "Event deleted.",
         description: `Event ${props.event.name} has been deleted. You will be redirected...`,
@@ -50,7 +51,7 @@ const DeleteEventDialog = (props) => {
     } catch (error) {
       console.error(error);
       props.onClose();
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       toast({
         title: "An error occurred.",
         description: error.message,

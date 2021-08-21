@@ -17,6 +17,7 @@ import {
   Heading,
   FormHelperText,
   FormErrorMessage,
+  useBoolean,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
@@ -50,6 +51,7 @@ import Card from "src/components/Card";
 import Link from "src/components/Link";
 import SchoolSearch from "src/components/SchoolSearch";
 import SiteLayout from "src/components/SiteLayout";
+import FormErrorAlert from "src/components/FormErrorAlert";
 
 // Other
 import { auth, db } from "src/firebase";
@@ -115,14 +117,14 @@ const Signup = () => {
     formDispatch({ field: "school", value: school });
   };
   const [error, setError] = React.useState(null);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const { isValid, errors } = validateSignUp({
       ...formState,
@@ -132,7 +134,7 @@ const Signup = () => {
     setErrors(errors);
 
     if (!isValid) {
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       window.scrollTo(0, 0);
       return;
     }
@@ -152,7 +154,7 @@ const Signup = () => {
     } catch (error) {
       console.error(error);
       setError(error.message);
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       window.scrollTo(0, 0);
       return;
     }
@@ -211,14 +213,14 @@ const Signup = () => {
         setError(
           `There was an issue creating your user. ${BASE_ERROR_MESSAGE}`
         );
-        setIsSubmitting(false);
+        setIsSubmitting.off();
         window.scrollTo(0, 0);
       }
     } else {
       setError(
         `There was an issue when creating your account. ${BASE_ERROR_MESSAGE}`
       );
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       window.scrollTo(0, 0);
     }
   };
@@ -228,15 +230,7 @@ const Signup = () => {
       meta={{ title: "Sign Up", og: { url: `${PRODUCTION_URL}/signup` } }}
     >
       <Article fullWidthMobile>
-        {hasErrors ? (
-          <Alert status="error" mb={4} rounded="lg">
-            <AlertIcon />
-            <AlertDescription>
-              There are errors in the form below. Please review and correct
-              before submitting again.
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        {hasErrors ? <FormErrorAlert /> : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl">
             Create an account
@@ -291,10 +285,7 @@ const Signup = () => {
 // DetailSection
 
 const DetailSection = React.memo((props) => {
-  const [isShowingPassword, setIsShowingPassword] = React.useState(false);
-  const togglePasswordVisibility = () => {
-    setIsShowingPassword(!isShowingPassword);
-  };
+  const [isShowingPassword, setIsShowingPassword] = useBoolean();
 
   return (
     <Stack spacing={6}>
@@ -361,7 +352,7 @@ const DetailSection = React.memo((props) => {
           size="lg"
         />
         <Button
-          onClick={togglePasswordVisibility}
+          onClick={setIsShowingPassword.toggle}
           fontSize="sm"
           fontStyle="italic"
           variant="link"

@@ -1,11 +1,11 @@
 // Libraries
 import React from "react";
-import { useToast } from "@chakra-ui/react";
+import { useToast, useBoolean } from "@chakra-ui/react";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { getFirestore, doc, updateDoc, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 
 // Other
 import firebaseAdmin from "src/firebaseAdmin";
@@ -70,11 +70,12 @@ const EditEvent = (props) => {
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useBoolean();
 
   const handleSubmit = async (e, formState) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const { isValid, errors } = validateCreateEvent({
       ...formState,
@@ -85,7 +86,7 @@ const EditEvent = (props) => {
     setErrors(errors);
 
     if (!isValid) {
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       window.scrollTo(0, 0);
       return;
     }
@@ -156,7 +157,7 @@ const EditEvent = (props) => {
         }, 2000);
       })
       .catch((error) => {
-        setIsSubmitting(false);
+        setIsSubmitting.off();
         toast({
           title: "An error occurred.",
           description: error.message,

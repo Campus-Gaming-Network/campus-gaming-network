@@ -22,26 +22,26 @@ import { db } from "src/firebase";
 import { COLLECTIONS } from "src/constants/firebase";
 
 ////////////////////////////////////////////////////////////////////////////
-// DeleteTeamDialog
+// DeleteTournamentDialog
 
-const DeleteTeamDialog = (props) => {
+const DeleteTournamentDialog = (props) => {
   const router = useRouter();
   const toast = useToast();
   const cancelRef = React.useRef();
-  const deleteTeamRef = React.useRef();
+  const deleteTournamentRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = useBoolean();
 
-  const onDeleteTeamConfirm = async () => {
+  const onDeleteTournamentConfirm = async () => {
     setIsSubmitting.on();
 
     try {
-      await deleteDoc(doc(db, COLLECTIONS.TEAMS, props.team.id));
+      await deleteDoc(doc(db, COLLECTIONS.TOURNAMENT, props.tournament.id));
 
       props.onClose();
       setIsSubmitting.off();
       toast({
-        title: "Team deleted.",
-        description: `Team ${props.team.name} has been deleted. You will be redirected...`,
+        title: "Tournament deleted.",
+        description: `Tournament ${props.tournament.name} has been deleted. You will be redirected...`,
         status: "success",
         isClosable: true,
       });
@@ -69,12 +69,12 @@ const DeleteTeamDialog = (props) => {
     >
       <AlertDialogOverlay />
       <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-        <AlertDialogHeader>Delete Team</AlertDialogHeader>
+        <AlertDialogHeader>Delete Tournament</AlertDialogHeader>
 
         <AlertDialogBody>
-          Are you sure you want to delete the team{" "}
+          Are you sure you want to delete the tournament{" "}
           <Text as="span" fontWeight="bold">
-            {props.team ? props.team.name : ""}
+            {props.tournament ? props.tournament.name : ""}
           </Text>
           ?
         </AlertDialogBody>
@@ -86,11 +86,15 @@ const DeleteTeamDialog = (props) => {
             </Button>
           ) : (
             <React.Fragment>
-              <Button ref={deleteTeamRef} onClick={props.onClose}>
+              <Button ref={deleteTournamentRef} onClick={props.onClose}>
                 No, nevermind
               </Button>
-              <Button colorScheme="red" onClick={onDeleteTeamConfirm} ml={3}>
-                Yes, I want to delete the team
+              <Button
+                colorScheme="red"
+                onClick={onDeleteTournamentConfirm}
+                ml={3}
+              >
+                Yes, I want to delete the tournament
               </Button>
             </React.Fragment>
           )}
@@ -100,4 +104,4 @@ const DeleteTeamDialog = (props) => {
   );
 };
 
-export default DeleteTeamDialog;
+export default DeleteTournamentDialog;

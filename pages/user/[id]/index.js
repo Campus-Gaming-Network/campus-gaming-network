@@ -26,6 +26,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  useBoolean,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import dynamic from "next/dynamic";
@@ -109,15 +110,7 @@ const User = (props) => {
   const [
     isReportingUserDialogOpen,
     setReportingUserDialogIsOpen,
-  ] = React.useState(false);
-
-  const openReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(true);
-  };
-
-  const closeReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(false);
-  };
+  ] = useBoolean();
 
   return (
     <SiteLayout meta={props.user.meta}>
@@ -204,7 +197,7 @@ const User = (props) => {
                 />
                 <MenuList fontSize="md">
                   <MenuItem
-                    onClick={openReportEntityDialog}
+                    onClick={setReportingUserDialogIsOpen.on}
                     icon={<FontAwesomeIcon icon={faFlag} />}
                   >
                     Report user
@@ -340,7 +333,7 @@ const User = (props) => {
           }}
           pageProps={props}
           isOpen={isReportingUserDialogOpen}
-          onClose={closeReportEntityDialog}
+          onClose={setReportingUserDialogIsOpen.off}
         />
       ) : null}
     </SiteLayout>
@@ -379,8 +372,8 @@ const AccountsList = (props) => {
 
 const AccountsListItem = (props) => {
   const toast = useToast();
-  const [isHovered, setIsHovered] = React.useState(false);
-  const [isFocused, setIsFocused] = React.useState(false);
+  const [isHovered, setIsHovered] = useBoolean();
+  const [isFocused, setIsFocused] = useBoolean();
   const { hasCopied, onCopy } = useClipboard(props.value);
 
   if (!props.value) {
@@ -412,10 +405,10 @@ const AccountsListItem = (props) => {
       <Box
         as={Button}
         onClick={() => handleCopy(props.label)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onMouseEnter={() => setIsHovered.on()}
+        onMouseLeave={() => setIsHovered.off()}
+        onFocus={() => setIsFocused.on()}
+        onBlur={() => setIsFocused.off()}
         variant="outline"
         bg="white"
         pos="relative"

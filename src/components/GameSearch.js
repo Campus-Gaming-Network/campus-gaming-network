@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Flex, Text, Spinner } from "@chakra-ui/react";
+import { Flex, Text, Spinner, useBoolean } from "@chakra-ui/react";
 import {
   Combobox,
   ComboboxInput,
@@ -31,7 +31,7 @@ const CACHED_GAMES = {};
 
 const GameSearch = (props) => {
   const [searchTerm, setSearchTerm] = React.useState(props.gameName || "");
-  const [isFetching, setIsFetching] = React.useState(false);
+  const [isFetching, setIsFetching] = useBoolean();
 
   const handleChange = (event) => setSearchTerm(event.target.value);
 
@@ -45,12 +45,12 @@ const GameSearch = (props) => {
 
       if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 2) {
         let isFresh = true;
-        setIsFetching(true);
+        setIsFetching.on();
 
         fetchGames(debouncedGameSearch).then((games) => {
           if (isFresh) {
             setGames(games);
-            setIsFetching(false);
+            setIsFetching.off();
           }
         });
         return () => (isFresh = false);

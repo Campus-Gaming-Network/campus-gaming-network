@@ -15,6 +15,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  useBoolean,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -105,15 +106,7 @@ const School = (props) => {
   const [
     isReportingUserDialogOpen,
     setReportingUserDialogIsOpen,
-  ] = React.useState(false);
-
-  const openReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(true);
-  };
-
-  const closeReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(false);
-  };
+  ] = useBoolean();
 
   return (
     <SiteLayout meta={props.school.meta}>
@@ -174,7 +167,7 @@ const School = (props) => {
                   />
                   <MenuList fontSize="md">
                     <MenuItem
-                      onClick={openReportEntityDialog}
+                      onClick={setReportingUserDialogIsOpen.on}
                       icon={<FontAwesomeIcon icon={faFlag} />}
                     >
                       Report school
@@ -289,7 +282,7 @@ const School = (props) => {
           }}
           pageProps={props}
           isOpen={isReportingUserDialogOpen}
-          onClose={closeReportEntityDialog}
+          onClose={setReportingUserDialogIsOpen.off}
         />
       ) : null}
     </SiteLayout>

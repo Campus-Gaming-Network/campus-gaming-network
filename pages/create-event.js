@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { useToast } from "@chakra-ui/react";
+import { useBoolean, useToast } from "@chakra-ui/react";
 import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
 import { DateTime } from "luxon";
 import { useRouter } from "next/router";
@@ -64,11 +64,11 @@ const CreateEvent = () => {
   const { user, school } = useAuth();
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
   const toast = useToast();
 
   const handleSubmitError = (error) => {
-    setIsSubmitting(false);
+    setIsSubmitting.off();
     toast({
       title: "An error occurred.",
       description: error.message,
@@ -80,7 +80,7 @@ const CreateEvent = () => {
   const handleSubmit = async (e, formState) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const { isValid, errors } = validateCreateEvent({
       ...formState,
@@ -91,7 +91,7 @@ const CreateEvent = () => {
     setErrors(errors);
 
     if (!isValid) {
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       window.scrollTo(0, 0);
       return;
     }

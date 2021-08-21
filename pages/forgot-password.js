@@ -15,6 +15,7 @@ import {
   AlertTitle,
   AlertDescription,
   FormErrorMessage,
+  useBoolean,
 } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import firebaseAdmin from "src/firebaseAdmin";
@@ -30,6 +31,7 @@ import Article from "src/components/Article";
 import Card from "src/components/Card";
 import Link from "src/components/Link";
 import SiteLayout from "src/components/SiteLayout";
+import FormErrorAlert from "src/components/FormErrorAlert";
 
 // Other
 import { auth } from "src/firebase";
@@ -70,8 +72,8 @@ const ForgotPassword = () => {
   const [fields, handleFieldChange] = useFormFields({
     email: "",
   });
-  const [isSendingEmail, setIsSendingEmail] = React.useState(false);
-  const [emailSent, setEmailSent] = React.useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useBoolean();
+  const [emailSent, setEmailSent] = useBoolean();
   const [error, setError] = React.useState(null);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
@@ -81,21 +83,21 @@ const ForgotPassword = () => {
 
     setError(null);
 
-    setIsSendingEmail(true);
+    setIsSendingEmail.on();
 
     const { isValid, errors } = validateForgotPassword(fields);
 
     setErrors(errors);
 
     if (!isValid) {
-      setIsSendingEmail(false);
+      setIsSendingEmail.off();
       window.scrollTo(0, 0);
       return;
     }
 
     try {
       await sendPasswordResetEmail(auth, fields.email);
-      setEmailSent(true);
+      setEmailSent.on();
     } catch (error) {
       handleError(error);
     }
@@ -104,7 +106,7 @@ const ForgotPassword = () => {
   const handleError = (error) => {
     console.error(error);
     setError(error.message);
-    setIsSendingEmail(false);
+    setIsSendingEmail.off();
     window.scrollTo(0, 0);
   };
 
@@ -116,15 +118,7 @@ const ForgotPassword = () => {
       }}
     >
       <Article fullWidthMobile>
-        {hasErrors ? (
-          <Alert status="error" mb={4} rounded="lg">
-            <AlertIcon />
-            <AlertDescription>
-              There are errors in the form below. Please review and correct
-              before submitting again.
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        {hasErrors ? <FormErrorAlert /> : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
           <Heading as="h2" size="2xl" mb={4}>
             Reset your password

@@ -13,6 +13,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useBoolean,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -108,15 +109,7 @@ const Team = (props) => {
   const [
     isReportingUserDialogOpen,
     setReportingUserDialogIsOpen,
-  ] = React.useState(false);
-
-  const openReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(true);
-  };
-
-  const closeReportEntityDialog = () => {
-    setReportingUserDialogIsOpen(false);
-  };
+  ] = useBoolean();
 
   return (
     <SiteLayout meta={props.team.meta}>
@@ -164,7 +157,7 @@ const Team = (props) => {
                     Leave team
                   </MenuItem>
                   <MenuItem
-                    onClick={openReportEntityDialog}
+                    onClick={setReportingUserDialogIsOpen.on}
                     icon={<FontAwesomeIcon icon={faFlag} />}
                   >
                     Report team
@@ -194,7 +187,7 @@ const Team = (props) => {
           }}
           pageProps={props}
           isOpen={isReportingUserDialogOpen}
-          onClose={closeReportEntityDialog}
+          onClose={setReportingUserDialogIsOpen.off}
         />
       ) : null}
     </SiteLayout>

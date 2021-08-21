@@ -30,6 +30,7 @@ import {
   MenuItem,
   Spacer,
   IconButton,
+  useBoolean,
 } from "@chakra-ui/react";
 import {
   faCaretRight,
@@ -39,7 +40,7 @@ import {
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import dynamic from "next/dynamic";
-import { getFirestore, doc, updateDoc, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 
 // Constants
 import {
@@ -73,6 +74,8 @@ import GameCover from "src/components/GameCover";
 import MonthSelect from "src/components/MonthSelect";
 import DaySelect from "src/components/DaySelect";
 import YearSelect from "src/components/YearSelect";
+import FormErrorAlert from "src/components/FormErrorAlert";
+import CharacterCounter from "src/components/CharacterCounter";
 
 // Utilities
 import { move } from "src/utilities/other";
@@ -154,14 +157,14 @@ const formReducer = (state, { field, value }) => {
 ////////////////////////////////////////////////////////////////////////////////
 // EditUser
 
-const EditUser = (props) => {
+const EditUser = () => {
   const { isAuthenticating, authUser, user, school } = useAuth();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
+  const [hasPrefilledForm, setHasPrefilledForm] = useBoolean();
   const [
     isDeletingAccountAlertOpen,
     setDeletingAccountAlertIsOpen,
-  ] = React.useState(false);
+  ] = useBoolean();
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
@@ -174,14 +177,6 @@ const EditUser = (props) => {
   const [currentlyPlaying, setCurrentGames] = React.useState([]);
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
-
-  const openDeleteAccountDialog = () => {
-    setDeletingAccountAlertIsOpen(true);
-  };
-
-  const closeDeleteAccountDialog = () => {
-    setDeletingAccountAlertIsOpen(false);
-  };
 
   const prefillForm = () => {
     formDispatch({
@@ -278,7 +273,7 @@ const EditUser = (props) => {
     });
     setCurrentGames(user.currentlyPlaying || []);
     setFavoriteGames(user.favoriteGames || []);
-    setHasPrefilledForm(true);
+    setHasPrefilledForm.on();
   };
 
   const onSchoolSelect = (school) => {
@@ -312,7 +307,7 @@ const EditUser = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const form = {
       ...formState,
@@ -326,7 +321,7 @@ const EditUser = (props) => {
     setErrors(errors);
 
     if (!isValid) {
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       window.scrollTo(0, 0);
       return;
     }
@@ -378,7 +373,7 @@ const EditUser = (props) => {
 
     updateDoc(doc(db, COLLECTIONS.USERS, user.id), data)
       .then(() => {
-        setIsSubmitting(false);
+        setIsSubmitting.off();
         toast({
           title: "Profile updated.",
           description: "Your profile has been updated.",
@@ -387,7 +382,7 @@ const EditUser = (props) => {
         });
       })
       .catch((error) => {
-        setIsSubmitting(false);
+        setIsSubmitting.off();
         toast({
           title: "An error occurred.",
           description: error.message,
@@ -419,15 +414,7 @@ const EditUser = (props) => {
       meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}
     >
       <Article fullWidthMobile>
-        {hasErrors ? (
-          <Alert status="error" mb={4} rounded="lg">
-            <AlertIcon />
-            <AlertDescription>
-              There are errors in the form below. Please review and correct
-              before submitting again.
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        {hasErrors ? <FormErrorAlert /> : null}
         <Stack as="form" spacing={6} onSubmit={handleSubmit}>
           <Flex alignItems="center" flexWrap="wrap">
             <PageHeading pb={{ base: 6, md: 0 }} px={0}>
@@ -442,7 +429,7 @@ const EditUser = (props) => {
               />
               <MenuList fontSize="md">
                 <MenuItem
-                  onClick={openDeleteAccountDialog}
+                  onClick={setDeletingAccountAlertIsOpen.on}
                   fontWeight="bold"
                   color="red.500"
                 >
@@ -531,7 +518,7 @@ const EditUser = (props) => {
       <DeleteAccountDialog
         user={user}
         isOpen={isDeletingAccountAlertOpen}
-        onClose={closeDeleteAccountDialog}
+        onClose={setDeletingAccountAlertIsOpen.off}
       />
     </SiteLayout>
   );
@@ -541,11 +528,6 @@ const EditUser = (props) => {
 // DetailSection
 
 const DetailSection = React.memo((props) => {
-  const bioCharactersRemaining = React.useMemo(
-    () => (props.bio ? MAX_BIO_LENGTH - props.bio.length : MAX_BIO_LENGTH),
-    [props.bio]
-  );
-
   return (
     <Card as="fieldset" p={0} mb={32}>
       <Box pos="absolute" top="-5rem" px={{ base: 8, md: 0 }}>
@@ -721,12 +703,7 @@ const DetailSection = React.memo((props) => {
           <FormHelperText id="bio-helper-text">
             Describe yourself in fewer than {MAX_BIO_LENGTH.toLocaleString()}{" "}
             characters.{" "}
-            <Text
-              as="span"
-              color={bioCharactersRemaining <= 0 ? "red.500" : undefined}
-            >
-              {bioCharactersRemaining.toLocaleString()} characters remaining.
-            </Text>
+            <CharacterCounter value={props.bio} maxLength={MAX_BIO_LENGTH} />
           </FormHelperText>
           <FormErrorMessage>{props.errors.bio}</FormErrorMessage>
         </FormControl>

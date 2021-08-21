@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { useToast } from "@chakra-ui/react";
+import { useBoolean, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { httpsCallable } from "firebase/functions";
@@ -54,11 +54,11 @@ export const getServerSideProps = async (context) => {
 const CreateTeam = () => {
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
   const toast = useToast();
 
   const handleSubmitError = (error) => {
-    setIsSubmitting(false);
+    setIsSubmitting.off();
     toast({
       title: "An error occurred.",
       description: error.message,
@@ -70,7 +70,7 @@ const CreateTeam = () => {
   const handleSubmit = async (e, formState) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     // TODO
     // const { isValid, errors } = validateCreateTeam({
@@ -80,7 +80,7 @@ const CreateTeam = () => {
     // setErrors(errors);
 
     // if (!isValid) {
-    //   setIsSubmitting(false);
+    //   setIsSubmitting.off();
     //   window.scrollTo(0, 0);
     //   return;
     // }

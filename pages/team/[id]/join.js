@@ -13,6 +13,7 @@ import {
   Divider,
   useToast,
   FormErrorMessage,
+  useBoolean,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
@@ -43,6 +44,7 @@ import { useAuth } from "src/providers/auth";
 import SiteLayout from "src/components/SiteLayout";
 import Card from "src/components/Card";
 import Article from "src/components/Article";
+import FormErrorAlert from "src/components/FormErrorAlert";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -98,16 +100,13 @@ const JoinTeam = (props) => {
   });
   const { isAuthenticating, isAuthenticated } = useAuth();
   const [error, setError] = React.useState(null);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
   const [errors, setErrors] = React.useState({});
   const hasErrors = React.useMemo(() => !isEmpty(errors), [errors]);
-  const [isShowingPassword, setIsShowingPassword] = React.useState(false);
-  const togglePasswordVisibility = () => {
-    setIsShowingPassword(!isShowingPassword);
-  };
+  const [isShowingPassword, setIsShowingPassword] = useBoolean();
 
   const handleSubmitError = (error) => {
-    setIsSubmitting(false);
+    setIsSubmitting.off();
     toast({
       title: "An error occurred.",
       description: error.message,
@@ -123,7 +122,7 @@ const JoinTeam = (props) => {
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const data = {
       teamId: props.team.id,
@@ -157,15 +156,7 @@ const JoinTeam = (props) => {
   return (
     <SiteLayout>
       <Article fullWidthMobile>
-        {hasErrors ? (
-          <Alert status="error" mb={4} rounded="lg">
-            <AlertIcon />
-            <AlertDescription>
-              There are errors in the form below. Please review and correct
-              before submitting again.
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        {hasErrors ? <FormErrorAlert /> : null}
         {!isAuthenticating && !isAuthenticated ? (
           <Alert status="warning" mb={4} rounded="lg">
             <AlertIcon />
@@ -216,7 +207,7 @@ const JoinTeam = (props) => {
                 }
               />
               <Button
-                onClick={togglePasswordVisibility}
+                onClick={setIsShowingPassword.toggle}
                 fontSize="sm"
                 fontStyle="italic"
                 variant="link"

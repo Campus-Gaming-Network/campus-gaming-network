@@ -14,6 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useBoolean,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { signOut } from "firebase/auth";
@@ -36,12 +37,12 @@ const DeleteAccountDialog = (props) => {
   const toast = useToast();
   const cancelRef = React.useRef();
   const [deleteConfirmation, setDeleteConfirmation] = React.useState("");
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
   const [errors, setErrors] = React.useState({});
 
   const handleOnClose = () => {
     setDeleteConfirmation("");
-    setIsSubmitting(false);
+    setIsSubmitting.off();
     setErrors({});
     props.onClose();
   };
@@ -55,12 +56,12 @@ const DeleteAccountDialog = (props) => {
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     try {
       await deleteDoc(doc(db, COLLECTIONS.USERS, props.user.id));
       props.onClose();
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       toast({
         title: "Account deleted.",
         description: "Your account has been deleted. You will be redirected...",
@@ -73,7 +74,7 @@ const DeleteAccountDialog = (props) => {
     } catch (error) {
       console.error(error);
       props.onClose();
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       toast({
         title: "An error occurred.",
         description: error.message,

@@ -15,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useBoolean,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import { doc } from "firebase/firestore";
@@ -39,7 +40,7 @@ const ReportEntityDialog = (props) => {
   const toast = useToast();
   const cancelRef = React.useRef();
   const [reason, setReason] = React.useState("");
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = useBoolean();
   const [errors, setErrors] = React.useState({});
   const reasonCharactersRemaining = React.useMemo(
     () =>
@@ -56,7 +57,7 @@ const ReportEntityDialog = (props) => {
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting.on();
 
     const reportData = {
       entity: {
@@ -75,7 +76,7 @@ const ReportEntityDialog = (props) => {
       const reportEntity = httpsCallable(functions, CALLABLES.REPORT_ENTITY);
       await reportEntity(reportData);
       props.onClose();
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       toast({
         title: "Reported succesfully.",
         description:
@@ -86,7 +87,7 @@ const ReportEntityDialog = (props) => {
     } catch (error) {
       console.error(error);
       props.onClose();
-      setIsSubmitting(false);
+      setIsSubmitting.off();
       toast({
         title: "An error occurred.",
         description: error.message,
@@ -98,7 +99,7 @@ const ReportEntityDialog = (props) => {
 
   const handleOnClose = () => {
     setReason("");
-    setIsSubmitting(false);
+    setIsSubmitting.off();
     setErrors({});
     props.onClose();
   };

@@ -18,10 +18,8 @@ import {
   Checkbox,
   Flex,
   Avatar,
-  Alert,
-  AlertIcon,
-  AlertDescription,
   Spacer,
+  useBoolean,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import PlacesAutocomplete from "react-places-autocomplete";
@@ -39,6 +37,8 @@ import MonthSelect from "src/components/MonthSelect";
 import DaySelect from "src/components/DaySelect";
 import YearSelect from "src/components/YearSelect";
 import TimeSelect from "src/components/TimeSelect";
+import FormErrorAlert from "src/components/FormErrorAlert";
+import CharacterCounter from "src/components/CharacterCounter";
 
 // Constants
 import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
@@ -86,15 +86,12 @@ const formReducer = (state, { field, value }) => {
 
 const EventForm = (props) => {
   const { isAuthenticating, user } = useAuth();
-  const [hasPrefilledForm, setHasPrefilledForm] = React.useState(false);
+  const [hasPrefilledForm, setHasPrefilledForm] = useBoolean();
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState
   );
-  const [
-    isDeletingEventAlertOpen,
-    setDeletingEventAlertIsOpen,
-  ] = React.useState(false);
+  const [isDeletingEventAlertOpen, setDeletingEventAlertIsOpen] = useBoolean();
   const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
@@ -104,21 +101,6 @@ const EventForm = (props) => {
       props.state === "edit" ? `Edit ${props.event.name}` : "Create Event",
     [props.state, props.event]
   );
-  const descriptionCharactersRemaining = React.useMemo(
-    () =>
-      formState.description
-        ? MAX_DESCRIPTION_LENGTH - formState.description.length
-        : MAX_DESCRIPTION_LENGTH,
-    [formState.description]
-  );
-
-  const openDeleteEventDialog = () => {
-    setDeletingEventAlertIsOpen(true);
-  };
-
-  const closeDeleteEventDialog = () => {
-    setDeletingEventAlertIsOpen(false);
-  };
 
   const setLocation = (address, placeId) => {
     formDispatch({ field: "location", value: address });
@@ -143,7 +125,7 @@ const EventForm = (props) => {
     // setErrors(errors);
 
     // if (!isValid) {
-    //   setIsSubmitting(false);
+    //   setIsSubmitting.off();
     //   window.scrollTo(0, 0);
     //   return;
     // }
@@ -183,7 +165,7 @@ const EventForm = (props) => {
     formDispatch({ field: "placeId", value: props.event.location });
     formDispatch({ field: "location", value: props.event.placeId });
     formDispatch({ field: "game", value: props.event.game });
-    setHasPrefilledForm(true);
+    setHasPrefilledForm.on();
   };
 
   const url = React.useMemo(() => {
@@ -209,15 +191,7 @@ const EventForm = (props) => {
   return (
     <SiteLayout meta={{ title: pageTitle, og: { url } }}>
       <Article fullWidthMobile>
-        {hasErrors ? (
-          <Alert status="error" mb={4} rounded="lg">
-            <AlertIcon />
-            <AlertDescription>
-              There are errors in the form below. Please review and correct
-              before submitting again.
-            </AlertDescription>
-          </Alert>
-        ) : null}
+        {hasErrors ? <FormErrorAlert /> : null}
         <Stack as="form" spacing={6} onSubmit={handleSubmit}>
           <Flex alignItems="center" flexWrap="wrap">
             <PageHeading>{pageTitle}</PageHeading>
@@ -227,7 +201,7 @@ const EventForm = (props) => {
                 variant="ghost"
                 colorScheme="red"
                 size="lg"
-                onClick={openDeleteEventDialog}
+                onClick={setDeletingEventAlertIsOpen.on}
               >
                 Delete event
               </Button>
@@ -410,17 +384,10 @@ const EventForm = (props) => {
                 <FormHelperText id="description-helper-text">
                   Describe your event in fewer than{" "}
                   {MAX_DESCRIPTION_LENGTH.toLocaleString()} characters.{" "}
-                  <Text
-                    as="span"
-                    color={
-                      descriptionCharactersRemaining <= 0
-                        ? "red.500"
-                        : undefined
-                    }
-                  >
-                    {descriptionCharactersRemaining.toLocaleString()} characters
-                    remaining.
-                  </Text>
+                  <CharacterCounter
+                    value={formState.description}
+                    maxLength={MAX_DESCRIPTION_LENGTH}
+                  />
                 </FormHelperText>
               </FormControl>
               <FormErrorMessage>{props.errors.description}</FormErrorMessage>
@@ -695,7 +662,7 @@ const EventForm = (props) => {
         <DeleteEventDialog
           event={props.event}
           isOpen={isDeletingEventAlertOpen}
-          onClose={closeDeleteEventDialog}
+          onClose={setDeletingEventAlertIsOpen.off}
         />
       ) : null}
     </SiteLayout>
