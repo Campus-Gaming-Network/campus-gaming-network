@@ -201,8 +201,8 @@ const SchoolSearch = (props) => {
           autocomplete={false}
           // This turns off the browser autocomplete
           autoComplete="off"
-          onFocus={setFocused.on()}
-          onBlur={setFocused.off()}
+          onFocus={setFocused.on}
+          onBlur={setFocused.off}
         />
         <Spinner
           visibility={isFetching ? "visible" : "hidden"}

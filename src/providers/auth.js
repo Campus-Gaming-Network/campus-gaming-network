@@ -45,12 +45,16 @@ export const AuthProvider = ({ children }) => {
     [authStatus]
   );
 
-  React.useEffect(() => console.log(`[AUTH] Status -> ${authStatus}`), [
-    authStatus,
-  ]);
+  React.useEffect(() => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[AUTH] Status -> ${authStatus}`);
+    }
+  }, [authStatus, process.env.NODE_ENV]);
 
   const clearAuth = () => {
-    console.log("[AUTH] Clearing auth.");
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[AUTH] Clearing auth.");
+    }
 
     setAuthStatus(AUTH_STATUS.UNAUTHENTICATED);
     setAuthUser(null);
@@ -75,15 +79,21 @@ export const AuthProvider = ({ children }) => {
     }
 
     return onIdTokenChanged(auth, async (authUser) => {
-      console.log("[AUTH] Token changed!");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[AUTH] Token changed!");
+      }
 
       if (!Boolean(authUser)) {
-        console.log("[AUTH] No auth user found.");
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[AUTH] No auth user found.");
+        }
         clearAuth();
         return;
       }
 
-      console.log("[AUTH] Updating token.");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[AUTH] Updating token.");
+      }
 
       let token;
 
@@ -146,7 +156,9 @@ export const AuthProvider = ({ children }) => {
   // Force refresh the token
   React.useEffect(() => {
     const handle = setInterval(async () => {
-      console.log("[AUTH] Refreshing token.");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[AUTH] Refreshing token.");
+      }
 
       const authUser = auth.currentUser;
 
@@ -158,7 +170,9 @@ export const AuthProvider = ({ children }) => {
           clearAuth();
         }
       } else {
-        console.log("[AUTH] No auth user found.");
+        if (process.env.NODE_ENV !== "production") {
+          console.log("[AUTH] No auth user found.");
+        }
         clearAuth();
       }
     }, AUTH_REFRESH_INTERVAL);

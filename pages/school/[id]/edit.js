@@ -53,14 +53,12 @@ export const getServerSideProps = async (context) => {
 
   try {
     cookies = nookies.get(context);
-    token =
-      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
-        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-        : null;
-    authStatus =
-      Boolean(token) && Boolean(token.uid)
-        ? AUTH_STATUS.AUTHENTICATED
-        : AUTH_STATUS.UNAUTHENTICATED;
+    token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
+      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+      : null;
+    authStatus = Boolean(token?.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return NOT_FOUND;

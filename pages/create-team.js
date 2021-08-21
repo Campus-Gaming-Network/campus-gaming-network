@@ -29,14 +29,12 @@ import { useAuth } from "src/providers/auth";
 export const getServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
-    const token =
-      Boolean(cookies) && Boolean(cookies[COOKIES.AUTH_TOKEN])
-        ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-        : null;
-    const authStatus =
-      Boolean(token) && Boolean(token.uid)
-        ? AUTH_STATUS.AUTHENTICATED
-        : AUTH_STATUS.UNAUTHENTICATED;
+    const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
+      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
+      : null;
+    const authStatus = Boolean(token?.uid)
+      ? AUTH_STATUS.AUTHENTICATED
+      : AUTH_STATUS.UNAUTHENTICATED;
 
     if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
       return NOT_FOUND;
