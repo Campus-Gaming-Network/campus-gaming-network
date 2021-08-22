@@ -20,7 +20,6 @@
     "@sentry/tracing": "^5.29.0",
     "bad-words": "^3.0.4",
     "cross-env": "^7.0.3",
-    "eslint": "^7.32.0",
     "firebase": "^9.0.0-beta.8",
     "firebase-admin": "^9.5.0",
     "firebase-tools": "^9.8.0",
@@ -66,9 +65,6 @@
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
     "test-firestore": "mocha --timeout 10000 --exit tests/collections.spec.js"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
