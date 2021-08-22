@@ -24,6 +24,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Img,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 
@@ -35,6 +36,7 @@ import PageHeading from "src/components/PageHeading";
 import Card from "src/components/Card";
 import FormErrorAlert from "src/components/FormErrorAlert";
 import CharacterCounter from "src/components/CharacterCounter";
+import OutsideLink from "src/components/OutsideLink";
 
 // Constants
 import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";
@@ -154,7 +156,29 @@ const TournamentForm = (props) => {
         {hasErrors ? <FormErrorAlert /> : null}
         <Stack as="form" spacing={2} onSubmit={handleSubmit}>
           <Flex alignItems="center" flexWrap="wrap">
-            <PageHeading>{pageTitle}</PageHeading>
+            <Box pb={12}>
+              <PageHeading pb={4}>{pageTitle}</PageHeading>
+              <Flex align="center">
+                <Img
+                  src="/challonge-logo.png"
+                  alt="Challonge"
+                  title="Challonge"
+                  h={4}
+                  mr={2}
+                />
+                <Text
+                  fontSize="sm"
+                  textTransform=""
+                  fontWeight="bold"
+                  color="gray.500"
+                >
+                  Powered by{" "}
+                  <OutsideLink href="https://challonge.com/">
+                    Challonge! &trade;
+                  </OutsideLink>
+                </Text>
+              </Flex>
+            </Box>
             <Spacer />
             {props.state === "edit" ? (
               <Button

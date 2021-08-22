@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Img, Heading, Image, VisuallyHidden } from "@chakra-ui/react";
+import { Img, Heading, VisuallyHidden } from "@chakra-ui/react";
 
 // Components
 import Link from "src/components/Link";
