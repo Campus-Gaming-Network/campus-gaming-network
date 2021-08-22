@@ -53,33 +53,33 @@ const DeleteTeamDialog = dynamic(
   { ssr: false }
 );
 
-const TEAMMATE_OPTIONS = [
-  {
+const TEAMMATE_OPTIONS = {
+  PROMOTE_TO_LEADER: {
     props: {
       children: "Promote to Leader",
       icon: <FontAwesomeIcon icon={faCrown} />,
     },
   },
-  {
+  PROMOTE_TO_OFFICER: {
     props: {
       children: "Promote to Officer",
       icon: <FontAwesomeIcon icon={faMedal} />,
     },
   },
-  {
+  DEMOTE: {
     props: {
       children: "Demote",
       icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
     },
   },
-  {
+  KICK: {
     props: {
       children: "Kick from team",
       icon: <FontAwesomeIcon icon={faBan} />,
       color: "red.500",
     },
   },
-];
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Form Reducer
@@ -345,14 +345,31 @@ const UsersList = (props) => {
     return (
       <React.Fragment>
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {props.users.map(({ user }) => (
-            <UserListItem
-              key={user.id}
-              user={user}
-              teamLeader={props.team?.roles?.leader?.id === user.id}
-              options={TEAMMATE_OPTIONS}
-            />
-          ))}
+          {props.users.map(({ user }) => {
+            const isTeamLeader = props.team?.roles?.leader?.id === user.id;
+            const isTeamOfficer = props.team?.roles?.officer?.id === user.id;
+            const options = [];
+
+            if (!isTeamLeader && !isTeamOfficer) {
+              options.push(TEAMMATE_OPTIONS.PROMOTE_TO_LEADER);
+              options.push(TEAMMATE_OPTIONS.PROMOTE_TO_OFFICER);
+              options.push(TEAMMATE_OPTIONS.KICK);
+            } else if (isTeamOfficer) {
+              options.push(TEAMMATE_OPTIONS.PROMOTE_TO_LEADER);
+              options.push(TEAMMATE_OPTIONS.DEMOTE);
+              options.push(TEAMMATE_OPTIONS.KICK);
+            }
+
+            return (
+              <UserListItem
+                key={user.id}
+                user={user}
+                teamLeader={isTeamLeader}
+                teamOfficer={isTeamOfficer}
+                options={options}
+              />
+            );
+          })}
         </List>
       </React.Fragment>
     );

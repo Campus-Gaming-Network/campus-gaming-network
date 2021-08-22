@@ -28,7 +28,7 @@ const UserListItem = (props) => {
   return (
     <React.Fragment>
       <SliderCard h="125px" w="150px">
-        {props.options ? (
+        {Boolean(props.options?.length) ? (
           <Box pos="absolute" top={2} right={2}>
             <Menu>
               <MenuButton
