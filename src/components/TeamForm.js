@@ -53,6 +53,34 @@ const DeleteTeamDialog = dynamic(
   { ssr: false }
 );
 
+const TEAMMATE_OPTIONS = [
+  {
+    props: {
+      children: "Promote to Leader",
+      icon: <FontAwesomeIcon icon={faCrown} />,
+    },
+  },
+  {
+    props: {
+      children: "Promote to Officer",
+      icon: <FontAwesomeIcon icon={faMedal} />,
+    },
+  },
+  {
+    props: {
+      children: "Demote",
+      icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
+    },
+  },
+  {
+    props: {
+      children: "Kick from team",
+      icon: <FontAwesomeIcon icon={faBan} />,
+      color: "red.500",
+    },
+  },
+];
+
 ////////////////////////////////////////////////////////////////////////////////
 // Form Reducer
 
@@ -103,34 +131,6 @@ const TeamForm = (props) => {
     formDispatch({ field: "website", value: props.team.website });
     setHasPrefilledForm.on();
   };
-
-  const teammateOptions = [
-    {
-      props: {
-        children: "Promote to Leader",
-        icon: <FontAwesomeIcon icon={faCrown} />,
-      },
-    },
-    {
-      props: {
-        children: "Promote to Officer",
-        icon: <FontAwesomeIcon icon={faMedal} />,
-      },
-    },
-    {
-      props: {
-        children: "Demote",
-        icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
-      },
-    },
-    {
-      props: {
-        children: "Kick from team",
-        icon: <FontAwesomeIcon icon={faBan} />,
-        color: "red.500",
-      },
-    },
-  ];
 
   const url = React.useMemo(() => {
     if (props.state === "edit") {
@@ -350,6 +350,7 @@ const UsersList = (props) => {
               key={user.id}
               user={user}
               teamLeader={props.team?.roles?.leader?.id === user.id}
+              options={TEAMMATE_OPTIONS}
             />
           ))}
         </List>
