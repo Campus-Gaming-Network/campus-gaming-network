@@ -29,7 +29,6 @@ import firebaseAdmin from "src/firebaseAdmin";
 import { noop, useFormFields } from "src/utilities/other";
 
 // Constants
-import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
 import { CALLABLES } from "src/constants/firebase";
 
@@ -51,16 +50,12 @@ import FormErrorAlert from "src/components/FormErrorAlert";
 
 export const getServerSideProps = async (context) => {
   let token;
-  let authStatus;
 
   try {
     const cookies = nookies.get(context);
     token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-    authStatus = Boolean(token?.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
   } catch (error) {
     noop();
   }
@@ -73,7 +68,7 @@ export const getServerSideProps = async (context) => {
 
   let teammate;
 
-  if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+  if (Boolean(token?.uid)) {
     const response = await getTeammateDetails(context.params.id, token.uid);
     teammate = response?.teammate;
   }

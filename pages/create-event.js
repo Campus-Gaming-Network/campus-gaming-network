@@ -23,7 +23,6 @@ import { validateCreateEvent } from "src/utilities/validation";
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { DASHED_DATE_TIME } from "src/constants/dateTime";
-import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
 
 // Components
@@ -41,11 +40,8 @@ export const getServerSideProps = async (context) => {
     const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-    const authStatus = Boolean(token?.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
+    if (!Boolean(token?.uid)) {
       return NOT_FOUND;
     }
   } catch (error) {

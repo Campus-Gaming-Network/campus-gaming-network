@@ -33,7 +33,6 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
 import { COLLECTIONS } from "src/constants/firebase";
-import { AUTH_STATUS } from "src/constants/auth";
 import {
   COOKIES,
   PRODUCTION_URL,
@@ -65,11 +64,8 @@ export const getServerSideProps = async (context) => {
     const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-    const authStatus = Boolean(token?.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    if (Boolean(token?.uid)) {
       return REDIRECT_HOME;
     }
   } catch (error) {

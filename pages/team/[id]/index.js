@@ -31,7 +31,6 @@ import { getUserTeammateDetails } from "src/api/user";
 
 // Constants
 import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { AUTH_STATUS } from "src/constants/auth";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -81,11 +80,8 @@ export const getServerSideProps = async (context) => {
     const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-    const authStatus = Boolean(token?.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    if (Boolean(token?.uid)) {
       const [userTeammateResponse] = await Promise.all([
         getUserTeammateDetails(context.params.id, token.uid),
       ]);

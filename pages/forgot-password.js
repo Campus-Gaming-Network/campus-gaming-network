@@ -37,7 +37,6 @@ import FormErrorAlert from "src/components/FormErrorAlert";
 import { auth } from "src/firebase";
 
 // Constants
-import { AUTH_STATUS } from "src/constants/auth";
 import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,11 +48,8 @@ export const getServerSideProps = async (context) => {
     const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-    const authStatus = Boolean(token?.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    if (Boolean(token?.uid)) {
       return REDIRECT_HOME;
     }
   } catch (error) {

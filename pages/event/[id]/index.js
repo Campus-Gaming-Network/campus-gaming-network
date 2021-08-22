@@ -33,7 +33,6 @@ import {
   EVENT_EMPTY_USERS_TEXT,
 } from "src/constants/event";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { AUTH_STATUS } from "src/constants/auth";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -113,11 +112,8 @@ export const getServerSideProps = async (context) => {
     const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-    const authStatus = Boolean(token?.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.AUTHENTICATED) {
+    if (Boolean(token?.uid)) {
       const [userResponse, userEventResponse] = await Promise.all([
         getUserDetails(token.uid),
         getUserEventResponse(context.params.id, token.uid),

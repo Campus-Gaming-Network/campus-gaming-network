@@ -57,7 +57,6 @@ import {
   PRODUCTION_URL,
   NOT_FOUND,
 } from "src/constants/other";
-import { AUTH_STATUS } from "src/constants/auth";
 
 // Other
 import { db } from "src/firebase";
@@ -92,20 +91,13 @@ const DeleteAccountDialog = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  let cookies;
-  let token;
-  let authStatus;
-
   try {
-    cookies = nookies.get(context);
-    token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
+    const cookies = nookies.get(context);
+    const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-    authStatus = Boolean(token?.uid)
-      ? AUTH_STATUS.AUTHENTICATED
-      : AUTH_STATUS.UNAUTHENTICATED;
 
-    if (authStatus === AUTH_STATUS.UNAUTHENTICATED) {
+    if (!Boolean(token?.uid)) {
       return NOT_FOUND;
     }
   } catch (error) {
