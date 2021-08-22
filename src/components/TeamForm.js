@@ -1,5 +1,12 @@
 // Libraries
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCrown,
+  faMedal,
+  faBan,
+  faArrowCircleDown,
+} from "@fortawesome/free-solid-svg-icons";
 import isEmpty from "lodash.isempty";
 import {
   Input,
@@ -17,6 +24,8 @@ import {
   Spacer,
   VisuallyHidden,
   useBoolean,
+  Heading,
+  List,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 
@@ -28,6 +37,8 @@ import PageHeading from "src/components/PageHeading";
 import Card from "src/components/Card";
 import FormErrorAlert from "src/components/FormErrorAlert";
 import CharacterCounter from "src/components/CharacterCounter";
+import EmptyText from "src/components/EmptyText";
+import UserListItem from "src/components/UserListItem";
 
 // Constants
 import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";
@@ -93,7 +104,7 @@ const TeamForm = (props) => {
     setHasPrefilledForm.on();
   };
 
-  const options = [
+  const teammateOptions = [
     {
       props: {
         children: "Promote to Leader",
@@ -287,6 +298,12 @@ const TeamForm = (props) => {
               </FormControl>
             </Stack>
           </Card>
+          <Stack as="section" pt={12} spacing={4}>
+            <Heading as="h4" fontSize="xl">
+              Team members
+            </Heading>
+            <UsersList team={props.team} users={props.teammates} />
+          </Stack>
           <Box pt={16}>
             <Button
               colorScheme="brand"
@@ -314,6 +331,33 @@ const TeamForm = (props) => {
       ) : null}
     </SiteLayout>
   );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// UsersList
+
+const UsersList = (props) => {
+  const hasUsers = React.useMemo(() => {
+    return Boolean(props.users) && props.users.length > 0;
+  }, [props.users]);
+
+  if (hasUsers) {
+    return (
+      <React.Fragment>
+        <List display="flex" flexWrap="wrap" mx={-2}>
+          {props.users.map(({ user }) => (
+            <UserListItem
+              key={user.id}
+              user={user}
+              teamLeader={props.team?.roles?.leader?.id === user.id}
+            />
+          ))}
+        </List>
+      </React.Fragment>
+    );
+  }
+
+  return <EmptyText mt={4}>This team currently has no users.</EmptyText>;
 };
 
 export default TeamForm;

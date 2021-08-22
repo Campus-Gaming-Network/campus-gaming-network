@@ -30,9 +30,11 @@ import { useAuth } from "src/providers/auth";
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
+  let token;
+
   try {
     const cookies = nookies.get(context);
-    const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
+    token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
 
@@ -54,7 +56,7 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  if (team.roles.leader.id !== token.uid) {
+  if (team?.roles?.leader?.id !== token.uid) {
     return NOT_FOUND;
   }
 
@@ -76,12 +78,17 @@ const EditTeam = (props) => {
   const [isSubmitting, setIsSubmitting] = useBoolean();
   const toast = useToast();
 
-  const handleSubmit = () => {};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setIsSubmitting.on();
+  };
 
   return (
     <TeamForm
       state="edit"
       team={props.team}
+      teammates={props.teammates}
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
       errors={errors}
