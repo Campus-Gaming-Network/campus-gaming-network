@@ -55,7 +55,9 @@ const CreateTeam = () => {
     setIsSubmitting.off();
     toast({
       title: "An error occurred.",
-      description: error.message,
+      description:
+        error?.message ||
+        "There was an error creating the team. Please try again.",
       status: "error",
       isClosable: true,
     });
@@ -91,7 +93,8 @@ const CreateTeam = () => {
 
     try {
       const result = await createTeam(teamData);
-      if (result.data.teamId) {
+
+      if (Boolean(result?.data?.teamId)) {
         toast({
           title: "Team created.",
           description: "Your team has been created. You will be redirected...",
@@ -102,9 +105,7 @@ const CreateTeam = () => {
           router.push(`/team/${result.data.teamId}`);
         }, 2000);
       } else {
-        handleSubmitError({
-          message: "There was an error creating the team. Please try again.",
-        });
+        handleSubmitError(result?.data?.error);
       }
     } catch (error) {
       handleSubmitError(error);

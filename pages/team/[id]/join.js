@@ -102,7 +102,9 @@ const JoinTeam = (props) => {
     setIsSubmitting.off();
     toast({
       title: "An error occurred.",
-      description: error.message,
+      description:
+        error?.message ||
+        "There was an error joining the team. Please try again.",
       status: "error",
       isClosable: true,
     });
@@ -126,7 +128,8 @@ const JoinTeam = (props) => {
 
     try {
       const result = await joinTeam(data);
-      if (result.data.teamId) {
+
+      if (Boolean(result?.data?.teamId)) {
         toast({
           title: "Team joined.",
           description: `You have joined "${props.team.name}". You will be redirected...`,
@@ -137,9 +140,7 @@ const JoinTeam = (props) => {
           router.push(`/team/${result.data.teamId}`);
         }, 2000);
       } else {
-        handleSubmitError({
-          message: "There was an error joining the team. Please try again.",
-        });
+        handleSubmitError(result?.data?.error);
       }
     } catch (error) {
       handleSubmitError(error);
@@ -184,7 +185,7 @@ const JoinTeam = (props) => {
           <Stack spacing={6}>
             <FormControl isRequired isInvalid={errors.password}>
               <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
-                Password
+                Team Password
               </FormLabel>
               <Input
                 id="password"
