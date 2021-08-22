@@ -16,6 +16,9 @@ const SliderCard = ({ children, ...rest }) => {
         rounded="lg"
         bg="white"
         zIndex={1}
+        _hover={{
+          shadow: "md",
+        }}
         {...rest}
       >
         {children}
