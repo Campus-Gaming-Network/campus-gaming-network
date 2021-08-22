@@ -44,10 +44,16 @@ const LeaveTeamDialog = (props) => {
       onClose={props.onClose}
     >
       <AlertDialogOverlay />
-      <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
+      <AlertDialogContent
+        rounded="lg"
+        borderWidth="1px"
+        boxShadow="lg"
+        as="form"
+        onSubmit={handleSubmit}
+      >
         <AlertDialogHeader>Leave Team</AlertDialogHeader>
 
-        <AlertDialogBody as="form" onSubmit={handleSubmit}>
+        <AlertDialogBody>
           Are you sure you want to leave{" "}
           <Text as="span" fontWeight="bold">
             {props.team ? props.team.name : ""}

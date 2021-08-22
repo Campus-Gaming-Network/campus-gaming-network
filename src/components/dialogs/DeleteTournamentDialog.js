@@ -31,7 +31,9 @@ const DeleteTournamentDialog = (props) => {
   const deleteTournamentRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = useBoolean();
 
-  const onDeleteTournamentConfirm = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     setIsSubmitting.on();
 
     try {
@@ -68,7 +70,13 @@ const DeleteTournamentDialog = (props) => {
       onClose={props.onClose}
     >
       <AlertDialogOverlay />
-      <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
+      <AlertDialogContent
+        rounded="lg"
+        borderWidth="1px"
+        boxShadow="lg"
+        as="form"
+        onSubmit={handleSubmit}
+      >
         <AlertDialogHeader>Delete Tournament</AlertDialogHeader>
 
         <AlertDialogBody>
@@ -89,11 +97,7 @@ const DeleteTournamentDialog = (props) => {
               <Button ref={deleteTournamentRef} onClick={props.onClose}>
                 No, nevermind
               </Button>
-              <Button
-                colorScheme="red"
-                onClick={onDeleteTournamentConfirm}
-                ml={3}
-              >
+              <Button colorScheme="red" type="submit" ml={3}>
                 Yes, I want to delete the tournament
               </Button>
             </React.Fragment>

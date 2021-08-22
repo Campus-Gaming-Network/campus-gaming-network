@@ -44,10 +44,16 @@ const PromoteTeammateDialog = (props) => {
       onClose={props.onClose}
     >
       <AlertDialogOverlay />
-      <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
+      <AlertDialogContent
+        rounded="lg"
+        borderWidth="1px"
+        boxShadow="lg"
+        as="form"
+        onSubmit={handleSubmit}
+      >
         <AlertDialogHeader>Promote Teammate</AlertDialogHeader>
 
-        <AlertDialogBody as="form" onSubmit={handleSubmit}>
+        <AlertDialogBody>
           Are you sure you want to promote{" "}
           <Text as="span" fontWeight="bold">
             {props.user ? props.user.fullName : ""}
