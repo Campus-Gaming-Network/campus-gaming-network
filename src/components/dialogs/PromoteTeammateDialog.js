@@ -12,10 +12,14 @@ import {
   AlertDialogOverlay,
   useBoolean,
 } from "@chakra-ui/react";
+import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/router";
 
 // Constants
 import { CALLABLES } from "src/constants/firebase";
+
+// Other
+import { functions } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////
 // PromoteTeammateDialog
@@ -26,6 +30,17 @@ const PromoteTeammateDialog = (props) => {
   const cancelRef = React.useRef();
   const promoteTeammateRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = useBoolean();
+
+  const handleSubmitError = (error) => {
+    props.onClose();
+    setIsSubmitting.off();
+    toast({
+      title: "An error occurred.",
+      description: error.message,
+      status: "error",
+      isClosable: true,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,7 +105,7 @@ const PromoteTeammateDialog = (props) => {
 
         <AlertDialogFooter>
           {isSubmitting ? (
-            <Button colorScheme="red" disabled>
+            <Button colorScheme="brand" disabled>
               Promoting...
             </Button>
           ) : (
@@ -98,7 +113,7 @@ const PromoteTeammateDialog = (props) => {
               <Button ref={promoteTeammateRef} onClick={props.onClose}>
                 No, nevermind
               </Button>
-              <Button colorScheme="red" type="submit" ml={3}>
+              <Button colorScheme="brand" type="submit" ml={3}>
                 Yes, I want to promote them
               </Button>
             </React.Fragment>

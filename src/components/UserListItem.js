@@ -15,7 +15,11 @@ import {
   Portal,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCrown, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCrown,
+  faEllipsisV,
+  faMedal,
+} from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Link from "src/components/Link";
@@ -40,7 +44,7 @@ const UserListItem = (props) => {
               />
               <Portal>
                 <MenuList fontSize="md">
-                  {props.options.map(({ option }) => {
+                  {props.options.map((option) => {
                     const { onClick, ...rest } = option.props;
                     return (
                       <MenuItem {...rest} onClick={() => onClick(props.user)} />
@@ -91,6 +95,28 @@ const UserListItem = (props) => {
               >
                 <FontAwesomeIcon icon={faCrown} />
                 <VisuallyHidden>Team leader</VisuallyHidden>
+              </Text>
+            </Tooltip>
+          ) : null}
+          {props.teamOfficer ? (
+            <Tooltip label="Team officer">
+              <Text
+                as="span"
+                d="flex"
+                fontSize="xs"
+                pos="absolute"
+                top="-11px"
+                align="center"
+                justify="center"
+                rounded="full"
+                shadow="sm"
+                borderWidth={1}
+                bg="white"
+                px="2px"
+                py="3px"
+              >
+                <FontAwesomeIcon icon={faMedal} />
+                <VisuallyHidden>Team officer</VisuallyHidden>
               </Text>
             </Tooltip>
           ) : null}

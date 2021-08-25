@@ -26,6 +26,7 @@ import {
   useBoolean,
   Heading,
   List,
+  Portal,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 
@@ -346,7 +347,7 @@ const UsersList = (props) => {
       props: {
         children: "Promote to Leader",
         icon: <FontAwesomeIcon icon={faCrown} />,
-        onClick: (_uesr) => {
+        onClick: (_user) => {
           setTeammateToEdit(_user);
           setPromotion("leader");
           setPromoteTeammateAlertIsOpen.on();
@@ -357,7 +358,7 @@ const UsersList = (props) => {
       props: {
         children: "Promote to Officer",
         icon: <FontAwesomeIcon icon={faMedal} />,
-        onClick: (_uesr) => {
+        onClick: (_user) => {
           setTeammateToEdit(_user);
           setPromotion("officer");
           setPromoteTeammateAlertIsOpen.on();
@@ -368,7 +369,7 @@ const UsersList = (props) => {
       props: {
         children: "Demote",
         icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
-        onClick: (_uesr) => {
+        onClick: (_user) => {
           setTeammateToEdit(_user);
           setDemoteTeammateAlertIsOpen.on();
         },
@@ -379,7 +380,7 @@ const UsersList = (props) => {
         children: "Kick from team",
         icon: <FontAwesomeIcon icon={faBan} />,
         color: "red.500",
-        onClick: (_uesr) => {
+        onClick: (_user) => {
           setTeammateToEdit(_user);
           setKickTeammateAlertIsOpen.on();
         },
@@ -419,7 +420,7 @@ const UsersList = (props) => {
         </List>
 
         {props.state === "edit" ? (
-          <React.Fragment>
+          <Portal>
             <KickTeammateDialog
               isOpen={isKickTeammateAlertOpen}
               onClose={setKickTeammateAlertIsOpen.off}
@@ -439,7 +440,7 @@ const UsersList = (props) => {
               teammate={teammateToEdit}
               team={props.team}
             />
-          </React.Fragment>
+          </Portal>
         ) : null}
       </React.Fragment>
     );

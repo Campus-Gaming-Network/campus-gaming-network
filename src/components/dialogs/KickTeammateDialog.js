@@ -12,10 +12,14 @@ import {
   AlertDialogOverlay,
   useBoolean,
 } from "@chakra-ui/react";
+import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/router";
 
 // Constants
 import { CALLABLES } from "src/constants/firebase";
+
+// Other
+import { functions } from "src/firebase";
 
 ////////////////////////////////////////////////////////////////////////////
 // KickTeammateDialog
@@ -26,6 +30,17 @@ const KickTeammateDialog = (props) => {
   const cancelRef = React.useRef();
   const kickTeammateRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = useBoolean();
+
+  const handleSubmitError = (error) => {
+    props.onClose();
+    setIsSubmitting.off();
+    toast({
+      title: "An error occurred.",
+      description: error.message,
+      status: "error",
+      isClosable: true,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
