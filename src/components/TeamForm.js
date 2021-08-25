@@ -52,34 +52,18 @@ const DeleteTeamDialog = dynamic(
   () => import("src/components/dialogs/DeleteTeamDialog"),
   { ssr: false }
 );
-
-const TEAMMATE_OPTIONS = {
-  PROMOTE_TO_LEADER: {
-    props: {
-      children: "Promote to Leader",
-      icon: <FontAwesomeIcon icon={faCrown} />,
-    },
-  },
-  PROMOTE_TO_OFFICER: {
-    props: {
-      children: "Promote to Officer",
-      icon: <FontAwesomeIcon icon={faMedal} />,
-    },
-  },
-  DEMOTE: {
-    props: {
-      children: "Demote",
-      icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
-    },
-  },
-  KICK: {
-    props: {
-      children: "Kick from team",
-      icon: <FontAwesomeIcon icon={faBan} />,
-      color: "red.500",
-    },
-  },
-};
+const KickTeammateDialog = dynamic(
+  () => import("src/components/dialogs/KickTeammateDialog"),
+  { ssr: false }
+);
+const PromoteTeammateDialog = dynamic(
+  () => import("src/components/dialogs/PromoteTeammateDialog"),
+  { ssr: false }
+);
+const DemoteTeammateDialog = dynamic(
+  () => import("src/components/dialogs/DemoteTeammateDialog"),
+  { ssr: false }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Form Reducer
@@ -302,7 +286,11 @@ const TeamForm = (props) => {
             <Heading as="h4" fontSize="xl">
               Team members
             </Heading>
-            <UsersList team={props.team} users={props.teammates} />
+            <UsersList
+              team={props.team}
+              users={props.teammates}
+              state={props.state}
+            />
           </Stack>
           <Box pt={16}>
             <Button
@@ -337,9 +325,67 @@ const TeamForm = (props) => {
 // UsersList
 
 const UsersList = (props) => {
+  const [
+    isPromoteTeammateAlertOpen,
+    setPromoteTeammateAlertIsOpen,
+  ] = useBoolean();
+  const [
+    isDemoteTeammateAlertOpen,
+    setDemoteTeammateAlertIsOpen,
+  ] = useBoolean();
+  const [isKickTeammateAlertOpen, setKickTeammateAlertIsOpen] = useBoolean();
+  const [promotion, setPromotion] = React.useState("");
+  const [teammateToEdit, setTeammateToEdit] = React.useState(null);
+
   const hasUsers = React.useMemo(() => {
     return Boolean(props.users) && props.users.length > 0;
   }, [props.users]);
+
+  const TEAMMATE_OPTIONS = {
+    PROMOTE_TO_LEADER: {
+      props: {
+        children: "Promote to Leader",
+        icon: <FontAwesomeIcon icon={faCrown} />,
+        onClick: (_uesr) => {
+          setTeammateToEdit(_user);
+          setPromotion("leader");
+          setPromoteTeammateAlertIsOpen.on();
+        },
+      },
+    },
+    PROMOTE_TO_OFFICER: {
+      props: {
+        children: "Promote to Officer",
+        icon: <FontAwesomeIcon icon={faMedal} />,
+        onClick: (_uesr) => {
+          setTeammateToEdit(_user);
+          setPromotion("officer");
+          setPromoteTeammateAlertIsOpen.on();
+        },
+      },
+    },
+    DEMOTE: {
+      props: {
+        children: "Demote",
+        icon: <FontAwesomeIcon icon={faArrowCircleDown} />,
+        onClick: (_uesr) => {
+          setTeammateToEdit(_user);
+          setDemoteTeammateAlertIsOpen.on();
+        },
+      },
+    },
+    KICK: {
+      props: {
+        children: "Kick from team",
+        icon: <FontAwesomeIcon icon={faBan} />,
+        color: "red.500",
+        onClick: (_uesr) => {
+          setTeammateToEdit(_user);
+          setKickTeammateAlertIsOpen.on();
+        },
+      },
+    },
+  };
 
   if (hasUsers) {
     return (
@@ -371,6 +417,27 @@ const UsersList = (props) => {
             );
           })}
         </List>
+
+        {props.state === "edit" ? (
+          <React.Fragment>
+            <KickTeammateDialog
+              isOpen={isKickTeammateAlertOpen}
+              onClose={setKickTeammateAlertIsOpen.off}
+              teammate={teammateToEdit}
+            />
+            <PromoteTeammateDialog
+              isOpen={isPromoteTeammateAlertOpen}
+              onClose={setPromoteTeammateAlertIsOpen.off}
+              teammate={teammateToEdit}
+              promotion={promotion}
+            />
+            <DemoteTeammateDialog
+              isOpen={isDemoteTeammateAlertOpen}
+              onClose={setDemoteTeammateAlertIsOpen.off}
+              teammate={teammateToEdit}
+            />
+          </React.Fragment>
+        ) : null}
       </React.Fragment>
     );
   }

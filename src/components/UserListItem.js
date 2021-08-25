@@ -40,9 +40,12 @@ const UserListItem = (props) => {
               />
               <Portal>
                 <MenuList fontSize="md">
-                  {props.options.map((option) => (
-                    <MenuItem {...option.props} />
-                  ))}
+                  {props.options.map(({ option }) => {
+                    const { onClick, ...rest } = option.props;
+                    return (
+                      <MenuItem {...rest} onClick={() => onClick(props.user)} />
+                    );
+                  })}
                 </MenuList>
               </Portal>
             </Menu>

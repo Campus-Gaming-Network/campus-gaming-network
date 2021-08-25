@@ -10,4 +10,5 @@ Disallow: /user/*/edit
 Disallow: /event/*/edit
 Disallow: /school/*/edit
 Disallow: /tournament/*/edit
+Disallow: /team/*/edit
 Disallow: /team/*/join
