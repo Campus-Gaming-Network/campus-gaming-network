@@ -424,17 +424,20 @@ const UsersList = (props) => {
               isOpen={isKickTeammateAlertOpen}
               onClose={setKickTeammateAlertIsOpen.off}
               teammate={teammateToEdit}
+              team={props.team}
             />
             <PromoteTeammateDialog
               isOpen={isPromoteTeammateAlertOpen}
               onClose={setPromoteTeammateAlertIsOpen.off}
               teammate={teammateToEdit}
+              team={props.team}
               promotion={promotion}
             />
             <DemoteTeammateDialog
               isOpen={isDemoteTeammateAlertOpen}
               onClose={setDemoteTeammateAlertIsOpen.off}
               teammate={teammateToEdit}
+              team={props.team}
             />
           </React.Fragment>
         ) : null}

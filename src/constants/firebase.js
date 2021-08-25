@@ -26,6 +26,9 @@ export const CALLABLES = {
   REPORT_ENTITY: "reportEntity",
   CREATE_TEAM: "createTeam",
   JOIN_TEAM: "joinTeam",
+  KICK_TEAMMATE: "kickTeammate",
+  PROMOTE_TEAMMATE: "promoteTeammate",
+  DEMOTE_TEAMMATE: "demoteTeammate",
 };
 
 export const AUTH_ACTION = {

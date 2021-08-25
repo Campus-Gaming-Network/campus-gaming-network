@@ -13,13 +13,9 @@ import {
   useBoolean,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { doc, deleteDoc } from "firebase/firestore";
-
-// Other
-import { db } from "src/firebase";
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
+import { CALLABLES } from "src/constants/firebase";
 
 ////////////////////////////////////////////////////////////////////////////
 // DemoteTeammateDialog
@@ -35,6 +31,33 @@ const DemoteTeammateDialog = (props) => {
     e.preventDefault();
 
     setIsSubmitting.on();
+
+    const data = {
+      teamId: props.team.id,
+      teammateId: props.teammate.id,
+    };
+
+    const demoteTeammate = httpsCallable(functions, CALLABLES.DEMOTE_TEAMMATE);
+
+    try {
+      const result = await demoteTeammate(data);
+
+      if (Boolean(result?.data?.success)) {
+        toast({
+          title: "Teammate demoted.",
+          description: `You have demoted "${props.teammate.fullName}". You will be redirected...`,
+          status: "success",
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push(`/team/${props.team.id}/edit`);
+        }, 2000);
+      } else {
+        handleSubmitError(result?.data?.error);
+      }
+    } catch (error) {
+      handleSubmitError(error);
+    }
   };
 
   return (
