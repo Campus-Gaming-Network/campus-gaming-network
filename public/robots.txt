@@ -1,6 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow: /edit-user
+Disallow: /teams
 Disallow: /create-event
 Disallow: /create-team
 Disallow: /create-tournament

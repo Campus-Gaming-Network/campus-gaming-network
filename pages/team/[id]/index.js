@@ -205,6 +205,7 @@ const UsersList = (props) => {
               key={user.id}
               user={user}
               teamLeader={props.team?.roles?.leader?.id === user.id}
+              teamOfficer={props.team?.roles?.officer?.id === user.id}
             />
           ))}
         </List>
