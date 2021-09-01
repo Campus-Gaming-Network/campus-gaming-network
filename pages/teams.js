@@ -98,24 +98,34 @@ const Teams = (props) => {
             {props?.teams?.map((team) => (
               <ListItem key={team.id} as={Card}>
                 <Flex align="center" justify="space-between">
-                  <Flex align="center">
-                    {team.roles?.leader?.id === user?.id ? (
-                      <Tooltip label="Team leader">
-                        <Text as="span" color="yellow.500" fontSize="xs" mr={2}>
-                          <FontAwesomeIcon icon={faCrown} />
-                          <VisuallyHidden>Team leader</VisuallyHidden>
-                        </Text>
-                      </Tooltip>
-                    ) : null}
-                    {team.roles?.officer?.id === user?.id ? (
-                      <Tooltip label="Team officer">
-                        <Text as="span" color="yellow.500" fontSize="xs" mr={2}>
-                          <FontAwesomeIcon icon={faMedal} />
-                          <VisuallyHidden>Team officer</VisuallyHidden>
-                        </Text>
-                      </Tooltip>
-                    ) : null}
-                    <Stack>
+                  <Stack>
+                    <Flex align="center">
+                      {team.roles?.leader?.id === user?.id ? (
+                        <Tooltip label="Team leader">
+                          <Text
+                            as="span"
+                            color="yellow.500"
+                            fontSize="xs"
+                            mr={2}
+                          >
+                            <FontAwesomeIcon icon={faCrown} />
+                            <VisuallyHidden>Team leader</VisuallyHidden>
+                          </Text>
+                        </Tooltip>
+                      ) : null}
+                      {team.roles?.officer?.id === user?.id ? (
+                        <Tooltip label="Team officer">
+                          <Text
+                            as="span"
+                            color="yellow.500"
+                            fontSize="xs"
+                            mr={2}
+                          >
+                            <FontAwesomeIcon icon={faMedal} />
+                            <VisuallyHidden>Team officer</VisuallyHidden>
+                          </Text>
+                        </Tooltip>
+                      ) : null}
                       <Link
                         href={`/team/${team.id}`}
                         color="brand.500"
@@ -125,8 +135,12 @@ const Teams = (props) => {
                         {team.name}{" "}
                         {team.shortName ? `(${team.shortName})` : ""}
                       </Link>
-                    </Stack>
-                  </Flex>
+                    </Flex>
+                    <Text fontSize="xs" fontWeight="bold" color="gray.500">
+                      {team.memberCount || 0}{" "}
+                      {team.memberCount === 1 ? "member" : "members"}
+                    </Text>
+                  </Stack>
                   <Box>
                     <Tooltip label="Edit team">
                       <IconButton
