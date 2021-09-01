@@ -145,6 +145,7 @@ export const getUserCreatedEvents = async (userId) => {
 };
 
 export const getUserTeams = async (userId) => {
+  let teamIds = [];
   let teams = [];
 
   try {
@@ -161,6 +162,23 @@ export const getUserTeams = async (userId) => {
 
     if (!teammatesSnapshot.empty) {
       teammatesSnapshot.forEach((doc) => {
+        teamIds.push(String(doc.data().team.id));
+      });
+    }
+  } catch (error) {
+    return { teams, error };
+  }
+
+  try {
+    const teamsSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("teams")
+      .where("id", "in", teamIds)
+      .limit(25)
+      .get();
+
+    if (!teamsSnapshot.empty) {
+      teamsSnapshot.forEach((doc) => {
         const data = doc.data();
         const team = mapTeam({ id: doc.id, ...data });
         teams.push(team);

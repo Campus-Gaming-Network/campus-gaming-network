@@ -242,6 +242,14 @@ const AuthenticatedNav = (props) => {
                 />
                 <Text lineHeight="1">School</Text>
               </MenuItem>
+              <MenuItem as={Link} href="/teams">
+                <Flex alignItems="center">
+                  <Flex alignItems="center" color="gray.600" mr={3}>
+                    <FontAwesomeIcon icon={faUserFriends} />
+                  </Flex>
+                  <Text lineHeight="1">Teams</Text>
+                </Flex>
+              </MenuItem>
             </MenuGroup>
             <MenuDivider />
             <MenuGroup title="Settings">

@@ -1,7 +1,12 @@
 // Libraries
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOutAlt, faCog } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSignOutAlt,
+  faCog,
+  faCrown,
+  faMedal,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Stack,
   Box,
@@ -11,6 +16,8 @@ import {
   ListItem,
   Flex,
   IconButton,
+  VisuallyHidden,
+  Text,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import firebaseAdmin from "src/firebaseAdmin";
@@ -29,6 +36,9 @@ import EmptyText from "src/components/EmptyText";
 // API
 import { getUserTeams } from "src/api/user";
 
+// Providers
+import { useAuth } from "src/providers/auth";
+
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
@@ -45,7 +55,6 @@ export const getServerSideProps = async (context) => {
       return NOT_FOUND;
     }
   } catch (error) {
-    console.log(error);
     return NOT_FOUND;
   }
 
@@ -64,6 +73,9 @@ export const getServerSideProps = async (context) => {
 // Teams
 
 const Teams = (props) => {
+  const { user } = useAuth();
+
+  console.log(props);
   return (
     <SiteLayout>
       <Article>
@@ -83,17 +95,38 @@ const Teams = (props) => {
         </Flex>
         {Boolean(props?.teams?.length) ? (
           <List as={Stack} spacing={4}>
-            {props?.teams?.map(({ team }) => (
+            {props?.teams?.map((team) => (
               <ListItem key={team.id} as={Card}>
                 <Flex align="center" justify="space-between">
-                  <Link
-                    href={`/team/${team.id}`}
-                    color="brand.500"
-                    fontWeight={600}
-                    fontSize="md"
-                  >
-                    {team.name} {team.shortName ? `(${team.shortName})` : ""}
-                  </Link>
+                  <Flex align="center">
+                    {team.roles?.leader?.id === user?.id ? (
+                      <Tooltip label="Team leader">
+                        <Text as="span" color="yellow.500" fontSize="xs" mr={2}>
+                          <FontAwesomeIcon icon={faCrown} />
+                          <VisuallyHidden>Team leader</VisuallyHidden>
+                        </Text>
+                      </Tooltip>
+                    ) : null}
+                    {team.roles?.officer?.id === user?.id ? (
+                      <Tooltip label="Team officer">
+                        <Text as="span" color="yellow.500" fontSize="xs" mr={2}>
+                          <FontAwesomeIcon icon={faMedal} />
+                          <VisuallyHidden>Team officer</VisuallyHidden>
+                        </Text>
+                      </Tooltip>
+                    ) : null}
+                    <Stack>
+                      <Link
+                        href={`/team/${team.id}`}
+                        color="brand.500"
+                        fontWeight={600}
+                        fontSize="md"
+                      >
+                        {team.name}{" "}
+                        {team.shortName ? `(${team.shortName})` : ""}
+                      </Link>
+                    </Stack>
+                  </Flex>
                   <Box>
                     <Tooltip label="Edit team">
                       <IconButton
