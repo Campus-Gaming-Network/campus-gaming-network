@@ -163,7 +163,7 @@ const JoinTeam = (props) => {
           <Alert status="info" mb={4} rounded="lg">
             <AlertIcon />
             <AlertDescription>
-              You are already apart of this team.
+              You are already a part of this team.
             </AlertDescription>
           </Alert>
         ) : null}

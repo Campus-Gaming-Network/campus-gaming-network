@@ -170,7 +170,7 @@ const School = (props) => {
                       onClick={setReportingUserDialogIsOpen.on}
                       icon={<FontAwesomeIcon icon={faFlag} />}
                     >
-                      Report school
+                      Report {props.school.formattedName}
                     </MenuItem>
                   </MenuList>
                 </Menu>

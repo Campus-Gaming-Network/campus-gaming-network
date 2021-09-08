@@ -37,6 +37,7 @@ import {
   USER_EMPTY_FAVORITE_GAMES_TEXT,
   USER_EMPTY_ACCOUNTS_TEXT,
   USER_EMPTY_UPCOMING_EVENTS_TEXT,
+  USER_EMPTY_TEAMS_TEXT,
 } from "src/constants/user";
 import { ACCOUNTS, NOT_FOUND } from "src/constants/other";
 
@@ -111,6 +112,10 @@ const User = (props) => {
     isReportingUserDialogOpen,
     setReportingUserDialogIsOpen,
   ] = useBoolean();
+  const hasTeams = React.useMemo(
+    () => Boolean(props.teams) && props.teams.length > 0,
+    [props.teams]
+  );
 
   return (
     <SiteLayout meta={props.user.meta}>
@@ -200,7 +205,7 @@ const User = (props) => {
                     onClick={setReportingUserDialogIsOpen.on}
                     icon={<FontAwesomeIcon icon={faFlag} />}
                   >
-                    Report user
+                    Report {props.user.fullName}
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -306,21 +311,24 @@ const User = (props) => {
             <Heading as="h3" fontSize="xl">
               Teams
             </Heading>
-            <List>
-              {props?.teams?.map((team) => (
-                <ListItem key={team.team.id}>
-                  <Link
-                    href={`/team/${team.team.id}`}
-                    color="brand.500"
-                    fontWeight={600}
-                    fontSize="md"
-                  >
-                    {team.team.name}{" "}
-                    {team.team.shortName ? `(${team.team.shortName})` : ""}
-                  </Link>
-                </ListItem>
-              ))}
-            </List>
+            {!hasTeams ? (
+              <EmptyText>{USER_EMPTY_TEAMS_TEXT}</EmptyText>
+            ) : (
+              <List>
+                {props.teams.map((team) => (
+                  <ListItem key={team.id}>
+                    <Link
+                      href={`/team/${team.id}`}
+                      color="brand.500"
+                      fontWeight={600}
+                      fontSize="md"
+                    >
+                      {team.name} {team.shortName ? `(${team.shortName})` : ""}
+                    </Link>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </Stack>
         </Stack>
       </Article>

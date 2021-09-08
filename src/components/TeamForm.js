@@ -283,16 +283,18 @@ const TeamForm = (props) => {
               </FormControl>
             </Stack>
           </Card>
-          <Stack as="section" pt={12} spacing={4}>
-            <Heading as="h4" fontSize="xl">
-              Team members
-            </Heading>
-            <UsersList
-              team={props.team}
-              users={props.teammates}
-              state={props.state}
-            />
-          </Stack>
+          {props.state === "edit" ? (
+            <Stack as="section" pt={12} spacing={4}>
+              <Heading as="h4" fontSize="xl">
+                Team members
+              </Heading>
+              <UsersList
+                team={props.team}
+                users={props.teammates}
+                state={props.state}
+              />
+            </Stack>
+          ) : null}
           <Box pt={16}>
             <Button
               colorScheme="brand"

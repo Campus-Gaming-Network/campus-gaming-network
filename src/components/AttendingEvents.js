@@ -25,7 +25,7 @@ const AttendingEvents = (props) => {
         <SliderSilhouette />
       ) : (
         <Stack as="section" spacing={4} bg="white">
-          <Heading as="h3" fontSize="2xl">
+          <Heading as="h3" fontSize="xl">
             {Boolean(props.title) ? props.title : "Events you're attending"}
           </Heading>
           {!(state === "done" && hasEvents) ? (

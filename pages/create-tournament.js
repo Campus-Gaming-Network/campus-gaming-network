@@ -45,6 +45,7 @@ export const getServerSideProps = async (context) => {
 // CreateTournament
 
 const CreateTournament = () => {
+  const { user, school } = useAuth();
   const router = useRouter();
   const [errors, setErrors] = React.useState({});
   const [isSubmitting, setIsSubmitting] = useBoolean();
@@ -64,6 +65,72 @@ const CreateTournament = () => {
     e.preventDefault();
 
     setIsSubmitting.on();
+
+    const userDocRef = doc(db, COLLECTIONS.USERS, user.id);
+    const schoolDocRef = doc(db, COLLECTIONS.SCHOOLS, school.id);
+
+    const tournamentData = {
+      name: formState.name?.trim(),
+      description: formState.description?.trim(),
+      tournamentFormat: formState.tournamentFormat,
+      holdThirdPlaceMatch: formState.holdThirdPlaceMatch,
+      grandFinalsModifier: formState.grandFinalsModifier,
+      rankedBy: formState.rankedBy,
+      ptsForMatchWin: formState.ptsForMatchWin,
+      ptsForMatchTie: formState.ptsForMatchTie,
+      ptsForGameWin: formState.ptsForGameWin,
+      ptsForGameTie: formState.ptsForGameTie,
+      ptsForBye: formState.ptsForBye,
+      rrPtsForMatchWin: formState.rrPtsForMatchWin,
+      rrPtsForMatchTie: formState.rrPtsForMatchTie,
+      rrPtsForGameWin: formState.rrPtsForGameWin,
+      rrPtsForGameTie: formState.rrPtsForGameTie,
+      creator: {
+        id: userDocRef.id,
+        ref: userDocRef,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        gravatar: user.gravatar,
+        status: user.status,
+        school: {
+          ref: user.school.ref,
+          id: user.school.id,
+          name: user.school.name,
+        },
+      },
+      school: {
+        ref: schoolDocRef,
+        id: schoolDocRef.id,
+        name: school.name,
+      },
+      participants: 0,
+    };
+
+    const createTournament = httpsCallable(
+      functions,
+      CALLABLES.CREATE_TOURNAMENT
+    );
+
+    try {
+      const result = await createTournament(tournamentData);
+
+      if (Boolean(result?.data?.tournamentId)) {
+        toast({
+          title: "Tournament created.",
+          description:
+            "Your tournament has been created. You will be redirected...",
+          status: "success",
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push(`/tournament/${result.data.tournamentId}`);
+        }, 2000);
+      } else {
+        handleSubmitError(result?.data?.error);
+      }
+    } catch (error) {
+      handleSubmitError(error);
+    }
   };
 
   return (

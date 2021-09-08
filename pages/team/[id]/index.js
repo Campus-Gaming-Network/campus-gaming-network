@@ -148,13 +148,13 @@ const Team = (props) => {
                     fontWeight="bold"
                     icon={<FontAwesomeIcon icon={faSignOutAlt} />}
                   >
-                    Leave team
+                    Leave {props.team.name}
                   </MenuItem>
                   <MenuItem
                     onClick={setReportingUserDialogIsOpen.on}
                     icon={<FontAwesomeIcon icon={faFlag} />}
                   >
-                    Report team
+                    Report {props.team.name}
                   </MenuItem>
                 </MenuList>
               </Menu>
