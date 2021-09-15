@@ -145,8 +145,8 @@ const Event = (props) => {
   const { authUser, isAuthenticated } = useAuth();
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = useBoolean();
   const [
-    isReportingUserDialogOpen,
-    setReportingUserDialogIsOpen,
+    isReportingEventDialogOpen,
+    setReportingEventDialogIsOpen,
   ] = useBoolean();
 
   const openRSVPDialog = () => {
@@ -201,7 +201,7 @@ const Event = (props) => {
                   />
                   <MenuList fontSize="md">
                     <MenuItem
-                      onClick={setReportingUserDialogIsOpen.on}
+                      onClick={setReportingEventDialogIsOpen.on}
                       icon={<FontAwesomeIcon icon={faFlag} />}
                     >
                       Report event
@@ -349,8 +349,8 @@ const Event = (props) => {
             id: props.event.id,
           }}
           pageProps={props}
-          isOpen={isReportingUserDialogOpen}
-          onClose={setReportingUserDialogIsOpen.off}
+          isOpen={isReportingEventDialogOpen}
+          onClose={setReportingEventDialogIsOpen.off}
         />
       ) : null}
     </SiteLayout>

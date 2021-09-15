@@ -37,3 +37,15 @@ export const GRAND_FINALS_MODIFIER_OPTIONS = [
   { label: "1 match", value: "single match" },
   { label: "None", value: "skip" },
 ];
+export const CHALLONGE_URL = "https://challonge.com/";
+export const BRACKET_URL_PARAMS = [
+  "multiplier",
+  "match_with_multiplier",
+  "scale_to_fit",
+  "show_tournament_name",
+  "show_final_results",
+  "show_standings",
+  "show_voting",
+  "show_live_status",
+  "tab",
+];

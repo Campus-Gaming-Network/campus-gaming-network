@@ -26,8 +26,7 @@ import {
 import dynamic from "next/dynamic";
 
 // API
-import { getTeamDetails, getTeamUsers } from "src/api/team";
-import { getUserTeammateDetails } from "src/api/user";
+import { getTournamentDetails } from "src/api/tournament";
 
 // Constants
 import { COOKIES, NOT_FOUND } from "src/constants/other";
@@ -57,22 +56,18 @@ const ReportEntityDialog = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [teamResponse, teamUsersResponse] = await Promise.all([
-    getTeamDetails(context.params.id),
-    getTeamUsers(context.params.id),
+  const [tournamentResponse] = await Promise.all([
+    getTournamentDetails(context.params.id),
   ]);
-  const { team } = teamResponse;
-  const { teammates } = teamUsersResponse;
+  const { tournament } = tournamentResponse;
 
-  if (!Boolean(team)) {
+  if (!Boolean(tournament)) {
     return NOT_FOUND;
   }
 
   const data = {
     params: context.params,
-    team,
-    teammates,
-    isPartOfTeam: false,
+    tournament,
   };
 
   try {
@@ -80,14 +75,6 @@ export const getServerSideProps = async (context) => {
     const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
       ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
       : null;
-
-    if (Boolean(token?.uid)) {
-      const [userTeammateResponse] = await Promise.all([
-        getUserTeammateDetails(context.params.id, token.uid),
-      ]);
-      const { teammate } = userTeammateResponse;
-      data.isPartOfTeam = Boolean(teammate);
-    }
   } catch (error) {
     return NOT_FOUND;
   }
@@ -96,22 +83,21 @@ export const getServerSideProps = async (context) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// Team
+// Tournament
 
-const Team = (props) => {
-  const { isAuthenticated } = useAuth();
+const Tournament = (props) => {
   const [
-    isReportingTeamDialogOpen,
-    setReportingTeamDialogIsOpen,
+    isReportingTournamentDialogOpen,
+    setReportingTournamentDialogIsOpen,
   ] = useBoolean();
 
   return (
-    <SiteLayout meta={props.team.meta}>
+    <SiteLayout meta={props.tournament.meta}>
       <Box bg="gray.200" h="150px" />
       <Article>
         <Box mb={10} textAlign="center" display="flex" justifyContent="center">
           <Link
-            href={`/team/${props.team.id}/edit`}
+            href={`/tournament/${props.tournament.id}/edit`}
             fontWeight="bold"
             width="100%"
             borderRadius="md"
@@ -120,7 +106,7 @@ const Team = (props) => {
             _hover={{ bg: "gray.200" }}
             p={8}
           >
-            Edit Team
+            Edit Tournament
           </Link>
         </Box>
         <Stack spacing={10}>
@@ -132,7 +118,7 @@ const Team = (props) => {
             pt={8}
           >
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
-              {props.team.name} ({props.team.memberCount || 0})
+              {props.tournament.name} ({props.tournament.memberCount || 0})
             </Heading>
             <Box>
               <Menu>
@@ -148,13 +134,13 @@ const Team = (props) => {
                     fontWeight="bold"
                     icon={<FontAwesomeIcon icon={faSignOutAlt} />}
                   >
-                    Leave {props.team.name}
+                    Leave {props.tournament.name}
                   </MenuItem>
                   <MenuItem
-                    onClick={setReportingTeamDialogIsOpen.on}
+                    onClick={setReportingUserDialogIsOpen.on}
                     icon={<FontAwesomeIcon icon={faFlag} />}
                   >
-                    Report {props.team.name}
+                    Report {props.tournament.name}
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -162,58 +148,25 @@ const Team = (props) => {
           </Flex>
           <Box as="section" pt={4}>
             <VisuallyHidden as="h2">Description</VisuallyHidden>
-            <Text>{props.team.description}</Text>
+            <Text>{props.tournament.description}</Text>
           </Box>
-          <Stack as="section" spacing={4}>
-            <Heading as="h4" fontSize="xl">
-              Team members
-            </Heading>
-            <UsersList team={props.team} users={props.teammates} />
-          </Stack>
+          <ChallongeBracket id={props.tournament.challonge.id} />
         </Stack>
       </Article>
 
       {isAuthenticated ? (
         <ReportEntityDialog
           entity={{
-            type: "teams",
-            id: props.team.id,
+            type: "tournaments",
+            id: props.tournament.id,
           }}
           pageProps={props}
-          isOpen={isReportingTeamDialogOpen}
-          onClose={setReportingTeamDialogIsOpen.off}
+          isOpen={isReportingTournamentDialogOpen}
+          onClose={setReportingTournamentDialogIsOpen.off}
         />
       ) : null}
     </SiteLayout>
   );
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// UsersList
-
-const UsersList = (props) => {
-  const hasUsers = React.useMemo(() => {
-    return Boolean(props.users) && props.users.length > 0;
-  }, [props.users]);
-
-  if (hasUsers) {
-    return (
-      <React.Fragment>
-        <List display="flex" flexWrap="wrap" mx={-2}>
-          {props.users.map(({ user }) => (
-            <UserListItem
-              key={user.id}
-              user={user}
-              teamLeader={props.team?.roles?.leader?.id === user.id}
-              teamOfficer={props.team?.roles?.officer?.id === user.id}
-            />
-          ))}
-        </List>
-      </React.Fragment>
-    );
-  }
-
-  return <EmptyText mt={4}>This team currently has no users.</EmptyText>;
-};
-
-export default Team;
+export default Tournament;

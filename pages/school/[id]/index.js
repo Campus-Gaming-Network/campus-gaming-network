@@ -104,8 +104,8 @@ export const getServerSideProps = async (context) => {
 const School = (props) => {
   const { isAuthenticated } = useAuth();
   const [
-    isReportingUserDialogOpen,
-    setReportingUserDialogIsOpen,
+    isReportingSchoolDialogOpen,
+    setReportingSchoolDialogIsOpen,
   ] = useBoolean();
 
   return (
@@ -167,7 +167,7 @@ const School = (props) => {
                   />
                   <MenuList fontSize="md">
                     <MenuItem
-                      onClick={setReportingUserDialogIsOpen.on}
+                      onClick={setReportingSchoolDialogIsOpen.on}
                       icon={<FontAwesomeIcon icon={faFlag} />}
                     >
                       Report {props.school.formattedName}
@@ -281,8 +281,8 @@ const School = (props) => {
             id: props.school.id,
           }}
           pageProps={props}
-          isOpen={isReportingUserDialogOpen}
-          onClose={setReportingUserDialogIsOpen.off}
+          isOpen={isReportingSchoolDialogOpen}
+          onClose={setReportingSchoolDialogIsOpen.off}
         />
       ) : null}
     </SiteLayout>

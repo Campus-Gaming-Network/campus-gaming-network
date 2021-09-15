@@ -249,6 +249,10 @@ service cloud.firestore {
       allow read, write, create, update, delete: if false;
     }
 
+    match /roles/{roleId} {
+      allow read, write, create, update, delete: if false;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Shared Functions
 
