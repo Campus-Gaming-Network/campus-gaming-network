@@ -117,7 +117,6 @@ const School = (props) => {
             <SchoolLogo
               rounded="full"
               bg="white"
-              shadow="sm"
               p={1}
               borderWidth={2}
               borderStyle="solid"

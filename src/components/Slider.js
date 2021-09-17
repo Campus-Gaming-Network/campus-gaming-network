@@ -9,7 +9,7 @@ import { SLICK_SETTINGS } from "src/constants/slick";
 ////////////////////////////////////////////////////////////////////////////////
 // Slider
 
-const Slider = ({ settings = {}, children }) => {
+const Slider = ({ settings = {}, children, ...rest }) => {
   const _settings = React.useMemo(() => {
     let responsive = [...(settings.responsive || [])];
 
@@ -29,7 +29,7 @@ const Slider = ({ settings = {}, children }) => {
   }, [settings]);
 
   return (
-    <Box>
+    <Box {...rest}>
       <SlickSlider {..._settings}>{children}</SlickSlider>
     </Box>
   );
