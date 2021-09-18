@@ -18,10 +18,12 @@ import {
   IconButton,
   VisuallyHidden,
   Text,
+  useBoolean,
 } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
+import dynamic from "next/dynamic";
 
 // Constants
 import { COOKIES, NOT_FOUND } from "src/constants/other";
@@ -38,6 +40,12 @@ import { getUserTeams } from "src/api/user";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+
+// Dynamic Components
+const LeaveTeamDialog = dynamic(
+  () => import("src/components/dialogs/LeaveTeamDialog"),
+  { ssr: false }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -74,8 +82,11 @@ export const getServerSideProps = async (context) => {
 
 const Teams = (props) => {
   const { user } = useAuth();
+  const [isTeamToLeaveDialogOpen, setTeamToLeaveDialogIsOpen] = useBoolean();
+  const [teamToLeave, setTeamToLeave] = React.useState(null);
 
-  console.log(props);
+  const leaveTeam = (team) => {};
+
   return (
     <SiteLayout>
       <Article>
@@ -144,6 +155,8 @@ const Teams = (props) => {
                   <Box>
                     <Tooltip label="Edit team">
                       <IconButton
+                        as={Link}
+                        href={`/team/${team.id}/edit`}
                         variant="outline"
                         aria-label="Edit team"
                         icon={<FontAwesomeIcon icon={faCog} />}
@@ -151,6 +164,10 @@ const Teams = (props) => {
                     </Tooltip>
                     <Tooltip label="Leave team">
                       <IconButton
+                        onClick={() => {
+                          setTeamToLeave(team);
+                          setTeamToLeaveDialogIsOpen.on();
+                        }}
                         variant="ghost"
                         colorScheme="red"
                         aria-label="Leave team"
@@ -167,6 +184,12 @@ const Teams = (props) => {
           <EmptyText>You are not apart of any teams.</EmptyText>
         )}
       </Article>
+
+      <LeaveTeamDialog
+        isOpen={isTeamToLeaveDialogOpen}
+        onClose={setTeamToLeaveDialogIsOpen.off}
+        team={teamToLeave}
+      />
     </SiteLayout>
   );
 };
