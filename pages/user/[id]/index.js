@@ -323,7 +323,7 @@ const User = (props) => {
                       fontWeight={600}
                       fontSize="md"
                     >
-                      {team.name} {team.shortName ? `(${team.shortName})` : ""}
+                      {team.displayName}
                     </Link>
                   </ListItem>
                 ))}

@@ -26,6 +26,7 @@ export const CALLABLES = {
   REPORT_ENTITY: "reportEntity",
   CREATE_TEAM: "createTeam",
   JOIN_TEAM: "joinTeam",
+  LEAVE_TEAM: "leaveTeam",
   KICK_TEAMMATE: "kickTeammate",
   PROMOTE_TEAMMATE: "promoteTeammate",
   DEMOTE_TEAMMATE: "demoteTeammate",

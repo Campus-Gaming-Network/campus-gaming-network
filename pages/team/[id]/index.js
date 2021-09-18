@@ -132,7 +132,7 @@ const Team = (props) => {
             pt={8}
           >
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
-              {props.team.name} ({props.team.memberCount || 0})
+              {props.team.name} ({props.team.memberCount})
             </Heading>
             <Box>
               <Menu>

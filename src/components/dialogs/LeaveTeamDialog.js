@@ -13,13 +13,10 @@ import {
   useBoolean,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { doc, deleteDoc } from "firebase/firestore";
-
-// Other
-import { db } from "src/firebase";
+import { httpsCallable } from "firebase/firestore";
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
+import { CALLABLES } from "src/constants/firebase";
 
 ////////////////////////////////////////////////////////////////////////////
 // LeaveTeamDialog
@@ -35,6 +32,34 @@ const LeaveTeamDialog = (props) => {
     e.preventDefault();
 
     setIsSubmitting.on();
+
+    const leaveTeam = httpsCallable(functions, CALLABLES.LEAVE_TEAM);
+
+    try {
+      await leaveTeam({ teamId: props.team.id });
+
+      props.onClose();
+      setIsSubmitting.off();
+      toast({
+        title: "Team left.",
+        description: `You have left team ${props.team.name}. You will be redirected...`,
+        status: "success",
+        isClosable: true,
+      });
+      setTimeout(() => {
+        router.push("/teams");
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      props.onClose();
+      setIsSubmitting.off();
+      toast({
+        title: "An error occurred.",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -56,7 +81,7 @@ const LeaveTeamDialog = (props) => {
         <AlertDialogBody>
           Are you sure you want to leave{" "}
           <Text as="span" fontWeight="bold">
-            {props.team ? props.team.name : ""}
+            {props?.team?.name || ""}
           </Text>
           ?
         </AlertDialogBody>

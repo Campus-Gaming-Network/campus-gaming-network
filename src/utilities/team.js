@@ -18,8 +18,16 @@ export const mapTeam = (team) => {
 
   const url = `${PRODUCTION_URL}/team/${team.id}`;
 
+  let displayName = team.name;
+
+  if (Boolean(team.shortName)) {
+    displayName = `${team.name} (${team.shortName})`;
+  }
+
   return cleanObjectOfBadWords({
     ...team,
+    displayName,
+    memberCount: team.memberCount || 0,
     url,
     meta: {
       title: team.name,
