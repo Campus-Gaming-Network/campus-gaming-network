@@ -27,7 +27,7 @@ export const mapTeam = (team) => {
   return cleanObjectOfBadWords({
     ...team,
     displayName,
-    memberCount: team.memberCount || 0,
+    memberCount: team.memberCount || 1,
     url,
     meta: {
       title: team.name,
