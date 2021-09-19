@@ -225,7 +225,7 @@ service cloud.firestore {
 
     match /teams/{teamId} {
       function canDeleteTeam() {
-        return incomingData().roles.leader.id === requestingUser();
+        return isOwner(existingData().roles.leader.id);
       }
 
       allow read: if true;
