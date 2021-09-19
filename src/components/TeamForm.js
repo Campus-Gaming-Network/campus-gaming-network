@@ -26,6 +26,7 @@ import {
   useBoolean,
   Heading,
   List,
+  Switch,
   Portal,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
@@ -75,6 +76,7 @@ const initialFormState = {
   description: "",
   website: "",
   password: "",
+  changePassword: false,
 };
 
 const formReducer = (state, { field, value }) => {
@@ -257,7 +259,30 @@ const TeamForm = (props) => {
                 />
                 <FormErrorMessage>{props.errors.website}</FormErrorMessage>
               </FormControl>
-              <FormControl isRequired isInvalid={props.errors.password}>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel
+                  htmlFor="change-password"
+                  mb="0"
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  Change team join password?
+                </FormLabel>
+                <Switch
+                  id="change-password"
+                  isChecked={formState.changePassword}
+                  onChange={(e) =>
+                    formDispatch({
+                      field: "changePassword",
+                      value: e.target.checked,
+                    })
+                  }
+                />
+              </FormControl>
+              <FormControl
+                isRequired={formState.changePassword}
+                isInvalid={props.errors.password}
+              >
                 <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
                   Join Password
                 </FormLabel>
@@ -269,8 +294,10 @@ const TeamForm = (props) => {
                   onChange={handleFieldChange}
                   value={formState.password}
                   size="lg"
+                  disabled={!formState.changePassword}
                 />
                 <Button
+                  disabled={!formState.changePassword}
                   onClick={setIsShowingPassword.toggle}
                   fontSize="sm"
                   fontStyle="italic"

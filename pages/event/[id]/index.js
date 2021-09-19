@@ -312,7 +312,7 @@ const Event = (props) => {
             </Stack>
           ) : null}
           <Stack as="section" spacing={4}>
-            <Heading as="h3" fontSize="xl" textTransform="uppercase">
+            <Heading as="h3" fontSize="xl">
               Event Details
             </Heading>
             {Boolean(props.event.description) &&
@@ -323,7 +323,7 @@ const Event = (props) => {
             )}
           </Stack>
           <Stack as="section" spacing={4}>
-            <Heading as="h4" fontSize="xl" textTransform="uppercase">
+            <Heading as="h4" fontSize="xl">
               Attendees
             </Heading>
             <UsersList users={props.users} />

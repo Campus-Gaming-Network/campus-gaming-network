@@ -181,12 +181,7 @@ const School = (props) => {
             <Text>{props.school.description}</Text>
           </Box>
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="xl"
-              textTransform="uppercase"
-              px={{ base: 4, md: 0 }}
-            >
+            <Heading as="h3" fontSize="xl" px={{ base: 4, md: 0 }}>
               Information
             </Heading>
             <Flex as="dl" flexWrap="wrap" w="100%" px={{ base: 4, md: 0 }}>
@@ -253,12 +248,7 @@ const School = (props) => {
             />
           </SliderLazyLoad>
           <Stack as="section" spacing={4}>
-            <Heading
-              as="h3"
-              fontSize="xl"
-              textTransform="uppercase"
-              px={{ base: 4, md: 0 }}
-            >
+            <Heading as="h3" fontSize="xl" px={{ base: 4, md: 0 }}>
               Members
             </Heading>
             <UsersList users={props.users} />

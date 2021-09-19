@@ -130,7 +130,7 @@ const Teams = (props) => {
 const TeamsListItem = (props) => {
   const isLeaderOfTeam = props.team.roles?.leader?.id === props.user?.id;
   const isOfficerOfTeam = props.team.roles?.officer?.id === props.user?.id;
-  const canEditTeam = isOfficerOfTeam || isLeaderOfTeam;
+  const canEditTeam = isLeaderOfTeam;
   const editTeamTooltip = canEditTeam
     ? "Edit team"
     : "You do not have permission to edit this team.";
