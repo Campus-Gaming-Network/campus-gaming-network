@@ -346,7 +346,7 @@ const TeamForm = (props) => {
 
       {props.state === "edit" ? (
         <DeleteTeamDialog
-          event={props.team}
+          team={props.team}
           isOpen={isDeletingTeamAlertOpen}
           onClose={setDeletingTeamAlertIsOpen.off}
         />
