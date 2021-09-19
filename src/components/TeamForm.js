@@ -259,28 +259,32 @@ const TeamForm = (props) => {
                 />
                 <FormErrorMessage>{props.errors.website}</FormErrorMessage>
               </FormControl>
-              <FormControl display="flex" alignItems="center">
-                <FormLabel
-                  htmlFor="change-password"
-                  mb="0"
-                  fontSize="lg"
-                  fontWeight="bold"
-                >
-                  Change team join password?
-                </FormLabel>
-                <Switch
-                  id="change-password"
-                  isChecked={formState.changePassword}
-                  onChange={(e) =>
-                    formDispatch({
-                      field: "changePassword",
-                      value: e.target.checked,
-                    })
-                  }
-                />
-              </FormControl>
+              {props.state === "edit" ? (
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel
+                    htmlFor="change-password"
+                    mb="0"
+                    fontSize="lg"
+                    fontWeight="bold"
+                  >
+                    Change team join password?
+                  </FormLabel>
+                  <Switch
+                    id="change-password"
+                    isChecked={formState.changePassword}
+                    onChange={(e) =>
+                      formDispatch({
+                        field: "changePassword",
+                        value: e.target.checked,
+                      })
+                    }
+                  />
+                </FormControl>
+              ) : null}
               <FormControl
-                isRequired={formState.changePassword}
+                isRequired={
+                  formState.changePassword || props.state === "create"
+                }
                 isInvalid={props.errors.password}
               >
                 <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
@@ -294,10 +298,10 @@ const TeamForm = (props) => {
                   onChange={handleFieldChange}
                   value={formState.password}
                   size="lg"
-                  disabled={!formState.changePassword}
+                  disabled={props.state === "edit" && !formState.changePassword}
                 />
                 <Button
-                  disabled={!formState.changePassword}
+                  disabled={props.state === "edit" && !formState.changePassword}
                   onClick={setIsShowingPassword.toggle}
                   fontSize="sm"
                   fontStyle="italic"
