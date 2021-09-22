@@ -52,25 +52,19 @@ const Home = () => {
       <Article
         maxW={{ base: "100%", sm: "100%", md: "100%" }}
         px={{ base: 0, md: 0 }}
-        {...(isAuthenticated ? { py: 0 } : {})}
       >
-        <ConditionalWrapper
-          condition={isAuthenticated}
-          wrapper={(children) => <VisuallyHidden>{children}</VisuallyHidden>}
+        <Box
+          px={{ base: 4, md: 8 }}
+          maxW={{ base: "100%", sm: "90%", md: "90%" }}
         >
-          <Box
-            px={{ base: 4, md: 8 }}
-            maxW={{ base: "100%", sm: "90%", md: "90%" }}
-          >
-            <Heading size="2xl" mb={8}>
-              Campus Gaming Network
-            </Heading>
-            <Text fontSize="3xl" color="gray.60">
-              Connect with other collegiate gamers for casual or competitive
-              gaming at your school or nearby.
-            </Text>
-          </Box>
-        </ConditionalWrapper>
+          <Heading size="2xl" mb={8}>
+            Campus Gaming Network
+          </Heading>
+          <Text fontSize="3xl" color="gray.60">
+            Connect with other collegiate gamers for casual or competitive
+            gaming at your school or nearby.
+          </Text>
+        </Box>
         <Stack pt={8} spacing={8}>
           {isAuthenticated ? (
             <SliderLazyLoad>

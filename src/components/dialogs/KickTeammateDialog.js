@@ -60,7 +60,7 @@ const KickTeammateDialog = (props) => {
       if (Boolean(result?.data?.success)) {
         toast({
           title: "Teammate kicked.",
-          description: `You have kicked "${props.teammate.fullName}". You will be redirected...`,
+          description: `You have kicked ${props.teammate.fullName}. You will be redirected...`,
           status: "success",
           isClosable: true,
         });
@@ -89,12 +89,14 @@ const KickTeammateDialog = (props) => {
         as="form"
         onSubmit={handleSubmit}
       >
-        <AlertDialogHeader>Kick Teammate</AlertDialogHeader>
+        <AlertDialogHeader>
+          Kick {props.user.fullName} from team
+        </AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to kick{" "}
           <Text as="span" fontWeight="bold">
-            {props.user ? props.user.fullName : ""}
+            {props.user.fullName}
           </Text>
           ?
         </AlertDialogBody>

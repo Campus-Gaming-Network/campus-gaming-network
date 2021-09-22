@@ -60,7 +60,7 @@ const DemoteTeammateDialog = (props) => {
       if (Boolean(result?.data?.success)) {
         toast({
           title: "Teammate demoted.",
-          description: `You have demoted "${props.teammate.fullName}". You will be redirected...`,
+          description: `You have demoted '${props.teammate.fullName}'. You will be redirected...`,
           status: "success",
           isClosable: true,
         });
@@ -89,12 +89,12 @@ const DemoteTeammateDialog = (props) => {
         as="form"
         onSubmit={handleSubmit}
       >
-        <AlertDialogHeader>Demote Teammate</AlertDialogHeader>
+        <AlertDialogHeader>Demote {props.user.fullName}</AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to demote{" "}
           <Text as="span" fontWeight="bold">
-            {props.user ? props.user.fullName : ""}
+            {props.user.fullName}
           </Text>
           ?
         </AlertDialogBody>

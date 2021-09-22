@@ -26,7 +26,7 @@ import {
 import dynamic from "next/dynamic";
 
 // API
-import { getTeamDetails, getTeamUsers } from "src/api/team";
+import { getTeamDetails, getTeamUsers, getTeamRole } from "src/api/team";
 import { getUserTeammateDetails } from "src/api/user";
 
 // Constants
@@ -82,11 +82,14 @@ export const getServerSideProps = async (context) => {
       : null;
 
     if (Boolean(token?.uid)) {
-      const [userTeammateResponse] = await Promise.all([
+      const [userTeammateResponse, teamRoleResponse] = await Promise.all([
         getUserTeammateDetails(context.params.id, token.uid),
+        getTeamRole(token.uid, context.params.id),
       ]);
       const { teammate } = userTeammateResponse;
+      const { role } = teamRoleResponse;
       data.isPartOfTeam = Boolean(teammate);
+      data.role = role;
     }
   } catch (error) {
     return NOT_FOUND;
@@ -109,20 +112,27 @@ const Team = (props) => {
     <SiteLayout meta={props.team.meta}>
       <Box bg="gray.200" h="150px" />
       <Article>
-        <Box mb={10} textAlign="center" display="flex" justifyContent="center">
-          <Link
-            href={`/team/${props.team.id}/edit`}
-            fontWeight="bold"
-            width="100%"
-            borderRadius="md"
-            bg="gray.100"
-            _focus={{ bg: "gray.200", boxShadow: "outline" }}
-            _hover={{ bg: "gray.200" }}
-            p={8}
+        {props.role?.permissions.includes("team.edit") ? (
+          <Box
+            mb={10}
+            textAlign="center"
+            display="flex"
+            justifyContent="center"
           >
-            Edit Team
-          </Link>
-        </Box>
+            <Link
+              href={`/team/${props.team.id}/edit`}
+              fontWeight="bold"
+              width="100%"
+              borderRadius="md"
+              bg="gray.100"
+              _focus={{ bg: "gray.200", boxShadow: "outline" }}
+              _hover={{ bg: "gray.200" }}
+              p={8}
+            >
+              Edit Team
+            </Link>
+          </Box>
+        ) : null}
         <Stack spacing={10}>
           <Flex
             as="header"

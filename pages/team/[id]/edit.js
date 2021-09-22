@@ -78,10 +78,52 @@ const EditTeam = (props) => {
   const [isSubmitting, setIsSubmitting] = useBoolean();
   const toast = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmitError = (error) => {
+    setIsSubmitting.off();
+    toast({
+      title: "An error occurred.",
+      description:
+        error?.message ||
+        "There was an error creating the team. Please try again.",
+      status: "error",
+      isClosable: true,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setIsSubmitting.on();
+
+    const teamData = {
+      name: formState.name?.trim(),
+      shortName: formState.shortName?.trim(),
+      description: formState.description?.trim(),
+      website: formState.website?.trim(),
+      password: formState.password?.trim(),
+    };
+
+    const editTeam = httpsCallable(functions, CALLABLES.EDIT_TEAM);
+
+    try {
+      const result = await editTeam(teamData);
+
+      if (Boolean(result?.data?.success)) {
+        toast({
+          title: "Team updated.",
+          description: "Your team has been updated. You will be redirected...",
+          status: "success",
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push(`/team/${props.team.id}`);
+        }, 2000);
+      } else {
+        handleSubmitError(result?.data?.error);
+      }
+    } catch (error) {
+      handleSubmitError(error);
+    }
   };
 
   return (

@@ -64,7 +64,7 @@ const settings = {
   arrows: false,
   lazyLoad: false,
   focusOnSelect: false,
-  swipeToSlide: false,
+  swipeToSlide: true,
   dots: false,
   infinite: true,
   slidesToShow: 7,

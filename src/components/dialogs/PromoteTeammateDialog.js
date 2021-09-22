@@ -64,7 +64,7 @@ const PromoteTeammateDialog = (props) => {
       if (Boolean(result?.data?.success)) {
         toast({
           title: "Teammate promoted.",
-          description: `You have promoted "${props.teammate.fullName}". You will be redirected...`,
+          description: `You have promoted ${props.teammate.fullName}. You will be redirected...`,
           status: "success",
           isClosable: true,
         });
@@ -93,12 +93,14 @@ const PromoteTeammateDialog = (props) => {
         as="form"
         onSubmit={handleSubmit}
       >
-        <AlertDialogHeader>Promote Teammate</AlertDialogHeader>
+        <AlertDialogHeader>
+          Promote {props.user.fullName} to {props.promotion}
+        </AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to promote{" "}
           <Text as="span" fontWeight="bold">
-            {props.user ? props.user.fullName : ""}
+            {props.user.fullName}
           </Text>
           ?
         </AlertDialogBody>

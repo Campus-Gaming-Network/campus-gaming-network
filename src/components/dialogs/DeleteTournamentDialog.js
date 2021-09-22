@@ -77,12 +77,12 @@ const DeleteTournamentDialog = (props) => {
         as="form"
         onSubmit={handleSubmit}
       >
-        <AlertDialogHeader>Delete Tournament</AlertDialogHeader>
+        <AlertDialogHeader>Delete '{props.tournament.name}'</AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to delete the tournament{" "}
           <Text as="span" fontWeight="bold">
-            {props.tournament ? props.tournament.name : ""}
+            {props.tournament.name}
           </Text>
           ?
         </AlertDialogBody>

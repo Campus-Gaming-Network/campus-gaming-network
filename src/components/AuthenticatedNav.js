@@ -143,7 +143,6 @@ const AuthenticatedNav = (props) => {
               <MenuItem
                 as={Link}
                 href="/create-team"
-                isDisabled
                 icon={
                   <Flex
                     align="center"

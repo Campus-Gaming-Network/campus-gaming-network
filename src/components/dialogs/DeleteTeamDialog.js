@@ -41,7 +41,7 @@ const DeleteTeamDialog = (props) => {
       setIsSubmitting.off();
       toast({
         title: "Team deleted.",
-        description: `Team ${props.team.name} has been deleted. You will be redirected...`,
+        description: `Team '${props.team.name}' has been deleted. You will be redirected...`,
         status: "success",
         isClosable: true,
       });
@@ -69,12 +69,12 @@ const DeleteTeamDialog = (props) => {
     >
       <AlertDialogOverlay />
       <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-        <AlertDialogHeader>Delete Team</AlertDialogHeader>
+        <AlertDialogHeader>Delete '{props.team.name}'</AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to delete the team{" "}
           <Text as="span" fontWeight="bold">
-            {props.team ? props.team.name : ""}
+            {props.team.name}
           </Text>
           ?
         </AlertDialogBody>

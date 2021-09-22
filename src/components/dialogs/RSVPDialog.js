@@ -142,12 +142,12 @@ const RSVPDialog = (props) => {
       >
         <AlertDialogOverlay />
         <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-          <AlertDialogHeader>RSVP</AlertDialogHeader>
+          <AlertDialogHeader>RSVP for '{props.event.name}'</AlertDialogHeader>
 
           <AlertDialogBody>
             Are you sure you want to RSVP for{" "}
             <Text as="span" fontWeight="bold">
-              {props.event ? props.event.name : ""}
+              {props.event.name}
             </Text>
             ?
           </AlertDialogBody>

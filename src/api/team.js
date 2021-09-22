@@ -51,3 +51,46 @@ export const getTeamUsers = async (teamId, limit = 25, page = 0) => {
     return { teammates, error };
   }
 };
+
+export const getTeamRole = async (userId, teamId) => {
+  let role = null;
+  let userTeamRole = null;
+
+  try {
+    const userTeamRolesSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("user-roles")
+      .where("user.id", "==", userId)
+      .where("team.id", "==", teamId)
+      .limit(1)
+      .get();
+
+    if (!userTeamRolesSnapshot.empty) {
+      userTeamRole = userTeamRolesSnapshot.docs[0].data();
+    }
+  } catch (error) {
+    return { role, error };
+  }
+
+  try {
+    const rolesSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("roles")
+      .where("id", "==", userTeamRole.role.id)
+      .limit(1)
+      .get();
+
+    if (!rolesSnapshot.empty) {
+      const roleData = rolesSnapshot.docs[0].data();
+
+      role = {
+        name: roleData.name,
+        permissions: roleData.permissions,
+      };
+    }
+
+    return { role };
+  } catch (error) {
+    return { role, error };
+  }
+};

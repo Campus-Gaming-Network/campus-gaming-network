@@ -13,7 +13,7 @@ import {
   useBoolean,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { httpsCallable } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 
 // Constants
 import { CALLABLES } from "src/constants/firebase";
@@ -42,7 +42,7 @@ const LeaveTeamDialog = (props) => {
       setIsSubmitting.off();
       toast({
         title: "Team left.",
-        description: `You have left team ${props.team.name}. You will be redirected...`,
+        description: `You have left team '${props.team.name}'. You will be redirected...`,
         status: "success",
         isClosable: true,
       });
@@ -76,12 +76,12 @@ const LeaveTeamDialog = (props) => {
         as="form"
         onSubmit={handleSubmit}
       >
-        <AlertDialogHeader>Leave Team</AlertDialogHeader>
+        <AlertDialogHeader>Leave '{props.team.name}'</AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to leave{" "}
           <Text as="span" fontWeight="bold">
-            {props?.team?.name || ""}
+            {props.team.name}
           </Text>
           ?
         </AlertDialogBody>

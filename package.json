@@ -20,6 +20,8 @@
     "@sentry/tracing": "^5.29.0",
     "bad-words": "^3.0.4",
     "cross-env": "^7.0.3",
+    "dompurify": "^2.3.3",
+    "draft-js": "^0.11.7",
     "firebase": "^9.0.0-beta.8",
     "firebase-admin": "^9.5.0",
     "firebase-tools": "^9.8.0",

@@ -110,7 +110,12 @@ const Teams = (props) => {
         {Boolean(props?.teams?.length) ? (
           <List as={Stack} spacing={4}>
             {props?.teams?.map((team) => (
-              <TeamsListItem team={team} user={user} leaveTeam={leaveTeam} />
+              <TeamsListItem
+                key={team.id}
+                team={team}
+                user={user}
+                leaveTeam={leaveTeam}
+              />
             ))}
           </List>
         ) : (
@@ -118,11 +123,13 @@ const Teams = (props) => {
         )}
       </Article>
 
-      <LeaveTeamDialog
-        isOpen={isTeamToLeaveDialogOpen}
-        onClose={setTeamToLeaveDialogIsOpen.off}
-        team={teamToLeave}
-      />
+      {Boolean(teamToLeave) ? (
+        <LeaveTeamDialog
+          isOpen={isTeamToLeaveDialogOpen}
+          onClose={setTeamToLeaveDialogIsOpen.off}
+          team={teamToLeave}
+        />
+      ) : null}
     </SiteLayout>
   );
 };
@@ -182,7 +189,7 @@ const TeamsListItem = (props) => {
           />
           <Tooltip label="Leave team">
             <IconButton
-              onClick={() => props.leaveTeam(team)}
+              onClick={() => props.leaveTeam(props.team)}
               variant="ghost"
               colorScheme="red"
               aria-label="Leave team"

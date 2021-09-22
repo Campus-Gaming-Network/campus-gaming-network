@@ -452,7 +452,7 @@ const UsersList = (props) => {
           })}
         </List>
 
-        {props.state === "edit" ? (
+        {props.state === "edit" && Boolean(teammateToEdit) ? (
           <Portal>
             <KickTeammateDialog
               isOpen={isKickTeammateAlertOpen}

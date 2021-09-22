@@ -41,7 +41,7 @@ const DeleteEventDialog = (props) => {
       setIsSubmitting.off();
       toast({
         title: "Event deleted.",
-        description: `Event ${props.event.name} has been deleted. You will be redirected...`,
+        description: `Event '${props.event.name}' has been deleted. You will be redirected...`,
         status: "success",
         isClosable: true,
       });
@@ -69,12 +69,12 @@ const DeleteEventDialog = (props) => {
     >
       <AlertDialogOverlay />
       <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
-        <AlertDialogHeader>Delete Event</AlertDialogHeader>
+        <AlertDialogHeader>Delete '{props.event.name}'</AlertDialogHeader>
 
         <AlertDialogBody>
           Are you sure you want to delete the event{" "}
           <Text as="span" fontWeight="bold">
-            {props.event ? props.event.name : ""}
+            {props.event.name}
           </Text>
           ?
         </AlertDialogBody>
