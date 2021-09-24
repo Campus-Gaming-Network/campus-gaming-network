@@ -65,6 +65,7 @@ const settings = {
   lazyLoad: false,
   focusOnSelect: false,
   swipeToSlide: true,
+  draggable: true,
   dots: false,
   infinite: true,
   slidesToShow: 7,

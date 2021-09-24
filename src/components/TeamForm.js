@@ -322,6 +322,7 @@ const TeamForm = (props) => {
               <UsersList
                 team={props.team}
                 users={props.teammates}
+                roles={props.roles}
                 state={props.state}
               />
             </Stack>

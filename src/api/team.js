@@ -94,3 +94,53 @@ export const getTeamRole = async (userId, teamId) => {
     return { role, error };
   }
 };
+
+export const getTeamRoles = async (teamId) => {
+  const roles = {};
+
+  try {
+    const userTeamRolesSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("user-roles")
+      .where("team.id", "==", teamId)
+      .get();
+
+    if (!userTeamRolesSnapshot.empty) {
+      userTeamRolesSnapshot.forEach((doc) => {
+        const { user, role } = doc.data();
+
+        roles[role.id] = {
+          ...role,
+          user,
+        };
+      });
+    }
+  } catch (error) {
+    return { roles, error };
+  }
+
+  try {
+    const rolesSnapshot = await firebaseAdmin
+      .firestore()
+      .collection("roles")
+      .where("id", "in", Object.keys(roles))
+      .get();
+
+    if (!rolesSnapshot.empty) {
+      rolesSnapshot.forEach((doc) => {
+        const { id, name, permissions } = doc.data();
+
+        Object.values(roles).forEach((role) => {
+          if (role.id === id) {
+            role.name = name;
+            role.permissions = permissions;
+          }
+        });
+      });
+    }
+
+    return { roles };
+  } catch (error) {
+    return { roles, error };
+  }
+};

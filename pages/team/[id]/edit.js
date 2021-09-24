@@ -7,7 +7,7 @@ import { httpsCallable } from "firebase/functions";
 import safeJsonStringify from "safe-json-stringify";
 
 // API
-import { getTeamDetails, getTeamUsers } from "src/api/team";
+import { getTeamDetails, getTeamUsers, getTeamRoles } from "src/api/team";
 
 // Other
 import { db, functions } from "src/firebase";
@@ -45,12 +45,18 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  const [teamResponse, teamUsersResponse] = await Promise.all([
+  const [
+    teamResponse,
+    teamUsersResponse,
+    teamRolesResponse,
+  ] = await Promise.all([
     getTeamDetails(context.params.id),
     getTeamUsers(context.params.id),
+    getTeamRoles(context.params.id),
   ]);
   const { team } = teamResponse;
   const { teammates } = teamUsersResponse;
+  const { roles } = teamRolesResponse;
 
   if (!Boolean(team)) {
     return NOT_FOUND;
@@ -64,6 +70,7 @@ export const getServerSideProps = async (context) => {
     params: context.params,
     team,
     teammates,
+    roles,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -131,6 +138,7 @@ const EditTeam = (props) => {
       state="edit"
       team={props.team}
       teammates={props.teammates}
+      roles={props.roles}
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}
       errors={errors}

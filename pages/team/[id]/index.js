@@ -26,7 +26,12 @@ import {
 import dynamic from "next/dynamic";
 
 // API
-import { getTeamDetails, getTeamUsers, getTeamRole } from "src/api/team";
+import {
+  getTeamDetails,
+  getTeamUsers,
+  getTeamRole,
+  getTeamRoles,
+} from "src/api/team";
 import { getUserTeammateDetails } from "src/api/user";
 
 // Constants
@@ -57,12 +62,18 @@ const ReportEntityDialog = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [teamResponse, teamUsersResponse] = await Promise.all([
+  const [
+    teamResponse,
+    teamUsersResponse,
+    teamRolesResponse,
+  ] = await Promise.all([
     getTeamDetails(context.params.id),
     getTeamUsers(context.params.id),
+    getTeamRoles(context.params.id),
   ]);
   const { team } = teamResponse;
   const { teammates } = teamUsersResponse;
+  const { roles } = teamRolesResponse;
 
   if (!Boolean(team)) {
     return NOT_FOUND;
@@ -72,6 +83,7 @@ export const getServerSideProps = async (context) => {
     params: context.params,
     team,
     teammates,
+    roles,
     isPartOfTeam: false,
   };
 
