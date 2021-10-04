@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@campus-gaming-network/tools": "^2.0.5",
     "@chakra-ui/icons": "^1.0.1",
     "@chakra-ui/react": "^1.4.0",
     "@emotion/react": "^11.1.5",
@@ -16,8 +17,7 @@
     "@next/bundle-analyzer": "^10.0.7",
     "@reach/combobox": "^0.10.1",
     "@reach/skip-nav": "^0.6.2",
-    "@sentry/react": "^5.29.0",
-    "@sentry/tracing": "^5.29.0",
+    "@sentry/nextjs": "^6.13.2",
     "bad-words": "^3.0.4",
     "cross-env": "^7.0.3",
     "dompurify": "^2.3.3",
