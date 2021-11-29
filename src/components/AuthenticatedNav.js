@@ -157,7 +157,7 @@ const AuthenticatedNav = (props) => {
                 }
               >
                 <Text fontWeight={600}>Team</Text>
-                <Text>Gather your classmates</Text>
+                <Text>Coming soon!</Text>
               </MenuItem>
             </MenuGroup>
           </MenuList>

@@ -64,6 +64,3 @@ firestore-coverage.html
 .vercel
 
 .firebase-debug.log.icloud
-
-# Sentry
-.sentryclirc
