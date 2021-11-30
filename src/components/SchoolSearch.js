@@ -98,16 +98,16 @@ const SchoolSearch = (props) => {
       console.log({ value, result });
       if (Boolean(result?.data?.hits?.length)) {
         const mappedSchools = result.data.hits.map((hit) => mapSchool(hit));
-        const schools = {
-          ...localStorageSchools,
-          ...keyBy(mappedSchools, "objectID"),
-        };
+        // const schools = {
+        //   // ...localStorageSchools,
+        //   ...keyBy(mappedSchools, "objectID"),
+        // };
 
-        setSchoolsInLocalStorage(schools);
-        setSchoolsQueryInLocalStorage({
-          ...localStorageSchoolQueries,
-          [value]: result.data.hits.map((hit) => hit.objectID),
-        });
+        // setSchoolsInLocalStorage(schools);
+        // setSchoolsQueryInLocalStorage({
+        //   ...localStorageSchoolQueries,
+        //   [value]: result.data.hits.map((hit) => hit.objectID),
+        // });
 
         return mappedSchools.slice(0, 10);
       }

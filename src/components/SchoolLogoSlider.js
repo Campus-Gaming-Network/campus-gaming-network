@@ -102,7 +102,11 @@ const SchoolLogoSlider = () => {
       </VisuallyHidden>
       <Slider settings={{ ...settings, slidesToScroll: 1 }}>
         {schoolIds.map((school) => (
-          <SchoolLogoSliderItem id={school.id} name={school.name} />
+          <SchoolLogoSliderItem
+            key={school.id}
+            id={school.id}
+            name={school.name}
+          />
         ))}
       </Slider>
     </Box>
