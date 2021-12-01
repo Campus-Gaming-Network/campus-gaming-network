@@ -7,6 +7,8 @@ import {
   faSchool,
   faFlag,
   faEllipsisH,
+  faChevronLeft,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -22,6 +24,7 @@ import {
   MenuItem,
   IconButton,
   useBoolean,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import safeJsonStringify from "safe-json-stringify";
@@ -47,12 +50,11 @@ import EmptyText from "src/components/EmptyText";
 import { useAuth } from "src/providers/auth";
 
 // API
-import {
-  getEventDetails,
-  getEventUsers,
-  incrementEventPageViews,
-} from "src/api/event";
+import { getEventDetails, incrementEventPageViews } from "src/api/event";
 import { getUserDetails, getUserEventResponse } from "src/api/user";
+
+// Hooks
+import useFetchEventUsers from "src/hooks/useFetchEventUsers";
 
 // Other
 import firebaseAdmin from "src/firebaseAdmin";
@@ -82,13 +84,11 @@ const EventResponseAttendButton = dynamic(() =>
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [eventDetailsResponse, usersResponse] = await Promise.all([
+  const [eventDetailsResponse] = await Promise.all([
     getEventDetails(context.params.id),
-    getEventUsers(context.params.id),
     incrementEventPageViews(context.params.id),
   ]);
   const { event } = eventDetailsResponse;
-  const { users } = usersResponse;
 
   if (!Boolean(event)) {
     return NOT_FOUND;
@@ -97,7 +97,6 @@ export const getServerSideProps = async (context) => {
   const data = {
     params: context.params,
     event,
-    users,
     eventResponse: null,
     isEventCreator: false,
     hasResponded: false,
@@ -322,12 +321,7 @@ const Event = (props) => {
               <EmptyText>No event description provided</EmptyText>
             )}
           </Stack>
-          <Stack as="section" spacing={4}>
-            <Heading as="h4" fontSize="xl">
-              Attendees
-            </Heading>
-            <UsersList users={props.users} />
-          </Stack>
+          <UsersList event={props.event} />
         </Stack>
       </Article>
 
@@ -361,23 +355,57 @@ const Event = (props) => {
 // UsersList
 
 const UsersList = (props) => {
+  const [page, setPage] = React.useState(0);
+  const [users, status] = useFetchEventUsers(props.event.id, page);
   const hasUsers = React.useMemo(() => {
-    return Boolean(props.users) && props.users.length > 0;
-  }, [props.users]);
+    return Boolean(users) && users.length > 0;
+  }, [users]);
 
-  if (hasUsers) {
-    return (
-      <React.Fragment>
+  const disablePrev = page === 0;
+  const disableNext = Math.floor(props.event.responses.yes / 25) === page;
+
+  const decPage = () => {
+    setPage(page - 1);
+  };
+  const incPage = () => {
+    setPage(page + 1);
+  };
+
+  return (
+    <Stack as="section" spacing={4}>
+      <Flex justify="space-between">
+        <Heading as="h4" fontSize="xl">
+          Attendees ({props.event.responses.yes})
+        </Heading>
+        <ButtonGroup size="sm" isAttached variant="outline">
+          <IconButton
+            onClick={decPage}
+            disabled={disablePrev}
+            aria-label="Previous page"
+            icon={<FontAwesomeIcon icon={faChevronLeft} />}
+          />
+          <IconButton
+            onClick={incPage}
+            disabled={disableNext}
+            aria-label="Next page"
+            icon={<FontAwesomeIcon icon={faChevronRight} />}
+          />
+        </ButtonGroup>
+      </Flex>
+      {/* TODO: Better loading here */}
+      {status === "loading" ? (
+        <Text>Loading...</Text>
+      ) : hasUsers ? (
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {props.users.map((user) => (
+          {users.map((user) => (
             <UserListItem key={user.id} user={user} />
           ))}
         </List>
-      </React.Fragment>
-    );
-  }
-
-  return <EmptyText mt={4}>{EVENT_EMPTY_USERS_TEXT}</EmptyText>;
+      ) : (
+        <EmptyText mt={4}>{EVENT_EMPTY_USERS_TEXT}</EmptyText>
+      )}
+    </Stack>
+  );
 };
 
 export default Event;
