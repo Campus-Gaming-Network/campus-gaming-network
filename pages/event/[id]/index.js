@@ -365,9 +365,15 @@ const UsersList = (props) => {
   const disableNext = Math.floor(props.event.responses.yes / 25) === page;
 
   const decPage = () => {
+    if (disablePrev) {
+      return;
+    }
     setPage(page - 1);
   };
   const incPage = () => {
+    if (disableNext) {
+      return;
+    }
     setPage(page + 1);
   };
 

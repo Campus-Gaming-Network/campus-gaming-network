@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import isEmpty from "lodash.isempty";
 import {
   doc,
   collection,

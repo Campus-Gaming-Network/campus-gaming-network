@@ -15,6 +15,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  ButtonGroup,
   useBoolean,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +23,8 @@ import {
   faSchool,
   faFlag,
   faEllipsisH,
+  faChevronLeft,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import safeJsonStringify from "safe-json-stringify";
 import dynamic from "next/dynamic";
@@ -53,6 +56,7 @@ import EmptyText from "src/components/EmptyText";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+import useFetchSchoolUsers from "src/hooks/useFetchSchoolUsers";
 
 // Dynamic Components
 const ReportEntityDialog = dynamic(
@@ -247,12 +251,7 @@ const School = (props) => {
               emptyText={SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
             />
           </SliderLazyLoad>
-          <Stack as="section" spacing={4}>
-            <Heading as="h3" fontSize="xl" px={{ base: 4, md: 0 }}>
-              Members
-            </Heading>
-            <UsersList users={props.users} />
-          </Stack>
+          <UsersList school={props.school} users={props.users} />
           {props.school.geohash ? (
             <NearbySchools
               latitude={props.school.location._latitude}
@@ -281,77 +280,137 @@ const School = (props) => {
 ////////////////////////////////////////////////////////////////////////////////
 // UsersList
 
+// const UsersList = (props) => {
+//   // const dispatch = useAppDispatch();
+//   // const [page, setPage] = React.useState(0);
+//   // const [users, isLoadingUsers] = useFetchSchoolUsers(
+//   //   props.id,
+//   //   undefined,
+//   //   page
+//   // );
+//   const hasUsers = React.useMemo(
+//     () => Boolean(props.users) && props.users.length && props.users.length > 0,
+//     [props.users]
+//   );
+//   // const isFirstPage = React.useMemo(() => page === 0, [page]);
+//   // const isLastPage = React.useMemo(
+//   //   () => hasUsers && users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
+//   //   [hasUsers, users]
+//   // );
+//   // const isValidPage = React.useMemo(() => page >= 0, [page]);
+
+//   // const nextPage = () => {
+//   //   if (!isLastPage) {
+//   //     setPage(page + 1);
+//   //   }
+//   // };
+
+//   // const prevPage = () => {
+//   //   if (!isFirstPage) {
+//   //     setPage(page - 1);
+//   //   }
+//   // };
+
+//   if (hasUsers) {
+//     return (
+//       <React.Fragment>
+//         <List display="flex" flexWrap="wrap" mx={-2}>
+//           {props.users.map((user) => (
+//             <UserListItem key={user.id} user={user} />
+//           ))}
+//         </List>
+//         {/* <Flex justifyContent="space-between" m={2}>
+//           {!isFirstPage ? (
+//             <Button
+//               variant="ghost"
+//               size="sm"
+//               leftIcon={<ArrowBack />}
+//               colorScheme="brand"
+//               disabled={isFirstPage}
+//               onClick={prevPage}
+//             >
+//               Prev Page
+//             </Button>
+//           ) : null}
+//           {!isLastPage ? (
+//             <Button
+//               variant="ghost"
+//               size="sm"
+//               rightIcon={<ArrowForward />}
+//               colorScheme="brand"
+//               disabled={isLastPage}
+//               onClick={nextPage}
+//               ml="auto"
+//             >
+//               Next Page
+//             </Button>
+//           ) : null}
+//         </Flex> */}
+//       </React.Fragment>
+//     );
+//   }
+
+//   return <EmptyText mt={4}>{SCHOOL_EMPTY_USERS_TEXT}</EmptyText>;
+// };
+
 const UsersList = (props) => {
-  // const dispatch = useAppDispatch();
-  // const [page, setPage] = React.useState(0);
-  // const [users, isLoadingUsers] = useFetchSchoolUsers(
-  //   props.id,
-  //   undefined,
-  //   page
-  // );
-  const hasUsers = React.useMemo(
-    () => Boolean(props.users) && props.users.length && props.users.length > 0,
-    [props.users]
-  );
-  // const isFirstPage = React.useMemo(() => page === 0, [page]);
-  // const isLastPage = React.useMemo(
-  //   () => hasUsers && users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
-  //   [hasUsers, users]
-  // );
-  // const isValidPage = React.useMemo(() => page >= 0, [page]);
+  const [page, setPage] = React.useState(0);
+  const [users, status] = useFetchSchoolUsers(props.event.id, page);
+  const hasUsers = React.useMemo(() => {
+    return Boolean(users) && users.length > 0;
+  }, [users]);
 
-  // const nextPage = () => {
-  //   if (!isLastPage) {
-  //     setPage(page + 1);
-  //   }
-  // };
+  const disablePrev = page === 0;
+  const disableNext = Math.floor(props.school.userCount / 25) === page;
 
-  // const prevPage = () => {
-  //   if (!isFirstPage) {
-  //     setPage(page - 1);
-  //   }
-  // };
+  const decPage = () => {
+    if (disablePrev) {
+      return;
+    }
+    setPage(page - 1);
+  };
+  const incPage = () => {
+    if (disableNext) {
+      return;
+    }
+    setPage(page + 1);
+  };
 
-  if (hasUsers) {
-    return (
-      <React.Fragment>
+  return (
+    <Stack as="section" spacing={4}>
+      <Flex justify="space-between">
+        <Heading as="h4" fontSize="xl">
+          Members
+        </Heading>
+        <ButtonGroup size="sm" isAttached variant="outline">
+          <IconButton
+            onClick={decPage}
+            disabled={disablePrev}
+            aria-label="Previous page"
+            icon={<FontAwesomeIcon icon={faChevronLeft} />}
+          />
+          <IconButton
+            onClick={incPage}
+            disabled={disableNext}
+            aria-label="Next page"
+            icon={<FontAwesomeIcon icon={faChevronRight} />}
+          />
+        </ButtonGroup>
+      </Flex>
+      {/* TODO: Better loading here */}
+      {status === "loading" ? (
+        <Text>Loading...</Text>
+      ) : hasUsers ? (
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {props.users.map((user) => (
+          {users.map((user) => (
             <UserListItem key={user.id} user={user} />
           ))}
         </List>
-        {/* <Flex justifyContent="space-between" m={2}>
-          {!isFirstPage ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              leftIcon={<ArrowBack />}
-              colorScheme="brand"
-              disabled={isFirstPage}
-              onClick={prevPage}
-            >
-              Prev Page
-            </Button>
-          ) : null}
-          {!isLastPage ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              rightIcon={<ArrowForward />}
-              colorScheme="brand"
-              disabled={isLastPage}
-              onClick={nextPage}
-              ml="auto"
-            >
-              Next Page
-            </Button>
-          ) : null}
-        </Flex> */}
-      </React.Fragment>
-    );
-  }
-
-  return <EmptyText mt={4}>{SCHOOL_EMPTY_USERS_TEXT}</EmptyText>;
+      ) : (
+        <EmptyText mt={4}>{SCHOOL_EMPTY_USERS_TEXT}</EmptyText>
+      )}
+    </Stack>
+  );
 };
 
 export default School;
