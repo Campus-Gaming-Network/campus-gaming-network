@@ -7,6 +7,7 @@ import {
   getDocs,
   orderBy,
   Timestamp,
+  limit,
 } from "firebase/firestore";
 
 // Other
