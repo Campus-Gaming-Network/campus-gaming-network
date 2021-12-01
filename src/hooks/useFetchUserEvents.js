@@ -7,6 +7,7 @@ import {
   where,
   getDocs,
   Timestamp,
+  limit,
 } from "firebase/firestore";
 
 // Other
@@ -42,7 +43,8 @@ const useFetchUserEvents = (id, limit) => {
             collection(db, COLLECTIONS.EVENT_RESPONSES),
             where("user.ref", "==", doc(db, COLLECTIONS.USERS, id)),
             where("response", "==", "YES"),
-            where("endDateTime", ">=", Timestamp.fromDate(new Date()))
+            where("endDateTime", ">=", Timestamp.fromDate(new Date())),
+            limit(25)
           )
         );
 
