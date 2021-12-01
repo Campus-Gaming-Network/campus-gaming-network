@@ -23,7 +23,7 @@ export const mapEvent = (event) => {
   }`;
   const url = `${PRODUCTION_URL}/event/${event.id}`;
 
-  return cleanObjectOfBadWords({
+  return {
     ...event,
     createdAt: event.createdAt?.toDate(),
     updatedAt: event.updatedAt?.toDate(),
@@ -50,5 +50,5 @@ export const mapEvent = (event) => {
         site_name: SITE_NAME,
       },
     },
-  });
+  };
 };

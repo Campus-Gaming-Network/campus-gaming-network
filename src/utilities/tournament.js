@@ -9,9 +9,9 @@ export const mapTournament = (tournament) => {
     return undefined;
   }
 
-  return cleanObjectOfBadWords({
+  return {
     ...tournament,
     createdAt: tournament.createdAt?.toDate(),
     updatedAt: tournament.updatedAt?.toDate(),
-  });
+  };
 };

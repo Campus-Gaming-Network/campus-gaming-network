@@ -24,7 +24,7 @@ export const mapSchool = (school) => {
     : undefined;
   const url = `${PRODUCTION_URL}/school/${school.id}`;
 
-  return cleanObjectOfBadWords({
+  return {
     ...school,
     createdAt: school.createdAt?.toDate(),
     updatedAt: school.updatedAt?.toDate(),
@@ -45,7 +45,7 @@ export const mapSchool = (school) => {
         url,
       },
     },
-  });
+  };
 };
 
 export const getSchoolLogoPath = (schoolId, extension = "png") =>

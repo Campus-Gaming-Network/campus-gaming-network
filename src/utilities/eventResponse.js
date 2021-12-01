@@ -12,12 +12,12 @@ export const mapEventResponse = (eventResponse) => {
     return undefined;
   }
 
-  return cleanObjectOfBadWords({
+  return {
     ...eventResponse,
     createdAt: eventResponse.createdAt?.toDate(),
     updatedAt: eventResponse.updatedAt?.toDate(),
     school: mapSchool(eventResponse.school),
     user: mapUser(eventResponse.user),
     event: mapEvent(eventResponse.event),
-  });
+  };
 };
