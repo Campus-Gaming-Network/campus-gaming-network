@@ -10,7 +10,22 @@ import { GOOGLE_MAPS_QUERY_URL } from "src/constants/other";
 
 const badWordFilter = new Filter();
 
-export const cleanBadWords = (text) => badWordFilter.clean(text);
+export const cleanBadWords = (text = "") => {
+  if (
+    !text ||
+    typeof text !== "string" ||
+    (typeof text === "string" && text.trim() === "")
+  ) {
+    return text;
+  }
+
+  try {
+    const cleaned = badWordFilter.clean(text);
+    return cleaned;
+  } catch (error) {
+    return text;
+  }
+};
 
 export const useFormFields = (initialState) => {
   const [fields, setValues] = React.useState(initialState);

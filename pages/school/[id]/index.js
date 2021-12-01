@@ -30,11 +30,7 @@ import safeJsonStringify from "safe-json-stringify";
 import dynamic from "next/dynamic";
 
 // API
-import {
-  getSchoolDetails,
-  getSchoolEvents,
-  getSchoolUsers,
-} from "src/api/school";
+import { getSchoolDetails, getSchoolEvents } from "src/api/school";
 
 // Constants
 import {
@@ -79,13 +75,11 @@ const UpcomingSchoolEvents = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [schoolResponse, usersResponse, eventsResponse] = await Promise.all([
+  const [schoolResponse, eventsResponse] = await Promise.all([
     getSchoolDetails(context.params.id),
-    getSchoolUsers(context.params.id),
     getSchoolEvents(context.params.id),
   ]);
   const { school } = schoolResponse;
-  const { users } = usersResponse;
   const { events } = eventsResponse;
 
   if (!Boolean(school)) {
@@ -95,7 +89,6 @@ export const getServerSideProps = async (context) => {
   const data = {
     params: context.params,
     school,
-    users,
     events,
   };
 
@@ -251,7 +244,7 @@ const School = (props) => {
               emptyText={SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT}
             />
           </SliderLazyLoad>
-          <UsersList school={props.school} users={props.users} />
+          <UsersList school={props.school} />
           {props.school.geohash ? (
             <NearbySchools
               latitude={props.school.location._latitude}
@@ -355,7 +348,7 @@ const School = (props) => {
 
 const UsersList = (props) => {
   const [page, setPage] = React.useState(0);
-  const [users, status] = useFetchSchoolUsers(props.event.id, page);
+  const [users, status] = useFetchSchoolUsers(props.school.id, page);
   const hasUsers = React.useMemo(() => {
     return Boolean(users) && users.length > 0;
   }, [users]);
@@ -380,7 +373,7 @@ const UsersList = (props) => {
     <Stack as="section" spacing={4}>
       <Flex justify="space-between">
         <Heading as="h4" fontSize="xl">
-          Members
+          Members ({props.school.userCount})
         </Heading>
         <ButtonGroup size="sm" isAttached variant="outline">
           <IconButton

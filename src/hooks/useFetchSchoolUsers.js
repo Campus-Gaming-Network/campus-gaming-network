@@ -72,11 +72,11 @@ const useFetchSchoolUsers = (
         let schoolUsers = [];
 
         snapshot.forEach((doc) => {
-          const data = doc.data();
+          const user = doc.data();
           schoolUsers.push(
             mapUser({
-              id: data.user.id,
-              ...data.user,
+              id: user.id,
+              ...user,
             })
           );
         });
