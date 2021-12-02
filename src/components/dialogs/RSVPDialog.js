@@ -112,7 +112,7 @@ const RSVPDialog = (props) => {
         ref: eventDocRef,
         name: props.event.name,
         description: props.event.description,
-        startDateTime: props.event.startDateTime.firestore,
+        startDateTime: props.event.startDateTime,
         endDateTime: props.event.endDateTime,
         isOnlineEvent: props.event.isOnlineEvent,
         responses: {
