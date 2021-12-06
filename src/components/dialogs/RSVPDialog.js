@@ -12,7 +12,13 @@ import {
   AlertDialogOverlay,
   useBoolean,
 } from "@chakra-ui/react";
-import { doc, updateDoc, addDoc, collection } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  addDoc,
+  collection,
+  Timestamp,
+} from "firebase/firestore";
 
 // Other
 import { db } from "src/firebase";
@@ -112,8 +118,8 @@ const RSVPDialog = (props) => {
         ref: eventDocRef,
         name: props.event.name,
         description: props.event.description,
-        startDateTime: props.event.startDateTime,
-        endDateTime: props.event.endDateTime,
+        startDateTime: Timestamp.fromDate(new Date(props.event.startDateTime)),
+        endDateTime: Timestamp.fromDate(new Date(props.event.endDateTime)),
         isOnlineEvent: props.event.isOnlineEvent,
         responses: {
           yes: 1,
