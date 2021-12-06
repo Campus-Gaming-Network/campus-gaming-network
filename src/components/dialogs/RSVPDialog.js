@@ -92,7 +92,8 @@ const RSVPDialog = (props) => {
     const eventDocRef = doc(db, COLLECTIONS.EVENTS, props.event.id);
     const schoolDocRef = doc(db, COLLECTIONS.SCHOOLS, props.event.school.id);
 
-    console.log("props.event", props.event);
+    console.log("props.event.startDateTime", props.event.startDateTime);
+    console.log("props.event.endDateTime", props.event.endDateTime);
 
     const data = {
       response,
@@ -128,8 +129,6 @@ const RSVPDialog = (props) => {
         name: props.event.school.name,
       },
     };
-
-    console.log("data", data);
 
     return data;
   };
