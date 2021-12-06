@@ -9,10 +9,9 @@ export const hasStarted = (startDateTime, endDateTime) => {
     return undefined;
   }
 
-  return Interval.fromDateTimes(
-    startDateTime.toDate(),
-    endDateTime.toDate()
-  ).contains(DateTime.local());
+  return Interval.fromDateTimes(startDateTime, endDateTime).contains(
+    DateTime.local()
+  );
 };
 
 export const hasEnded = (endDateTime) => {
@@ -20,17 +19,12 @@ export const hasEnded = (endDateTime) => {
     return undefined;
   }
 
-  return (
-    DateTime.local() > DateTime.fromISO(endDateTime.toDate().toISOString())
-  );
+  return DateTime.local() > DateTime.fromISO(endDateTime);
 };
 
-export const formatCalendarDateTime = (dateTime) => {
-  if (!Boolean(dateTime)) {
-    return undefined;
-  }
-
-  return DateTime.fromISO(dateTime.toDate().toISOString()).toRelativeCalendar();
+const localeFormat = {
+  ...DateTime.DATETIME_FULL,
+  ...{ month: "long", day: "numeric" },
 };
 
 export const buildDateTime = (dateTime) => {
@@ -40,11 +34,6 @@ export const buildDateTime = (dateTime) => {
 
   const _dateTime = dateTime.toDate();
   const _dateTimeISO = _dateTime.toISOString();
-  // TODO: Move to constants
-  const localeFormat = {
-    ...DateTime.DATETIME_FULL,
-    ...{ month: "long", day: "numeric" },
-  };
 
   return {
     firestore: dateTime,
@@ -60,16 +49,7 @@ export const firebaseToLocaleString = (dateTime) => {
     return undefined;
   }
 
-  const seconds = dateTime._seconds || dateTime.seconds;
-
-  if (!Boolean(seconds) || typeof seconds !== "number") {
-    return undefined;
-  }
-
-  return DateTime.fromSeconds(seconds).toLocaleString({
-    ...DateTime.DATETIME_FULL,
-    ...{ month: "long", day: "numeric" },
-  });
+  return DateTime.fromISO(dateTime).toLocaleString(localeFormat);
 };
 
 export const getYears = (
