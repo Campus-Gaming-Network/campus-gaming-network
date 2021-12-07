@@ -49,7 +49,7 @@ export const firebaseToLocaleString = (dateTime) => {
     return undefined;
   }
 
-  return DateTime.fromISO(dateTime).toLocaleString(localeFormat);
+  return DateTime.fromJSDate(dateTime).toLocaleString(localeFormat);
 };
 
 export const getYears = (
