@@ -49,6 +49,10 @@ export const firebaseToLocaleString = (dateTime) => {
     return undefined;
   }
 
+  if (typeof dateTime === "string") {
+    return DateTime.fromISO(dateTime).toLocaleString(localeFormat);
+  }
+
   return DateTime.fromJSDate(dateTime).toLocaleString(localeFormat);
 };
 
