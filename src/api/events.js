@@ -22,7 +22,7 @@ export const getRecentlyCreatedEvents = async () => {
       .get();
 
     if (!recentlyCreatedEventsSnapshot.empty) {
-      recentlyCreatedEventsSnapshot.forEach(doc => {
+      recentlyCreatedEventsSnapshot.forEach((doc) => {
         const data = doc.data();
         const event = mapEvent({ id: doc.id, ...data }, doc);
         events.push(event);

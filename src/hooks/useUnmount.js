@@ -6,7 +6,7 @@ import React from "react";
 //Hooks
 import useEffectOnce from "src/hooks/useEffectOnce";
 
-const useUnmount = fn => {
+const useUnmount = (fn) => {
   const fnRef = React.useRef(fn);
 
   // update the ref each render so if it change the newest callback will be invoked

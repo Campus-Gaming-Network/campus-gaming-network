@@ -8,5 +8,5 @@ export const INITIAL_STORE = {
   schools: {},
   user: {},
   users: {},
-  games: {}
+  games: {},
 };

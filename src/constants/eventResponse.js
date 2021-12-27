@@ -3,5 +3,5 @@
 
 export const EVENT_RESPONSES = {
   YES: "YES",
-  NO: "NO"
+  NO: "NO",
 };

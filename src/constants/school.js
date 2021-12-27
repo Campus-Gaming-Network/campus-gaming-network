@@ -12,14 +12,14 @@ export const ALLOWED_SCHOOL_ACCOUNTS = [
   "twitch",
   "youtube",
   "skype",
-  "discord"
+  "discord",
 ];
 export const SCHOOL_ACCOUNTS = Object.keys(ACCOUNTS)
-  .filter(key => ALLOWED_SCHOOL_ACCOUNTS.includes(key))
+  .filter((key) => ALLOWED_SCHOOL_ACCOUNTS.includes(key))
   .reduce((obj, key) => {
     return {
       ...obj,
-      [key]: ACCOUNTS[key]
+      [key]: ACCOUNTS[key],
     };
   }, {});
 export const EMPTY_SCHOOL_WEBSITE = "NOT AVAILABLE";

@@ -5,7 +5,7 @@ import { mapUser } from "src/utilities/user";
 
 // const geofire = require('geofire-common');
 
-export const getSchoolDetails = async id => {
+export const getSchoolDetails = async (id) => {
   let school = null;
 
   try {
@@ -56,7 +56,7 @@ export const getSchoolEvents = async (id, limit = 25, page = 0) => {
     const schoolEventsSnapshot = await query.limit(limit).get();
 
     if (!schoolEventsSnapshot.empty) {
-      schoolEventsSnapshot.forEach(doc => {
+      schoolEventsSnapshot.forEach((doc) => {
         const data = doc.data();
         const event = mapEvent({ id: doc.id, ...data }, doc);
         events.push(event);
@@ -94,7 +94,7 @@ export const getSchoolUsers = async (id, limit = 25, page = 0) => {
     const schoolUsersSnapshot = await query.limit(limit).get();
 
     if (!schoolUsersSnapshot.empty) {
-      schoolUsersSnapshot.forEach(doc => {
+      schoolUsersSnapshot.forEach((doc) => {
         const user = mapUser(doc.data(), doc);
         users.push(user);
       });
