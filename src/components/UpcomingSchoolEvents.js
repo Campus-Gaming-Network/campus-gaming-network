@@ -34,7 +34,7 @@ const UpcomingSchoolEvents = (props) => {
               <React.Fragment>
                 Upcoming events at{" "}
                 <Link
-                  href={`/school/${props.school.id}`}
+                  href={`/school/${props.school.handle}`}
                   color="brand.500"
                   fontWeight="bold"
                   isTruncated

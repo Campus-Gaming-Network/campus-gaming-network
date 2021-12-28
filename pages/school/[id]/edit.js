@@ -217,7 +217,7 @@ const EditSchool = (props) => {
     <SiteLayout
       meta={{
         title: `Edit ${props.school.formattedName}`,
-        og: { url: `${PRODUCTION_URL}/school/${props.school.id}/edit` },
+        og: { url: `${PRODUCTION_URL}/school/${props.school.handle}/edit` },
       }}
     >
       <Article>

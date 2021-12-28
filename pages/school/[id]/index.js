@@ -373,7 +373,7 @@ const UsersList = (props) => {
     <Stack as="section" spacing={4}>
       <Flex justify="space-between">
         <Heading as="h4" fontSize="xl">
-          Members ({props.school.userCount})
+          Members ({props.school.userCount || 0})
         </Heading>
         <ButtonGroup size="sm" isAttached variant="outline">
           <IconButton

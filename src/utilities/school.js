@@ -22,7 +22,7 @@ export const mapSchool = (school) => {
   const formattedName = Boolean(school.name)
     ? startCase(school.name.toLowerCase())
     : undefined;
-  const url = `${PRODUCTION_URL}/school/${school.id}`;
+  const url = `${PRODUCTION_URL}/school/${school.handle}`;
 
   return {
     ...school,

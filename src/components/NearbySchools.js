@@ -149,7 +149,7 @@ const NearbySchools = (props) => {
                           {school.city}, {school.state}
                         </Text>
                         <Link
-                          href={`/school/${school.id}`}
+                          href={`/school/${school.handle}`}
                           fontWeight="bold"
                           fontSize="sm"
                           lineHeight="1.2"

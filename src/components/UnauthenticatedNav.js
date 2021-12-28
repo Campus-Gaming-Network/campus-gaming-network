@@ -18,8 +18,8 @@ const UnauthenticatedNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useBoolean();
 
   const onSchoolSelect = (selectedSchool) => {
-    if (selectedSchool && selectedSchool.id) {
-      router.push(`/school/${selectedSchool.id}`);
+    if (selectedSchool && selectedSchool.handle) {
+      router.push(`/school/${selectedSchool.handle}`);
     }
   };
 
