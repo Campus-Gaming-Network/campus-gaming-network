@@ -62,7 +62,6 @@ const ReportEntityDialog = (props) => {
     const reportData = {
       entity: {
         ...props.entity,
-        ref: doc(db, props.entity.type, props.entity.id),
       },
       reason,
       metadata: safeJsonStringify({
@@ -71,13 +70,11 @@ const ReportEntityDialog = (props) => {
         timestamp: Date.now(),
       }),
     };
-    console.log("reportData", reportData);
 
     try {
-      console.log("try");
       const reportEntity = httpsCallable(functions, CALLABLES.REPORT_ENTITY);
       await reportEntity(reportData);
-      // props.onClose();
+      props.onClose();
       setIsSubmitting.off();
       toast({
         title: "Reported succesfully.",
@@ -87,9 +84,8 @@ const ReportEntityDialog = (props) => {
         isClosable: true,
       });
     } catch (error) {
-      console.log("catch");
       console.error(error);
-      // props.onClose();
+      props.onClose();
       setIsSubmitting.off();
       toast({
         title: "An error occurred.",
