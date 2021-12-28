@@ -26,7 +26,7 @@ import { validateReportEntity } from "src/utilities/validation";
 import { sanitizePrivateProperties } from "src/utilities/other";
 
 // Constants
-import { CALLABLES } from "src/constants/firebase";
+import { CALLABLES, COLLECTIONS } from "src/constants/firebase";
 
 // Other
 import { db, functions } from "src/firebase";
