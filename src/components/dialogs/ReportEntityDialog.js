@@ -26,7 +26,7 @@ import { validateReportEntity } from "src/utilities/validation";
 import { sanitizePrivateProperties } from "src/utilities/other";
 
 // Constants
-import { CALLABLES, COLLECTIONS } from "src/constants/firebase";
+import { CALLABLES } from "src/constants/firebase";
 
 // Other
 import { db, functions } from "src/firebase";
@@ -62,7 +62,7 @@ const ReportEntityDialog = (props) => {
     const reportData = {
       entity: {
         ...props.entity,
-        ref: doc(db, COLLECTIONS[props.entity.type], props.entity.id),
+        ref: doc(db, props.entity.type, props.entity.id),
       },
       reason,
       metadata: safeJsonStringify({
@@ -86,7 +86,7 @@ const ReportEntityDialog = (props) => {
       });
     } catch (error) {
       console.error(error);
-      props.onClose();
+      // props.onClose();
       setIsSubmitting.off();
       toast({
         title: "An error occurred.",
