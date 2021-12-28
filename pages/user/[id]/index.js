@@ -336,7 +336,7 @@ const User = (props) => {
       {isAuthenticated ? (
         <ReportEntityDialog
           entity={{
-            type: "USERS",
+            type: "users",
             id: props.user.id,
           }}
           pageProps={props}
