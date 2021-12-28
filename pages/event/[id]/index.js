@@ -166,7 +166,7 @@ const Event = (props) => {
           <Flex align="center" justify="space-between">
             <Box pr={2}>
               <Link
-                href={`/school/${props.event.school.id}`}
+                href={`/school/${props.event.school.handle}`}
                 color="brand.500"
                 fontWeight={600}
                 fontSize="lg"
@@ -381,7 +381,7 @@ const UsersList = (props) => {
     <Stack as="section" spacing={4}>
       <Flex justify="space-between">
         <Heading as="h4" fontSize="xl">
-          Attendees ({props.event.responses.yes})
+          Attendees ({props.event.responses.yes || 0})
         </Heading>
         <ButtonGroup size="sm" isAttached variant="outline">
           <IconButton

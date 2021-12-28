@@ -111,6 +111,7 @@ const RSVPDialog = (props) => {
           ref: props.user.school.ref,
           id: props.user.school.id,
           name: props.user.school.name,
+          handle: props.user.school.handle,
         },
       },
       event: {
@@ -130,6 +131,7 @@ const RSVPDialog = (props) => {
         id: schoolDocRef.id,
         ref: schoolDocRef,
         name: props.event.school.name,
+        handle: props.event.school.handle,
       },
     };
 

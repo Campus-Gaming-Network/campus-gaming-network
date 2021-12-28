@@ -356,6 +356,7 @@ const EditUser = () => {
         ref: schoolDocRef,
         id: schoolDocRef.id,
         name: formState.school.name,
+        handle: formState.school.handle,
       },
       currentlyPlaying: currentlyPlaying || [],
       favoriteGames: favoriteGames || [],

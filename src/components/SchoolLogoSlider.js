@@ -106,6 +106,7 @@ const SchoolLogoSlider = () => {
             key={school.id}
             id={school.id}
             name={school.name}
+            handle={school.handle}
           />
         ))}
       </Slider>
@@ -119,7 +120,7 @@ const SchoolLogoSliderItem = (props) => {
   return (
     <Box>
       <Link
-        href={`/school/${props.id}`}
+        href={`/school/${props.handle}`}
         pos="relative"
         d="flex"
         alignItems="center"

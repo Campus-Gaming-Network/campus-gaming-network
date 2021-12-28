@@ -96,12 +96,14 @@ const CreateTournament = () => {
           ref: user.school.ref,
           id: user.school.id,
           name: user.school.name,
+          handle: user.school.handle,
         },
       },
       school: {
         ref: schoolDocRef,
         id: schoolDocRef.id,
         name: school.name,
+        handle: school.handle,
       },
       participants: 0,
     };

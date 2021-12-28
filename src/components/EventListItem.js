@@ -91,7 +91,7 @@ const EventListItem = (props) => {
             {props.event.name}
           </Link>
           <Link
-            href={`/school/${props.school.id}`}
+            href={`/school/${props.school.handle}`}
             color="gray.500"
             fontWeight={600}
             fontSize="sm"

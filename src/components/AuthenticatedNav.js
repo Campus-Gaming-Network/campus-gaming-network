@@ -56,10 +56,8 @@ const AuthenticatedNav = (props) => {
   };
 
   const onSchoolSelect = (selectedSchool) => {
-    const id = selectedSchool.id || selectedSchool.objectID;
-
-    if (selectedSchool && id) {
-      router.push(`/school/${id}`);
+    if (selectedSchool && selectedSchool.handle) {
+      router.push(`/school/${selectedSchool.handle}`);
     }
   };
 
@@ -217,7 +215,7 @@ const AuthenticatedNav = (props) => {
                   <Text lineHeight="1">Profile</Text>
                 </Flex>
               </MenuItem>
-              <MenuItem as={Link} href={`/school/${props.school.id}`}>
+              <MenuItem as={Link} href={`/school/${props.school.handle}`}>
                 <SchoolLogo
                   schoolId={props.school.id}
                   schoolName={props.school.formattedName}
