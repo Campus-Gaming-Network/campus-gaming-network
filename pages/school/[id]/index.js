@@ -354,7 +354,9 @@ const UsersList = (props) => {
   }, [users]);
 
   const disablePrev = page === 0;
-  const disableNext = Math.floor(props.school.userCount / 25) === page;
+  const disableNext =
+    props.school.userCount === 0 ||
+    Math.floor(props.school.userCount / 25) === page;
 
   const decPage = () => {
     if (disablePrev) {

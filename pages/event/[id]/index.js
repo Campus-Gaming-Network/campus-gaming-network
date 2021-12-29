@@ -362,7 +362,9 @@ const UsersList = (props) => {
   }, [users]);
 
   const disablePrev = page === 0;
-  const disableNext = Math.floor(props.event.responses.yes / 25) === page;
+  const disableNext =
+    props.event.responses.yes === 0 ||
+    Math.floor(props.event.responses.yes / 25) === page;
 
   const decPage = () => {
     if (disablePrev) {
