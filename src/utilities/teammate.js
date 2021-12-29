@@ -11,11 +11,11 @@ export const mapTeammate = (teammate) => {
     return undefined;
   }
 
-  return cleanObjectOfBadWords({
+  return {
     ...teammate,
     createdAt: teammate.createdAt?.toDate(),
     updatedAt: teammate.updatedAt?.toDate(),
     user: mapUser(teammate.user),
     team: mapTeam(teammate.team),
-  });
+  };
 };

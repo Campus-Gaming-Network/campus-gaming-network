@@ -7,6 +7,7 @@ import {
   where,
   getDocs,
   Timestamp,
+  limit,
 } from "firebase/firestore";
 
 // Other
@@ -19,7 +20,7 @@ import { mapEventResponse } from "src/utilities/eventResponse";
 import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
 
-const useFetchUserEvents = (id, limit) => {
+const useFetchUserEvents = (id, _limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -42,7 +43,8 @@ const useFetchUserEvents = (id, limit) => {
             collection(db, COLLECTIONS.EVENT_RESPONSES),
             where("user.ref", "==", doc(db, COLLECTIONS.USERS, id)),
             where("response", "==", "YES"),
-            where("endDateTime", ">=", Timestamp.fromDate(new Date()))
+            where("event.endDateTime", ">=", Timestamp.fromDate(new Date())),
+            limit(25)
           )
         );
 
@@ -66,7 +68,7 @@ const useFetchUserEvents = (id, limit) => {
     if (id) {
       fetchUserEvents();
     }
-  }, [id, limit]);
+  }, [id, _limit]);
 
   return [events, state, error];
 };

@@ -22,9 +22,9 @@ export const mapSchool = (school) => {
   const formattedName = Boolean(school.name)
     ? startCase(school.name.toLowerCase())
     : undefined;
-  const url = `${PRODUCTION_URL}/school/${school.id}`;
+  const url = `${PRODUCTION_URL}/school/${school.handle}`;
 
-  return cleanObjectOfBadWords({
+  return {
     ...school,
     createdAt: school.createdAt?.toDate(),
     updatedAt: school.updatedAt?.toDate(),
@@ -45,7 +45,7 @@ export const mapSchool = (school) => {
         url,
       },
     },
-  });
+  };
 };
 
 export const getSchoolLogoPath = (schoolId, extension = "png") =>

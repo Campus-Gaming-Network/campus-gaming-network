@@ -151,7 +151,7 @@ const UserListItem = (props) => {
                 }
               />
               <Link
-                href={`/school/${props.user.school.id}`}
+                href={`/school/${props.user.school.handle}`}
                 fontSize="xs"
                 noOfLines={1}
                 color="gray.600"

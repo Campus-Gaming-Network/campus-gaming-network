@@ -7,6 +7,7 @@ import {
   getDocs,
   orderBy,
   Timestamp,
+  limit,
 } from "firebase/firestore";
 
 // Other
@@ -19,7 +20,7 @@ import { mapEvent } from "src/utilities/event";
 import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
 
-const useFetchRecentlyCreatedEvents = (limit) => {
+const useFetchRecentlyCreatedEvents = (_limit = 25) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -42,7 +43,8 @@ const useFetchRecentlyCreatedEvents = (limit) => {
             collection(db, COLLECTIONS.EVENTS),
             where("endDateTime", ">=", Timestamp.fromDate(new Date())),
             orderBy("endDateTime"),
-            orderBy("createdAt", "desc")
+            orderBy("createdAt", "desc"),
+            limit(_limit)
           )
         );
 
@@ -69,7 +71,7 @@ const useFetchRecentlyCreatedEvents = (limit) => {
     };
 
     fetchRecentlyCreatedEvents();
-  }, [limit]);
+  }, [_limit]);
 
   return [events, state, error];
 };

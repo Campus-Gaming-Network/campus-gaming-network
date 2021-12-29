@@ -46,7 +46,7 @@ export const mapUser = (user) => {
   );
   const url = `${PRODUCTION_URL}/user/${user.id}`;
 
-  return cleanObjectOfBadWords({
+  return {
     ...user,
     createdAt: user.createdAt?.toDate(),
     updatedAt: user.updatedAt?.toDate(),
@@ -64,7 +64,7 @@ export const mapUser = (user) => {
         url,
       },
     },
-  });
+  };
 };
 
 export const userHasAccounts = (user) => {

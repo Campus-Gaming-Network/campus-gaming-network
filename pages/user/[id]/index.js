@@ -88,7 +88,7 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  const { school } = await getSchoolDetails(user.school.id);
+  const { school } = await getSchoolDetails(user.school.handle);
   const data = {
     params: context.params,
     user,
@@ -181,7 +181,7 @@ const User = (props) => {
               {props.user.displayStatus}
               {Boolean(props.school) ? (
                 <Link
-                  href={`/school/${props.school.id}`}
+                  href={`/school/${props.school.handle}`}
                   color="brand.500"
                   fontWeight={600}
                   ml={2}

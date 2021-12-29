@@ -24,7 +24,7 @@ export const mapTeam = (team) => {
     displayName = `${team.name} (${team.shortName})`;
   }
 
-  return cleanObjectOfBadWords({
+  return {
     ...team,
     displayName,
     memberCount: team.memberCount || 1,
@@ -44,5 +44,5 @@ export const mapTeam = (team) => {
         site_name: SITE_NAME,
       },
     },
-  });
+  };
 };

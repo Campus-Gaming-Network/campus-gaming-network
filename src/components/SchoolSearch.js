@@ -95,23 +95,19 @@ const SchoolSearch = (props) => {
     const searchSchools = httpsCallable(functions, CALLABLES.SEARCH_SCHOOLS);
 
     return searchSchools({ query: value }).then((result) => {
-      if (
-        result &&
-        result.data &&
-        result.data.hits &&
-        result.data.hits.length > 0
-      ) {
+      console.log({ value, result });
+      if (Boolean(result?.data?.hits?.length)) {
         const mappedSchools = result.data.hits.map((hit) => mapSchool(hit));
-        const schools = {
-          ...localStorageSchools,
-          ...keyBy(mappedSchools, "objectID"),
-        };
+        // const schools = {
+        //   // ...localStorageSchools,
+        //   ...keyBy(mappedSchools, "objectID"),
+        // };
 
-        setSchoolsInLocalStorage(schools);
-        setSchoolsQueryInLocalStorage({
-          ...localStorageSchoolQueries,
-          [value]: result.data.hits.map((hit) => hit.objectID),
-        });
+        // setSchoolsInLocalStorage(schools);
+        // setSchoolsQueryInLocalStorage({
+        //   ...localStorageSchoolQueries,
+        //   [value]: result.data.hits.map((hit) => hit.objectID),
+        // });
 
         return mappedSchools.slice(0, 10);
       }

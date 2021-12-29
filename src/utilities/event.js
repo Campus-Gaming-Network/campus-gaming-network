@@ -18,19 +18,22 @@ export const mapEvent = (event) => {
     return undefined;
   }
 
-  const metaDescription = `${event.startDateTime.toDate()}: ${
-    event.description
-  }`;
+  const startDateTime = event.startDateTime.toDate();
+  const endDateTime = event.endDateTime.toDate();
+
+  const metaDescription = `${startDateTime}: ${event.description}`;
   const url = `${PRODUCTION_URL}/event/${event.id}`;
 
-  return cleanObjectOfBadWords({
+  return {
     ...event,
+    startDateTime,
+    endDateTime,
     createdAt: event.createdAt?.toDate(),
     updatedAt: event.updatedAt?.toDate(),
     url,
     googleMapsAddressLink: googleMapsLink(event.location),
-    hasStarted: hasStarted(event.startDateTime, event.endDateTime),
-    hasEnded: hasEnded(event.endDateTime),
+    hasStarted: hasStarted(startDateTime, endDateTime),
+    hasEnded: hasEnded(endDateTime),
     school: mapSchool(event.school),
     meta: {
       title: event.name,
@@ -50,5 +53,5 @@ export const mapEvent = (event) => {
         site_name: SITE_NAME,
       },
     },
-  });
+  };
 };

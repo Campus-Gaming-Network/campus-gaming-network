@@ -4,7 +4,7 @@
 // Libraries
 import React from "react";
 
-const useScript = src => {
+const useScript = (src) => {
   // Keep track of script status ("idle", "loading", "ready", "error")
   const [status, setStatus] = React.useState(src ? "loading" : "idle");
 
@@ -32,7 +32,7 @@ const useScript = src => {
 
         // Store status in attribute on script
         // This can be read by other instances of this hook
-        const setAttributeFromEvent = event => {
+        const setAttributeFromEvent = (event) => {
           script.setAttribute(
             "data-status",
             event.type === "load" ? "ready" : "error"
@@ -49,7 +49,7 @@ const useScript = src => {
       // Script event handler to update status in state
       // Note: Even if the script already exists we still need to add
       // event handlers to update the state for *this* hook instance.
-      const setStateFromEvent = event => {
+      const setStateFromEvent = (event) => {
         setStatus(event.type === "load" ? "ready" : "error");
       };
 

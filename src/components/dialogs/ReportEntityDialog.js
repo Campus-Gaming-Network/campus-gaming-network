@@ -62,7 +62,6 @@ const ReportEntityDialog = (props) => {
     const reportData = {
       entity: {
         ...props.entity,
-        ref: doc(db, COLLECTIONS[props.entity.type], props.entity.id),
       },
       reason,
       metadata: safeJsonStringify({

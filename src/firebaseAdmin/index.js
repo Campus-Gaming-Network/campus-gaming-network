@@ -5,9 +5,9 @@ try {
     credential: firebaseAdmin.credential.cert({
       privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
       clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID
+      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
     }),
-    databaseURL: `https://${process.env.FIREBASE_ADMIN_PROJECT_ID}.firebaseio.com`
+    databaseURL: `https://${process.env.FIREBASE_ADMIN_PROJECT_ID}.firebaseio.com`,
   });
 } catch (error) {
   if (!/already exists/u.test(error.message)) {

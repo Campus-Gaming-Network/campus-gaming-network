@@ -32,6 +32,7 @@ export const CALLABLES = {
   PROMOTE_TEAMMATE: "promoteTeammate",
   DEMOTE_TEAMMATE: "demoteTeammate",
   CREATE_TOURNAMENT: "createTournament",
+  GET_ALL_SCHOOLS: "getAllSchools",
 };
 
 export const AUTH_ACTION = {

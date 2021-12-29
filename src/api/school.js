@@ -5,17 +5,19 @@ import { mapUser } from "src/utilities/user";
 
 // const geofire = require('geofire-common');
 
-export const getSchoolDetails = async id => {
+export const getSchoolDetails = async (handle) => {
   let school = null;
 
   try {
-    const schoolDoc = await firebaseAdmin
+    const schoolSnapshot = await firebaseAdmin
       .firestore()
       .collection("schools")
-      .doc(id)
+      .where("handle", "==", handle)
+      .limit(1)
       .get();
 
-    if (schoolDoc.exists) {
+    if (!schoolSnapshot.empty) {
+      const schoolDoc = schoolSnapshot.docs[0];
       school = { ...mapSchool(schoolDoc.data(), schoolDoc) };
     }
 
@@ -25,20 +27,15 @@ export const getSchoolDetails = async id => {
   }
 };
 
-export const getSchoolEvents = async (id, limit = 25, page = 0) => {
+export const getSchoolEvents = async (handle, limit = 25, page = 0) => {
   const now = new Date();
   let events = [];
 
   try {
-    const schoolDocRef = firebaseAdmin
-      .firestore()
-      .collection("schools")
-      .doc(id);
-
     let query = firebaseAdmin
       .firestore()
       .collection("events")
-      .where("school.ref", "==", schoolDocRef)
+      .where("school.handle", "==", handle)
       .where(
         "endDateTime",
         ">=",
@@ -56,7 +53,7 @@ export const getSchoolEvents = async (id, limit = 25, page = 0) => {
     const schoolEventsSnapshot = await query.limit(limit).get();
 
     if (!schoolEventsSnapshot.empty) {
-      schoolEventsSnapshot.forEach(doc => {
+      schoolEventsSnapshot.forEach((doc) => {
         const data = doc.data();
         const event = mapEvent({ id: doc.id, ...data }, doc);
         events.push(event);
@@ -69,19 +66,14 @@ export const getSchoolEvents = async (id, limit = 25, page = 0) => {
   }
 };
 
-export const getSchoolUsers = async (id, limit = 25, page = 0) => {
+export const getSchoolUsers = async (handle, limit = 25, page = 0) => {
   let users = [];
 
   try {
-    const schoolDocRef = firebaseAdmin
-      .firestore()
-      .collection("schools")
-      .doc(id);
-
     let query = firebaseAdmin
       .firestore()
       .collection("users")
-      .where("school.ref", "==", schoolDocRef);
+      .where("school.handle", "==", handle);
 
     if (page > 0) {
       if (!pages[page]) {
@@ -94,7 +86,7 @@ export const getSchoolUsers = async (id, limit = 25, page = 0) => {
     const schoolUsersSnapshot = await query.limit(limit).get();
 
     if (!schoolUsersSnapshot.empty) {
-      schoolUsersSnapshot.forEach(doc => {
+      schoolUsersSnapshot.forEach((doc) => {
         const user = mapUser(doc.data(), doc);
         users.push(user);
       });

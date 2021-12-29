@@ -11,8 +11,8 @@ export const classNames = (_classNames = []) => {
     }
   }
   return _classNames
-    .map(str => str.trim())
-    .filter(str => str)
+    .map((str) => str.trim())
+    .filter((str) => str)
     .join(" ")
     .trim();
 };

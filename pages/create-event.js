@@ -146,6 +146,7 @@ const CreateEvent = () => {
           ref: user.school.ref,
           id: user.school.id,
           name: user.school.name,
+          handle: user.school.handle,
         },
       },
       name: formState.name.trim(),
@@ -160,6 +161,7 @@ const CreateEvent = () => {
         ref: schoolDocRef,
         id: schoolDocRef.id,
         name: school.name,
+        handle: school.handle,
       },
       responses: {
         yes: 0,
@@ -197,6 +199,7 @@ const CreateEvent = () => {
             ref: user.school.ref,
             id: user.school.id,
             name: user.school.name,
+            handle: user.school.handle,
           },
         },
         event: {
@@ -213,6 +216,7 @@ const CreateEvent = () => {
           ref: schoolDocRef,
           id: schoolDocRef.id,
           name: school.name,
+          handle: school.handle,
         },
       };
 

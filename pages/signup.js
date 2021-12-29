@@ -186,6 +186,7 @@ const Signup = () => {
             ref: doc(db, COLLECTIONS.SCHOOLS, formState.school.id),
             id: formState.school.id,
             name: formState.school.name,
+            handle: formState.school.handle,
           },
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),

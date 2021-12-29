@@ -102,7 +102,12 @@ const SchoolLogoSlider = () => {
       </VisuallyHidden>
       <Slider settings={{ ...settings, slidesToScroll: 1 }}>
         {schoolIds.map((school) => (
-          <SchoolLogoSliderItem id={school.id} name={school.name} />
+          <SchoolLogoSliderItem
+            key={school.id}
+            id={school.id}
+            name={school.name}
+            handle={school.handle}
+          />
         ))}
       </Slider>
     </Box>
@@ -115,7 +120,7 @@ const SchoolLogoSliderItem = (props) => {
   return (
     <Box>
       <Link
-        href={`/school/${props.id}`}
+        href={`/school/${props.handle}`}
         pos="relative"
         d="flex"
         alignItems="center"

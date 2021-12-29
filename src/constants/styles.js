@@ -9,13 +9,13 @@ export const CUSTOM_CHAKRA_THEME = {
     brand: {
       500: "#F15A29",
       300: "#F7941D",
-      100: "#FBB040"
-    }
+      100: "#FBB040",
+    },
   },
   fonts: {
     body: FONT_STACK,
-    heading: FONT_STACK
-  }
+    heading: FONT_STACK,
+  },
 };
 
 export const DROPZONE_STYLES = {
@@ -32,15 +32,15 @@ export const DROPZONE_STYLES = {
     backgroundColor: "#fafafa",
     color: "#bdbdbd",
     outline: "none",
-    transition: "border .24s ease-in-out"
+    transition: "border .24s ease-in-out",
   },
   ACTIVE: {
-    borderColor: "#2196f3"
+    borderColor: "#2196f3",
   },
   ACCEPT: {
-    borderColor: "#00e676"
+    borderColor: "#00e676",
   },
   REJECT: {
-    borderColor: "#ff1744"
-  }
+    borderColor: "#ff1744",
+  },
 };

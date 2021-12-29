@@ -11,7 +11,7 @@ export const getSchools = async (limit = 25) => {
       .get();
 
     if (!schoolsSnapshot.empty) {
-      schoolsSnapshot.forEach(doc => {
+      schoolsSnapshot.forEach((doc) => {
         const school = doc.data();
         schools.push(school);
       });
