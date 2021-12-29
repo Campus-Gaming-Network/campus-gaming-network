@@ -1,9 +1,12 @@
 // Libraries
 import React from "react";
 import { Box, Heading, Flex, List, ListItem } from "@chakra-ui/react";
+import firebaseAdmin from "src/firebaseAdmin";
 import sortBy from "lodash.sortby";
-import { functions } from "src/firebase";
-import { httpsCallable } from "firebase/functions";
+import safeJsonStringify from "safe-json-stringify";
+
+// Constants
+import { NOT_FOUND } from "src/constants/other";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -15,34 +18,38 @@ import { mapSchool } from "src/utilities/school";
 // getStaticProps
 
 export const getStaticProps = async () => {
-  return { props: {} };
+  let schools = [];
+
+  try {
+    const response = await firebaseAdmin
+      .storage()
+      .bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET)
+      .file("schools.json")
+      .download();
+
+    if (response && response.length) {
+      try {
+        const data = JSON.parse(response[0].toString()).map(mapSchool);
+        schools = sortBy(data, "name");
+      } catch (error) {
+        return NOT_FOUND;
+      }
+    }
+  } catch (error) {
+    return NOT_FOUND;
+  }
+
+  const data = {
+    schools,
+  };
+
+  return { props: JSON.parse(safeJsonStringify(data)) };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Schools
 
-const Schools = () => {
-  const [schools, setSchools] = React.useState(null);
-
-  const fetchSchools = async () => {
-    const getAllSchools = httpsCallable(functions, "getAllSchools");
-
-    try {
-      const response = await getAllSchools();
-
-      if (response?.data?.success) {
-        const schools = sortBy(response.data.schools.map(mapSchool), "name");
-        setSchools(schools);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchSchools();
-  }, []);
-
+const Schools = (props) => {
   return (
     <SiteLayout>
       <Article>
@@ -61,7 +68,7 @@ const Schools = () => {
           </Box>
         </Flex>
         <List>
-          {schools?.map((school) => (
+          {props.schools?.map((school) => (
             <ListItem key={school.id}>
               <Link href={school.meta.og.url}>{school.formattedName}</Link>
             </ListItem>
