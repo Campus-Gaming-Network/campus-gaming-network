@@ -1,4 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
+Sitemap: https://campusgamingnetwork.com/sitemap.xml
 User-agent: *
 Disallow: /edit-user
 Disallow: /teams
