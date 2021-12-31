@@ -100,7 +100,7 @@ const SchoolLogoSlider = () => {
           Find your school
         </Heading>
       </VisuallyHidden>
-      <Slider settings={{ ...settings, slidesToScroll: 1 }}>
+      <Slider>
         {schoolIds.map((school) => (
           <SchoolLogoSliderItem
             key={school.id}

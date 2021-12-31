@@ -7,7 +7,7 @@ export const SLICK_SETTINGS = {
   infinite: false,
   speed: 500,
   slidesToShow: 5,
-  slidesToScroll: 2,
+  slidesToScroll: 1,
   rows: 1,
   responsive: [
     {
@@ -19,7 +19,13 @@ export const SLICK_SETTINGS = {
     {
       breakpoint: 600,
       settings: {
-        slidesToShow: 2,
+        slidesToShow: 1,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
       },
     },
   ],
