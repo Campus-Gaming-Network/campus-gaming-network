@@ -445,7 +445,7 @@ const EditUser = () => {
             errors={errors}
             firstName={formState.firstName}
             lastName={formState.lastName}
-            email={authUser.email}
+            email={authUser?.email}
             hometown={formState.hometown}
             birthYear={formState.birthYear}
             birthMonth={formState.birthMonth}
