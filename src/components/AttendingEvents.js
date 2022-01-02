@@ -71,11 +71,7 @@ const AttendingEvents = (props) => {
               onPageChange={(nextPage) => setPage(nextPage)}
             >
               {allEvents?.map((eventResponse) => (
-                <EventListItem
-                  key={eventResponse.id}
-                  event={eventResponse.event}
-                  school={eventResponse.school}
-                />
+                <EventListItem key={eventResponse.id} {...eventResponse} />
               ))}
             </Slider>
           )}
