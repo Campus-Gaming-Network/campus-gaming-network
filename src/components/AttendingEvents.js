@@ -1,5 +1,6 @@
 // Libraries
 import React from "react";
+import uniqBy from "lodash.uniqby";
 import { Heading, Stack, List } from "@chakra-ui/react";
 
 // Hooks
@@ -14,32 +15,68 @@ import EmptyText from "src/components/EmptyText";
 // AttendingEvents
 
 const AttendingEvents = (props) => {
-  const [events, state] = useFetchUserEvents(props?.user?.id);
-  const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [
-    events,
-  ]);
+  const [hasLoadedOnce, setHasLoadedOnce] = React.useState(false);
+  const [page, setPage] = React.useState(0);
+  const limit = React.useMemo(() => (page === 0 ? 6 : 1), [page]);
+  const [events, state] = useFetchUserEvents(props?.user?.id, page, limit);
+  const [allEvents, setAllEvents] = React.useState([]);
+  const hasEvents = React.useMemo(
+    () => Boolean(allEvents) && allEvents.length > 0,
+    [allEvents]
+  );
+
+  React.useEffect(() => {
+    if (events) {
+      setAllEvents((prev) => uniqBy([...prev, ...events], "id"));
+    }
+  }, [events]);
+
+  const displaySilhouette = React.useMemo(
+    () =>
+      (state === "idle" || state === "loading") && page === 0 && !hasLoadedOnce,
+    [state, page]
+  );
+  const displayEmptyText = React.useMemo(
+    () => state === "done" && !hasEvents && page === 0,
+    [state, hasEvents, page]
+  );
+
+  React.useEffect(() => {
+    if (state === "done") {
+      setHasLoadedOnce(true);
+    }
+  }, [state]);
 
   return (
     <React.Fragment>
-      {state === "idle" || state === "loading" ? (
+      {displaySilhouette ? (
         <SliderSilhouette />
       ) : (
         <Stack as="section" spacing={4} bg="white">
           <Heading as="h3" fontSize="xl">
             {Boolean(props.title) ? props.title : "Events you're attending"}
           </Heading>
-          {!(state === "done" && hasEvents) ? (
+          {displayEmptyText ? (
             <EmptyText>
               {Boolean(props.emptyText)
                 ? props.emptyText
                 : "You are not attending any upcoming events"}
             </EmptyText>
           ) : (
-            <List d="flex" flexWrap="wrap" m={-2} p={0}>
-              {events.map((event) => (
-                <EventListItem key={event.id} {...event} />
+            <Slider
+              settings={{
+                className: allEvents?.length < 5 ? "slick--less-slides" : "",
+              }}
+              onPageChange={(nextPage) => setPage(nextPage)}
+            >
+              {allEvents?.map((event) => (
+                <EventListItem
+                  key={event.id}
+                  event={event}
+                  school={event.school}
+                />
               ))}
-            </List>
+            </Slider>
           )}
         </Stack>
       )}
