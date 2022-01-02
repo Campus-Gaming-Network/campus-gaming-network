@@ -46,7 +46,7 @@ class MyDocument extends Document {
           <script
             async
             defer
-            data-domain="campusgamingnetwork.com"
+            data-domain={process.env.NEXT_PUBLIC_BASE_URL}
             src="https://plausible.io/js/plausible.js"
           ></script>
           <script

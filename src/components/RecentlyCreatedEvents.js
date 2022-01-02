@@ -1,5 +1,6 @@
 // Libraries
 import React from "react";
+import uniqBy from "lodash.uniqby";
 import { Box, Heading } from "@chakra-ui/react";
 
 // Hooks
@@ -15,29 +16,57 @@ import EmptyText from "src/components/EmptyText";
 // RecentlyCreatedEvents
 
 const RecentlyCreatedEvents = () => {
-  const [events, state] = useFetchRecentlyCreatedEvents();
-  const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [
-    events,
-  ]);
+  const [hasLoadedOnce, setHasLoadedOnce] = React.useState(false);
+  const [page, setPage] = React.useState(0);
+  const limit = React.useMemo(() => (page === 0 ? 6 : 1), [page]);
+  const [events, state] = useFetchRecentlyCreatedEvents(page, limit);
+  const [allEvents, setAllEvents] = React.useState([]);
+  const hasEvents = React.useMemo(
+    () => Boolean(allEvents) && allEvents.length > 0,
+    [allEvents]
+  );
+
+  React.useEffect(() => {
+    if (events) {
+      setAllEvents((prev) => uniqBy([...prev, ...events], "id"));
+    }
+  }, [events]);
+
+  const displaySilhouette = React.useMemo(
+    () =>
+      (state === "idle" || state === "loading") && page === 0 && !hasLoadedOnce,
+    [state, page]
+  );
+  const displayEmptyText = React.useMemo(
+    () => state === "done" && !hasEvents && page === 0,
+    [state, hasEvents, page]
+  );
+
+  React.useEffect(() => {
+    if (state === "done") {
+      setHasLoadedOnce(true);
+    }
+  }, [state]);
 
   return (
     <React.Fragment>
-      {state === "idle" || state === "loading" ? (
+      {displaySilhouette ? (
         <SliderSilhouette />
       ) : (
         <Box as="section" py={4}>
           <Heading as="h3" fontSize="xl" pb={4}>
             Newest events
           </Heading>
-          {!(state === "done" && hasEvents) ? (
+          {displayEmptyText ? (
             <EmptyText>No events have been recently created</EmptyText>
           ) : (
             <Slider
               settings={{
-                className: events.length < 5 ? "slick--less-slides" : "",
+                className: allEvents?.length < 5 ? "slick--less-slides" : "",
               }}
+              onPageChange={(nextPage) => setPage(nextPage)}
             >
-              {events.map((event) => (
+              {allEvents?.map((event) => (
                 <EventListItem
                   key={event.id}
                   event={event}
