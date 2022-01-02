@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
+import { BASE_URL } from "src/constants/other";
 
 class MyDocument extends Document {
   render() {
@@ -46,7 +47,7 @@ class MyDocument extends Document {
           <script
             async
             defer
-            data-domain="campusgamingnetwork.com"
+            data-domain={BASE_URL.replace("https://", "")}
             src="https://plausible.io/js/plausible.js"
           ></script>
           <script
