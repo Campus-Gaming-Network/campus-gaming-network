@@ -1,13 +1,14 @@
 // Libraries
 import React from "react";
 import uniqBy from "lodash.uniqby";
-import { Heading, Stack, List } from "@chakra-ui/react";
+import { Heading, Stack } from "@chakra-ui/react";
 
 // Hooks
 import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
 // Components
 import EventListItem from "src/components/EventListItem";
+import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
 
