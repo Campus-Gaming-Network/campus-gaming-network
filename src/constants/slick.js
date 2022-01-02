@@ -11,6 +11,12 @@ export const SLICK_SETTINGS = {
   rows: 1,
   responsive: [
     {
+      breakpoint: 1200,
+      settings: {
+        slidesToShow: 4,
+      },
+    },
+    {
       breakpoint: 1024,
       settings: {
         slidesToShow: 3,
@@ -19,13 +25,13 @@ export const SLICK_SETTINGS = {
     {
       breakpoint: 600,
       settings: {
-        slidesToShow: 1,
+        slidesToShow: 2,
       },
     },
     {
       breakpoint: 480,
       settings: {
-        slidesToShow: 1,
+        slidesToShow: 1.5,
       },
     },
   ],

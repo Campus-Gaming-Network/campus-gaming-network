@@ -9,7 +9,8 @@ import { SLICK_SETTINGS } from "src/constants/slick";
 ////////////////////////////////////////////////////////////////////////////////
 // Slider
 
-const Slider = ({ settings = {}, children, ...rest }) => {
+const Slider = ({ settings = {}, onPageChange, children, ...boxProps }) => {
+  const [page, setPage] = React.useState(0);
   const _settings = React.useMemo(() => {
     let responsive = [...(settings.responsive || [])];
 
@@ -23,13 +24,28 @@ const Slider = ({ settings = {}, children, ...rest }) => {
 
     return {
       ...SLICK_SETTINGS,
+      beforeChange: (current, next) => {
+        let forward = next > current;
+
+        if (forward) {
+          setPage(page + 1);
+        } else {
+          setPage(page - 1);
+        }
+      },
       ...settings,
       responsive: [...responsive],
     };
   }, [settings]);
 
+  React.useEffect(() => {
+    if (!!onPageChange) {
+      onPageChange(page);
+    }
+  }, [page]);
+
   return (
-    <Box {...rest}>
+    <Box {...boxProps}>
       <SlickSlider {..._settings}>{children}</SlickSlider>
     </Box>
   );
