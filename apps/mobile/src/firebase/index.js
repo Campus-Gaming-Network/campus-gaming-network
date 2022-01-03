@@ -1,8 +1,8 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-import { FIREBASE_CONFIG } from "../constants/firebase";
+import { FIREBASE_CONFIG } from '../constants/firebase';
 
 let app;
 let auth;

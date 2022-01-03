@@ -1,23 +1,15 @@
-import React from "react";
-import { SafeAreaView, FlatList } from "react-native";
-import {
-  Divider,
-  VStack,
-  Text,
-  Box,
-  Pressable,
-  Flex,
-  Badge,
-} from "native-base";
-import useFetchUserEvents from "../hooks/useFetchUserEvents";
-import { auth } from "../firebase";
+import React from 'react';
+import { SafeAreaView, FlatList } from 'react-native';
+import { Divider, VStack, Text, Box, Pressable, Flex, Badge } from 'native-base';
+import useFetchUserEvents from '../hooks/useFetchUserEvents';
+import { auth } from '../firebase';
 
 export default function Landing({ navigation }) {
   const id = auth.currentUser.uid;
   const [events, isLoading, error] = useFetchUserEvents(id);
 
   const handleOnPress = (eventId) => {
-    navigation.navigate("Event", { eventId });
+    navigation.navigate('Event', { eventId });
   };
 
   if (isLoading) {
@@ -60,13 +52,7 @@ export default function Landing({ navigation }) {
             <Pressable onPress={() => handleOnPress(item.id)} bg="white" px={6}>
               <VStack>
                 {item.hasStarted ? (
-                  <Text
-                    color="green.600"
-                    textTransform="uppercase"
-                    bold
-                    fontSize="sm"
-                    isTruncated
-                  >
+                  <Text color="green.600" textTransform="uppercase" bold fontSize="sm" isTruncated>
                     Happening now
                   </Text>
                 ) : (
@@ -74,13 +60,7 @@ export default function Landing({ navigation }) {
                     {item.date}
                   </Text>
                 )}
-                <Text
-                  color="gray.700"
-                  fontSize="md"
-                  bold
-                  lineHeight="md"
-                  numberOfLines={3}
-                >
+                <Text color="gray.700" fontSize="md" bold lineHeight="md" numberOfLines={3}>
                   {item.title}
                 </Text>
                 <Text color="gray.500" bold fontSize="sm" isTruncated>

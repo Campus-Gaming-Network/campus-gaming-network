@@ -2,10 +2,10 @@
 // Auth Constants
 
 export const AUTH_STATUS_TYPES = {
-  IDLE: "idle",
-  UNAUTHENTICATED: "unauthenticated",
-  AUTHENTICATING: "authenticating",
-  AUTHENTICATED: "authenticated",
+  IDLE: 'idle',
+  UNAUTHENTICATED: 'unauthenticated',
+  AUTHENTICATING: 'authenticating',
+  AUTHENTICATED: 'authenticated',
 };
 
 export const AUTH_STATUS = {

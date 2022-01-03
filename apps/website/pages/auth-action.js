@@ -1,15 +1,15 @@
 // Libraries
-import React from "react";
-import safeJsonStringify from "safe-json-stringify";
+import React from 'react';
+import safeJsonStringify from 'safe-json-stringify';
 
 // Constants
-import { AUTH_ACTION, AUTH_ACTIONS } from "src/constants/firebase";
-import { REDIRECT_HOME } from "src/constants/other";
+import { AUTH_ACTION, AUTH_ACTIONS } from 'src/constants/firebase';
+import { REDIRECT_HOME } from 'src/constants/other';
 
 // Components
-import Empty from "src/components/Empty";
-import PasswordReset from "src/components/password-reset";
-import VerifyEmail from "src/components/verify-email";
+import Empty from 'src/components/Empty';
+import PasswordReset from 'src/components/password-reset';
+import VerifyEmail from 'src/components/verify-email';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -33,11 +33,7 @@ export const getServerSideProps = async (context) => {
 // AuthAction
 
 const AuthAction = (props) => {
-  if (
-    !Boolean(props.oobCode) ||
-    !Boolean(props.mode) ||
-    !AUTH_ACTIONS.includes(props.mode)
-  ) {
+  if (!Boolean(props.oobCode) || !Boolean(props.mode) || !AUTH_ACTIONS.includes(props.mode)) {
     return <Empty />;
   }
 

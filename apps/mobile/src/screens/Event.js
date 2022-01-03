@@ -1,20 +1,10 @@
-import React from "react";
-import { SafeAreaView, ScrollView } from "react-native";
-import {
-  Heading,
-  Divider,
-  VStack,
-  Image,
-  Text,
-  Box,
-  Flex,
-  Badge,
-  Button,
-} from "native-base";
-import { FontAwesome } from "@expo/vector-icons";
-import background from "../../assets/background.png";
-import useFetchEventDetails from "../hooks/useFetchEventDetails";
-import { DateTime } from "luxon";
+import React from 'react';
+import { SafeAreaView, ScrollView } from 'react-native';
+import { Heading, Divider, VStack, Image, Text, Box, Flex, Badge, Button } from 'native-base';
+import { FontAwesome } from '@expo/vector-icons';
+import background from '../../assets/background.png';
+import useFetchEventDetails from '../hooks/useFetchEventDetails';
+import { DateTime } from 'luxon';
 
 export default function Event({ route, navigation }) {
   const id = route.params.eventId;
@@ -58,25 +48,13 @@ export default function Event({ route, navigation }) {
           <VStack p={4}>
             {event.hasStarted ? (
               <Flex bg="green.100" mr="auto" px={4} rounded="lg">
-                <Text
-                  color="green.600"
-                  textTransform="uppercase"
-                  bold
-                  fontSize="sm"
-                  isTruncated
-                >
+                <Text color="green.600" textTransform="uppercase" bold fontSize="sm" isTruncated>
                   Happening now
                 </Text>
               </Flex>
             ) : event.hasEnded ? (
               <Flex bg="red.100" mr="auto" px={2} rounded="lg">
-                <Text
-                  color="red.600"
-                  textTransform="uppercase"
-                  bold
-                  fontSize="sm"
-                  isTruncated
-                >
+                <Text color="red.600" textTransform="uppercase" bold fontSize="sm" isTruncated>
                   Event ended
                 </Text>
               </Flex>
@@ -101,19 +79,15 @@ export default function Event({ route, navigation }) {
                   </Box>
                   <VStack>
                     <Text bold fontSize="md" lineHeight="sm">
-                      {DateTime.fromSeconds(
-                        event.startDateTime.seconds
-                      ).toLocaleString({
+                      {DateTime.fromSeconds(event.startDateTime.seconds).toLocaleString({
                         ...DateTime.DATETIME_FULL,
-                        ...{ month: "long", day: "numeric" },
+                        ...{ month: 'long', day: 'numeric' },
                       })}
                     </Text>
                     <Text bold fontSize="md">
-                      {DateTime.fromSeconds(
-                        event.endDateTime.seconds
-                      ).toLocaleString({
+                      {DateTime.fromSeconds(event.endDateTime.seconds).toLocaleString({
                         ...DateTime.DATETIME_FULL,
-                        ...{ month: "long", day: "numeric" },
+                        ...{ month: 'long', day: 'numeric' },
                       })}
                     </Text>
                   </VStack>
@@ -139,7 +113,7 @@ export default function Event({ route, navigation }) {
                 <Box>
                   <Button
                     onPress={() =>
-                      navigation.navigate("EventAttendees", {
+                      navigation.navigate('EventAttendees', {
                         creatorId: event.creator,
                         eventId: id,
                       })
@@ -147,9 +121,7 @@ export default function Event({ route, navigation }) {
                     mt="1"
                     colorScheme="orange"
                   >
-                    <Text style={{ color: "white", fontWeight: "bold" }}>
-                      View Attendees ({event.responses.yes})
-                    </Text>
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>View Attendees ({event.responses.yes})</Text>
                   </Button>
                 </Box>
               ) : (

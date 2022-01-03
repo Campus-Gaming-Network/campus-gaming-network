@@ -1,8 +1,8 @@
 // Libraries
-import React from "react";
+import React from 'react';
 
 // Utilities
-import { getEvent } from "../utilities/api";
+import { getEvent } from '../utilities/api';
 
 const useFetchEventDetails = (id) => {
   const [isLoading, setIsLoading] = React.useState(true);

@@ -1,9 +1,9 @@
 // Libraries
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import xorBy from "lodash.xorby";
-import isEmpty from "lodash.isempty";
-import { DateTime } from "luxon";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import xorBy from 'lodash.xorby';
+import isEmpty from 'lodash.isempty';
+import { DateTime } from 'luxon';
 import {
   Flex,
   Input,
@@ -31,16 +31,12 @@ import {
   Spacer,
   IconButton,
   useBoolean,
-} from "@chakra-ui/react";
-import {
-  faCaretRight,
-  faCaretLeft,
-  faEllipsisH,
-} from "@fortawesome/free-solid-svg-icons";
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
-import dynamic from "next/dynamic";
-import { doc, updateDoc, Timestamp } from "firebase/firestore";
+} from '@chakra-ui/react';
+import { faCaretRight, faCaretLeft, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import firebaseAdmin from 'src/firebaseAdmin';
+import nookies from 'nookies';
+import dynamic from 'next/dynamic';
+import { doc, updateDoc, Timestamp } from 'firebase/firestore';
 
 // Constants
 import {
@@ -48,44 +44,36 @@ import {
   MAX_BIO_LENGTH,
   MAX_FAVORITE_GAME_LIST,
   MAX_CURRENTLY_PLAYING_LIST,
-} from "src/constants/user";
-import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from "src/constants/dateTime";
-import { COLLECTIONS } from "src/constants/firebase";
-import {
-  ACCOUNTS,
-  COOKIES,
-  PRODUCTION_URL,
-  NOT_FOUND,
-} from "src/constants/other";
+} from 'src/constants/user';
+import { TIMEZONES, DASHED_DATE, CURRENT_YEAR } from 'src/constants/dateTime';
+import { COLLECTIONS } from 'src/constants/firebase';
+import { ACCOUNTS, COOKIES, PRODUCTION_URL, NOT_FOUND } from 'src/constants/other';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import FormSilhouette from "src/components/silhouettes/FormSilhouette";
-import Article from "src/components/Article";
-import PageHeading from "src/components/PageHeading";
-import Card from "src/components/Card";
-import SchoolSearch from "src/components/SchoolSearch";
-import GameSearch from "src/components/GameSearch";
-import GameCover from "src/components/GameCover";
-import MonthSelect from "src/components/MonthSelect";
-import DaySelect from "src/components/DaySelect";
-import YearSelect from "src/components/YearSelect";
-import FormErrorAlert from "src/components/FormErrorAlert";
-import CharacterCounter from "src/components/CharacterCounter";
+import SiteLayout from 'src/components/SiteLayout';
+import FormSilhouette from 'src/components/silhouettes/FormSilhouette';
+import Article from 'src/components/Article';
+import PageHeading from 'src/components/PageHeading';
+import Card from 'src/components/Card';
+import SchoolSearch from 'src/components/SchoolSearch';
+import GameSearch from 'src/components/GameSearch';
+import GameCover from 'src/components/GameCover';
+import MonthSelect from 'src/components/MonthSelect';
+import DaySelect from 'src/components/DaySelect';
+import YearSelect from 'src/components/YearSelect';
+import FormErrorAlert from 'src/components/FormErrorAlert';
+import CharacterCounter from 'src/components/CharacterCounter';
 
 // Utilities
-import { move } from "src/utilities/other";
-import { validateEditUser } from "src/utilities/validation";
-import { useAuth } from "src/providers/auth";
+import { move } from 'src/utilities/other';
+import { validateEditUser } from 'src/utilities/validation';
+import { useAuth } from 'src/providers/auth';
 
 // Dynamic Components
-const DeleteAccountDialog = dynamic(
-  () => import("src/components/dialogs/DeleteAccountDialog"),
-  { ssr: false }
-);
+const DeleteAccountDialog = dynamic(() => import('src/components/dialogs/DeleteAccountDialog'), { ssr: false });
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -111,30 +99,30 @@ export const getServerSideProps = async (context) => {
 // Form Reducer
 
 const initialFormState = {
-  firstName: "",
-  lastName: "",
+  firstName: '',
+  lastName: '',
   school: {},
-  status: "",
-  major: "",
-  minor: "",
-  bio: "",
-  timezone: "",
-  hometown: "",
-  birthMonth: "",
-  birthDay: "",
-  birthYear: "",
-  website: "",
-  twitter: "",
-  twitch: "",
-  youtube: "",
-  skype: "",
-  discord: "",
-  battlenet: "",
-  steam: "",
-  xbox: "",
-  psn: "",
-  favoriteGameSearch: "",
-  currentGameSearch: "",
+  status: '',
+  major: '',
+  minor: '',
+  bio: '',
+  timezone: '',
+  hometown: '',
+  birthMonth: '',
+  birthDay: '',
+  birthYear: '',
+  website: '',
+  twitter: '',
+  twitch: '',
+  youtube: '',
+  skype: '',
+  discord: '',
+  battlenet: '',
+  steam: '',
+  xbox: '',
+  psn: '',
+  favoriteGameSearch: '',
+  currentGameSearch: '',
 };
 
 const formReducer = (state, { field, value }) => {
@@ -151,14 +139,8 @@ const EditUser = () => {
   const { isAuthenticating, authUser, user, school } = useAuth();
   const [isSubmitting, setIsSubmitting] = useBoolean();
   const [hasPrefilledForm, setHasPrefilledForm] = useBoolean();
-  const [
-    isDeletingAccountAlertOpen,
-    setDeletingAccountAlertIsOpen,
-  ] = useBoolean();
-  const [formState, formDispatch] = React.useReducer(
-    formReducer,
-    initialFormState
-  );
+  const [isDeletingAccountAlertOpen, setDeletingAccountAlertIsOpen] = useBoolean();
+  const [formState, formDispatch] = React.useReducer(formReducer, initialFormState);
   const toast = useToast();
   const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
@@ -170,95 +152,91 @@ const EditUser = () => {
 
   const prefillForm = () => {
     formDispatch({
-      field: "firstName",
+      field: 'firstName',
       value: user.firstName || initialFormState.firstName,
     });
     formDispatch({
-      field: "lastName",
+      field: 'lastName',
       value: user.lastName || initialFormState.lastName,
     });
     formDispatch({
-      field: "school",
+      field: 'school',
       value: user.school || initialFormState.school,
     });
     formDispatch({
-      field: "status",
+      field: 'status',
       value: user.status || initialFormState.status,
     });
     formDispatch({
-      field: "major",
+      field: 'major',
       value: user.major || initialFormState.major,
     });
     formDispatch({
-      field: "minor",
+      field: 'minor',
       value: user.minor || initialFormState.minor,
     });
     formDispatch({
-      field: "bio",
+      field: 'bio',
       value: user.bio || initialFormState.bio,
     });
     formDispatch({
-      field: "timezone",
+      field: 'timezone',
       value: user.timezone || initialFormState.timezone,
     });
     formDispatch({
-      field: "hometown",
+      field: 'hometown',
       value: user.hometown || initialFormState.hometown,
     });
 
     if (Boolean(user.birthdate)) {
-      const [birthMonth, birthDay, birthYear] = DateTime.fromISO(
-        user.birthdate.iso
-      )
-        .toFormat(DASHED_DATE)
-        .split("-");
-      formDispatch({ field: "birthMonth", value: birthMonth });
-      formDispatch({ field: "birthDay", value: birthDay });
-      formDispatch({ field: "birthYear", value: birthYear });
+      const [birthMonth, birthDay, birthYear] = DateTime.fromISO(user.birthdate.iso).toFormat(DASHED_DATE).split('-');
+      formDispatch({ field: 'birthMonth', value: birthMonth });
+      formDispatch({ field: 'birthDay', value: birthDay });
+      formDispatch({ field: 'birthYear', value: birthYear });
     } else {
-      formDispatch({ field: "birthMonth", value: initialFormState.birthMonth });
-      formDispatch({ field: "birthDay", value: initialFormState.birthDay });
-      formDispatch({ field: "birthYear", value: initialFormState.birthYear });
+      formDispatch({ field: 'birthMonth', value: initialFormState.birthMonth });
+      formDispatch({ field: 'birthDay', value: initialFormState.birthDay });
+      formDispatch({ field: 'birthYear', value: initialFormState.birthYear });
     }
 
     formDispatch({
-      field: "website",
+      field: 'website',
       value: user.website || initialFormState.website,
     });
     formDispatch({
-      field: "twitter",
+      field: 'twitter',
       value: user.twitter || initialFormState.twitter,
     });
     formDispatch({
-      field: "twitch",
+      field: 'twitch',
       value: user.twitch || initialFormState.twitch,
     });
     formDispatch({
-      field: "youtube",
+      field: 'youtube',
       value: user.youtube || initialFormState.youtube,
     });
     formDispatch({
-      field: "skype",
+      field: 'skype',
       value: user.skype || initialFormState.skype,
     });
     formDispatch({
-      field: "discord",
+      field: 'discord',
       value: user.discord || initialFormState.discord,
     });
     formDispatch({
-      field: "battlenet",
+      field: 'battlenet',
       value: user.battlenet || initialFormState.battlenet,
     });
     formDispatch({
-      field: "steam",
+      field: 'steam',
       value: user.steam || initialFormState.steam,
     });
     formDispatch({
-      field: "xbox",
+      field: 'xbox',
       value: user.xbox || initialFormState.xbox,
     });
     formDispatch({
-      field: "psn",
+      field: 'psn',
       value: user.psn || initialFormState.psn,
     });
     setCurrentGames(user.currentlyPlaying || []);
@@ -267,15 +245,15 @@ const EditUser = () => {
   };
 
   const onSchoolSelect = (school) => {
-    formDispatch({ field: "school", value: school });
+    formDispatch({ field: 'school', value: school });
   };
 
   const toggleFavoriteGame = (game) => {
-    setFavoriteGames(xorBy(favoriteGames, [game], "id"));
+    setFavoriteGames(xorBy(favoriteGames, [game], 'id'));
   };
 
   const toggleCurrentGame = (game) => {
-    setCurrentGames(xorBy(currentlyPlaying, [game], "id"));
+    setCurrentGames(xorBy(currentlyPlaying, [game], 'id'));
   };
 
   const onFavoriteGameSelect = (game) => {
@@ -318,12 +296,12 @@ const EditUser = () => {
 
     const schoolDocRef = doc(db, COLLECTIONS.SCHOOLS, formState.school.id);
 
-    let birthdate = "";
+    let birthdate = '';
 
     if (formState.birthMonth && formState.birthDay && formState.birthYear) {
       const formattedBirthdate = DateTime.fromFormat(
         `${formState.birthMonth}-${formState.birthDay}-${formState.birthYear}`,
-        DASHED_DATE
+        DASHED_DATE,
       );
       birthdate = Timestamp.fromDate(new Date(formattedBirthdate));
     }
@@ -366,18 +344,18 @@ const EditUser = () => {
       .then(() => {
         setIsSubmitting.off();
         toast({
-          title: "Profile updated.",
-          description: "Your profile has been updated.",
-          status: "success",
+          title: 'Profile updated.',
+          description: 'Your profile has been updated.',
+          status: 'success',
           isClosable: true,
         });
       })
       .catch((error) => {
         setIsSubmitting.off();
         toast({
-          title: "An error occurred.",
+          title: 'An error occurred.',
           description: error.message,
-          status: "error",
+          status: 'error',
           isClosable: true,
         });
       });
@@ -387,7 +365,7 @@ const EditUser = () => {
     return (
       <SiteLayout
         meta={{
-          title: "Edit User",
+          title: 'Edit User',
           og: { url: `${PRODUCTION_URL}/edit-user` },
         }}
       >
@@ -401,9 +379,7 @@ const EditUser = () => {
   }
 
   return (
-    <SiteLayout
-      meta={{ title: "Edit User", og: { url: `${PRODUCTION_URL}/edit-user` } }}
-    >
+    <SiteLayout meta={{ title: 'Edit User', og: { url: `${PRODUCTION_URL}/edit-user` } }}>
       <Article fullWidthMobile>
         {hasErrors ? <FormErrorAlert /> : null}
         <Stack as="form" spacing={6} onSubmit={handleSubmit}>
@@ -413,31 +389,17 @@ const EditUser = () => {
             </PageHeading>
             <Spacer />
             <Menu>
-              <MenuButton
-                as={IconButton}
-                icon={<FontAwesomeIcon icon={faEllipsisH} />}
-                aria-label="Options"
-              />
+              <MenuButton as={IconButton} icon={<FontAwesomeIcon icon={faEllipsisH} />} aria-label="Options" />
               <MenuList fontSize="md">
-                <MenuItem
-                  onClick={setDeletingAccountAlertIsOpen.on}
-                  fontWeight="bold"
-                  color="red.500"
-                >
+                <MenuItem onClick={setDeletingAccountAlertIsOpen.on} fontWeight="bold" color="red.500">
                   Delete account
                 </MenuItem>
               </MenuList>
             </Menu>
           </Flex>
           <Box pt={16} pb={32}>
-            <Button
-              colorScheme="brand"
-              type="submit"
-              size="lg"
-              w="full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Update Profile"}
+            <Button colorScheme="brand" type="submit" size="lg" w="full" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Update Profile'}
             </Button>
           </Box>
           <DetailSection
@@ -493,14 +455,8 @@ const EditUser = () => {
             reorderCurrentlyPlaying={reorderCurrentlyPlaying}
           />
           <Box pt={6} pb={12}>
-            <Button
-              colorScheme="brand"
-              type="submit"
-              size="lg"
-              w="full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Update Profile"}
+            <Button colorScheme="brand" type="submit" size="lg" w="full" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Update Profile'}
             </Button>
           </Box>
         </Stack>
@@ -532,7 +488,7 @@ const DetailSection = React.memo((props) => {
           <FormControl
             isRequired
             isInvalid={props.errors.firstName}
-            flexBasis={{ base: "100%", md: "50%" }}
+            flexBasis={{ base: '100%', md: '50%' }}
             pr={{ base: 0, md: 4 }}
           >
             <FormLabel htmlFor="firstName" fontSize="lg" fontWeight="bold">
@@ -552,7 +508,7 @@ const DetailSection = React.memo((props) => {
           <FormControl
             isRequired
             isInvalid={props.errors.lastName}
-            flexBasis={{ base: "100%", md: "50%" }}
+            flexBasis={{ base: '100%', md: '50%' }}
             pt={{ base: 6, md: 0 }}
           >
             <FormLabel htmlFor="lastName" fontSize="lg" fontWeight="bold">
@@ -571,11 +527,7 @@ const DetailSection = React.memo((props) => {
             <FormErrorMessage>{props.errors.lastName}</FormErrorMessage>
           </FormControl>
         </Flex>
-        <FormControl
-          disabled
-          width={{ base: "100%", md: "50%" }}
-          pr={{ base: 0, md: 4 }}
-        >
+        <FormControl disabled width={{ base: '100%', md: '50%' }} pr={{ base: 0, md: 4 }}>
           <FormLabel htmlFor="email" fontSize="lg" fontWeight="bold">
             Email
           </FormLabel>
@@ -589,15 +541,9 @@ const DetailSection = React.memo((props) => {
             disabled
             aria-describedby="email-helper-text"
           />
-          <FormHelperText id="email-helper-text">
-            Your email cannot be changed.
-          </FormHelperText>
+          <FormHelperText id="email-helper-text">Your email cannot be changed.</FormHelperText>
         </FormControl>
-        <FormControl
-          isInvalid={props.errors.hometown}
-          width={{ base: "100%", md: "50%" }}
-          pr={{ base: 0, md: 4 }}
-        >
+        <FormControl isInvalid={props.errors.hometown} width={{ base: '100%', md: '50%' }} pr={{ base: 0, md: 4 }}>
           <FormLabel htmlFor="hometown" fontSize="lg" fontWeight="bold">
             Hometown
           </FormLabel>
@@ -619,7 +565,7 @@ const DetailSection = React.memo((props) => {
           <Flex flexWrap="wrap">
             <FormControl
               isInvalid={props.errors.birthMonth}
-              flexBasis={{ base: "100%", md: "33.3333%" }}
+              flexBasis={{ base: '100%', md: '33.3333%' }}
               pr={{ base: 0, md: 4 }}
             >
               <FormLabel htmlFor="birthMonth" fontSize="sm" fontWeight="bold">
@@ -636,7 +582,7 @@ const DetailSection = React.memo((props) => {
             </FormControl>
             <FormControl
               isInvalid={props.errors.birthDay}
-              flexBasis={{ base: "100%", md: "33.3333%" }}
+              flexBasis={{ base: '100%', md: '33.3333%' }}
               pr={{ base: 0, md: 4 }}
             >
               <FormLabel htmlFor="birthDay" fontSize="sm" fontWeight="bold">
@@ -651,10 +597,7 @@ const DetailSection = React.memo((props) => {
               />
               <FormErrorMessage>{props.errors.birthDay}</FormErrorMessage>
             </FormControl>
-            <FormControl
-              isInvalid={props.errors.birthYear}
-              flexBasis={{ base: "100%", md: "33.3333%" }}
-            >
+            <FormControl isInvalid={props.errors.birthYear} flexBasis={{ base: '100%', md: '33.3333%' }}>
               <FormLabel htmlFor="birthYear" fontSize="sm" fontWeight="bold">
                 Year
               </FormLabel>
@@ -692,17 +635,12 @@ const DetailSection = React.memo((props) => {
             h="150px"
           />
           <FormHelperText id="bio-helper-text">
-            Describe yourself in fewer than {MAX_BIO_LENGTH.toLocaleString()}{" "}
-            characters.{" "}
+            Describe yourself in fewer than {MAX_BIO_LENGTH.toLocaleString()} characters.{' '}
             <CharacterCounter value={props.bio} maxLength={MAX_BIO_LENGTH} />
           </FormHelperText>
           <FormErrorMessage>{props.errors.bio}</FormErrorMessage>
         </FormControl>
-        <FormControl
-          isInvalid={props.errors.timezone}
-          width={{ base: "100%", md: "50%" }}
-          pr={{ base: 0, md: 4 }}
-        >
+        <FormControl isInvalid={props.errors.timezone} width={{ base: '100%', md: '50%' }} pr={{ base: 0, md: 4 }}>
           <FormLabel htmlFor="timezone" fontSize="lg" fontWeight="bold">
             Timezone
           </FormLabel>
@@ -721,16 +659,14 @@ const DetailSection = React.memo((props) => {
               </option>
             ))}
           </Select>
-          <FormHelperText id="timezone-helper-text">
-            For displaying dates and times correctly.
-          </FormHelperText>
+          <FormHelperText id="timezone-helper-text">For displaying dates and times correctly.</FormHelperText>
           <FormErrorMessage>{props.errors.timezone}</FormErrorMessage>
         </FormControl>
         {!Boolean(props.timezone) ? (
           <Alert status="info">
             <AlertIcon boxSize={4} />
             <AlertDescription fontSize="sm">
-              Your browser timezone is{" "}
+              Your browser timezone is{' '}
               <Text as="span" fontWeight="bold">
                 {DateTime.local().zoneName}
               </Text>
@@ -738,16 +674,15 @@ const DetailSection = React.memo((props) => {
             </AlertDescription>
           </Alert>
         ) : null}
-        {Boolean(props.timezone) &&
-        props.timezone !== DateTime.local().zoneName ? (
+        {Boolean(props.timezone) && props.timezone !== DateTime.local().zoneName ? (
           <Alert status="warning">
             <AlertIcon boxSize={4} />
             <AlertDescription fontSize="sm">
-              Your selected timezone{" "}
+              Your selected timezone{' '}
               <Text as="span" fontWeight="bold">
                 {props.timezone}
-              </Text>{" "}
-              is different than your browser timezone{" "}
+              </Text>{' '}
+              is different than your browser timezone{' '}
               <Text as="span" fontWeight="bold">
                 {DateTime.local().zoneName}
               </Text>
@@ -777,28 +712,19 @@ const SchoolSection = React.memo((props) => {
           <FormLabel htmlFor="school" fontSize="lg" fontWeight="bold">
             School
           </FormLabel>
-          <SchoolSearch
-            onSelect={props.onSchoolSelect}
-            schoolName={props.schoolName}
-          />
+          <SchoolSearch onSelect={props.onSchoolSelect} schoolName={props.schoolName} />
           <FormErrorMessage>{props.errors.school}</FormErrorMessage>
         </FormControl>
         <FormControl
           isRequired
           isInvalid={props.errors.status}
-          width={{ base: "100%", md: "50%" }}
+          width={{ base: '100%', md: '50%' }}
           pr={{ base: 0, md: 4 }}
         >
           <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
             Status
           </FormLabel>
-          <Select
-            id="status"
-            name="status"
-            onChange={props.handleFieldChange}
-            value={props.status}
-            size="lg"
-          >
+          <Select id="status" name="status" onChange={props.handleFieldChange} value={props.status} size="lg">
             {STUDENT_STATUS_OPTIONS.map((status) => (
               <option key={status.value} value={status.value}>
                 {status.label}
@@ -808,11 +734,7 @@ const SchoolSection = React.memo((props) => {
           <FormErrorMessage>{props.errors.status}</FormErrorMessage>
         </FormControl>
         <Flex flexWrap="wrap">
-          <FormControl
-            isInvalid={props.errors.major}
-            flexBasis={{ base: "100%", md: "50%" }}
-            pr={{ base: 0, md: 4 }}
-          >
+          <FormControl isInvalid={props.errors.major} flexBasis={{ base: '100%', md: '50%' }} pr={{ base: 0, md: 4 }}>
             <FormLabel htmlFor="major" fontSize="lg" fontWeight="bold">
               Major
             </FormLabel>
@@ -826,11 +748,7 @@ const SchoolSection = React.memo((props) => {
             />
             <FormErrorMessage>{props.errors.major}</FormErrorMessage>
           </FormControl>
-          <FormControl
-            isInvalid={props.errors.minor}
-            flexBasis={{ base: "100%", md: "50%" }}
-            pt={{ base: 6, md: 0 }}
-          >
+          <FormControl isInvalid={props.errors.minor} flexBasis={{ base: '100%', md: '50%' }} pt={{ base: 6, md: 0 }}>
             <FormLabel htmlFor="minor" fontSize="lg" fontWeight="bold">
               Minor
             </FormLabel>
@@ -877,9 +795,7 @@ const SocialAccountsSection = React.memo((props) => {
                     children={
                       <React.Fragment>
                         <FontAwesomeIcon icon={account.icon} />
-                        {Boolean(account.url) ? (
-                          <Text ml={4}>{account.url}</Text>
-                        ) : null}
+                        {Boolean(account.url) ? <Text ml={4}>{account.url}</Text> : null}
                       </React.Fragment>
                     }
                   />
@@ -913,17 +829,11 @@ const FavoriteGamesSection = React.memo((props) => {
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Favorite Games
         </Text>
-        <Text color="gray.500">
-          Your top 5 favorite games (if you can even choose).
-        </Text>
+        <Text color="gray.500">Your top 5 favorite games (if you can even choose).</Text>
       </Box>
       <Stack spacing={6} p={8}>
         <FormControl isInvalid={props.errors.favoriteGames}>
-          <FormLabel
-            htmlFor="favoriteGameSearch"
-            fontSize="lg"
-            fontWeight="bold"
-          >
+          <FormLabel htmlFor="favoriteGameSearch" fontSize="lg" fontWeight="bold">
             Search for a game
           </FormLabel>
           <GameSearch
@@ -937,15 +847,8 @@ const FavoriteGamesSection = React.memo((props) => {
         <FormErrorMessage>{props.errors.favoriteGames}</FormErrorMessage>
         <Stack spacing={2}>
           <Text fontWeight="bold">
-            Your favorites{" "}
-            <Text
-              as="span"
-              color={`${
-                props.favoriteGames.length === MAX_FAVORITE_GAME_LIST
-                  ? "red.500"
-                  : undefined
-              }`}
-            >
+            Your favorites{' '}
+            <Text as="span" color={`${props.favoriteGames.length === MAX_FAVORITE_GAME_LIST ? 'red.500' : undefined}`}>
               ({props.favoriteGames.length}/5)
             </Text>
           </Text>
@@ -961,36 +864,23 @@ const FavoriteGamesSection = React.memo((props) => {
                 return (
                   <Box key={game.id} w="125px" mt={4}>
                     <Flex alignItems="center" justifyContent="space-between">
-                      <GameCover
-                        url={game.cover ? game.cover.url : null}
-                        name={game.name}
-                      />
+                      <GameCover url={game.cover ? game.cover.url : null} name={game.name} />
                       {!isLast ? (
                         <Stack px={2}>
-                          <Tooltip
-                            label={`Move ${game.name} to spot #${index + 2}`}
-                          >
+                          <Tooltip label={`Move ${game.name} to spot #${index + 2}`}>
                             <Button
                               size="xs"
                               variant="ghost"
-                              onClick={() =>
-                                props.reorderFavoriteGames(index, index + 1)
-                              }
+                              onClick={() => props.reorderFavoriteGames(index, index + 1)}
                             >
                               <FontAwesomeIcon icon={faCaretRight} />
                             </Button>
                           </Tooltip>
-                          <Tooltip
-                            label={`Move ${nextGame.name} to spot #${
-                              index + 1
-                            }`}
-                          >
+                          <Tooltip label={`Move ${nextGame.name} to spot #${index + 1}`}>
                             <Button
                               size="xs"
                               variant="ghost"
-                              onClick={() =>
-                                props.reorderFavoriteGames(index + 1, index)
-                              }
+                              onClick={() => props.reorderFavoriteGames(index + 1, index)}
                             >
                               <FontAwesomeIcon icon={faCaretLeft} />
                             </Button>
@@ -998,19 +888,10 @@ const FavoriteGamesSection = React.memo((props) => {
                         </Stack>
                       ) : null}
                     </Flex>
-                    <Text
-                      fontSize="sm"
-                      lineHeight="1.2"
-                      pr={2}
-                      py={2}
-                      isTruncated
-                      title={game.name}
-                    >
+                    <Text fontSize="sm" lineHeight="1.2" pr={2} py={2} isTruncated title={game.name}>
                       {game.name}
                     </Text>
-                    <Tooltip
-                      label={`Remove ${game.name} from favorite games list`}
-                    >
+                    <Tooltip label={`Remove ${game.name} from favorite games list`}>
                       <Button
                         size="xs"
                         variant="ghost"
@@ -1045,11 +926,7 @@ const CurrentlyPlayingSection = React.memo((props) => {
       </Box>
       <Stack spacing={6} p={8}>
         <FormControl isInvalid={props.errors.favoriteGames}>
-          <FormLabel
-            htmlFor="currentGameSearch"
-            fontSize="lg"
-            fontWeight="bold"
-          >
+          <FormLabel htmlFor="currentGameSearch" fontSize="lg" fontWeight="bold">
             Search for a game
           </FormLabel>
           <GameSearch
@@ -1057,22 +934,16 @@ const CurrentlyPlayingSection = React.memo((props) => {
             name="currentGameSearch"
             onSelect={props.onGameSelect}
             clearInputOnSelect={true}
-            disabled={
-              props.currentlyPlaying.length === MAX_CURRENTLY_PLAYING_LIST
-            }
+            disabled={props.currentlyPlaying.length === MAX_CURRENTLY_PLAYING_LIST}
           />
           <FormErrorMessage>{props.errors.favoriteGames}</FormErrorMessage>
         </FormControl>
         <Stack spacing={2}>
           <Text fontWeight="bold">
-            What you’re playing{" "}
+            What you’re playing{' '}
             <Text
               as="span"
-              color={`${
-                props.currentlyPlaying.length === MAX_CURRENTLY_PLAYING_LIST
-                  ? "red.500"
-                  : undefined
-              }`}
+              color={`${props.currentlyPlaying.length === MAX_CURRENTLY_PLAYING_LIST ? 'red.500' : undefined}`}
             >
               ({props.currentlyPlaying.length}/5)
             </Text>
@@ -1088,36 +959,23 @@ const CurrentlyPlayingSection = React.memo((props) => {
                 return (
                   <Box key={game.id} w="125px" mt={4}>
                     <Flex alignItems="center" justifyContent="space-between">
-                      <GameCover
-                        url={game.cover ? game.cover.url : null}
-                        name={game.name}
-                      />
+                      <GameCover url={game.cover ? game.cover.url : null} name={game.name} />
                       {!isLast ? (
                         <Stack px={2}>
-                          <Tooltip
-                            label={`Move ${game.name} to spot #${index + 2}`}
-                          >
+                          <Tooltip label={`Move ${game.name} to spot #${index + 2}`}>
                             <Button
                               size="xs"
                               variant="ghost"
-                              onClick={() =>
-                                props.reorderCurrentlyPlaying(index, index + 1)
-                              }
+                              onClick={() => props.reorderCurrentlyPlaying(index, index + 1)}
                             >
                               <FontAwesomeIcon icon={faCaretRight} />
                             </Button>
                           </Tooltip>
-                          <Tooltip
-                            label={`Move ${nextGame.name} to spot #${
-                              index + 1
-                            }`}
-                          >
+                          <Tooltip label={`Move ${nextGame.name} to spot #${index + 1}`}>
                             <Button
                               size="xs"
                               variant="ghost"
-                              onClick={() =>
-                                props.reorderCurrentlyPlaying(index + 1, index)
-                              }
+                              onClick={() => props.reorderCurrentlyPlaying(index + 1, index)}
                             >
                               <FontAwesomeIcon icon={faCaretLeft} />
                             </Button>
@@ -1125,25 +983,11 @@ const CurrentlyPlayingSection = React.memo((props) => {
                         </Stack>
                       ) : null}
                     </Flex>
-                    <Text
-                      fontSize="sm"
-                      lineHeight="1.2"
-                      pr={2}
-                      py={2}
-                      isTruncated
-                      title={game.name}
-                    >
+                    <Text fontSize="sm" lineHeight="1.2" pr={2} py={2} isTruncated title={game.name}>
                       {game.name}
                     </Text>
-                    <Tooltip
-                      label={`Remove ${game.name} from currently playing list`}
-                    >
-                      <Button
-                        size="xs"
-                        variant="ghost"
-                        colorScheme="red"
-                        onClick={() => props.toggleCurrentGame(game)}
-                      >
+                    <Tooltip label={`Remove ${game.name} from currently playing list`}>
+                      <Button size="xs" variant="ghost" colorScheme="red" onClick={() => props.toggleCurrentGame(game)}>
                         Remove
                       </Button>
                     </Tooltip>

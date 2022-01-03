@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import * as SecureStore from 'expo-secure-store';
 
 export const saveStorageItem = async (key, value) => {
   await SecureStore.setItemAsync(key, value);

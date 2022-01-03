@@ -1,25 +1,25 @@
 // Libraries
-import React from "react";
-import { useBoolean, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import nookies from "nookies";
-import { httpsCallable } from "firebase/functions";
+import React from 'react';
+import { useBoolean, useToast } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import nookies from 'nookies';
+import { httpsCallable } from 'firebase/functions';
 
 // Other
-import { db, functions } from "src/firebase";
-import firebaseAdmin from "src/firebaseAdmin";
+import { db, functions } from 'src/firebase';
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Utilities
 
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { COLLECTIONS, CALLABLES } from "src/constants/firebase";
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
+import { COLLECTIONS, CALLABLES } from 'src/constants/firebase';
 
 // Components
-import TournamentForm from "src/components/TournamentForm";
+import TournamentForm from 'src/components/TournamentForm';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -54,9 +54,9 @@ const CreateTournament = () => {
   const handleSubmitError = (error) => {
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
+      title: 'An error occurred.',
       description: error.message,
-      status: "error",
+      status: 'error',
       isClosable: true,
     });
   };
@@ -108,20 +108,16 @@ const CreateTournament = () => {
       participants: 0,
     };
 
-    const createTournament = httpsCallable(
-      functions,
-      CALLABLES.CREATE_TOURNAMENT
-    );
+    const createTournament = httpsCallable(functions, CALLABLES.CREATE_TOURNAMENT);
 
     try {
       const result = await createTournament(tournamentData);
 
       if (Boolean(result?.data?.tournamentId)) {
         toast({
-          title: "Tournament created.",
-          description:
-            "Your tournament has been created. You will be redirected...",
-          status: "success",
+          title: 'Tournament created.',
+          description: 'Your tournament has been created. You will be redirected...',
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {
@@ -135,14 +131,7 @@ const CreateTournament = () => {
     }
   };
 
-  return (
-    <TournamentForm
-      state="create"
-      onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
-      errors={errors}
-    />
-  );
+  return <TournamentForm state="create" onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />;
 };
 
 export default CreateTournament;

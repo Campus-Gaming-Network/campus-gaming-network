@@ -1,15 +1,5 @@
-import React from "react";
-import {
-  Box,
-  Text,
-  Heading,
-  VStack,
-  FormControl,
-  Input,
-  Link,
-  Button,
-  HStack,
-} from "native-base";
+import React from 'react';
+import { Box, Text, Heading, VStack, FormControl, Input, Link, Button, HStack } from 'native-base';
 
 export default function SignUp({ navigation }) {
   return (
@@ -22,34 +12,22 @@ export default function SignUp({ navigation }) {
       </Heading>
       <VStack space={3} mt="5">
         <FormControl>
-          <FormControl.Label
-            _text={{ color: "muted.700", fontSize: "xs", fontWeight: 500 }}
-          >
-            Email
-          </FormControl.Label>
+          <FormControl.Label _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>Email</FormControl.Label>
           <Input />
         </FormControl>
         <FormControl>
-          <FormControl.Label
-            _text={{ color: "muted.700", fontSize: "xs", fontWeight: 500 }}
-          >
+          <FormControl.Label _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
             Password
           </FormControl.Label>
           <Input type="password" />
         </FormControl>
         <FormControl>
-          <FormControl.Label
-            _text={{ color: "muted.700", fontSize: "xs", fontWeight: 500 }}
-          >
+          <FormControl.Label _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
             Confirm Password
           </FormControl.Label>
           <Input type="password" />
         </FormControl>
-        <Button
-          mt="2"
-          colorScheme="orange"
-          _text={{ color: "white", fontWeight: "bold" }}
-        >
+        <Button mt="2" colorScheme="orange" _text={{ color: 'white', fontWeight: 'bold' }}>
           Sign up
         </Button>
       </VStack>

@@ -1,19 +1,11 @@
-import React from "react";
-import {
-  Box,
-  Heading,
-  VStack,
-  FormControl,
-  Input,
-  Button,
-  useToast,
-} from "native-base";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../firebase";
+import React from 'react';
+import { Box, Heading, VStack, FormControl, Input, Button, useToast } from 'native-base';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function ForgotPassword() {
   const toast = useToast();
-  const [email, setEmail] = React.useState("sansonebrandon@gmail.com");
+  const [email, setEmail] = React.useState('sansonebrandon@gmail.com');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handleSubmit = async () => {
@@ -21,33 +13,33 @@ export default function ForgotPassword() {
 
     try {
       const actionCodeSettings = {
-        url: "https://campusgamingnetwork.page.link/auth-action",
+        url: 'https://campusgamingnetwork.page.link/auth-action',
         // url: `https://dev.campusgamingnetwork.com/auth-action`,
         // url: `https://campusgamingnetwork.page.link/auth-action?email=${email}`,
         android: {
-          packageName: "com.cgn.mobile-dev",
+          packageName: 'com.cgn.mobile-dev',
           installApp: true,
-          minimumVersion: "12",
+          minimumVersion: '12',
         },
         handleCodeInApp: true,
-        dynamicLinkDomain: "campusgamingnetwork.page.link",
+        dynamicLinkDomain: 'campusgamingnetwork.page.link',
       };
       console.log(actionCodeSettings);
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
     } catch (error) {
       console.log(error);
       toast.show({
-        title: "Something went wrong",
-        status: "error",
-        description: "Please create a support ticket from the support page",
+        title: 'Something went wrong',
+        status: 'error',
+        description: 'Please create a support ticket from the support page',
       });
       setIsSubmitting(false);
       return;
     }
 
     toast.show({
-      title: "Instructions Sent",
-      status: "success",
+      title: 'Instructions Sent',
+      status: 'success',
       description: `Please check both the inbox and spam folder of the email ${email}.`,
     });
   };
@@ -58,15 +50,15 @@ export default function ForgotPassword() {
         Reset your password
       </Heading>
       <Heading mt="1" color="coolGray.600" fontWeight="medium" size="xs">
-        Please enter the email you use for Campus Gaming Network below, and
-        we’ll send you instructions on how to reset your password.
+        Please enter the email you use for Campus Gaming Network below, and we’ll send you instructions on how to reset
+        your password.
       </Heading>
       <VStack space={3} mt="5">
         <FormControl isRequired>
           <FormControl.Label
             _text={{
-              color: "coolGray.800",
-              fontSize: "xs",
+              color: 'coolGray.800',
+              fontSize: 'xs',
               fontWeight: 500,
             }}
           >
@@ -79,9 +71,9 @@ export default function ForgotPassword() {
           onPress={handleSubmit}
           mt="2"
           colorScheme="orange"
-          _text={{ color: "white", fontWeight: "bold" }}
+          _text={{ color: 'white', fontWeight: 'bold' }}
         >
-          {isSubmitting ? "Sending..." : "Send Instructions"}
+          {isSubmitting ? 'Sending...' : 'Send Instructions'}
         </Button>
       </VStack>
     </Box>

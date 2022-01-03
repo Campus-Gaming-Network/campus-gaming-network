@@ -1,20 +1,12 @@
-import React from "react";
-import {
-  Box,
-  Heading,
-  VStack,
-  FormControl,
-  Input,
-  Button,
-  useToast,
-} from "native-base";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import React from 'react';
+import { Box, Heading, VStack, FormControl, Input, Button, useToast } from 'native-base';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function LogIn({ navigation }) {
   const toast = useToast();
-  const [email, setEmail] = React.useState("sansonebrandon@gmail.com");
-  const [password, setPassword] = React.useState("lol123!");
+  const [email, setEmail] = React.useState('sansonebrandon@gmail.com');
+  const [password, setPassword] = React.useState('lol123!');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handleSubmit = async () => {
@@ -25,18 +17,18 @@ export default function LogIn({ navigation }) {
     } catch (error) {
       console.log(error);
       toast.show({
-        title: "Something went wrong",
-        status: "error",
-        description: "Please create a support ticket from the support page",
+        title: 'Something went wrong',
+        status: 'error',
+        description: 'Please create a support ticket from the support page',
       });
       setIsSubmitting(false);
       return;
     }
 
     toast.show({
-      title: "Login successful",
-      status: "success",
-      description: "Welcome back.",
+      title: 'Login successful',
+      status: 'success',
+      description: 'Welcome back.',
     });
   };
 
@@ -52,8 +44,8 @@ export default function LogIn({ navigation }) {
         <FormControl isRequired>
           <FormControl.Label
             _text={{
-              color: "coolGray.800",
-              fontSize: "xs",
+              color: 'coolGray.800',
+              fontSize: 'xs',
               fontWeight: 500,
             }}
           >
@@ -64,8 +56,8 @@ export default function LogIn({ navigation }) {
         <FormControl isRequired>
           <FormControl.Label
             _text={{
-              color: "coolGray.800",
-              fontSize: "xs",
+              color: 'coolGray.800',
+              fontSize: 'xs',
               fontWeight: 500,
             }}
           >
@@ -78,13 +70,11 @@ export default function LogIn({ navigation }) {
           onPress={handleSubmit}
           mt="2"
           colorScheme="orange"
-          _text={{ color: "white", fontWeight: "bold" }}
+          _text={{ color: 'white', fontWeight: 'bold' }}
         >
-          {isSubmitting ? "Signing in..." : "Sign in"}
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
-        <Button onPress={() => navigation.navigate("ForgotPassword")}>
-          Forgot Password?
-        </Button>
+        <Button onPress={() => navigation.navigate('ForgotPassword')}>Forgot Password?</Button>
       </VStack>
     </Box>
   );

@@ -1,19 +1,11 @@
-import React from "react";
-import {
-  Box,
-  Heading,
-  VStack,
-  FormControl,
-  Input,
-  Button,
-  useToast,
-} from "native-base";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import React from 'react';
+import { Box, Heading, VStack, FormControl, Input, Button, useToast } from 'native-base';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function AuthAction({ navigation }) {
   const toast = useToast();
-  const [password, setPassword] = React.useState("");
+  const [password, setPassword] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handleSubmit = async () => {};
@@ -27,8 +19,8 @@ export default function AuthAction({ navigation }) {
         <FormControl isRequired>
           <FormControl.Label
             _text={{
-              color: "coolGray.800",
-              fontSize: "xs",
+              color: 'coolGray.800',
+              fontSize: 'xs',
               fontWeight: 500,
             }}
           >
@@ -41,9 +33,9 @@ export default function AuthAction({ navigation }) {
           onPress={handleSubmit}
           mt="2"
           colorScheme="orange"
-          _text={{ color: "white", fontWeight: "bold" }}
+          _text={{ color: 'white', fontWeight: 'bold' }}
         >
-          {isSubmitting ? "Signing in..." : "Sign in"}
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
       </VStack>
     </Box>

@@ -1,4 +1,4 @@
-import Document, { Html, Head, Main, NextScript } from "next/document";
+import Document, { Html, Head, Main, NextScript } from 'next/document';
 
 class MyDocument extends Document {
   render() {
@@ -6,29 +6,12 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <meta charSet="utf-8" />
-          <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/favicon-32x32.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/favicon-16x16.png"
-          />
+          <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
-          <meta
-            name="apple-mobile-web-app-title"
-            content="Campus Gaming Network"
-          />
+          <meta name="apple-mobile-web-app-title" content="Campus Gaming Network" />
           <meta name="application-name" content="Campus Gaming Network" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="msapplication-TileImage" content="/mstile-144x144.png" />

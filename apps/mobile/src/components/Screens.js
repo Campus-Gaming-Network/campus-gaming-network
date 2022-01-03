@@ -1,31 +1,24 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  Center,
-  IconButton,
-  Spinner,
-  Heading,
-  HStack,
-  useToast,
-} from "native-base";
-import { Ionicons } from "@expo/vector-icons";
-import { signOut } from "firebase/auth";
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Center, IconButton, Spinner, Heading, HStack, useToast } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { signOut } from 'firebase/auth';
 // import { dynamicLinks } from '@react-native-firebase/dynamic-links';
 
 // Other
-import { auth } from "../firebase";
+import { auth } from '../firebase';
 
 // Providers
-import { useAuth } from "../providers/auth";
+import { useAuth } from '../providers/auth';
 
 // Screens
-import Welcome from "../screens/Welcome";
-import LogIn from "../screens/Login";
-import Landing from "../screens/Landing";
-import ForgotPassword from "../screens/ForgotPassword";
-import AuthAction from "../screens/AuthAction";
-import Event from "../screens/Event";
-import EventAttendees from "../screens/eventAttendees";
+import Welcome from '../screens/Welcome';
+import LogIn from '../screens/Login';
+import Landing from '../screens/Landing';
+import ForgotPassword from '../screens/ForgotPassword';
+import AuthAction from '../screens/AuthAction';
+import Event from '../screens/Event';
+import EventAttendees from '../screens/eventAttendees';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,21 +31,21 @@ const Screens = () => {
     } catch (error) {
       console.error(error);
       toast.show({
-        title: "Something went wrong",
-        status: "error",
-        description: "Please create a support ticket from the support page",
+        title: 'Something went wrong',
+        status: 'error',
+        description: 'Please create a support ticket from the support page',
       });
     }
   };
   const unauthorizedScreens = [
-    { name: "LogIn", component: LogIn },
-    { name: "Welcome", component: Welcome },
-    { name: "ForgotPassword", component: ForgotPassword },
-    { name: "AuthAction", component: AuthAction },
+    { name: 'LogIn', component: LogIn },
+    { name: 'Welcome', component: Welcome },
+    { name: 'ForgotPassword', component: ForgotPassword },
+    { name: 'AuthAction', component: AuthAction },
   ];
   const authorizedScreens = [
     {
-      name: "Landing",
+      name: 'Landing',
       component: Landing,
       options: {
         title: "Events You're Attending",
@@ -63,26 +56,23 @@ const Screens = () => {
             variant="ghost"
             _icon={{
               as: Ionicons,
-              name: "log-out-outline",
+              name: 'log-out-outline',
             }}
             onPress={handleSignOut}
           />
         ),
       },
     },
-    { name: "Event", component: Event },
+    { name: 'Event', component: Event },
     {
-      name: "EventAttendees",
+      name: 'EventAttendees',
       component: EventAttendees,
-      options: { title: "Attendees" },
+      options: { title: 'Attendees' },
     },
   ];
-  const screens = React.useMemo(
-    () => (!isAuthenticated ? unauthorizedScreens : authorizedScreens),
-    [isAuthenticated]
-  );
+  const screens = React.useMemo(() => (!isAuthenticated ? unauthorizedScreens : authorizedScreens), [isAuthenticated]);
   const handleDynamicLink = (link) => {
-    console.log("handleDynamicLink", link.url);
+    console.log('handleDynamicLink', link.url);
   };
   // React.useEffect(() => {
   //   const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
@@ -95,10 +85,7 @@ const Screens = () => {
       <Center flex={1} px="3">
         <Center>
           <HStack space={2} alignItems="center">
-            <Spinner
-              color="orange.500"
-              accessibilityLabel="Authenticating..."
-            />
+            <Spinner color="orange.500" accessibilityLabel="Authenticating..." />
             <Heading color="orange.500" fontSize="md">
               Authenticating...
             </Heading>

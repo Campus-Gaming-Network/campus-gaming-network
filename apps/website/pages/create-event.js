@@ -1,35 +1,29 @@
 // Libraries
-import React from "react";
-import { useBoolean, useToast } from "@chakra-ui/react";
-import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
-import { DateTime } from "luxon";
-import { useRouter } from "next/router";
-import nookies from "nookies";
-import {
-  doc,
-  updateDoc,
-  addDoc,
-  collection,
-  Timestamp,
-} from "firebase/firestore";
+import React from 'react';
+import { useBoolean, useToast } from '@chakra-ui/react';
+import { geocodeByAddress } from 'react-places-autocomplete/dist/utils';
+import { DateTime } from 'luxon';
+import { useRouter } from 'next/router';
+import nookies from 'nookies';
+import { doc, updateDoc, addDoc, collection, Timestamp } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
-import firebaseAdmin from "src/firebaseAdmin";
+import { db } from 'src/firebase';
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Utilities
-import { validateCreateEvent } from "src/utilities/validation";
+import { validateCreateEvent } from 'src/utilities/validation';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { DASHED_DATE_TIME } from "src/constants/dateTime";
-import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { DASHED_DATE_TIME } from 'src/constants/dateTime';
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
 
 // Components
-import EventForm from "src/components/EventForm";
+import EventForm from 'src/components/EventForm';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -64,9 +58,9 @@ const CreateEvent = () => {
   const handleSubmitError = (error) => {
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
+      title: 'An error occurred.',
       description: error.message,
-      status: "error",
+      status: 'error',
       isClosable: true,
     });
   };
@@ -102,31 +96,21 @@ const CreateEvent = () => {
         console.error({ error });
       });
 
-    let startDateTime = "";
-    let endDateTime = "";
+    let startDateTime = '';
+    let endDateTime = '';
 
-    if (
-      formState.startMonth &&
-      formState.startDay &&
-      formState.startYear &&
-      formState.startTime
-    ) {
+    if (formState.startMonth && formState.startDay && formState.startYear && formState.startTime) {
       const formattedStartdate = DateTime.fromFormat(
         `${formState.startMonth}-${formState.startDay}-${formState.startYear} ${formState.startTime}`,
-        DASHED_DATE_TIME
+        DASHED_DATE_TIME,
       );
       startDateTime = Timestamp.fromDate(new Date(formattedStartdate));
     }
 
-    if (
-      formState.endMonth &&
-      formState.endDay &&
-      formState.endYear &&
-      formState.endTime
-    ) {
+    if (formState.endMonth && formState.endDay && formState.endYear && formState.endTime) {
       const formattedEnddate = DateTime.fromFormat(
         `${formState.endMonth}-${formState.endDay}-${formState.endYear} ${formState.endTime}`,
-        DASHED_DATE_TIME
+        DASHED_DATE_TIME,
       );
       endDateTime = Timestamp.fromDate(new Date(formattedEnddate));
     }
@@ -187,7 +171,7 @@ const CreateEvent = () => {
       }
 
       const eventResponseData = {
-        response: "YES",
+        response: 'YES',
         user: {
           ref: userDocRef,
           id: userDocRef.id,
@@ -221,14 +205,11 @@ const CreateEvent = () => {
       };
 
       try {
-        await addDoc(
-          collection(db, COLLECTIONS.EVENT_RESPONSES),
-          eventResponseData
-        );
+        await addDoc(collection(db, COLLECTIONS.EVENT_RESPONSES), eventResponseData);
         toast({
-          title: "Event created.",
-          description: "Your event has been created. You will be redirected...",
-          status: "success",
+          title: 'Event created.',
+          description: 'Your event has been created. You will be redirected...',
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {
@@ -240,14 +221,7 @@ const CreateEvent = () => {
     }
   };
 
-  return (
-    <EventForm
-      state="create"
-      onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
-      errors={errors}
-    />
-  );
+  return <EventForm state="create" onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />;
 };
 
 export default CreateEvent;

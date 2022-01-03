@@ -1,9 +1,9 @@
 // Libraries
-import React from "react";
-import { DEFAULT_PAGE_SIZE } from "@campus-gaming-network/tools";
+import React from 'react';
+import { DEFAULT_PAGE_SIZE } from '@campus-gaming-network/tools';
 
 // Utilities
-import { getUserEvents } from "../utilities/api";
+import { getUserEvents } from '../utilities/api';
 
 const useFetchUserEvents = (id, _limit = DEFAULT_PAGE_SIZE) => {
   const [isLoading, setIsLoading] = React.useState(true);

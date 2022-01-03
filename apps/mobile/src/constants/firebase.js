@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Firebase Constants
 
-import Constants from "expo-constants";
+import Constants from 'expo-constants';
 
 export const FIREBASE_CONFIG = {
   apiKey: Constants.manifest.extra.apiKey,

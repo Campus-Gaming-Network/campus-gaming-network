@@ -1,24 +1,24 @@
 // Libraries
-import React from "react";
-import { useBoolean, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import nookies from "nookies";
-import { httpsCallable } from "firebase/functions";
-import { validateCreateTeam } from "@campus-gaming-network/tools";
+import React from 'react';
+import { useBoolean, useToast } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import nookies from 'nookies';
+import { httpsCallable } from 'firebase/functions';
+import { validateCreateTeam } from '@campus-gaming-network/tools';
 
 // Other
-import { db, functions } from "src/firebase";
-import firebaseAdmin from "src/firebaseAdmin";
+import { db, functions } from 'src/firebase';
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { COLLECTIONS, CALLABLES } from "src/constants/firebase";
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
+import { COLLECTIONS, CALLABLES } from 'src/constants/firebase';
 
 // Components
-import TeamForm from "src/components/TeamForm";
+import TeamForm from 'src/components/TeamForm';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -52,11 +52,9 @@ const CreateTeam = () => {
   const handleSubmitError = (error) => {
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
-      description:
-        error?.message ||
-        "There was an error creating the team. Please try again.",
-      status: "error",
+      title: 'An error occurred.',
+      description: error?.message || 'There was an error creating the team. Please try again.',
+      status: 'error',
       isClosable: true,
     });
   };
@@ -69,10 +67,7 @@ const CreateTeam = () => {
     const { error } = validateCreateTeam(formState);
 
     if (error) {
-      const errors = error.details.reduce(
-        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
-        {}
-      );
+      const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
       setErrors(errors);
       setIsSubmitting.off();
       window.scrollTo(0, 0);
@@ -94,9 +89,9 @@ const CreateTeam = () => {
 
       if (Boolean(result?.data?.teamId)) {
         toast({
-          title: "Team created.",
-          description: "Your team has been created. You will be redirected...",
-          status: "success",
+          title: 'Team created.',
+          description: 'Your team has been created. You will be redirected...',
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {
@@ -110,14 +105,7 @@ const CreateTeam = () => {
     }
   };
 
-  return (
-    <TeamForm
-      state="create"
-      onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
-      errors={errors}
-    />
-  );
+  return <TeamForm state="create" onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />;
 };
 
 export default CreateTeam;

@@ -8,20 +8,11 @@ import {
   formatSchoolName,
   isValidUrl,
   getSchoolUrl,
-} from "@campus-gaming-network/tools";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDoc,
-  getDocs,
-  limit,
-  Timestamp,
-} from "firebase/firestore";
+} from '@campus-gaming-network/tools';
+import { doc, collection, query, where, getDoc, getDocs, limit, Timestamp } from 'firebase/firestore';
 
 // Other
-import { db } from "../firebase";
+import { db } from '../firebase';
 
 const mapEvent = (event) => {
   if (!Boolean(event)) {
@@ -42,7 +33,7 @@ const mapEvent = (event) => {
       createdAt: event.school.createdAt?.toDate(),
       updatedAt: event.school.updatedAt?.toDate(),
       name: formatSchoolName(event.school.name),
-      isValidWebsiteUrl: isValidUrl(event.school.website || ""),
+      isValidWebsiteUrl: isValidUrl(event.school.website || ''),
       url: getSchoolUrl(event.school.id),
     },
   };
@@ -68,11 +59,11 @@ export const getUserEvents = async (id, _limit) => {
     const snapshot = await getDocs(
       query(
         collection(db, COLLECTIONS.EVENT_RESPONSES),
-        where("user.ref", "==", doc(db, COLLECTIONS.USERS, id)),
-        where("response", "==", "YES"),
-        where("event.endDateTime", ">=", Timestamp.fromDate(new Date())),
-        limit(_limit)
-      )
+        where('user.ref', '==', doc(db, COLLECTIONS.USERS, id)),
+        where('response', '==', 'YES'),
+        where('event.endDateTime', '>=', Timestamp.fromDate(new Date())),
+        limit(_limit),
+      ),
     );
 
     if (!snapshot.empty) {
@@ -86,7 +77,7 @@ export const getUserEvents = async (id, _limit) => {
     error = err;
   }
 
-  return { events, error }
+  return { events, error };
 };
 
 export const getEvent = async (id) => {
@@ -103,7 +94,7 @@ export const getEvent = async (id) => {
     error = err;
   }
 
-  return { event, error }
+  return { event, error };
 };
 
 export const getEventUsers = async (id, _limit) => {
@@ -114,10 +105,10 @@ export const getEventUsers = async (id, _limit) => {
     const snapshot = await getDocs(
       query(
         collection(db, COLLECTIONS.EVENT_RESPONSES),
-        where("event.ref", "==", doc(db, COLLECTIONS.EVENTS, id)),
-        where("response", "==", "YES"),
-        limit(_limit)
-      )
+        where('event.ref', '==', doc(db, COLLECTIONS.EVENTS, id)),
+        where('response', '==', 'YES'),
+        limit(_limit),
+      ),
     );
 
     if (!snapshot.empty) {
@@ -131,5 +122,5 @@ export const getEventUsers = async (id, _limit) => {
     error = err;
   }
 
-  return { users, error }
+  return { users, error };
 };
