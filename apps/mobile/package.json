@@ -1,0 +1,42 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "ENV=development expo start",
+    "android": "ENV=development expo start --android",
+    "ios": "ENV=development expo start --ios",
+    "eject": "expo eject",
+    "clean": "rm -rf .turbo && rm -rf node_modules"
+  },
+  "dependencies": {
+    "@campus-gaming-network/tools": "^2.0.100",
+    "@react-native-firebase/dynamic-links": "^14.0.0",
+    "@react-navigation/native": "^6.0.6",
+    "@react-navigation/native-stack": "^6.2.4",
+    "dotenv": "^10.0.0",
+    "expo": "~42.0.1",
+    "expo-application": "~3.2.0",
+    "expo-constants": "~11.0.1",
+    "expo-device": "~3.3.0",
+    "expo-secure-store": "~10.2.0",
+    "expo-status-bar": "~1.0.4",
+    "expo-updates": "~0.8.2",
+    "firebase": "^9.0.2",
+    "luxon": "^2.1.1",
+    "native-base": "^3.2.1-rc.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-safe-area-context": "3.2.0",
+    "react-native-screens": "~3.4.0",
+    "react-native-svg": "12.1.1",
+    "react-native-web": "~0.13.12",
+    "sentry-expo": "^4.0.0",
+    "styled-components": "^5.3.1",
+    "styled-system": "^5.1.5",
+    "text-encoding-polyfill": "^0.6.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0"
+  },
+  "private": true
+}
