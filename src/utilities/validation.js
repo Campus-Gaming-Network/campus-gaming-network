@@ -450,22 +450,6 @@ export const validateEditUser = (form) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-// Validate Delete Account
-
-export const validateDeleteAccount = (form) => {
-  const { deleteConfirmation } = form;
-  const errors = {};
-
-  if (isNilOrEmpty(deleteConfirmation)) {
-    errors.deleteConfirmation = "Confirmation is required.";
-  } else if (deleteConfirmation.trim() !== DELETE_USER_VERIFICATION_TEXT) {
-    errors.deleteConfirmation = `${deleteConfirmation} is not the correct confirmation.`;
-  }
-
-  return validate("validateDeleteAccount", form, errors);
-};
-
-////////////////////////////////////////////////////////////////////////////////
 // Validate Report Entity
 
 export const validateReportEntity = (form) => {
