@@ -448,17 +448,3 @@ export const validateEditUser = (form) => {
 
   return validate("validateEditUser", form, errors);
 };
-
-////////////////////////////////////////////////////////////////////////////////
-// Validate Report Entity
-
-export const validateReportEntity = (form) => {
-  const { reason } = form;
-  const errors = {};
-
-  if (isNilOrEmpty(reason)) {
-    errors.reason = "Reason is required.";
-  }
-
-  return validate("validateReportEntity", form, errors);
-};
