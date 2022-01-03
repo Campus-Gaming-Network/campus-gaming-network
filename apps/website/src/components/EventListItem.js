@@ -1,14 +1,14 @@
 // Libraries
-import React from "react";
-import { Text, Flex, Stack, Badge } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSchool } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import { Text, Flex, Stack, Badge } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSchool } from '@fortawesome/free-solid-svg-icons';
 
 // Components
-import SchoolLogo from "src/components/SchoolLogo";
-import Link from "src/components/Link";
-import SliderCard from "src/components/SliderCard";
-import Time from "src/components/Time";
+import SchoolLogo from 'src/components/SchoolLogo';
+import Link from 'src/components/Link';
+import SliderCard from 'src/components/SliderCard';
+import Time from 'src/components/Time';
 
 ////////////////////////////////////////////////////////////////////////////////
 // EventListItem
@@ -66,14 +66,7 @@ const EventListItem = (props) => {
               htmlWidth={6}
               ml={2}
               fallback={
-                <Flex
-                  alignItems="center"
-                  justifyContent="center"
-                  color="gray.500"
-                  h={6}
-                  w={6}
-                  ml={2}
-                >
+                <Flex alignItems="center" justifyContent="center" color="gray.500" h={6} w={6} ml={2}>
                   <FontAwesomeIcon icon={faSchool} />
                 </Flex>
               }
@@ -108,12 +101,7 @@ const EventListItem = (props) => {
             </Badge>
           ) : null}
           {Boolean(props.event.responses?.yes?.length) > 0 ? (
-            <Text
-              fontSize="xs"
-              color="gray.500"
-              fontWeight={600}
-              flexShrink={0}
-            >
+            <Text fontSize="xs" color="gray.500" fontWeight={600} flexShrink={0}>
               {props.event.responses.yes} Attending
             </Text>
           ) : null}

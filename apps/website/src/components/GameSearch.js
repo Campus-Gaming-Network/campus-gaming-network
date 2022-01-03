@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { Flex, Text, Spinner, useBoolean } from "@chakra-ui/react";
+import React from 'react';
+import { Flex, Text, Spinner, useBoolean } from '@chakra-ui/react';
 import {
   Combobox,
   ComboboxInput,
@@ -8,21 +8,21 @@ import {
   ComboboxList,
   ComboboxOption,
   ComboboxOptionText,
-} from "@reach/combobox";
-import uniqBy from "lodash.uniqby";
-import { httpsCallable } from "firebase/functions";
+} from '@reach/combobox';
+import uniqBy from 'lodash.uniqby';
+import { httpsCallable } from 'firebase/functions';
 
 // Components
-import GameCover from "src/components/GameCover";
+import GameCover from 'src/components/GameCover';
 
 // Hooks
-import useDebounce from "src/hooks/useDebounce";
+import useDebounce from 'src/hooks/useDebounce';
 
 // Constants
-import { CALLABLES } from "src/constants/firebase";
+import { CALLABLES } from 'src/constants/firebase';
 
 // Other
-import { functions } from "src/firebase";
+import { functions } from 'src/firebase';
 
 const CACHED_GAMES = {};
 
@@ -30,7 +30,7 @@ const CACHED_GAMES = {};
 // GameSearch
 
 const GameSearch = (props) => {
-  const [searchTerm, setSearchTerm] = React.useState(props.gameName || "");
+  const [searchTerm, setSearchTerm] = React.useState(props.gameName || '');
   const [isFetching, setIsFetching] = useBoolean();
 
   const handleChange = (event) => setSearchTerm(event.target.value);
@@ -43,7 +43,7 @@ const GameSearch = (props) => {
     React.useEffect(() => {
       const _debouncedGameSearch = debouncedGameSearch.trim();
 
-      if (_debouncedGameSearch !== "" && _debouncedGameSearch.length > 2) {
+      if (_debouncedGameSearch !== '' && _debouncedGameSearch.length > 2) {
         let isFresh = true;
         setIsFetching.on();
 
@@ -74,10 +74,9 @@ const GameSearch = (props) => {
   };
 
   const handleGameSelect = (selectedGame) => {
-    const games = uniqBy(Object.values(CACHED_GAMES).flat(), "id");
+    const games = uniqBy(Object.values(CACHED_GAMES).flat(), 'id');
     const _selectedGame = games.find(
-      (game) =>
-        game.name.toLowerCase().trim() === selectedGame.toLowerCase().trim()
+      (game) => game.name.toLowerCase().trim() === selectedGame.toLowerCase().trim(),
     ) || {
       name: selectedGame,
     };
@@ -85,7 +84,7 @@ const GameSearch = (props) => {
     props.onSelect(_selectedGame);
 
     if (props.clearInputOnSelect) {
-      setSearchTerm("");
+      setSearchTerm('');
     } else {
       setSearchTerm(selectedGame);
     }
@@ -94,27 +93,19 @@ const GameSearch = (props) => {
   const gamesResults = useGameSearch(debouncedGameSearch);
 
   return (
-    <Combobox
-      aria-label="Games"
-      name={props.name || "gameSearch"}
-      onSelect={handleGameSelect}
-    >
+    <Combobox aria-label="Games" name={props.name || 'gameSearch'} onSelect={handleGameSelect}>
       <Flex align="center">
         <ComboboxInput
-          id={props.id || "gameSearch"}
-          name={props.name || "gameSearch"}
-          placeholder={props.inputPlaceholder || "Search"}
+          id={props.id || 'gameSearch'}
+          name={props.name || 'gameSearch'}
+          placeholder={props.inputPlaceholder || 'Search'}
           onChange={handleChange}
           value={searchTerm}
           autocomplete={false}
           // This turns off the browser autocomplete
           autoComplete="off"
         />
-        <Spinner
-          visibility={isFetching ? "visible" : "hidden"}
-          color="orange.500"
-          ml={2}
-        />
+        <Spinner visibility={isFetching ? 'visible' : 'hidden'} color="orange.500" ml={2} />
       </Flex>
       {Boolean(gamesResults) && Boolean(searchTerm) ? (
         <ComboboxPopover>
@@ -124,14 +115,7 @@ const GameSearch = (props) => {
                 return (
                   <ComboboxOption key={game.id} value={game.name}>
                     <Flex align="center">
-                      <GameCover
-                        url={game.cover?.url || null}
-                        name={game.name}
-                        mr={2}
-                        h={12}
-                        w={12}
-                        shadow="none"
-                      />
+                      <GameCover url={game.cover?.url || null} name={game.name} mr={2} h={12} w={12} shadow="none" />
                       <Text fontSize="lg">
                         <ComboboxOptionText />
                       </Text>

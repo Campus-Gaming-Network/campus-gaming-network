@@ -1,21 +1,18 @@
-import React from "react";
-import sortBy from "lodash.sortby";
-import keyBy from "lodash.keyby";
-import { useBoolean } from "@chakra-ui/react";
+import React from 'react';
+import sortBy from 'lodash.sortby';
+import keyBy from 'lodash.keyby';
+import { useBoolean } from '@chakra-ui/react';
 
 // Other
-import { firestore } from "src/firebase";
-import { mapSchool } from "src/utilities/school";
-import { COLLECTIONS } from "src/constants/firebase";
+import { firestore } from 'src/firebase';
+import { mapSchool } from 'src/utilities/school';
+import { COLLECTIONS } from 'src/constants/firebase';
 
 // Hooks
-import useLocalStorage from "src/hooks/useLocalStorage";
+import useLocalStorage from 'src/hooks/useLocalStorage';
 
 const useFetchSchools = () => {
-  const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage(
-    "cgn.schools",
-    null
-  );
+  const [localStorageSchools, setSchoolsInLocalStorage] = useLocalStorage('cgn.schools', null);
   const [isLoading, setIsLoading] = useBoolean();
   const [schools, setSchools] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -34,8 +31,8 @@ const useFetchSchools = () => {
 
   React.useEffect(() => {
     const fetchSchools = async () => {
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[API] fetchSchools...");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[API] fetchSchools...');
       }
 
       firestore
@@ -45,9 +42,9 @@ const useFetchSchools = () => {
           const schools = keyBy(
             sortBy(
               snapshot.docs.map((doc) => mapSchool(doc.data(), doc)),
-              ["name"]
+              ['name'],
             ),
-            "id"
+            'id',
           );
 
           setSchools(schools);

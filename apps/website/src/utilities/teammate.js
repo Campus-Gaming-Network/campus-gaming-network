@@ -2,9 +2,9 @@
 // Teammate Utilities
 
 // Utilities
-import { mapUser } from "src/utilities/user";
-import { mapTeam } from "src/utilities/team";
-import { cleanObjectOfBadWords } from "src/utilities/other";
+import { mapUser } from 'src/utilities/user';
+import { mapTeam } from 'src/utilities/team';
+import { cleanObjectOfBadWords } from 'src/utilities/other';
 
 export const mapTeammate = (teammate) => {
   if (!Boolean(teammate)) {

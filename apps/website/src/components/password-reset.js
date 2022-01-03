@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Alert,
   AlertIcon,
@@ -13,30 +13,26 @@ import {
   FormErrorMessage,
   AlertDescription,
   useBoolean,
-} from "@chakra-ui/react";
-import isEmpty from "lodash.isempty";
-import { useRouter } from "next/router";
-import {
-  verifyPasswordResetCode,
-  confirmPasswordReset,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { validatePasswordReset } from "@campus-gaming-network/tools";
+} from '@chakra-ui/react';
+import isEmpty from 'lodash.isempty';
+import { useRouter } from 'next/router';
+import { verifyPasswordResetCode, confirmPasswordReset, signInWithEmailAndPassword } from 'firebase/auth';
+import { validatePasswordReset } from '@campus-gaming-network/tools';
 
 // Utilities
-import { useFormFields } from "src/utilities/other";
+import { useFormFields } from 'src/utilities/other';
 
 // Other
-import { auth } from "src/firebase";
+import { auth } from 'src/firebase';
 
 // Constants
-import { PRODUCTION_URL } from "src/constants/other";
+import { PRODUCTION_URL } from 'src/constants/other';
 
 // Components
-import Article from "src/components/Article";
-import Card from "src/components/Card";
-import SiteLayout from "src/components/SiteLayout";
-import FormErrorAlert from "src/components/FormErrorAlert";
+import Article from 'src/components/Article';
+import Card from 'src/components/Card';
+import SiteLayout from 'src/components/SiteLayout';
+import FormErrorAlert from 'src/components/FormErrorAlert';
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset
@@ -44,7 +40,7 @@ import FormErrorAlert from "src/components/FormErrorAlert";
 const PasswordReset = (props) => {
   const router = useRouter();
   const [fields, handleFieldChange] = useFormFields({
-    password: "",
+    password: '',
   });
   const [isChangingPassword, setIsChangingPassword] = useBoolean();
   const [isShowingPassword, setIsShowingPassword] = useBoolean();
@@ -66,10 +62,7 @@ const PasswordReset = (props) => {
     const { error } = validatePasswordReset(fields);
 
     if (error) {
-      const errors = error.details.reduce(
-        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
-        {}
-      );
+      const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
       setErrors(errors);
       setIsChangingPassword.off();
       window.scrollTo(0, 0);
@@ -82,7 +75,7 @@ const PasswordReset = (props) => {
           .then(() => {
             signInWithEmailAndPassword(auth, email, fields.password)
               .then(() => {
-                router.push("/");
+                router.push('/');
               })
               .catch((error) => {
                 handleError(error);
@@ -107,7 +100,7 @@ const PasswordReset = (props) => {
   return (
     <SiteLayout
       meta={{
-        title: "Password Reset",
+        title: 'Password Reset',
         og: { url: `${PRODUCTION_URL}/password-reset` },
       }}
     >
@@ -132,7 +125,7 @@ const PasswordReset = (props) => {
               <Input
                 id="password"
                 name="password"
-                type={isShowingPassword ? "text" : "password"}
+                type={isShowingPassword ? 'text' : 'password'}
                 placeholder="******************"
                 onChange={handleFieldChange}
                 value={fields.password}
@@ -145,7 +138,7 @@ const PasswordReset = (props) => {
                 variant="link"
                 fontWeight="normal"
               >
-                {isShowingPassword ? "Hide" : "Show"} password
+                {isShowingPassword ? 'Hide' : 'Show'} password
               </Button>
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>

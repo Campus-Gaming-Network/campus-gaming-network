@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Box,
   Avatar,
@@ -13,19 +13,14 @@ import {
   MenuItem,
   IconButton,
   Portal,
-} from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCrown,
-  faEllipsisV,
-  faMedal,
-  faSchool,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCrown, faEllipsisV, faMedal, faSchool } from '@fortawesome/free-solid-svg-icons';
 
 // Components
-import Link from "src/components/Link";
-import SliderCard from "src/components/SliderCard";
-import SchoolLogo from "src/components/SchoolLogo";
+import Link from 'src/components/Link';
+import SliderCard from 'src/components/SliderCard';
+import SchoolLogo from 'src/components/SchoolLogo';
 
 ////////////////////////////////////////////////////////////////////////////////
 // UserListItem
@@ -48,27 +43,15 @@ const UserListItem = (props) => {
                 <MenuList fontSize="md">
                   {props.options.map((option) => {
                     const { onClick, ...rest } = option.props;
-                    return (
-                      <MenuItem {...rest} onClick={() => onClick(props.user)} />
-                    );
+                    return <MenuItem {...rest} onClick={() => onClick(props.user)} />;
                   })}
                 </MenuList>
               </Portal>
             </Menu>
           </Box>
         ) : null}
-        <Flex
-          direction="column"
-          align="center"
-          justify="space-between"
-          h="100%"
-        >
-          <Avatar
-            name={props.user.fullName}
-            title={props.user.fullName}
-            src={props.user.gravatarUrl}
-            size="md"
-          />
+        <Flex direction="column" align="center" justify="space-between" h="100%">
+          <Avatar name={props.user.fullName} title={props.user.fullName} src={props.user.gravatarUrl} size="md" />
           <Box d="inline-flex">
             <Link
               href={`/user/${props.user.id}`}
@@ -139,13 +122,7 @@ const UserListItem = (props) => {
                 htmlWidth={4}
                 mr={2}
                 fallback={
-                  <Flex
-                    alignItems="center"
-                    justifyContent="center"
-                    color="gray.500"
-                    fontSize="sm"
-                    mr={2}
-                  >
+                  <Flex alignItems="center" justifyContent="center" color="gray.500" fontSize="sm" mr={2}>
                     <FontAwesomeIcon icon={faSchool} />
                   </Flex>
                 }

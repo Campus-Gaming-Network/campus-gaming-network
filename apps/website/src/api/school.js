@@ -1,7 +1,7 @@
-import firebaseAdmin from "src/firebaseAdmin";
-import { mapSchool } from "src/utilities/school";
-import { mapEvent } from "src/utilities/event";
-import { mapUser } from "src/utilities/user";
+import firebaseAdmin from 'src/firebaseAdmin';
+import { mapSchool } from 'src/utilities/school';
+import { mapEvent } from 'src/utilities/event';
+import { mapUser } from 'src/utilities/user';
 
 // const geofire = require('geofire-common');
 
@@ -11,8 +11,8 @@ export const getSchoolDetails = async (handle) => {
   try {
     const schoolSnapshot = await firebaseAdmin
       .firestore()
-      .collection("schools")
-      .where("handle", "==", handle)
+      .collection('schools')
+      .where('handle', '==', handle)
       .limit(1)
       .get();
 
@@ -34,13 +34,9 @@ export const getSchoolEvents = async (handle, limit = 25, page = 0) => {
   try {
     let query = firebaseAdmin
       .firestore()
-      .collection("events")
-      .where("school.handle", "==", handle)
-      .where(
-        "endDateTime",
-        ">=",
-        firebaseAdmin.firestore.Timestamp.fromDate(now)
-      );
+      .collection('events')
+      .where('school.handle', '==', handle)
+      .where('endDateTime', '>=', firebaseAdmin.firestore.Timestamp.fromDate(now));
 
     if (page > 0) {
       if (!pages[page]) {
@@ -70,10 +66,7 @@ export const getSchoolUsers = async (handle, limit = 25, page = 0) => {
   let users = [];
 
   try {
-    let query = firebaseAdmin
-      .firestore()
-      .collection("users")
-      .where("school.handle", "==", handle);
+    let query = firebaseAdmin.firestore().collection('users').where('school.handle', '==', handle);
 
     if (page > 0) {
       if (!pages[page]) {

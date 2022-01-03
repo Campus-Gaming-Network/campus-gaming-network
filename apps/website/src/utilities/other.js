@@ -2,20 +2,16 @@
 // Other Utilities
 
 // Libraries
-import React from "react";
-import Filter from "bad-words";
+import React from 'react';
+import Filter from 'bad-words';
 
 // Constans
-import { GOOGLE_MAPS_QUERY_URL } from "src/constants/other";
+import { GOOGLE_MAPS_QUERY_URL } from 'src/constants/other';
 
 const badWordFilter = new Filter();
 
-export const cleanBadWords = (text = "") => {
-  if (
-    !text ||
-    typeof text !== "string" ||
-    (typeof text === "string" && text.trim() === "")
-  ) {
+export const cleanBadWords = (text = '') => {
+  if (!text || typeof text !== 'string' || (typeof text === 'string' && text.trim() === '')) {
     return text;
   }
 
@@ -43,8 +39,7 @@ export const useFormFields = (initialState) => {
 
 export const noop = () => {};
 
-export const isValidUrl = (url) =>
-  Boolean(url) && (url.startsWith("http://") || url.startsWith("https://"));
+export const isValidUrl = (url) => Boolean(url) && (url.startsWith('http://') || url.startsWith('https://'));
 
 // Move an array element from one array index to another
 export const move = (array, from, to) => {
@@ -79,9 +74,9 @@ export const sanitizePrivateProperties = (obj = {}) => {
   for (const prop in obj) {
     // Assuming a private property starts with an underscore.
     // In the case of Firebase ref properties, they do.
-    if (prop.startsWith("_")) {
+    if (prop.startsWith('_')) {
       delete obj[prop];
-    } else if (typeof obj[prop] === "object") {
+    } else if (typeof obj[prop] === 'object') {
       sanitizePrivateProperties(obj[prop]);
     }
   }
@@ -95,15 +90,9 @@ export const cleanObjectOfBadWords = (obj = {}) => {
   for (const prop in _obj) {
     // Assuming a private property starts with an underscore.
     // In the case of Firebase ref properties, they do.
-    if (
-      !prop.startsWith("_") &&
-      typeof _obj[prop] === "string" &&
-      _obj[prop].trim() !== ""
-    ) {
+    if (!prop.startsWith('_') && typeof _obj[prop] === 'string' && _obj[prop].trim() !== '') {
       cleanBadWords(_obj[prop]);
-    } else if (
-      ["meta", "school", "user", "event", "twitter", "og"].includes(prop)
-    ) {
+    } else if (['meta', 'school', 'user', 'event', 'twitter', 'og'].includes(prop)) {
       cleanObjectOfBadWords(_obj[prop]);
     }
   }

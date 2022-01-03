@@ -1,34 +1,32 @@
 // Libraries
-import React from "react";
-import { Box, Heading, Wrap, WrapItem } from "@chakra-ui/react";
+import React from 'react';
+import { Box, Heading, Wrap, WrapItem } from '@chakra-ui/react';
 
 // Hooks
-import useFetchRecentlyCreatedUsers from "src/hooks/useFetchRecentlyCreatedUsers";
+import useFetchRecentlyCreatedUsers from 'src/hooks/useFetchRecentlyCreatedUsers';
 
 // Components
-import UserListItem from "src/components/UserListItem";
-import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
-import EmptyText from "src/components/EmptyText";
+import UserListItem from 'src/components/UserListItem';
+import SliderSilhouette from 'src/components/silhouettes/SliderSilhouette';
+import EmptyText from 'src/components/EmptyText';
 
 ////////////////////////////////////////////////////////////////////////////////
 // RecentlyCreatedUsers
 
 const RecentlyCreatedUsers = () => {
   const [users, state] = useFetchRecentlyCreatedUsers(50);
-  const hasUsers = React.useMemo(() => Boolean(users) && users.length > 0, [
-    users,
-  ]);
+  const hasUsers = React.useMemo(() => Boolean(users) && users.length > 0, [users]);
 
   return (
     <React.Fragment>
-      {state === "idle" || state === "loading" ? (
+      {state === 'idle' || state === 'loading' ? (
         <SliderSilhouette />
       ) : (
         <Box as="section" py={4}>
           <Heading as="h3" fontSize="xl" pb={4}>
             Newest users
           </Heading>
-          {!(state === "done" && hasUsers) ? (
+          {!(state === 'done' && hasUsers) ? (
             <EmptyText>No users have been recently created</EmptyText>
           ) : (
             <Wrap>

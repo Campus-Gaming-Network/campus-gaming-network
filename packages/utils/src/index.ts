@@ -1418,14 +1418,30 @@ export const createEventSchema = Joi.object({
   name: Joi.string().trim().max(BASE_STRING_MAX_LENGTH).required(),
   description: Joi.string().trim().max(MAX_DESCRIPTION_LENGTH).required(),
   game: gameSchema.required(),
-  startMonth: Joi.string().valid(...getMonths()).required(),
-  startDay: Joi.string().valid(...DAYS).required(),
-  startYear: Joi.string().valid(...getNext5Years()).required(),
-  startTime: Joi.string().valid(...getTimes()).required(),
-  endMonth: Joi.string().valid(...getMonths()).required(),
-  endDay: Joi.string().valid(...DAYS).required(),
-  endYear: Joi.string().valid(...getNext5Years()).required(),
-  endTime: Joi.string().valid(...getTimes()).required(),
+  startMonth: Joi.string()
+    .valid(...getMonths())
+    .required(),
+  startDay: Joi.string()
+    .valid(...DAYS)
+    .required(),
+  startYear: Joi.string()
+    .valid(...getNext5Years())
+    .required(),
+  startTime: Joi.string()
+    .valid(...getTimes())
+    .required(),
+  endMonth: Joi.string()
+    .valid(...getMonths())
+    .required(),
+  endDay: Joi.string()
+    .valid(...DAYS)
+    .required(),
+  endYear: Joi.string()
+    .valid(...getNext5Years())
+    .required(),
+  endTime: Joi.string()
+    .valid(...getTimes())
+    .required(),
   isOnlineEvent: Joi.boolean(),
   placeId: Joi.string()
     .trim()

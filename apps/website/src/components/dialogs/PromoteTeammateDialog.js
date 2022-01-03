@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Button,
   Text,
@@ -11,15 +11,15 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useBoolean,
-} from "@chakra-ui/react";
-import { httpsCallable } from "firebase/functions";
-import { useRouter } from "next/router";
+} from '@chakra-ui/react';
+import { httpsCallable } from 'firebase/functions';
+import { useRouter } from 'next/router';
 
 // Constants
-import { CALLABLES } from "src/constants/firebase";
+import { CALLABLES } from 'src/constants/firebase';
 
 // Other
-import { functions } from "src/firebase";
+import { functions } from 'src/firebase';
 
 ////////////////////////////////////////////////////////////////////////////
 // PromoteTeammateDialog
@@ -35,9 +35,9 @@ const PromoteTeammateDialog = (props) => {
     props.onClose();
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
+      title: 'An error occurred.',
       description: error.message,
-      status: "error",
+      status: 'error',
       isClosable: true,
     });
   };
@@ -53,19 +53,16 @@ const PromoteTeammateDialog = (props) => {
       role: props.promotion,
     };
 
-    const promoteTeammate = httpsCallable(
-      functions,
-      CALLABLES.PROMOTE_TEAMMATE
-    );
+    const promoteTeammate = httpsCallable(functions, CALLABLES.PROMOTE_TEAMMATE);
 
     try {
       const result = await promoteTeammate(data);
 
       if (Boolean(result?.data?.success)) {
         toast({
-          title: "Teammate promoted.",
+          title: 'Teammate promoted.',
           description: `You have promoted ${props.teammate.fullName}. You will be redirected...`,
-          status: "success",
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {
@@ -80,25 +77,15 @@ const PromoteTeammateDialog = (props) => {
   };
 
   return (
-    <AlertDialog
-      isOpen={props.isOpen}
-      leastDestructiveRef={cancelRef}
-      onClose={props.onClose}
-    >
+    <AlertDialog isOpen={props.isOpen} leastDestructiveRef={cancelRef} onClose={props.onClose}>
       <AlertDialogOverlay />
-      <AlertDialogContent
-        rounded="lg"
-        borderWidth="1px"
-        boxShadow="lg"
-        as="form"
-        onSubmit={handleSubmit}
-      >
+      <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg" as="form" onSubmit={handleSubmit}>
         <AlertDialogHeader>
           Promote {props.user.fullName} to {props.promotion}
         </AlertDialogHeader>
 
         <AlertDialogBody>
-          Are you sure you want to promote{" "}
+          Are you sure you want to promote{' '}
           <Text as="span" fontWeight="bold">
             {props.user.fullName}
           </Text>

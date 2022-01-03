@@ -1,19 +1,12 @@
 // Libraries
-import React from "react";
-import {
-  Box,
-  Link as ChakraLink,
-  List,
-  ListItem,
-  Text,
-  Flex,
-} from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faMugHot } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import { Box, Link as ChakraLink, List, ListItem, Text, Flex } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart, faMugHot } from '@fortawesome/free-solid-svg-icons';
 
 // Components
-import Link from "src/components/Link";
-import OutsideLink from "src/components/OutsideLink";
+import Link from 'src/components/Link';
+import OutsideLink from 'src/components/OutsideLink';
 
 // Constants
 import {
@@ -24,7 +17,7 @@ import {
   INSTAGRAM_LINK,
   BUY_ME_A_COFFEE_LINK,
   SUPPORT_EMAIL,
-} from "src/constants/other";
+} from 'src/constants/other';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Footer
@@ -34,10 +27,7 @@ const Footer = () => {
     <React.Fragment>
       <Box borderTopWidth={1} bg="white" py={4} textAlign="center">
         <Text fontSize="lg">
-          Enjoying the site?{" "}
-          <OutsideLink href={BUY_ME_A_COFFEE_LINK}>
-            Buy me a coffee.
-          </OutsideLink>
+          Enjoying the site? <OutsideLink href={BUY_ME_A_COFFEE_LINK}>Buy me a coffee.</OutsideLink>
         </Text>
       </Box>
       <Box
@@ -52,17 +42,12 @@ const Footer = () => {
         <Flex justifyContent="space-between" flexWrap="wrap">
           <List
             spacing={2}
-            flexBasis={{ base: "100%", md: "33.3333%" }}
-            minWidth={{ base: "100%", md: "33.3333%" }}
+            flexBasis={{ base: '100%', md: '33.3333%' }}
+            minWidth={{ base: '100%', md: '33.3333%' }}
             flexGrow={0}
             pt={{ base: 8, md: 0 }}
           >
-            <ListItem
-              fontSize="xs"
-              fontWeight="bold"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase" color="gray.500">
               Resources
             </ListItem>
             <ListItem fontSize="md">
@@ -81,17 +66,12 @@ const Footer = () => {
           </List>
           <List
             spacing={2}
-            flexBasis={{ base: "100%", md: "33.3333%" }}
-            minWidth={{ base: "100%", md: "33.3333%" }}
+            flexBasis={{ base: '100%', md: '33.3333%' }}
+            minWidth={{ base: '100%', md: '33.3333%' }}
             flexGrow={0}
             pt={{ base: 8, md: 0 }}
           >
-            <ListItem
-              fontSize="xs"
-              fontWeight="bold"
-              textTransform="uppercase"
-              color="gray.500"
-            >
+            <ListItem fontSize="xs" fontWeight="bold" textTransform="uppercase" color="gray.500">
               Community
             </ListItem>
             <ListItem fontSize="md">
@@ -101,8 +81,8 @@ const Footer = () => {
               Contribute on <OutsideLink href={GITHUB_LINK}>GitHub</OutsideLink>
             </ListItem>
             <ListItem fontSize="md">
-              Like on <OutsideLink href={FACEBOOK_LINK}>Facebook</OutsideLink>{" "}
-              and <OutsideLink href={INSTAGRAM_LINK}>Instagram</OutsideLink>
+              Like on <OutsideLink href={FACEBOOK_LINK}>Facebook</OutsideLink> and{' '}
+              <OutsideLink href={INSTAGRAM_LINK}>Instagram</OutsideLink>
             </ListItem>
             <ListItem fontSize="md">
               Follow on <OutsideLink href={TWITTER_LINK}>Twitter</OutsideLink>
@@ -110,20 +90,20 @@ const Footer = () => {
           </List>
           <List
             spacing={2}
-            flexBasis={{ base: "100%", md: "33.3333%" }}
-            minWidth={{ base: "100%", md: "33.3333%" }}
+            flexBasis={{ base: '100%', md: '33.3333%' }}
+            minWidth={{ base: '100%', md: '33.3333%' }}
             flexGrow={0}
             pt={{ base: 8, md: 0 }}
           >
             <ListItem fontSize="md">
-              Made with{" "}
+              Made with{' '}
               <Text d="inline" color="red.500">
                 <FontAwesomeIcon icon={faHeart} />
-              </Text>{" "}
-              and{" "}
+              </Text>{' '}
+              and{' '}
               <Text d="inline" color="white">
                 <FontAwesomeIcon icon={faMugHot} />
-              </Text>{" "}
+              </Text>{' '}
               in <Text d="inline">Salt Lake City, Utah</Text>
             </ListItem>
           </List>

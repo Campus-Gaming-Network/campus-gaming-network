@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Source: https://github.com/streamich/react-use
 
-import React from "react";
+import React from 'react';
 
 //Hooks
-import useEffectOnce from "src/hooks/useEffectOnce";
+import useEffectOnce from 'src/hooks/useEffectOnce';
 
 const useUnmount = (fn) => {
   const fnRef = React.useRef(fn);

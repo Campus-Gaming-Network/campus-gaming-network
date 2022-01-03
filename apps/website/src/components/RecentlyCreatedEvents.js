@@ -1,16 +1,16 @@
 // Libraries
-import React from "react";
-import uniqBy from "lodash.uniqby";
-import { Box, Heading } from "@chakra-ui/react";
+import React from 'react';
+import uniqBy from 'lodash.uniqby';
+import { Box, Heading } from '@chakra-ui/react';
 
 // Hooks
-import useFetchRecentlyCreatedEvents from "src/hooks/useFetchRecentlyCreatedEvents";
+import useFetchRecentlyCreatedEvents from 'src/hooks/useFetchRecentlyCreatedEvents';
 
 // Components
-import EventListItem from "src/components/EventListItem";
-import Slider from "src/components/Slider";
-import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
-import EmptyText from "src/components/EmptyText";
+import EventListItem from 'src/components/EventListItem';
+import Slider from 'src/components/Slider';
+import SliderSilhouette from 'src/components/silhouettes/SliderSilhouette';
+import EmptyText from 'src/components/EmptyText';
 
 ////////////////////////////////////////////////////////////////////////////////
 // RecentlyCreatedEvents
@@ -21,29 +21,22 @@ const RecentlyCreatedEvents = () => {
   const limit = React.useMemo(() => (page === 0 ? 6 : 1), [page]);
   const [events, state] = useFetchRecentlyCreatedEvents(page, limit);
   const [allEvents, setAllEvents] = React.useState([]);
-  const hasEvents = React.useMemo(
-    () => Boolean(allEvents) && allEvents.length > 0,
-    [allEvents]
-  );
+  const hasEvents = React.useMemo(() => Boolean(allEvents) && allEvents.length > 0, [allEvents]);
 
   React.useEffect(() => {
     if (events) {
-      setAllEvents((prev) => uniqBy([...prev, ...events], "id"));
+      setAllEvents((prev) => uniqBy([...prev, ...events], 'id'));
     }
   }, [events]);
 
   const displaySilhouette = React.useMemo(
-    () =>
-      (state === "idle" || state === "loading") && page === 0 && !hasLoadedOnce,
-    [state, page]
+    () => (state === 'idle' || state === 'loading') && page === 0 && !hasLoadedOnce,
+    [state, page],
   );
-  const displayEmptyText = React.useMemo(
-    () => state === "done" && !hasEvents && page === 0,
-    [state, hasEvents, page]
-  );
+  const displayEmptyText = React.useMemo(() => state === 'done' && !hasEvents && page === 0, [state, hasEvents, page]);
 
   React.useEffect(() => {
-    if (state === "done") {
+    if (state === 'done') {
       setHasLoadedOnce(true);
     }
   }, [state]);
@@ -62,16 +55,12 @@ const RecentlyCreatedEvents = () => {
           ) : (
             <Slider
               settings={{
-                className: allEvents?.length < 5 ? "slick--less-slides" : "",
+                className: allEvents?.length < 5 ? 'slick--less-slides' : '',
               }}
               onPageChange={(nextPage) => setPage(nextPage)}
             >
               {allEvents?.map((event) => (
-                <EventListItem
-                  key={event.id}
-                  event={event}
-                  school={event.school}
-                />
+                <EventListItem key={event.id} event={event} school={event.school} />
               ))}
             </Slider>
           )}

@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Stack,
   Box,
@@ -14,59 +14,43 @@ import {
   MenuList,
   MenuItem,
   useBoolean,
-} from "@chakra-ui/react";
-import safeJsonStringify from "safe-json-stringify";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import nookies from "nookies";
-import {
-  faEllipsisV,
-  faFlag,
-  faSignOutAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import dynamic from "next/dynamic";
+} from '@chakra-ui/react';
+import safeJsonStringify from 'safe-json-stringify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import nookies from 'nookies';
+import { faEllipsisV, faFlag, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import dynamic from 'next/dynamic';
 
 // API
-import {
-  getTeamDetails,
-  getTeamUsers,
-  getTeamRole,
-  getTeamRoles,
-} from "src/api/team";
-import { getUserTeammateDetails } from "src/api/user";
+import { getTeamDetails, getTeamUsers, getTeamRole, getTeamRoles } from 'src/api/team';
+import { getUserTeammateDetails } from 'src/api/user';
 
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Article from "src/components/Article";
-import UserListItem from "src/components/UserListItem";
-import EmptyText from "src/components/EmptyText";
-import Link from "src/components/Link";
+import SiteLayout from 'src/components/SiteLayout';
+import Article from 'src/components/Article';
+import UserListItem from 'src/components/UserListItem';
+import EmptyText from 'src/components/EmptyText';
+import Link from 'src/components/Link';
 
 // Other
-import firebaseAdmin from "src/firebaseAdmin";
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // Dynamic Components
-const ReportEntityDialog = dynamic(
-  () => import("src/components/dialogs/ReportEntityDialog"),
-  {
-    ssr: false,
-  }
-);
+const ReportEntityDialog = dynamic(() => import('src/components/dialogs/ReportEntityDialog'), {
+  ssr: false,
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [
-    teamResponse,
-    teamUsersResponse,
-    teamRolesResponse,
-  ] = await Promise.all([
+  const [teamResponse, teamUsersResponse, teamRolesResponse] = await Promise.all([
     getTeamDetails(context.params.id),
     getTeamUsers(context.params.id),
     getTeamRoles(context.params.id),
@@ -115,30 +99,22 @@ export const getServerSideProps = async (context) => {
 
 const Team = (props) => {
   const { isAuthenticated } = useAuth();
-  const [
-    isReportingTeamDialogOpen,
-    setReportingTeamDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingTeamDialogOpen, setReportingTeamDialogIsOpen] = useBoolean();
 
   return (
     <SiteLayout meta={props.team.meta}>
       <Box bg="gray.200" h="150px" />
       <Article>
-        {props.role?.permissions.includes("team.edit") ? (
-          <Box
-            mb={10}
-            textAlign="center"
-            display="flex"
-            justifyContent="center"
-          >
+        {props.role?.permissions.includes('team.edit') ? (
+          <Box mb={10} textAlign="center" display="flex" justifyContent="center">
             <Link
               href={`/team/${props.team.id}/edit`}
               fontWeight="bold"
               width="100%"
               borderRadius="md"
               bg="gray.100"
-              _focus={{ bg: "gray.200", boxShadow: "outline" }}
-              _hover={{ bg: "gray.200" }}
+              _focus={{ bg: 'gray.200', boxShadow: 'outline' }}
+              _hover={{ bg: 'gray.200' }}
               p={8}
             >
               Edit Team
@@ -146,13 +122,7 @@ const Team = (props) => {
           </Box>
         ) : null}
         <Stack spacing={10}>
-          <Flex
-            as="header"
-            align="center"
-            justify="space-between"
-            px={{ base: 4, md: 0 }}
-            pt={8}
-          >
+          <Flex as="header" align="center" justify="space-between" px={{ base: 4, md: 0 }} pt={8}>
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
               {props.team.name} ({props.team.memberCount})
             </Heading>
@@ -165,17 +135,10 @@ const Team = (props) => {
                   aria-label="Options"
                 />
                 <MenuList fontSize="md">
-                  <MenuItem
-                    color="red.500"
-                    fontWeight="bold"
-                    icon={<FontAwesomeIcon icon={faSignOutAlt} />}
-                  >
+                  <MenuItem color="red.500" fontWeight="bold" icon={<FontAwesomeIcon icon={faSignOutAlt} />}>
                     Leave {props.team.name}
                   </MenuItem>
-                  <MenuItem
-                    onClick={setReportingTeamDialogIsOpen.on}
-                    icon={<FontAwesomeIcon icon={faFlag} />}
-                  >
+                  <MenuItem onClick={setReportingTeamDialogIsOpen.on} icon={<FontAwesomeIcon icon={faFlag} />}>
                     Report {props.team.name}
                   </MenuItem>
                 </MenuList>
@@ -198,7 +161,7 @@ const Team = (props) => {
       {isAuthenticated ? (
         <ReportEntityDialog
           entity={{
-            type: "teams",
+            type: 'teams',
             id: props.team.id,
           }}
           pageProps={props}

@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Alert,
   AlertIcon,
@@ -15,29 +15,29 @@ import {
   Flex,
   FormErrorMessage,
   useBoolean,
-} from "@chakra-ui/react";
-import isEmpty from "lodash.isempty";
-import { useRouter } from "next/router";
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { validateLogIn } from "@campus-gaming-network/tools";
+} from '@chakra-ui/react';
+import isEmpty from 'lodash.isempty';
+import { useRouter } from 'next/router';
+import firebaseAdmin from 'src/firebaseAdmin';
+import nookies from 'nookies';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { validateLogIn } from '@campus-gaming-network/tools';
 
 // Utilities
-import { useFormFields } from "src/utilities/other";
+import { useFormFields } from 'src/utilities/other';
 
 // Other
-import { auth } from "src/firebase";
+import { auth } from 'src/firebase';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Card from "src/components/Card";
-import Article from "src/components/Article";
-import Link from "src/components/Link";
-import FormErrorAlert from "src/components/FormErrorAlert";
+import SiteLayout from 'src/components/SiteLayout';
+import Card from 'src/components/Card';
+import Article from 'src/components/Article';
+import Link from 'src/components/Link';
+import FormErrorAlert from 'src/components/FormErrorAlert';
 
 // Constants
-import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
+import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from 'src/constants/other';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -65,8 +65,8 @@ export const getServerSideProps = async (context) => {
 const Login = () => {
   const router = useRouter();
   const [fields, handleFieldChange] = useFormFields({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = useBoolean();
@@ -82,10 +82,7 @@ const Login = () => {
     const { error } = validateLogIn(fields);
 
     if (error) {
-      const errors = error.details.reduce(
-        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
-        {}
-      );
+      const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
       setErrors(errors);
       setIsLoading.off();
       window.scrollTo(0, 0);
@@ -94,7 +91,7 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, fields.email, fields.password);
-      router.push("/");
+      router.push('/');
     } catch (error) {
       console.error(error);
       setError(error.message);
@@ -104,9 +101,7 @@ const Login = () => {
   };
 
   return (
-    <SiteLayout
-      meta={{ title: "Login", og: { url: `${PRODUCTION_URL}/login` } }}
-    >
+    <SiteLayout meta={{ title: 'Login', og: { url: `${PRODUCTION_URL}/login` } }}>
       <Article fullWidthMobile>
         {hasErrors ? <FormErrorAlert /> : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
@@ -167,7 +162,7 @@ const Login = () => {
           </Button>
           <Flex alignItems="center" justifyContent="space-between">
             <Text>
-              Don’t have an account?{" "}
+              Don’t have an account?{' '}
               <Link href="/signup" color="brand.500" fontWeight={600}>
                 Create one
               </Link>

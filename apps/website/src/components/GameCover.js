@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { Image, Flex, Text } from "@chakra-ui/react";
+import React from 'react';
+import { Image, Flex, Text } from '@chakra-ui/react';
 
 ////////////////////////////////////////////////////////////////////////////////
 // GameCover
@@ -12,15 +12,7 @@ const GameCover = React.memo(({ url, name, ...rest }) => {
 
   if (!url) {
     return (
-      <Flex
-        justifyContent="center"
-        alignItems="center"
-        bg="gray.100"
-        w="90px"
-        h="90px"
-        rounded="md"
-        shadow="md"
-      >
+      <Flex justifyContent="center" alignItems="center" bg="gray.100" w="90px" h="90px" rounded="md" shadow="md">
         <Text fontSize="xs" fontWeight={600} color="gray.500">
           No game cover
         </Text>

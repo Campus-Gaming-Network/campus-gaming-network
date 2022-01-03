@@ -1,24 +1,16 @@
 // Libraries
-import React from "react";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDocs,
-  limit,
-  Timestamp,
-} from "firebase/firestore";
+import React from 'react';
+import { doc, collection, query, where, getDocs, limit, Timestamp } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapEvent } from "src/utilities/event";
+import { mapEvent } from 'src/utilities/event';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { STATES } from "src/constants/api";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { STATES } from 'src/constants/api';
 
 const useFetchUserCreatedEvents = (id) => {
   const [state, setState] = React.useState(STATES.INITIAL);
@@ -31,7 +23,7 @@ const useFetchUserCreatedEvents = (id) => {
       setEvents(null);
       setError(null);
 
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.log(`[API] fetchUserCreatedEvents...${id}`);
       }
 
@@ -41,10 +33,10 @@ const useFetchUserCreatedEvents = (id) => {
         const userCreatedEventsSnapshot = await getDocs(
           query(
             collection(db, COLLECTIONS.EVENTS),
-            where("creator", "==", doc(db, COLLECTIONS.USERS, id)),
-            where("endDateTime", ">=", Timestamp.fromDate(new Date())),
-            limit(25)
-          )
+            where('creator', '==', doc(db, COLLECTIONS.USERS, id)),
+            where('endDateTime', '>=', Timestamp.fromDate(new Date())),
+            limit(25),
+          ),
         );
 
         if (!userCreatedEventsSnapshot.empty) {

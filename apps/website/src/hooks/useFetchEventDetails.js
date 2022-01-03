@@ -1,16 +1,16 @@
 // Libraries
-import React from "react";
-import isEmpty from "lodash.isempty";
-import { getDoc, doc } from "firebase/firestore";
+import React from 'react';
+import isEmpty from 'lodash.isempty';
+import { getDoc, doc } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapEvent } from "src/utilities/event";
+import { mapEvent } from 'src/utilities/event';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
+import { COLLECTIONS } from 'src/constants/firebase';
 
 const useFetchEventDetails = (id) => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -24,14 +24,14 @@ const useFetchEventDetails = (id) => {
       setError(null);
 
       if (state.events[id] && !isEmpty(state.events[id])) {
-        if (process.env.NODE_ENV !== "production") {
+        if (process.env.NODE_ENV !== 'production') {
           console.log(`[CACHE] fetchEventDetails...${id}`);
         }
 
         setEvent(state.events[id]);
         setIsLoading(false);
       } else {
-        if (process.env.NODE_ENV !== "production") {
+        if (process.env.NODE_ENV !== 'production') {
           console.log(`[API] fetchEventDetails...${id}`);
         }
 

@@ -1,9 +1,9 @@
 // Libraries
-import isNil from "lodash.isnil";
-import isEmpty from "lodash.isempty";
-import isDate from "lodash.isdate";
-import isString from "lodash.isstring";
-import { DateTime } from "luxon";
+import isNil from 'lodash.isnil';
+import isEmpty from 'lodash.isempty';
+import isDate from 'lodash.isdate';
+import isString from 'lodash.isstring';
+import { DateTime } from 'luxon';
 
 // Constants
 import {
@@ -12,8 +12,8 @@ import {
   MAX_CURRENTLY_PLAYING_LIST,
   MAX_BIO_LENGTH,
   DELETE_USER_VERIFICATION_TEXT,
-} from "src/constants/user";
-import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";
+} from 'src/constants/user';
+import { MAX_DESCRIPTION_LENGTH } from 'src/constants/event';
 import {
   DAYS,
   MONTHS,
@@ -23,14 +23,11 @@ import {
   DASHED_DATE,
   DASHED_DATE_TIME,
   DEFAULT_TIME_INCREMENT,
-} from "src/constants/dateTime";
-import {
-  MIN_PASSWORD_LENGTH,
-  MAX_DEFAULT_STRING_LENGTH,
-} from "src/constants/other";
+} from 'src/constants/dateTime';
+import { MIN_PASSWORD_LENGTH, MAX_DEFAULT_STRING_LENGTH } from 'src/constants/other';
 
 // Utilities
-import { getTimes } from "src/utilities/dateTime";
+import { getTimes } from 'src/utilities/dateTime';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local Helpers
@@ -42,7 +39,7 @@ const validate = (validator, form, errors) => {
     isValid: isValid(errors),
   };
 
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     console.log(validator, validation);
   }
 
@@ -66,10 +63,8 @@ const isGreaterThan = (value, other) => value > other;
 const isLessThan = (value, other) => value < other;
 const isValidDateTime = (dateTime) => dateTime.isValid;
 const isBeforeToday = (dateTime) => dateTime < DateTime.local();
-const isSameOrAfterEndDateTime = (startDateTime, endDateTime) =>
-  startDateTime >= endDateTime;
-const isSameOrBeforeStartDateTime = (endDateTime, startDateTime) =>
-  endDateTime <= startDateTime;
+const isSameOrAfterEndDateTime = (startDateTime, endDateTime) => startDateTime >= endDateTime;
+const isSameOrBeforeStartDateTime = (endDateTime, startDateTime) => endDateTime <= startDateTime;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local Constants
@@ -99,37 +94,37 @@ export const validateCreateEvent = (form) => {
   const errors = {};
 
   if (isNilOrEmpty(name)) {
-    errors.name = "Name is required.";
+    errors.name = 'Name is required.';
   }
 
   if (isNilOrEmpty(description)) {
-    errors.description = "Description is required.";
+    errors.description = 'Description is required.';
   } else if (isGreaterThan(description.trim().length, MAX_DESCRIPTION_LENGTH)) {
     errors.description = `Description is too long (maximum is ${MAX_DESCRIPTION_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(game)) {
-    errors.game = "Game is required.";
+    errors.game = 'Game is required.';
   }
 
   if (!isOnlineEvent && isNilOrEmpty(location)) {
-    errors.location = "Location is required.";
+    errors.location = 'Location is required.';
   }
 
   if (isNilOrEmpty(startYear)) {
-    errors.startYear = "Start year is required.";
+    errors.startYear = 'Start year is required.';
   }
 
   if (isNilOrEmpty(startMonth)) {
-    errors.startMonth = "Start month is required.";
+    errors.startMonth = 'Start month is required.';
   }
 
   if (isNilOrEmpty(startDay)) {
-    errors.startDay = "Start day is required.";
+    errors.startDay = 'Start day is required.';
   }
 
   if (isNilOrEmpty(startTime)) {
-    errors.startTime = "Start time is required.";
+    errors.startTime = 'Start time is required.';
   }
 
   if (!isNilOrEmpty(startYear) && !isWithin(startYear, NEXT_5_YEARS)) {
@@ -144,27 +139,24 @@ export const validateCreateEvent = (form) => {
     errors.startDay = `${startDay} is not a valid day`;
   }
 
-  if (
-    !isNilOrEmpty(startTime) &&
-    !isWithin(startTime, getTimes({ increment: DEFAULT_TIME_INCREMENT }))
-  ) {
+  if (!isNilOrEmpty(startTime) && !isWithin(startTime, getTimes({ increment: DEFAULT_TIME_INCREMENT }))) {
     errors.startTime = `${startTime} is not a valid time`;
   }
 
   if (isNilOrEmpty(endYear)) {
-    errors.endYear = "End year is required.";
+    errors.endYear = 'End year is required.';
   }
 
   if (isNilOrEmpty(endMonth)) {
-    errors.endMonth = "End month is required.";
+    errors.endMonth = 'End month is required.';
   }
 
   if (isNilOrEmpty(endDay)) {
-    errors.endDay = "End day is required.";
+    errors.endDay = 'End day is required.';
   }
 
   if (isNilOrEmpty(endTime)) {
-    errors.endTime = "End time is required.";
+    errors.endTime = 'End time is required.';
   }
 
   if (!isNilOrEmpty(endYear) && !isWithin(endYear, NEXT_5_YEARS)) {
@@ -179,10 +171,7 @@ export const validateCreateEvent = (form) => {
     errors.endDay = `${endDay} is not a valid day`;
   }
 
-  if (
-    !isNilOrEmpty(endTime) &&
-    !isWithin(endTime, getTimes({ increment: DEFAULT_TIME_INCREMENT }))
-  ) {
+  if (!isNilOrEmpty(endTime) && !isWithin(endTime, getTimes({ increment: DEFAULT_TIME_INCREMENT }))) {
     errors.endTime = `${endTime} is not a valid time`;
   }
 
@@ -195,12 +184,7 @@ export const validateCreateEvent = (form) => {
     !errors.startMonth &&
     !errors.startDay &&
     !errors.startTime &&
-    !isValidDateTime(
-      DateTime.fromFormat(
-        `${startMonth}-${startDay}-${startYear} ${startTime}`,
-        DASHED_DATE_TIME
-      )
-    )
+    !isValidDateTime(DateTime.fromFormat(`${startMonth}-${startDay}-${startYear} ${startTime}`, DASHED_DATE_TIME))
   ) {
     errors.startDateTime = `${startMonth}-${startDay}-${startYear} ${startTime} is not a valid datetime`;
   }
@@ -214,43 +198,31 @@ export const validateCreateEvent = (form) => {
     !errors.endMonth &&
     !errors.endDay &&
     !errors.endTime &&
-    !isValidDateTime(
-      DateTime.fromFormat(
-        `${endMonth}-${endDay}-${endYear} ${endTime}`,
-        DASHED_DATE_TIME
-      )
-    )
+    !isValidDateTime(DateTime.fromFormat(`${endMonth}-${endDay}-${endYear} ${endTime}`, DASHED_DATE_TIME))
   ) {
     errors.endDateTime = `${endMonth}-${endDay}-${endYear} ${endTime} is not a valid datetime`;
   }
 
-  const startDateTime = DateTime.fromFormat(
-    `${startMonth}-${startDay}-${startYear} ${startTime}`,
-    DASHED_DATE_TIME
-  );
-  const endDateTime = DateTime.fromFormat(
-    `${endMonth}-${endDay}-${endYear} ${endTime}`,
-    DASHED_DATE_TIME
-  );
+  const startDateTime = DateTime.fromFormat(`${startMonth}-${startDay}-${startYear} ${startTime}`, DASHED_DATE_TIME);
+  const endDateTime = DateTime.fromFormat(`${endMonth}-${endDay}-${endYear} ${endTime}`, DASHED_DATE_TIME);
 
   if (isBeforeToday(startDateTime)) {
-    errors.startDateTime = "Starting date/time cannot be in the past.";
+    errors.startDateTime = 'Starting date/time cannot be in the past.';
   }
 
   if (isSameOrAfterEndDateTime(startDateTime, endDateTime)) {
-    errors.startDateTime =
-      "Starting date/time must be before ending date/time.";
+    errors.startDateTime = 'Starting date/time must be before ending date/time.';
   }
 
   if (isBeforeToday(endDateTime)) {
-    errors.endDateTime = "Ending date/time cannot be in the past.";
+    errors.endDateTime = 'Ending date/time cannot be in the past.';
   }
 
   if (isSameOrBeforeStartDateTime(endDateTime, startDateTime)) {
-    errors.endDateTime = "Ending date/time must be after starting date/time.";
+    errors.endDateTime = 'Ending date/time must be after starting date/time.';
   }
 
-  return validate("validateCreateEvent", form, errors);
+  return validate('validateCreateEvent', form, errors);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -286,38 +258,30 @@ export const validateEditUser = (form) => {
   const errors = {};
 
   if (isNilOrEmpty(firstName)) {
-    errors.firstName = "First name is required.";
-  } else if (
-    isGreaterThan(firstName.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+    errors.firstName = 'First name is required.';
+  } else if (isGreaterThan(firstName.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.firstName = `First name is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(lastName)) {
-    errors.lastName = "Last name is required.";
+    errors.lastName = 'Last name is required.';
   } else if (isGreaterThan(lastName.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.lastName = `Last name is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
   if (isNilOrEmpty(school)) {
-    errors.school = "School is required.";
+    errors.school = 'School is required.';
   }
 
   if (!isWithin(status, STATUS_VALUES)) {
     errors.status = `${status} is not a valid status`;
   }
 
-  if (
-    !isNilOrEmpty(major) &&
-    isGreaterThan(major.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(major) && isGreaterThan(major.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.major = `Major is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(minor) &&
-    isGreaterThan(minor.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(minor) && isGreaterThan(minor.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.minor = `Minor is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
@@ -348,103 +312,62 @@ export const validateEditUser = (form) => {
     !errors.birthYear &&
     !errors.birthMonth &&
     !errors.birthDay &&
-    !isValidDateTime(
-      DateTime.fromFormat(`${birthMonth}-${birthDay}-${birthYear}`, DASHED_DATE)
-    )
+    !isValidDateTime(DateTime.fromFormat(`${birthMonth}-${birthDay}-${birthYear}`, DASHED_DATE))
   ) {
     errors.birthdate = `${birthMonth}-${birthDay}-${birthYear} is not a valid date`;
   }
 
-  if (
-    !isNilOrEmpty(hometown) &&
-    isGreaterThan(hometown.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(hometown) && isGreaterThan(hometown.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.hometown = `Hometown is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(website) &&
-    isGreaterThan(website.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(website) && isGreaterThan(website.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.website = `Website is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(twitter) &&
-    isGreaterThan(twitter.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(twitter) && isGreaterThan(twitter.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.twitter = `Twitter is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(twitch) &&
-    isGreaterThan(twitch.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(twitch) && isGreaterThan(twitch.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.twitch = `Twitch is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(youtube) &&
-    isGreaterThan(youtube.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(youtube) && isGreaterThan(youtube.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.youtube = `YouTube is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(skype) &&
-    isGreaterThan(skype.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(skype) && isGreaterThan(skype.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.skype = `Skype is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(discord) &&
-    isGreaterThan(discord.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(discord) && isGreaterThan(discord.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.discord = `Discord is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(battlenet) &&
-    isGreaterThan(battlenet.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(battlenet) && isGreaterThan(battlenet.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.battlenet = `Battlenet is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(steam) &&
-    isGreaterThan(steam.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(steam) && isGreaterThan(steam.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.steam = `Steam is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(xbox) &&
-    isGreaterThan(xbox.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(xbox) && isGreaterThan(xbox.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.xbox = `Xbox is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(psn) &&
-    isGreaterThan(psn.trim().length, MAX_DEFAULT_STRING_LENGTH)
-  ) {
+  if (!isNilOrEmpty(psn) && isGreaterThan(psn.trim().length, MAX_DEFAULT_STRING_LENGTH)) {
     errors.psn = `PSN is too long (maximum is ${MAX_DEFAULT_STRING_LENGTH.toLocaleString()} characters).`;
   }
 
-  if (
-    !isNilOrEmpty(favoriteGames) &&
-    isGreaterThan(favoriteGames.length, MAX_FAVORITE_GAME_LIST)
-  ) {
+  if (!isNilOrEmpty(favoriteGames) && isGreaterThan(favoriteGames.length, MAX_FAVORITE_GAME_LIST)) {
     errors.favoriteGames = `Too many games selected (maximum is ${MAX_FAVORITE_GAME_LIST.toLocaleString()} games).`;
   }
 
-  if (
-    !isNilOrEmpty(currentlyPlaying) &&
-    isGreaterThan(currentlyPlaying.length, MAX_CURRENTLY_PLAYING_LIST)
-  ) {
+  if (!isNilOrEmpty(currentlyPlaying) && isGreaterThan(currentlyPlaying.length, MAX_CURRENTLY_PLAYING_LIST)) {
     errors.currentlyPlaying = `Too many games selected (maximum is ${MAX_CURRENTLY_PLAYING_LIST.toLocaleString()} games).`;
   }
 
-  return validate("validateEditUser", form, errors);
+  return validate('validateEditUser', form, errors);
 };

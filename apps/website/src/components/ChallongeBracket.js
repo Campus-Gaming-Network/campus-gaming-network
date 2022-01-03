@@ -1,9 +1,9 @@
 // Libraries
-import React from "react";
-import isNil from "lodash.isnil";
+import React from 'react';
+import isNil from 'lodash.isnil';
 
 // Constants
-import { CHALLONGE_URL, BRACKET_URL_PARAMS } from "src/constants/challonge";
+import { CHALLONGE_URL, BRACKET_URL_PARAMS } from 'src/constants/challonge';
 
 // Options
 // OPTION --- RANGE --- DEFAULT
@@ -59,15 +59,7 @@ const ChallongeBracket = ({
     tab,
   ]);
   return (
-    <iframe
-      src={url}
-      width="100%"
-      height="500"
-      frameBorder="0"
-      scrolling="auto"
-      allowTransparency="true"
-      {...rest}
-    />
+    <iframe src={url} width="100%" height="500" frameBorder="0" scrolling="auto" allowTransparency="true" {...rest} />
   );
 };
 

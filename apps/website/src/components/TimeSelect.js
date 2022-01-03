@@ -1,21 +1,17 @@
 // Libraries
-import React from "react";
-import { Select } from "@chakra-ui/react";
+import React from 'react';
+import { Select } from '@chakra-ui/react';
 
 // Constants
-import { DEFAULT_TIME_INCREMENT } from "src/constants/dateTime";
+import { DEFAULT_TIME_INCREMENT } from 'src/constants/dateTime';
 
 // Utilities
-import { getTimes } from "src/utilities/dateTime";
+import { getTimes } from 'src/utilities/dateTime';
 
 ////////////////////////////////////////////////////////////////////////////////
 // TimeSelect
 
-const TimeSelect = ({
-  children,
-  increment = DEFAULT_TIME_INCREMENT,
-  ...rest
-}) => {
+const TimeSelect = ({ children, increment = DEFAULT_TIME_INCREMENT, ...rest }) => {
   const OPTIONS = React.useMemo(
     () =>
       getTimes({ increment }).map((time) => (
@@ -23,7 +19,7 @@ const TimeSelect = ({
           {time}
         </option>
       )),
-    [increment]
+    [increment],
   );
 
   return (

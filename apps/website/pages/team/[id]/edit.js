@@ -1,30 +1,30 @@
 // Libraries
-import React from "react";
-import { useBoolean, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import nookies from "nookies";
-import { httpsCallable } from "firebase/functions";
-import safeJsonStringify from "safe-json-stringify";
+import React from 'react';
+import { useBoolean, useToast } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import nookies from 'nookies';
+import { httpsCallable } from 'firebase/functions';
+import safeJsonStringify from 'safe-json-stringify';
 
 // API
-import { getTeamDetails, getTeamUsers, getTeamRoles } from "src/api/team";
+import { getTeamDetails, getTeamUsers, getTeamRoles } from 'src/api/team';
 
 // Other
-import { db, functions } from "src/firebase";
-import firebaseAdmin from "src/firebaseAdmin";
+import { db, functions } from 'src/firebase';
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Utilities
-import { validateCreateTeam } from "src/utilities/validation";
+import { validateCreateTeam } from 'src/utilities/validation';
 
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { COLLECTIONS, CALLABLES } from "src/constants/firebase";
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
+import { COLLECTIONS, CALLABLES } from 'src/constants/firebase';
 
 // Components
-import TeamForm from "src/components/TeamForm";
+import TeamForm from 'src/components/TeamForm';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -45,11 +45,7 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  const [
-    teamResponse,
-    teamUsersResponse,
-    teamRolesResponse,
-  ] = await Promise.all([
+  const [teamResponse, teamUsersResponse, teamRolesResponse] = await Promise.all([
     getTeamDetails(context.params.id),
     getTeamUsers(context.params.id),
     getTeamRoles(context.params.id),
@@ -88,11 +84,9 @@ const EditTeam = (props) => {
   const handleSubmitError = (error) => {
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
-      description:
-        error?.message ||
-        "There was an error creating the team. Please try again.",
-      status: "error",
+      title: 'An error occurred.',
+      description: error?.message || 'There was an error creating the team. Please try again.',
+      status: 'error',
       isClosable: true,
     });
   };
@@ -117,9 +111,9 @@ const EditTeam = (props) => {
 
       if (Boolean(result?.data?.success)) {
         toast({
-          title: "Team updated.",
-          description: "Your team has been updated. You will be redirected...",
-          status: "success",
+          title: 'Team updated.',
+          description: 'Your team has been updated. You will be redirected...',
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {

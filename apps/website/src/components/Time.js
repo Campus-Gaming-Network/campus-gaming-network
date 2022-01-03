@@ -1,17 +1,15 @@
 // Libraries
-import React from "react";
-import { Text } from "@chakra-ui/react";
+import React from 'react';
+import { Text } from '@chakra-ui/react';
 
 // Utilities
-import { firebaseToLocaleString } from "src/utilities/dateTime";
+import { firebaseToLocaleString } from 'src/utilities/dateTime';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Time
 
 const Time = ({ children, dateTime, ...rest }) => {
-  const _dateTime = React.useMemo(() => firebaseToLocaleString(dateTime), [
-    dateTime,
-  ]);
+  const _dateTime = React.useMemo(() => firebaseToLocaleString(dateTime), [dateTime]);
 
   if (!process.browser || !_dateTime) {
     return null;

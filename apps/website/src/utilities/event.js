@@ -2,16 +2,12 @@
 // Event Utilities
 
 // Utilities
-import { googleMapsLink, cleanObjectOfBadWords } from "src/utilities/other";
-import { hasStarted, hasEnded } from "src/utilities/dateTime";
-import { mapSchool } from "src/utilities/school";
+import { googleMapsLink, cleanObjectOfBadWords } from 'src/utilities/other';
+import { hasStarted, hasEnded } from 'src/utilities/dateTime';
+import { mapSchool } from 'src/utilities/school';
 
 // Constants
-import {
-  PRODUCTION_URL,
-  CGN_TWITTER_HANDLE,
-  SITE_NAME,
-} from "src/constants/other";
+import { PRODUCTION_URL, CGN_TWITTER_HANDLE, SITE_NAME } from 'src/constants/other';
 
 export const mapEvent = (event) => {
   if (!Boolean(event)) {
@@ -39,7 +35,7 @@ export const mapEvent = (event) => {
       title: event.name,
       description: metaDescription.substring(0, 155),
       twitter: {
-        card: "summary",
+        card: 'summary',
         site: SITE_NAME,
         title: event.name,
         description: metaDescription.substring(0, 200),
@@ -47,7 +43,7 @@ export const mapEvent = (event) => {
       },
       og: {
         title: event.name,
-        type: "article",
+        type: 'article',
         url,
         description: metaDescription,
         site_name: SITE_NAME,

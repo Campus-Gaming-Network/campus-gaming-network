@@ -1,47 +1,41 @@
 // Libraries
-import React from "react";
-import { Box } from "@chakra-ui/react";
-import Head from "next/head";
+import React from 'react';
+import { Box } from '@chakra-ui/react';
+import Head from 'next/head';
 
 // Components
-import Nav from "src/components/Nav";
-import Footer from "src/components/Footer";
-import VerifyEmailReminderBanner from "src/components/banners/VerifyEmailReminderBanner";
-import BetaWarningBanner from "./banners/BetaWarningBanner";
+import Nav from 'src/components/Nav';
+import Footer from 'src/components/Footer';
+import VerifyEmailReminderBanner from 'src/components/banners/VerifyEmailReminderBanner';
+import BetaWarningBanner from './banners/BetaWarningBanner';
 
 // Constants
-import { PRODUCTION_URL, CGN_TWITTER_HANDLE } from "src/constants/other";
+import { PRODUCTION_URL, CGN_TWITTER_HANDLE } from 'src/constants/other';
 
 const DEFAULT_META = {
-  title: "Campus Gaming Network",
+  title: 'Campus Gaming Network',
   description:
-    "Campus Gaming Network - Connect with other collegiate gamers for casual or competitive gaming at your school or nearby.",
+    'Campus Gaming Network - Connect with other collegiate gamers for casual or competitive gaming at your school or nearby.',
   twitter: {
-    card: "summary",
-    site: "Campus Gaming Network",
+    card: 'summary',
+    site: 'Campus Gaming Network',
     creator: CGN_TWITTER_HANDLE,
     image: `${PRODUCTION_URL}/logo.png`,
-    "image:alt": "Campus Gaming Network",
+    'image:alt': 'Campus Gaming Network',
   },
   og: {
-    type: "article",
-    url: typeof window !== "undefined" ? window.location.href : PRODUCTION_URL,
-    site_name: "Campus Gaming Network",
+    type: 'article',
+    url: typeof window !== 'undefined' ? window.location.href : PRODUCTION_URL,
+    site_name: 'Campus Gaming Network',
     image: `${PRODUCTION_URL}/logo.png`,
-    "image:alt": "Campus Gaming Network",
+    'image:alt': 'Campus Gaming Network',
   },
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // SiteLayout
 
-const SiteLayout = ({
-  children,
-  meta = {},
-  hideNav = false,
-  hideFooter = false,
-  ...rest
-}) => {
+const SiteLayout = ({ children, meta = {}, hideNav = false, hideFooter = false, ...rest }) => {
   const title = React.useMemo(() => {
     let _title = DEFAULT_META.title;
 
@@ -51,7 +45,7 @@ const SiteLayout = ({
 
     _title = `${_title} | CGN`;
 
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       _title = `DEV | ${_title}`;
     }
 
@@ -82,16 +76,8 @@ const SiteLayout = ({
     <React.Fragment>
       <Head>
         <title>{_meta.title}</title>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=yes"
-          key="viewport"
-        />
-        <meta
-          name="description"
-          content={_meta.description}
-          key="description"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" key="viewport" />
+        <meta name="description" content={_meta.description} key="description" />
         {/* Schema.org markup for Google+ */}
         <SchemaMeta meta={_meta} />
         {/* Open Graph data */}
@@ -102,15 +88,7 @@ const SiteLayout = ({
       <BetaWarningBanner />
       <VerifyEmailReminderBanner />
       {!hideNav ? <Nav /> : null}
-      <Box
-        as="main"
-        pos="relative"
-        pb={12}
-        bg="#fdfdfd"
-        minH="100vh"
-        h="100%"
-        {...rest}
-      >
+      <Box as="main" pos="relative" pb={12} bg="#fdfdfd" minH="100vh" h="100%" {...rest}>
         {children}
       </Box>
       {!hideFooter ? <Footer /> : null}
@@ -126,11 +104,7 @@ const SchemaMeta = (props) => {
   return (
     <React.Fragment>
       <meta itemProp="name" content={props.meta.title} key="schema:title" />
-      <meta
-        itemProp="description"
-        content={props.meta.description}
-        key="schema:description"
-      />
+      <meta itemProp="description" content={props.meta.description} key="schema:description" />
     </React.Fragment>
   );
 };
@@ -163,8 +137,6 @@ const OpenGraphMeta = (props) => <MetaObject prefix="og" meta={props.meta} />;
 ////////////////////////////////////////////////////////////////////////////////
 // TwitterMeta
 
-const TwitterMeta = (props) => (
-  <MetaObject prefix="twitter" meta={props.meta} />
-);
+const TwitterMeta = (props) => <MetaObject prefix="twitter" meta={props.meta} />;
 
 export default SiteLayout;

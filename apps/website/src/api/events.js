@@ -1,7 +1,7 @@
-import firebaseAdmin from "src/firebaseAdmin";
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Utilities
-import { mapEvent } from "src/utilities/event";
+import { mapEvent } from 'src/utilities/event';
 
 export const getRecentlyCreatedEvents = async () => {
   const now = new Date();
@@ -10,14 +10,10 @@ export const getRecentlyCreatedEvents = async () => {
   try {
     const recentlyCreatedEventsSnapshot = await firebaseAdmin
       .firestore()
-      .collection("events")
-      .where(
-        "endDateTime",
-        ">=",
-        firebaseAdmin.firestore.Timestamp.fromDate(now)
-      )
-      .orderBy("endDateTime")
-      .orderBy("createdAt", "desc")
+      .collection('events')
+      .where('endDateTime', '>=', firebaseAdmin.firestore.Timestamp.fromDate(now))
+      .orderBy('endDateTime')
+      .orderBy('createdAt', 'desc')
       .limit(25)
       .get();
 

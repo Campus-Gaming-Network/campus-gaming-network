@@ -1,4 +1,4 @@
-import * as firebaseAdmin from "firebase-admin";
+import * as firebaseAdmin from 'firebase-admin';
 
 try {
   firebaseAdmin.initializeApp({
@@ -11,7 +11,7 @@ try {
   });
 } catch (error) {
   if (!/already exists/u.test(error.message)) {
-    console.error("Firebase admin initialization error", error.stack);
+    console.error('Firebase admin initialization error', error.stack);
   }
 }
 

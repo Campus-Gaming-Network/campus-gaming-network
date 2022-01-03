@@ -1,16 +1,16 @@
 // Libraries
-import React from "react";
-import uniqBy from "lodash.uniqby";
-import { Heading, Stack } from "@chakra-ui/react";
+import React from 'react';
+import uniqBy from 'lodash.uniqby';
+import { Heading, Stack } from '@chakra-ui/react';
 
 // Hooks
-import useFetchUserEvents from "src/hooks/useFetchUserEvents";
+import useFetchUserEvents from 'src/hooks/useFetchUserEvents';
 
 // Components
-import EventListItem from "src/components/EventListItem";
-import Slider from "src/components/Slider";
-import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
-import EmptyText from "src/components/EmptyText";
+import EventListItem from 'src/components/EventListItem';
+import Slider from 'src/components/Slider';
+import SliderSilhouette from 'src/components/silhouettes/SliderSilhouette';
+import EmptyText from 'src/components/EmptyText';
 
 ////////////////////////////////////////////////////////////////////////////////
 // AttendingEvents
@@ -21,29 +21,22 @@ const AttendingEvents = (props) => {
   const limit = React.useMemo(() => (page === 0 ? 6 : 1), [page]);
   const [events, state] = useFetchUserEvents(props?.user?.id, page, limit);
   const [allEvents, setAllEvents] = React.useState([]);
-  const hasEvents = React.useMemo(
-    () => Boolean(allEvents) && allEvents.length > 0,
-    [allEvents]
-  );
+  const hasEvents = React.useMemo(() => Boolean(allEvents) && allEvents.length > 0, [allEvents]);
 
   React.useEffect(() => {
     if (events) {
-      setAllEvents((prev) => uniqBy([...prev, ...events], "id"));
+      setAllEvents((prev) => uniqBy([...prev, ...events], 'id'));
     }
   }, [events]);
 
   const displaySilhouette = React.useMemo(
-    () =>
-      (state === "idle" || state === "loading") && page === 0 && !hasLoadedOnce,
-    [state, page]
+    () => (state === 'idle' || state === 'loading') && page === 0 && !hasLoadedOnce,
+    [state, page],
   );
-  const displayEmptyText = React.useMemo(
-    () => state === "done" && !hasEvents && page === 0,
-    [state, hasEvents, page]
-  );
+  const displayEmptyText = React.useMemo(() => state === 'done' && !hasEvents && page === 0, [state, hasEvents, page]);
 
   React.useEffect(() => {
-    if (state === "done") {
+    if (state === 'done') {
       setHasLoadedOnce(true);
     }
   }, [state]);
@@ -59,14 +52,12 @@ const AttendingEvents = (props) => {
           </Heading>
           {displayEmptyText ? (
             <EmptyText>
-              {Boolean(props.emptyText)
-                ? props.emptyText
-                : "You are not attending any upcoming events"}
+              {Boolean(props.emptyText) ? props.emptyText : 'You are not attending any upcoming events'}
             </EmptyText>
           ) : (
             <Slider
               settings={{
-                className: allEvents?.length < 5 ? "slick--less-slides" : "",
+                className: allEvents?.length < 5 ? 'slick--less-slides' : '',
               }}
               onPageChange={(nextPage) => setPage(nextPage)}
             >

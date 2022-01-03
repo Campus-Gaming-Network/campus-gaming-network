@@ -1,23 +1,17 @@
-import firebaseAdmin from "src/firebaseAdmin";
-import { mapTeammate } from "src/utilities/teammate";
+import firebaseAdmin from 'src/firebaseAdmin';
+import { mapTeammate } from 'src/utilities/teammate';
 
 export const getTeammateDetails = async (teamId, userId) => {
   let teammate = null;
 
   try {
-    const usersDocRef = firebaseAdmin
-      .firestore()
-      .collection("users")
-      .doc(userId);
-    const teamsDocRef = firebaseAdmin
-      .firestore()
-      .collection("teams")
-      .doc(teamId);
+    const usersDocRef = firebaseAdmin.firestore().collection('users').doc(userId);
+    const teamsDocRef = firebaseAdmin.firestore().collection('teams').doc(teamId);
     const teammatesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("teammates")
-      .where("user.ref", "==", usersDocRef)
-      .where("team.ref", "==", teamsDocRef)
+      .collection('teammates')
+      .where('user.ref', '==', usersDocRef)
+      .where('team.ref', '==', teamsDocRef)
       .limit(1)
       .get();
 

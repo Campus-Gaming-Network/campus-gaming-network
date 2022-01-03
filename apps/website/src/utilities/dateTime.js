@@ -1,17 +1,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Date/Time Utilities
 
-import range from "lodash.range";
-import { DateTime, Interval } from "luxon";
+import range from 'lodash.range';
+import { DateTime, Interval } from 'luxon';
 
 export const hasStarted = (startDateTime, endDateTime) => {
   if (!Boolean(startDateTime) || !Boolean(endDateTime)) {
     return undefined;
   }
 
-  return Interval.fromDateTimes(startDateTime, endDateTime).contains(
-    DateTime.local()
-  );
+  return Interval.fromDateTimes(startDateTime, endDateTime).contains(DateTime.local());
 };
 
 export const hasEnded = (endDateTime) => {
@@ -24,7 +22,7 @@ export const hasEnded = (endDateTime) => {
 
 const localeFormat = {
   ...DateTime.DATETIME_FULL,
-  ...{ month: "long", day: "numeric" },
+  ...{ month: 'long', day: 'numeric' },
 };
 
 export const buildDateTime = (dateTime) => {
@@ -49,18 +47,14 @@ export const firebaseToLocaleString = (dateTime) => {
     return undefined;
   }
 
-  if (typeof dateTime === "string") {
+  if (typeof dateTime === 'string') {
     return DateTime.fromISO(dateTime).toLocaleString(localeFormat);
   }
 
   return DateTime.fromJSDate(dateTime).toLocaleString(localeFormat);
 };
 
-export const getYears = (
-  min = 2020,
-  max = 2020,
-  options = { reverse: false }
-) => {
+export const getYears = (min = 2020, max = 2020, options = { reverse: false }) => {
   let years = [];
 
   if (min < 0 || max < 0) {
@@ -110,7 +104,7 @@ export const getClosestTimeByN = (hour, minutes, n) => {
   }
 
   if (_minutes === 60) {
-    _minutes = "00";
+    _minutes = '00';
     _hour += 1;
   }
 

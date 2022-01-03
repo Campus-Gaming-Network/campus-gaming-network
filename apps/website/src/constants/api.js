@@ -2,10 +2,10 @@
 // API Constants
 
 export const STATE_TYPES = {
-  IDLE: "idle",
-  LOADING: "loading",
-  DONE: "done",
-  ERROR: "error",
+  IDLE: 'idle',
+  LOADING: 'loading',
+  DONE: 'done',
+  ERROR: 'error',
 };
 
 export const STATES = {

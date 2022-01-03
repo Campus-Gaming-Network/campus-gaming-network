@@ -1,13 +1,13 @@
 // Libraries
-import React from "react";
+import React from 'react';
 
 // Components
-import NavSilhouette from "src/components/silhouettes/NavSilhouette";
-import AuthenticatedNav from "src/components/AuthenticatedNav";
-import UnauthenticatedNav from "src/components/UnauthenticatedNav";
+import NavSilhouette from 'src/components/silhouettes/NavSilhouette';
+import AuthenticatedNav from 'src/components/AuthenticatedNav';
+import UnauthenticatedNav from 'src/components/UnauthenticatedNav';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Nav

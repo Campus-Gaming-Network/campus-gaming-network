@@ -1,13 +1,6 @@
 // Libraries
-import React from "react";
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  FormErrorMessage,
-  useBoolean,
-} from "@chakra-ui/react";
+import React from 'react';
+import { FormControl, FormLabel, Input, Button, FormErrorMessage, useBoolean } from '@chakra-ui/react';
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordFormControl
@@ -18,12 +11,12 @@ const PasswordFormControl = (props) => {
   return (
     <FormControl isRequired isInvalid={props.errors.password}>
       <FormLabel htmlFor="password" fontSize="lg" fontWeight="bold">
-        {props.label || "Password"}
+        {props.label || 'Password'}
       </FormLabel>
       <Input
         id="password"
         name="password"
-        type={isShowingPassword ? "text" : "password"}
+        type={isShowingPassword ? 'text' : 'password'}
         placeholder="******************"
         onChange={props.onChange}
         value={props.value}
@@ -37,7 +30,7 @@ const PasswordFormControl = (props) => {
           variant="link"
           fontWeight="normal"
         >
-          {isShowingPassword ? "Hide" : "Show"} password
+          {isShowingPassword ? 'Hide' : 'Show'} password
         </Button>
       ) : null}
       <FormErrorMessage>{props.errors.password}</FormErrorMessage>

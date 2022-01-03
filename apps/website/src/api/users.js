@@ -1,7 +1,7 @@
-import firebaseAdmin from "src/firebaseAdmin";
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Utilities
-import { mapUser } from "src/utilities/user";
+import { mapUser } from 'src/utilities/user';
 
 export const getRecentlyCreatedUsers = async () => {
   let users = [];
@@ -9,8 +9,8 @@ export const getRecentlyCreatedUsers = async () => {
   try {
     const recentlyCreatedUsersSnapshot = await firebaseAdmin
       .firestore()
-      .collection("users")
-      .orderBy("createdAt", "desc")
+      .collection('users')
+      .orderBy('createdAt', 'desc')
       .limit(40)
       .get();
 

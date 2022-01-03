@@ -1,32 +1,19 @@
 // Libraries
-import React from "react";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDocs,
-  limit,
-  startAfter,
-  startAt,
-} from "firebase/firestore";
+import React from 'react';
+import { doc, collection, query, where, getDocs, limit, startAfter, startAt } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapUser } from "src/utilities/user";
+import { mapUser } from 'src/utilities/user';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { DEFAULT_USERS_LIST_PAGE_SIZE } from 'src/constants/other';
 
-const useFetchEventUsers = (
-  id,
-  page = 0,
-  _limit = DEFAULT_USERS_LIST_PAGE_SIZE
-) => {
-  const [status, setStatus] = React.useState("idle");
+const useFetchEventUsers = (id, page = 0, _limit = DEFAULT_USERS_LIST_PAGE_SIZE) => {
+  const [status, setStatus] = React.useState('idle');
   const [users, setUsers] = React.useState([]);
   const [error, setError] = React.useState(null);
   const [pages, setPages] = React.useState({});
@@ -37,16 +24,16 @@ const useFetchEventUsers = (
     }
 
     const fetchEventUsers = async () => {
-      setStatus("loading");
+      setStatus('loading');
 
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.log(`[API] fetchEventUsers...${id}`);
       }
 
       let queryArgs = [
         collection(db, COLLECTIONS.EVENT_RESPONSES),
-        where("event.ref", "==", doc(db, COLLECTIONS.EVENTS, id)),
-        where("response", "==", "YES"),
+        where('event.ref', '==', doc(db, COLLECTIONS.EVENTS, id)),
+        where('response', '==', 'YES'),
       ];
 
       if (page > 0) {
@@ -66,7 +53,7 @@ const useFetchEventUsers = (
       } catch (error) {
         console.error({ error });
         setError(error);
-        setStatus("done");
+        setStatus('done');
       }
 
       if (!snapshot.empty) {
@@ -78,7 +65,7 @@ const useFetchEventUsers = (
             mapUser({
               id: data.user.id,
               ...data.user,
-            })
+            }),
           );
         });
 
@@ -104,7 +91,7 @@ const useFetchEventUsers = (
         }));
       }
 
-      setStatus("done");
+      setStatus('done');
     };
 
     fetchEventUsers();

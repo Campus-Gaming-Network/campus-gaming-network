@@ -1,11 +1,11 @@
 // Libraries
-import React from "react";
+import React from 'react';
 
 // Constants
-import { IGDB_GAME_URL } from "src/constants/igdb";
+import { IGDB_GAME_URL } from 'src/constants/igdb';
 
 // Components
-import OutsideLink from "src/components/OutsideLink";
+import OutsideLink from 'src/components/OutsideLink';
 
 ////////////////////////////////////////////////////////////////////////////////
 // GameLink

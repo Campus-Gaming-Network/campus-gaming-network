@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import startCase from "lodash.startcase";
+import React from 'react';
+import startCase from 'lodash.startcase';
 import {
   Alert,
   AlertIcon,
@@ -18,42 +18,33 @@ import {
   FormHelperText,
   FormErrorMessage,
   useBoolean,
-} from "@chakra-ui/react";
-import isEmpty from "lodash.isempty";
-import { useRouter } from "next/router";
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  getIdToken,
-} from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { validateSignUp } from "@campus-gaming-network/tools";
+} from '@chakra-ui/react';
+import isEmpty from 'lodash.isempty';
+import { useRouter } from 'next/router';
+import firebaseAdmin from 'src/firebaseAdmin';
+import nookies from 'nookies';
+import { createUserWithEmailAndPassword, sendEmailVerification, getIdToken } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { validateSignUp } from '@campus-gaming-network/tools';
 
 // Constants
-import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
-import { COLLECTIONS } from "src/constants/firebase";
-import {
-  COOKIES,
-  PRODUCTION_URL,
-  REDIRECT_HOME,
-  BASE_ERROR_MESSAGE,
-} from "src/constants/other";
+import { BASE_USER, STUDENT_STATUS_OPTIONS } from 'src/constants/user';
+import { COLLECTIONS } from 'src/constants/firebase';
+import { COOKIES, PRODUCTION_URL, REDIRECT_HOME, BASE_ERROR_MESSAGE } from 'src/constants/other';
 
 // Utilities
-import { createGravatarHash } from "src/utilities/user";
+import { createGravatarHash } from 'src/utilities/user';
 
 // Components
-import Article from "src/components/Article";
-import Card from "src/components/Card";
-import Link from "src/components/Link";
-import SchoolSearch from "src/components/SchoolSearch";
-import SiteLayout from "src/components/SiteLayout";
-import FormErrorAlert from "src/components/FormErrorAlert";
+import Article from 'src/components/Article';
+import Card from 'src/components/Card';
+import Link from 'src/components/Link';
+import SchoolSearch from 'src/components/SchoolSearch';
+import SiteLayout from 'src/components/SiteLayout';
+import FormErrorAlert from 'src/components/FormErrorAlert';
 
 // Other
-import { auth, db } from "src/firebase";
+import { auth, db } from 'src/firebase';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -79,12 +70,12 @@ export const getServerSideProps = async (context) => {
 // Form Reducer
 
 const initialFormState = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
   school: {},
-  status: "",
+  status: '',
 };
 
 const formReducer = (state, { field, value }) => {
@@ -100,15 +91,12 @@ const formReducer = (state, { field, value }) => {
 const Signup = () => {
   const router = useRouter();
   const toast = useToast();
-  const [formState, formDispatch] = React.useReducer(
-    formReducer,
-    initialFormState
-  );
+  const [formState, formDispatch] = React.useReducer(formReducer, initialFormState);
   const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
   const onSchoolSelect = (school) => {
-    formDispatch({ field: "school", value: school });
+    formDispatch({ field: 'school', value: school });
   };
   const [error, setError] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = useBoolean();
@@ -126,10 +114,7 @@ const Signup = () => {
     });
 
     if (error) {
-      const errors = error.details.reduce(
-        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
-        {}
-      );
+      const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
       setErrors(errors);
       setIsSubmitting.off();
       window.scrollTo(0, 0);
@@ -139,11 +124,7 @@ const Signup = () => {
     let user;
 
     try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        formState.email,
-        formState.password
-      );
+      const response = await createUserWithEmailAndPassword(auth, formState.email, formState.password);
 
       if (response?.user) {
         user = response.user;
@@ -162,17 +143,17 @@ const Signup = () => {
         await getIdToken(auth.currentUser, true);
 
         toast({
-          title: "Verification email sent.",
+          title: 'Verification email sent.',
           description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
-          status: "success",
+          status: 'success',
           isClosable: true,
         });
       } catch (error) {
         console.error(error);
         toast({
-          title: "Verification email error.",
+          title: 'Verification email error.',
           description: `There was an issue sending a verification email to ${formState.email}. ${BASE_ERROR_MESSAGE}`,
-          status: "error",
+          status: 'error',
           isClosable: true,
         });
       }
@@ -196,37 +177,30 @@ const Signup = () => {
         });
 
         toast({
-          title: "Account creation successful.",
-          description:
-            "Your account has successfully been created, welcome to Campus Gaming Network!",
-          status: "success",
+          title: 'Account creation successful.',
+          description: 'Your account has successfully been created, welcome to Campus Gaming Network!',
+          status: 'success',
           isClosable: true,
         });
 
         setTimeout(() => {
-          router.push("/");
+          router.push('/');
         }, 2000);
       } catch (error) {
         console.error(error);
-        setError(
-          `There was an issue creating your user. ${BASE_ERROR_MESSAGE}`
-        );
+        setError(`There was an issue creating your user. ${BASE_ERROR_MESSAGE}`);
         setIsSubmitting.off();
         window.scrollTo(0, 0);
       }
     } else {
-      setError(
-        `There was an issue when creating your account. ${BASE_ERROR_MESSAGE}`
-      );
+      setError(`There was an issue when creating your account. ${BASE_ERROR_MESSAGE}`);
       setIsSubmitting.off();
       window.scrollTo(0, 0);
     }
   };
 
   return (
-    <SiteLayout
-      meta={{ title: "Sign Up", og: { url: `${PRODUCTION_URL}/signup` } }}
-    >
+    <SiteLayout meta={{ title: 'Sign Up', og: { url: `${PRODUCTION_URL}/signup` } }}>
       <Article fullWidthMobile>
         {hasErrors ? <FormErrorAlert /> : null}
         <Card as="form" p={12} onSubmit={handleSubmit}>
@@ -268,7 +242,7 @@ const Signup = () => {
             Sign Up
           </Button>
           <Text>
-            Already a member?{" "}
+            Already a member?{' '}
             <Link href="/login" color="brand.500" fontWeight={600}>
               Log in
             </Link>
@@ -331,9 +305,7 @@ const DetailSection = React.memo((props) => {
           size="lg"
           aria-describedby="email-helper-text"
         />
-        <FormHelperText id="email-helper-text">
-          This is what you will use for logging in.
-        </FormHelperText>
+        <FormHelperText id="email-helper-text">This is what you will use for logging in.</FormHelperText>
         <FormErrorMessage>{props.errors.email}</FormErrorMessage>
       </FormControl>
       <FormControl isRequired isInvalid={props.errors.password}>
@@ -343,7 +315,7 @@ const DetailSection = React.memo((props) => {
         <Input
           id="password"
           name="password"
-          type={isShowingPassword ? "text" : "password"}
+          type={isShowingPassword ? 'text' : 'password'}
           placeholder="******************"
           onChange={props.handleFieldChange}
           value={props.password}
@@ -356,7 +328,7 @@ const DetailSection = React.memo((props) => {
           variant="link"
           fontWeight="normal"
         >
-          {isShowingPassword ? "Hide" : "Show"} password
+          {isShowingPassword ? 'Hide' : 'Show'} password
         </Button>
         <FormErrorMessage>{props.errors.password}</FormErrorMessage>
       </FormControl>
@@ -381,13 +353,7 @@ const SchoolSection = React.memo((props) => {
         <FormLabel htmlFor="status" fontSize="lg" fontWeight="bold">
           Status
         </FormLabel>
-        <Select
-          id="status"
-          name="status"
-          onChange={props.handleFieldChange}
-          value={props.status}
-          size="lg"
-        >
+        <Select id="status" name="status" onChange={props.handleFieldChange} value={props.status} size="lg">
           {STUDENT_STATUS_OPTIONS.map((status) => (
             <option key={status.value} value={status.value}>
               {startCase(status.label)}

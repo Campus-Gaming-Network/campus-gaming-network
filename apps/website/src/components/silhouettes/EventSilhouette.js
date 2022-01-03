@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { Stack, Box } from "@chakra-ui/react";
+import React from 'react';
+import { Stack, Box } from '@chakra-ui/react';
 
 ////////////////////////////////////////////////////////////////////////////////
 // EventSIlhouette
@@ -13,14 +13,7 @@ const EventSilhouette = () => {
           <Box bg="gray.100" w="325px" h="30px" mb="4" borderRadius="md" />
           <Box bg="gray.100" w="400px" h="60px" borderRadius="md" />
         </Box>
-        <Box
-          bg="gray.100"
-          w="96px"
-          h="96px"
-          mb={8}
-          borderRadius="full"
-          ml="auto"
-        />
+        <Box bg="gray.100" w="96px" h="96px" mb={8} borderRadius="full" ml="auto" />
       </Box>
       <Stack spacing={10}>
         <Stack as="section">

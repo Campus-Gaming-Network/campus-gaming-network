@@ -1,12 +1,7 @@
 // Libraries
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSignOutAlt,
-  faCog,
-  faCrown,
-  faMedal,
-} from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignOutAlt, faCog, faCrown, faMedal } from '@fortawesome/free-solid-svg-icons';
 import {
   Stack,
   Box,
@@ -19,33 +14,30 @@ import {
   VisuallyHidden,
   Text,
   useBoolean,
-} from "@chakra-ui/react";
-import safeJsonStringify from "safe-json-stringify";
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
-import dynamic from "next/dynamic";
+} from '@chakra-ui/react';
+import safeJsonStringify from 'safe-json-stringify';
+import firebaseAdmin from 'src/firebaseAdmin';
+import nookies from 'nookies';
+import dynamic from 'next/dynamic';
 
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Article from "src/components/Article";
-import Link from "src/components/Link";
-import Card from "src/components/Card";
-import EmptyText from "src/components/EmptyText";
+import SiteLayout from 'src/components/SiteLayout';
+import Article from 'src/components/Article';
+import Link from 'src/components/Link';
+import Card from 'src/components/Card';
+import EmptyText from 'src/components/EmptyText';
 
 // API
-import { getUserTeams } from "src/api/user";
+import { getUserTeams } from 'src/api/user';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // Dynamic Components
-const LeaveTeamDialog = dynamic(
-  () => import("src/components/dialogs/LeaveTeamDialog"),
-  { ssr: false }
-);
+const LeaveTeamDialog = dynamic(() => import('src/components/dialogs/LeaveTeamDialog'), { ssr: false });
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -95,14 +87,7 @@ const Teams = (props) => {
       <Article>
         <Flex as="header" align="center" justify="space-between" mb={12}>
           <Box>
-            <Heading
-              as="h2"
-              fontSize="5xl"
-              fontWeight="bold"
-              pb={2}
-              display="flex"
-              alignItems="center"
-            >
+            <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2} display="flex" alignItems="center">
               Your Teams ({props.teams.length || 0})
             </Heading>
           </Box>
@@ -110,12 +95,7 @@ const Teams = (props) => {
         {Boolean(props?.teams?.length) ? (
           <List as={Stack} spacing={4}>
             {props?.teams?.map((team) => (
-              <TeamsListItem
-                key={team.id}
-                team={team}
-                user={user}
-                leaveTeam={leaveTeam}
-              />
+              <TeamsListItem key={team.id} team={team} user={user} leaveTeam={leaveTeam} />
             ))}
           </List>
         ) : (
@@ -124,11 +104,7 @@ const Teams = (props) => {
       </Article>
 
       {Boolean(teamToLeave) ? (
-        <LeaveTeamDialog
-          isOpen={isTeamToLeaveDialogOpen}
-          onClose={setTeamToLeaveDialogIsOpen.off}
-          team={teamToLeave}
-        />
+        <LeaveTeamDialog isOpen={isTeamToLeaveDialogOpen} onClose={setTeamToLeaveDialogIsOpen.off} team={teamToLeave} />
       ) : null}
     </SiteLayout>
   );
@@ -138,9 +114,7 @@ const TeamsListItem = (props) => {
   const isLeaderOfTeam = props.team.roles?.leader?.id === props.user?.id;
   const isOfficerOfTeam = props.team.roles?.officer?.id === props.user?.id;
   const canEditTeam = isLeaderOfTeam;
-  const editTeamTooltip = canEditTeam
-    ? "Edit team"
-    : "You do not have permission to edit this team.";
+  const editTeamTooltip = canEditTeam ? 'Edit team' : 'You do not have permission to edit this team.';
 
   return (
     <ListItem key={props.team.id} as={Card}>
@@ -163,18 +137,12 @@ const TeamsListItem = (props) => {
                 </Text>
               </Tooltip>
             ) : null}
-            <Link
-              href={`/team/${props.team.id}`}
-              color="brand.500"
-              fontWeight="bold"
-              fontSize="md"
-            >
+            <Link href={`/team/${props.team.id}`} color="brand.500" fontWeight="bold" fontSize="md">
               {props.team.displayName}
             </Link>
           </Flex>
           <Text fontSize="xs" fontWeight="bold" color="gray.500">
-            {props.team.memberCount}{" "}
-            {props.team.memberCount === 1 ? "member" : "members"}
+            {props.team.memberCount} {props.team.memberCount === 1 ? 'member' : 'members'}
           </Text>
         </Stack>
         <Box>

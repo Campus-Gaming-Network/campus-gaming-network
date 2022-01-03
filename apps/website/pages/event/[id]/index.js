@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMapMarkerAlt,
   faGlobe,
@@ -9,8 +9,8 @@ import {
   faEllipsisH,
   faChevronLeft,
   faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { faClock } from "@fortawesome/free-regular-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-regular-svg-icons';
 import {
   Stack,
   Box,
@@ -25,60 +25,50 @@ import {
   IconButton,
   useBoolean,
   ButtonGroup,
-} from "@chakra-ui/react";
-import dynamic from "next/dynamic";
-import safeJsonStringify from "safe-json-stringify";
-import nookies from "nookies";
+} from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+import safeJsonStringify from 'safe-json-stringify';
+import nookies from 'nookies';
 
 // Constants
-import {
-  EVENT_EMPTY_LOCATION_TEXT,
-  EVENT_EMPTY_USERS_TEXT,
-} from "src/constants/event";
-import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { EVENT_EMPTY_LOCATION_TEXT, EVENT_EMPTY_USERS_TEXT } from 'src/constants/event';
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import OutsideLink from "src/components/OutsideLink";
-import Article from "src/components/Article";
-import Link from "src/components/Link";
-import GameCover from "src/components/GameCover";
-import UserListItem from "src/components/UserListItem";
-import EmptyText from "src/components/EmptyText";
+import SiteLayout from 'src/components/SiteLayout';
+import OutsideLink from 'src/components/OutsideLink';
+import Article from 'src/components/Article';
+import Link from 'src/components/Link';
+import GameCover from 'src/components/GameCover';
+import UserListItem from 'src/components/UserListItem';
+import EmptyText from 'src/components/EmptyText';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // API
-import { getEventDetails, incrementEventPageViews } from "src/api/event";
-import { getUserDetails, getUserEventResponse } from "src/api/user";
+import { getEventDetails, incrementEventPageViews } from 'src/api/event';
+import { getUserDetails, getUserEventResponse } from 'src/api/user';
 
 // Hooks
-import useFetchEventUsers from "src/hooks/useFetchEventUsers";
+import useFetchEventUsers from 'src/hooks/useFetchEventUsers';
 
 // Other
-import firebaseAdmin from "src/firebaseAdmin";
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Dynamic Components
-const ReportEntityDialog = dynamic(
-  () => import("src/components/dialogs/ReportEntityDialog"),
-  {
-    ssr: false,
-  }
-);
-const RSVPDialog = dynamic(() => import("src/components/dialogs/RSVPDialog"), {
+const ReportEntityDialog = dynamic(() => import('src/components/dialogs/ReportEntityDialog'), {
   ssr: false,
 });
-const Time = dynamic(() => import("src/components/Time"), {
+const RSVPDialog = dynamic(() => import('src/components/dialogs/RSVPDialog'), {
   ssr: false,
 });
-const EventResponseAlert = dynamic(() =>
-  import("src/components/EventResponseAlert")
-);
-const EditEventLink = dynamic(() => import("src/components/EditEventLink"));
-const EventResponseAttendButton = dynamic(() =>
-  import("src/components/EventResponseAttendButton")
-);
+const Time = dynamic(() => import('src/components/Time'), {
+  ssr: false,
+});
+const EventResponseAlert = dynamic(() => import('src/components/EventResponseAlert'));
+const EditEventLink = dynamic(() => import('src/components/EditEventLink'));
+const EventResponseAttendButton = dynamic(() => import('src/components/EventResponseAttendButton'));
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -143,10 +133,7 @@ export const getServerSideProps = async (context) => {
 const Event = (props) => {
   const { authUser, isAuthenticated } = useAuth();
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = useBoolean();
-  const [
-    isReportingEventDialogOpen,
-    setReportingEventDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingEventDialogOpen, setReportingEventDialogIsOpen] = useBoolean();
 
   const openRSVPDialog = () => {
     if (props.canChangeEventResponse) {
@@ -160,17 +147,10 @@ const Event = (props) => {
     <SiteLayout meta={props.event.meta}>
       <Article>
         <Stack spacing={10}>
-          {props.isEventCreator ? (
-            <EditEventLink eventId={props.event.id} />
-          ) : null}
+          {props.isEventCreator ? <EditEventLink eventId={props.event.id} /> : null}
           <Flex align="center" justify="space-between">
             <Box pr={2}>
-              <Link
-                href={`/school/${props.event.school.handle}`}
-                color="brand.500"
-                fontWeight={600}
-                fontSize="lg"
-              >
+              <Link href={`/school/${props.event.school.handle}`} color="brand.500" fontWeight={600} fontSize="lg">
                 {props.event.school.formattedName}
               </Link>
               <Heading as="h2" fontWeight="bold" fontSize="5xl">
@@ -199,10 +179,7 @@ const Event = (props) => {
                     aria-label="Options"
                   />
                   <MenuList fontSize="md">
-                    <MenuItem
-                      onClick={setReportingEventDialogIsOpen.on}
-                      icon={<FontAwesomeIcon icon={faFlag} />}
-                    >
+                    <MenuItem onClick={setReportingEventDialogIsOpen.on} icon={<FontAwesomeIcon icon={faFlag} />}>
                       Report event
                     </MenuItem>
                   </MenuList>
@@ -214,11 +191,7 @@ const Event = (props) => {
             <Flex align="center" pt={2}>
               <GameCover
                 name={Boolean(props.event.game) ? props.event.game.name : null}
-                url={
-                  Boolean(props.event.game) && Boolean(props.event.game.cover)
-                    ? props.event.game.cover.url
-                    : null
-                }
+                url={Boolean(props.event.game) && Boolean(props.event.game.cover) ? props.event.game.cover.url : null}
                 h={10}
                 w={10}
                 mr={2}
@@ -226,40 +199,14 @@ const Event = (props) => {
               <Text as="span">{props.event.game.name}</Text>
             </Flex>
             {props.event.hasEnded ? (
-              <Flex
-                alignItems="center"
-                justifyContent="flex-start"
-                mr="auto"
-                px={4}
-                bg="red.100"
-                rounded="lg"
-              >
-                <Text
-                  as="span"
-                  fontSize="lg"
-                  color="red.500"
-                  fontWeight="bold"
-                  textTransform="uppercase"
-                >
+              <Flex alignItems="center" justifyContent="flex-start" mr="auto" px={4} bg="red.100" rounded="lg">
+                <Text as="span" fontSize="lg" color="red.500" fontWeight="bold" textTransform="uppercase">
                   Event Ended
                 </Text>
               </Flex>
             ) : props.event.hasStarted ? (
-              <Flex
-                alignItems="center"
-                justifyContent="flex-start"
-                mr="auto"
-                px={4}
-                bg="green.100"
-                rounded="lg"
-              >
-                <Text
-                  as="span"
-                  fontSize="lg"
-                  color="green.500"
-                  fontWeight="bold"
-                  textTransform="uppercase"
-                >
+              <Flex alignItems="center" justifyContent="flex-start" mr="auto" px={4} bg="green.100" rounded="lg">
+                <Text as="span" fontSize="lg" color="green.500" fontWeight="bold" textTransform="uppercase">
                   Happening now
                 </Text>
               </Flex>
@@ -268,8 +215,7 @@ const Event = (props) => {
               <Text as="span" color="gray.600" mr={2} fontSize="lg">
                 <FontAwesomeIcon icon={faClock} />
               </Text>
-              <Time dateTime={props.event.startDateTime} /> to{" "}
-              <Time dateTime={props.event.endDateTime} />
+              <Time dateTime={props.event.startDateTime} /> to <Time dateTime={props.event.endDateTime} />
             </Box>
             <Box>
               {props.event.isOnlineEvent ? (
@@ -284,10 +230,7 @@ const Event = (props) => {
                   <Text as="span" color="gray.600" mr={2} fontSize="lg">
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
                   </Text>
-                  <OutsideLink
-                    d="inline-block"
-                    href={props.event.googleMapsAddressLink}
-                  >
+                  <OutsideLink d="inline-block" href={props.event.googleMapsAddressLink}>
                     {props.event.location}
                   </OutsideLink>
                 </React.Fragment>
@@ -303,7 +246,7 @@ const Event = (props) => {
           </Stack>
           {props.canChangeEventResponse ? (
             <Stack as="section" spacing={4}>
-              {props.hasResponded && props.eventResponse.response === "YES" ? (
+              {props.hasResponded && props.eventResponse.response === 'YES' ? (
                 <EventResponseAlert onClick={openRSVPDialog} />
               ) : (
                 <EventResponseAttendButton onClick={openRSVPDialog} />
@@ -314,8 +257,7 @@ const Event = (props) => {
             <Heading as="h3" fontSize="xl">
               Event Details
             </Heading>
-            {Boolean(props.event.description) &&
-            props.event.description.trim().length > 0 ? (
+            {Boolean(props.event.description) && props.event.description.trim().length > 0 ? (
               <Text>{props.event.description}</Text>
             ) : (
               <EmptyText>No event description provided</EmptyText>
@@ -339,7 +281,7 @@ const Event = (props) => {
       {isAuthenticated ? (
         <ReportEntityDialog
           entity={{
-            type: "events",
+            type: 'events',
             id: props.event.id,
           }}
           pageProps={props}
@@ -362,9 +304,7 @@ const UsersList = (props) => {
   }, [users]);
 
   const disablePrev = page === 0;
-  const disableNext =
-    props.event.responses.yes === 0 ||
-    Math.floor(props.event.responses.yes / 25) === page;
+  const disableNext = props.event.responses.yes === 0 || Math.floor(props.event.responses.yes / 25) === page;
 
   const decPage = () => {
     if (disablePrev) {
@@ -401,7 +341,7 @@ const UsersList = (props) => {
         </ButtonGroup>
       </Flex>
       {/* TODO: Better loading here */}
-      {status === "loading" ? (
+      {status === 'loading' ? (
         <Text>Loading...</Text>
       ) : hasUsers ? (
         <List display="flex" flexWrap="wrap" mx={-2}>

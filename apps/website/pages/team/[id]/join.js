@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Alert,
   AlertIcon,
@@ -14,36 +14,36 @@ import {
   useToast,
   FormErrorMessage,
   useBoolean,
-} from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import nookies from "nookies";
-import safeJsonStringify from "safe-json-stringify";
-import isEmpty from "lodash.isempty";
-import { httpsCallable } from "firebase/functions";
+} from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import nookies from 'nookies';
+import safeJsonStringify from 'safe-json-stringify';
+import isEmpty from 'lodash.isempty';
+import { httpsCallable } from 'firebase/functions';
 
 // Other
-import { functions } from "src/firebase";
-import firebaseAdmin from "src/firebaseAdmin";
+import { functions } from 'src/firebase';
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Utilities
-import { noop, useFormFields } from "src/utilities/other";
+import { noop, useFormFields } from 'src/utilities/other';
 
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
-import { CALLABLES } from "src/constants/firebase";
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
+import { CALLABLES } from 'src/constants/firebase';
 
 // API
-import { getTeamDetails } from "src/api/team";
-import { getTeammateDetails } from "src/api/teammate";
+import { getTeamDetails } from 'src/api/team';
+import { getTeammateDetails } from 'src/api/teammate';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Card from "src/components/Card";
-import Article from "src/components/Article";
-import FormErrorAlert from "src/components/FormErrorAlert";
+import SiteLayout from 'src/components/SiteLayout';
+import Card from 'src/components/Card';
+import Article from 'src/components/Article';
+import FormErrorAlert from 'src/components/FormErrorAlert';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -89,7 +89,7 @@ const JoinTeam = (props) => {
   const router = useRouter();
   const toast = useToast();
   const [fields, handleFieldChange] = useFormFields({
-    password: "",
+    password: '',
   });
   const { isAuthenticating, isAuthenticated } = useAuth();
   const [error, setError] = React.useState(null);
@@ -101,11 +101,9 @@ const JoinTeam = (props) => {
   const handleSubmitError = (error) => {
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
-      description:
-        error?.message ||
-        "There was an error joining the team. Please try again.",
-      status: "error",
+      title: 'An error occurred.',
+      description: error?.message || 'There was an error joining the team. Please try again.',
+      status: 'error',
       isClosable: true,
     });
   };
@@ -131,9 +129,9 @@ const JoinTeam = (props) => {
 
       if (Boolean(result?.data?.teamId)) {
         toast({
-          title: "Team joined.",
+          title: 'Team joined.',
           description: `You have joined "${props.team.name}". You will be redirected...`,
-          status: "success",
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {
@@ -154,24 +152,16 @@ const JoinTeam = (props) => {
         {!isAuthenticating && !isAuthenticated ? (
           <Alert status="warning" mb={4} rounded="lg">
             <AlertIcon />
-            <AlertDescription>
-              You must be logged in to join this team.
-            </AlertDescription>
+            <AlertDescription>You must be logged in to join this team.</AlertDescription>
           </Alert>
         ) : null}
         {props.alreadyJoinedTeam ? (
           <Alert status="info" mb={4} rounded="lg">
             <AlertIcon />
-            <AlertDescription>
-              You are already a part of this team.
-            </AlertDescription>
+            <AlertDescription>You are already a part of this team.</AlertDescription>
           </Alert>
         ) : null}
-        <Card
-          as="form"
-          p={12}
-          onSubmit={!props.alreadyJoinedTeam ? handleSubmit : null}
-        >
+        <Card as="form" p={12} onSubmit={!props.alreadyJoinedTeam ? handleSubmit : null}>
           <Heading as="h2" size="2xl">
             Join team "{props.team.name}"
           </Heading>
@@ -190,15 +180,12 @@ const JoinTeam = (props) => {
               <Input
                 id="password"
                 name="password"
-                type={isShowingPassword ? "text" : "password"}
+                type={isShowingPassword ? 'text' : 'password'}
                 placeholder="******************"
                 onChange={handleFieldChange}
                 value={fields.password}
                 size="lg"
-                disabled={
-                  props.alreadyJoinedTeam ||
-                  (!isAuthenticating && !isAuthenticated)
-                }
+                disabled={props.alreadyJoinedTeam || (!isAuthenticating && !isAuthenticated)}
               />
               <Button
                 onClick={setIsShowingPassword.toggle}
@@ -207,7 +194,7 @@ const JoinTeam = (props) => {
                 variant="link"
                 fontWeight="normal"
               >
-                {isShowingPassword ? "Hide" : "Show"} password
+                {isShowingPassword ? 'Hide' : 'Show'} password
               </Button>
               <FormErrorMessage>{errors.password}</FormErrorMessage>
             </FormControl>
@@ -217,11 +204,7 @@ const JoinTeam = (props) => {
             type="submit"
             size="lg"
             w="full"
-            isDisabled={
-              isSubmitting ||
-              props.alreadyJoinedTeam ||
-              (!isAuthenticating && !isAuthenticated)
-            }
+            isDisabled={isSubmitting || props.alreadyJoinedTeam || (!isAuthenticating && !isAuthenticated)}
             isLoading={isSubmitting}
             loadingText="Joining team..."
             my={12}

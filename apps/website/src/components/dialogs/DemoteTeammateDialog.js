@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Button,
   Text,
@@ -11,15 +11,15 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useBoolean,
-} from "@chakra-ui/react";
-import { httpsCallable } from "firebase/functions";
-import { useRouter } from "next/router";
+} from '@chakra-ui/react';
+import { httpsCallable } from 'firebase/functions';
+import { useRouter } from 'next/router';
 
 // Constants
-import { CALLABLES } from "src/constants/firebase";
+import { CALLABLES } from 'src/constants/firebase';
 
 // Other
-import { functions } from "src/firebase";
+import { functions } from 'src/firebase';
 
 ////////////////////////////////////////////////////////////////////////////
 // DemoteTeammateDialog
@@ -35,9 +35,9 @@ const DemoteTeammateDialog = (props) => {
     props.onClose();
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
+      title: 'An error occurred.',
       description: error.message,
-      status: "error",
+      status: 'error',
       isClosable: true,
     });
   };
@@ -59,9 +59,9 @@ const DemoteTeammateDialog = (props) => {
 
       if (Boolean(result?.data?.success)) {
         toast({
-          title: "Teammate demoted.",
+          title: 'Teammate demoted.',
           description: `You have demoted '${props.teammate.fullName}'. You will be redirected...`,
-          status: "success",
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {
@@ -76,23 +76,13 @@ const DemoteTeammateDialog = (props) => {
   };
 
   return (
-    <AlertDialog
-      isOpen={props.isOpen}
-      leastDestructiveRef={cancelRef}
-      onClose={props.onClose}
-    >
+    <AlertDialog isOpen={props.isOpen} leastDestructiveRef={cancelRef} onClose={props.onClose}>
       <AlertDialogOverlay />
-      <AlertDialogContent
-        rounded="lg"
-        borderWidth="1px"
-        boxShadow="lg"
-        as="form"
-        onSubmit={handleSubmit}
-      >
+      <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg" as="form" onSubmit={handleSubmit}>
         <AlertDialogHeader>Demote {props.user.fullName}</AlertDialogHeader>
 
         <AlertDialogBody>
-          Are you sure you want to demote{" "}
+          Are you sure you want to demote{' '}
           <Text as="span" fontWeight="bold">
             {props.user.fullName}
           </Text>

@@ -1,16 +1,16 @@
 // Libraries
-import React from "react";
-import { collection, query, limit, getDocs, orderBy } from "firebase/firestore";
+import React from 'react';
+import { collection, query, limit, getDocs, orderBy } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapUser } from "src/utilities/user";
+import { mapUser } from 'src/utilities/user';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { STATES } from "src/constants/api";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { STATES } from 'src/constants/api';
 
 const useFetchRecentlyCreatedUsers = (_limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
@@ -23,19 +23,15 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
       setUsers(null);
       setError(null);
 
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[API] fetchRecentlyCreatedUsers...");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[API] fetchRecentlyCreatedUsers...');
       }
 
       let _users = [];
 
       try {
         const recentlyCreatedUsersSnapshot = await getDocs(
-          query(
-            collection(db, COLLECTIONS.USERS),
-            orderBy("createdAt", "desc"),
-            limit(_limit)
-          )
+          query(collection(db, COLLECTIONS.USERS), orderBy('createdAt', 'desc'), limit(_limit)),
         );
 
         if (!recentlyCreatedUsersSnapshot.empty) {

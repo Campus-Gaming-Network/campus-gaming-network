@@ -1,7 +1,7 @@
 // Libraries
-import React from "react";
-import { Editor as DraftEditor, EditorState } from "draft-js";
-import "draft-js/dist/Draft.css";
+import React from 'react';
+import { Editor as DraftEditor, EditorState } from 'draft-js';
+import 'draft-js/dist/Draft.css';
 
 // Components
 
@@ -9,9 +9,7 @@ import "draft-js/dist/Draft.css";
 // Editor
 
 const Editor = () => {
-  const [editorState, setEditorState] = React.useState(() =>
-    EditorState.createEmpty()
-  );
+  const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
 
   return <DraftEditor editorState={editorState} onChange={setEditorState} />;
 };

@@ -1,8 +1,8 @@
 // Libraries
-import React from "react";
-import { Link, Text } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import { Link, Text } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 ////////////////////////////////////////////////////////////////////////////////
 // OutsideLink

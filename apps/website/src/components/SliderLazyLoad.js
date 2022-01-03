@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import LazyLoad from "react-lazyload";
+import React from 'react';
+import LazyLoad from 'react-lazyload';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SliderLazyLoad

@@ -1,38 +1,31 @@
 // Libraries
-import React from "react";
-import { Heading, Text, Stack, Box, Flex } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSchool } from "@fortawesome/free-solid-svg-icons";
-import { usePosition } from "use-position";
+import React from 'react';
+import { Heading, Text, Stack, Box, Flex } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSchool } from '@fortawesome/free-solid-svg-icons';
+import { usePosition } from 'use-position';
 
 // Components
-import SchoolLogo from "src/components/SchoolLogo";
-import Link from "src/components/Link";
-import Slider from "src/components/Slider";
-import EmptyText from "src/components/EmptyText";
-import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
-import SliderCard from "src/components/SliderCard";
+import SchoolLogo from 'src/components/SchoolLogo';
+import Link from 'src/components/Link';
+import Slider from 'src/components/Slider';
+import EmptyText from 'src/components/EmptyText';
+import SliderSilhouette from 'src/components/silhouettes/SliderSilhouette';
+import SliderCard from 'src/components/SliderCard';
 
 // Hooks
-import useFetchNearbySchools from "src/hooks/useFetchNearbySchools";
-import useLocalStorage from "src/hooks/useLocalStorage";
+import useFetchNearbySchools from 'src/hooks/useFetchNearbySchools';
+import useLocalStorage from 'src/hooks/useLocalStorage';
 
 // Constants
-import { LOCAL_STORAGE } from "src/constants/other";
+import { LOCAL_STORAGE } from 'src/constants/other';
 
 ////////////////////////////////////////////////////////////////////////////////
 // NearbySchools
 
 const NearbySchools = (props) => {
-  const {
-    latitude: browserLatitude,
-    longitude: browserLongitude,
-    error: geoPositionError,
-  } = usePosition();
-  const [
-    localStorageGeolocation,
-    setGeolocationInLocalStorage,
-  ] = useLocalStorage(LOCAL_STORAGE.GEOLOCATION, null);
+  const { latitude: browserLatitude, longitude: browserLongitude, error: geoPositionError } = usePosition();
+  const [localStorageGeolocation, setGeolocationInLocalStorage] = useLocalStorage(LOCAL_STORAGE.GEOLOCATION, null);
   const latitude = React.useMemo(() => {
     let _latitude = props.useBrowserLocation
       ? localStorageGeolocation?.browserLatitude || browserLatitude
@@ -40,14 +33,8 @@ const NearbySchools = (props) => {
     // 3 decimal places because if the lat/long changes just slighlty after those decimals
     // we will request new data but the results wont be that different.
     _latitude = _latitude?.toFixed(3);
-    return isNaN(_latitude) || !Boolean(_latitude)
-      ? undefined
-      : Number(_latitude);
-  }, [
-    props.latitude,
-    localStorageGeolocation?.browserLatitude,
-    browserLatitude,
-  ]);
+    return isNaN(_latitude) || !Boolean(_latitude) ? undefined : Number(_latitude);
+  }, [props.latitude, localStorageGeolocation?.browserLatitude, browserLatitude]);
   const longitude = React.useMemo(() => {
     let _longitude = props.useBrowserLocation
       ? localStorageGeolocation?.browserLongitude || browserLongitude
@@ -55,27 +42,16 @@ const NearbySchools = (props) => {
     // 3 decimal places because if the lat/long changes just slighlty after those decimals
     // we will request new data but the results wont be that different.
     _longitude = _longitude?.toFixed(3);
-    return isNaN(_longitude) || !Boolean(_longitude)
-      ? undefined
-      : Number(_longitude);
-  }, [
-    props.longitude,
-    localStorageGeolocation?.browserLongitude,
-    browserLongitude,
-  ]);
+    return isNaN(_longitude) || !Boolean(_longitude) ? undefined : Number(_longitude);
+  }, [props.longitude, localStorageGeolocation?.browserLongitude, browserLongitude]);
   const [schools, state] = useFetchNearbySchools(latitude, longitude);
-  const hasSchools = React.useMemo(
-    () => Boolean(schools) && schools.length > 0,
-    [schools]
-  );
+  const hasSchools = React.useMemo(() => Boolean(schools) && schools.length > 0, [schools]);
 
   React.useEffect(() => {
     if (Boolean(localStorageGeolocation)) {
       if (
-        (Boolean(browserLatitude) &&
-          localStorageGeolocation.browserLatitude !== browserLatitude) ||
-        (Boolean(browserLongitude) &&
-          localStorageGeolocation.browserLongitude !== browserLongitude)
+        (Boolean(browserLatitude) && localStorageGeolocation.browserLatitude !== browserLatitude) ||
+        (Boolean(browserLongitude) && localStorageGeolocation.browserLongitude !== browserLongitude)
       ) {
         setGeolocationInLocalStorage({ browserLatitude, browserLongitude });
       }
@@ -84,26 +60,26 @@ const NearbySchools = (props) => {
     }
   }, [browserLatitude, browserLongitude]);
 
-  if (state === "idle" || (props.useBrowserLocation && geoPositionError)) {
+  if (state === 'idle' || (props.useBrowserLocation && geoPositionError)) {
     return null;
   }
 
   return (
     <React.Fragment>
-      {state === "loading" ? (
+      {state === 'loading' ? (
         <SliderSilhouette />
       ) : (
         <Box as="section" py={4}>
           <Heading as="h3" fontSize="xl" pb={4}>
             Nearby schools
           </Heading>
-          {!(state === "done" && hasSchools) ? (
+          {!(state === 'done' && hasSchools) ? (
             <EmptyText>There are no schools nearby</EmptyText>
           ) : (
             <Slider
               settings={{
                 ...props.settings,
-                className: schools.length < 5 ? "slick--less-slides" : "",
+                className: schools.length < 5 ? 'slick--less-slides' : '',
               }}
             >
               {schools.map((school) => {
@@ -141,11 +117,7 @@ const NearbySchools = (props) => {
                         }
                       />
                       <Stack spacing={0}>
-                        <Text
-                          fontWeight={600}
-                          color="gray.500"
-                          fontSize="0.65rem"
-                        >
+                        <Text fontWeight={600} color="gray.500" fontSize="0.65rem">
                           {school.city}, {school.state}
                         </Text>
                         <Link

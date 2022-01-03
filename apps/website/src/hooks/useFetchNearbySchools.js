@@ -1,26 +1,17 @@
 // Libraries
-import React from "react";
-import { geohashQueryBounds, distanceBetween } from "geofire-common";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  startAt,
-  orderBy,
-  limit,
-  endAt,
-} from "firebase/firestore";
+import React from 'react';
+import { geohashQueryBounds, distanceBetween } from 'geofire-common';
+import { collection, query, where, getDocs, startAt, orderBy, limit, endAt } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapSchool } from "src/utilities/school";
+import { mapSchool } from 'src/utilities/school';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { STATES } from "src/constants/api";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { STATES } from 'src/constants/api';
 
 const useFetchNearbySchools = (latitude, longitude) => {
   const [state, setState] = React.useState(STATES.INITIAL);
@@ -38,18 +29,18 @@ const useFetchNearbySchools = (latitude, longitude) => {
       setSchools(null);
       setError(null);
 
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.log(`[API] fetchNearbySchools...(${latitude}, ${longitude})`);
       }
 
       for (const b of bounds) {
         const q = query(
           collection(db, COLLECTIONS.SCHOOLS),
-          where("geohash", "!=", ""),
-          orderBy("geohash"),
+          where('geohash', '!=', ''),
+          orderBy('geohash'),
           startAt(b[0]),
           endAt(b[1]),
-          limit(25)
+          limit(25),
         );
 
         promises.push(getDocs(q));
@@ -61,15 +52,10 @@ const useFetchNearbySchools = (latitude, longitude) => {
 
           for (const snap of snapshots) {
             for (const doc of snap.docs) {
-              const { longitude: _longitude, latitude: _latitude } = doc.get(
-                "location"
-              );
+              const { longitude: _longitude, latitude: _latitude } = doc.get('location');
 
               if (Boolean(_latitude) && Boolean(_longitude)) {
-                const distanceInKilometers = distanceBetween(
-                  [_latitude, _longitude],
-                  center
-                );
+                const distanceInKilometers = distanceBetween([_latitude, _longitude], center);
                 const distanceInMeters = distanceInKilometers * 1000;
 
                 if (distanceInMeters <= radiusInMeters) {

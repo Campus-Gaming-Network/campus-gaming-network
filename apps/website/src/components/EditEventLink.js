@@ -1,9 +1,9 @@
 // Libraries
-import React from "react";
-import { Box } from "@chakra-ui/react";
+import React from 'react';
+import { Box } from '@chakra-ui/react';
 
 // Components
-import Link from "src/components/Link";
+import Link from 'src/components/Link';
 
 ////////////////////////////////////////////////////////////////////////////////
 // EditEventLink
@@ -17,8 +17,8 @@ const EditEventLink = (props) => {
         width="100%"
         borderRadius="md"
         bg="gray.100"
-        _focus={{ bg: "gray.200", boxShadow: "outline" }}
-        _hover={{ bg: "gray.200" }}
+        _focus={{ bg: 'gray.200', boxShadow: 'outline' }}
+        _hover={{ bg: 'gray.200' }}
         p={8}
       >
         Edit Event

@@ -1,8 +1,8 @@
 // Libraries
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-import isEmpty from "lodash.isempty";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import isEmpty from 'lodash.isempty';
 import {
   Input,
   Stack,
@@ -20,58 +20,55 @@ import {
   Avatar,
   Spacer,
   useBoolean,
-} from "@chakra-ui/react";
-import dynamic from "next/dynamic";
-import PlacesAutocomplete from "react-places-autocomplete";
-import { DateTime } from "luxon";
+} from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+import PlacesAutocomplete from 'react-places-autocomplete';
+import { DateTime } from 'luxon';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import FormSilhouette from "src/components/silhouettes/FormSilhouette";
-import Article from "src/components/Article";
-import PageHeading from "src/components/PageHeading";
-import Card from "src/components/Card";
-import GameSearch from "src/components/GameSearch";
-import GameCover from "src/components/GameCover";
-import MonthSelect from "src/components/MonthSelect";
-import DaySelect from "src/components/DaySelect";
-import YearSelect from "src/components/YearSelect";
-import TimeSelect from "src/components/TimeSelect";
-import FormErrorAlert from "src/components/FormErrorAlert";
-import CharacterCounter from "src/components/CharacterCounter";
+import SiteLayout from 'src/components/SiteLayout';
+import FormSilhouette from 'src/components/silhouettes/FormSilhouette';
+import Article from 'src/components/Article';
+import PageHeading from 'src/components/PageHeading';
+import Card from 'src/components/Card';
+import GameSearch from 'src/components/GameSearch';
+import GameCover from 'src/components/GameCover';
+import MonthSelect from 'src/components/MonthSelect';
+import DaySelect from 'src/components/DaySelect';
+import YearSelect from 'src/components/YearSelect';
+import TimeSelect from 'src/components/TimeSelect';
+import FormErrorAlert from 'src/components/FormErrorAlert';
+import CharacterCounter from 'src/components/CharacterCounter';
 
 // Constants
-import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";
-import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";
-import { PRODUCTION_URL } from "src/constants/other";
+import { CURRENT_YEAR, DASHED_DATE_TIME } from 'src/constants/dateTime';
+import { MAX_DESCRIPTION_LENGTH } from 'src/constants/event';
+import { PRODUCTION_URL } from 'src/constants/other';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // Dynamic Components
-const DeleteEventDialog = dynamic(
-  () => import("src/components/dialogs/DeleteEventDialog"),
-  { ssr: false }
-);
+const DeleteEventDialog = dynamic(() => import('src/components/dialogs/DeleteEventDialog'), { ssr: false });
 
 ////////////////////////////////////////////////////////////////////////////////
 // Form Reducer
 
 const initialFormState = {
-  name: "",
-  description: "",
+  name: '',
+  description: '',
   game: {},
-  startMonth: "",
-  startDay: "",
-  startYear: "",
-  startTime: "",
-  endMonth: "",
-  endDay: "",
-  endYear: "",
-  endTime: "",
-  placeId: "",
+  startMonth: '',
+  startDay: '',
+  startYear: '',
+  startTime: '',
+  endMonth: '',
+  endDay: '',
+  endYear: '',
+  endTime: '',
+  placeId: '',
   isOnlineEvent: false,
-  location: "",
+  location: '',
 };
 
 const formReducer = (state, { field, value }) => {
@@ -87,28 +84,24 @@ const formReducer = (state, { field, value }) => {
 const EventForm = (props) => {
   const { isAuthenticating, user } = useAuth();
   const [hasPrefilledForm, setHasPrefilledForm] = useBoolean();
-  const [formState, formDispatch] = React.useReducer(
-    formReducer,
-    initialFormState
-  );
+  const [formState, formDispatch] = React.useReducer(formReducer, initialFormState);
   const [isDeletingEventAlertOpen, setDeletingEventAlertIsOpen] = useBoolean();
   const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);
   const hasErrors = React.useMemo(() => !isEmpty(props.errors), [props.errors]);
   const pageTitle = React.useMemo(
-    () =>
-      props.state === "edit" ? `Edit ${props.event.name}` : "Create Event",
-    [props.state, props.event]
+    () => (props.state === 'edit' ? `Edit ${props.event.name}` : 'Create Event'),
+    [props.state, props.event],
   );
 
   const setLocation = (address, placeId) => {
-    formDispatch({ field: "location", value: address });
-    formDispatch({ field: "placeId", value: placeId });
+    formDispatch({ field: 'location', value: address });
+    formDispatch({ field: 'placeId', value: placeId });
   };
 
   const setGame = (value) => {
-    formDispatch({ field: "game", value });
+    formDispatch({ field: 'game', value });
   };
 
   const handleSubmit = (e) => {
@@ -134,42 +127,38 @@ const EventForm = (props) => {
   };
 
   const prefillForm = () => {
-    formDispatch({ field: "name", value: props.event.name });
-    formDispatch({ field: "description", value: props.event.description });
-    formDispatch({ field: "isOnlineEvent", value: props.event.isOnlineEvent });
+    formDispatch({ field: 'name', value: props.event.name });
+    formDispatch({ field: 'description', value: props.event.description });
+    formDispatch({ field: 'isOnlineEvent', value: props.event.isOnlineEvent });
 
-    const [startDate, startTime] = DateTime.fromISO(
-      props.event.startDateTime.toDate().toISOString()
-    )
+    const [startDate, startTime] = DateTime.fromISO(props.event.startDateTime.toDate().toISOString())
       .toFormat(DASHED_DATE_TIME)
-      .split(" ");
-    const [startMonth, startDay, startYear] = startDate.split("-");
+      .split(' ');
+    const [startMonth, startDay, startYear] = startDate.split('-');
 
-    formDispatch({ field: "startMonth", value: startMonth });
-    formDispatch({ field: "startDay", value: startDay });
-    formDispatch({ field: "startYear", value: startYear });
-    formDispatch({ field: "startTime", value: startTime });
+    formDispatch({ field: 'startMonth', value: startMonth });
+    formDispatch({ field: 'startDay', value: startDay });
+    formDispatch({ field: 'startYear', value: startYear });
+    formDispatch({ field: 'startTime', value: startTime });
 
-    const [endDate, endTime] = DateTime.fromISO(
-      props.event.endDateTime.toDate().toISOString()
-    )
+    const [endDate, endTime] = DateTime.fromISO(props.event.endDateTime.toDate().toISOString())
       .toFormat(DASHED_DATE_TIME)
-      .split(" ");
-    const [endMonth, endDay, endYear] = endDate.split("-");
+      .split(' ');
+    const [endMonth, endDay, endYear] = endDate.split('-');
 
-    formDispatch({ field: "endMonth", value: endMonth });
-    formDispatch({ field: "endDay", value: endDay });
-    formDispatch({ field: "endYear", value: endYear });
-    formDispatch({ field: "endTime", value: endTime });
+    formDispatch({ field: 'endMonth', value: endMonth });
+    formDispatch({ field: 'endDay', value: endDay });
+    formDispatch({ field: 'endYear', value: endYear });
+    formDispatch({ field: 'endTime', value: endTime });
 
-    formDispatch({ field: "placeId", value: props.event.location });
-    formDispatch({ field: "location", value: props.event.placeId });
-    formDispatch({ field: "game", value: props.event.game });
+    formDispatch({ field: 'placeId', value: props.event.location });
+    formDispatch({ field: 'location', value: props.event.placeId });
+    formDispatch({ field: 'game', value: props.event.game });
     setHasPrefilledForm.on();
   };
 
   const url = React.useMemo(() => {
-    if (props.state === "edit") {
+    if (props.state === 'edit') {
       return `${PRODUCTION_URL}/event/${props.event.id}/edit`;
     } else {
       return `${PRODUCTION_URL}/create-event`;
@@ -184,7 +173,7 @@ const EventForm = (props) => {
     );
   }
 
-  if (props.state === "edit" && !hasPrefilledForm) {
+  if (props.state === 'edit' && !hasPrefilledForm) {
     prefillForm();
   }
 
@@ -196,13 +185,8 @@ const EventForm = (props) => {
           <Flex alignItems="center" flexWrap="wrap">
             <PageHeading>{pageTitle}</PageHeading>
             <Spacer />
-            {props.state === "edit" ? (
-              <Button
-                variant="ghost"
-                colorScheme="red"
-                size="lg"
-                onClick={setDeletingEventAlertIsOpen.on}
-              >
+            {props.state === 'edit' ? (
+              <Button variant="ghost" colorScheme="red" size="lg" onClick={setDeletingEventAlertIsOpen.on}>
                 Delete event
               </Button>
             ) : null}
@@ -222,12 +206,7 @@ const EventForm = (props) => {
                 </Text>
                 <Flex>
                   {user.gravatar ? (
-                    <Avatar
-                      name={user.fullName}
-                      title={user.fullName}
-                      src={user.gravatarUrl}
-                      size="sm"
-                    />
+                    <Avatar name={user.fullName} title={user.fullName} src={user.gravatarUrl} size="sm" />
                   ) : null}
                   <Text ml={4} as="span" alignSelf="center">
                     {user.fullName}
@@ -251,11 +230,7 @@ const EventForm = (props) => {
                 <FormErrorMessage>{props.errors.name}</FormErrorMessage>
               </FormControl>
               <FormControl>
-                <FormLabel
-                  htmlFor="onlineEvent"
-                  fontSize="lg"
-                  fontWeight="bold"
-                >
+                <FormLabel htmlFor="onlineEvent" fontSize="lg" fontWeight="bold">
                   Is this an online event?
                 </FormLabel>
                 <Stack>
@@ -268,7 +243,7 @@ const EventForm = (props) => {
                     value={formState.isOnlineEvent}
                     onChange={(e) =>
                       formDispatch({
-                        field: "isOnlineEvent",
+                        field: 'isOnlineEvent',
                         value: e.target.checked,
                       })
                     }
@@ -278,10 +253,7 @@ const EventForm = (props) => {
                 </Stack>
               </FormControl>
               <Text>or</Text>
-              <FormControl
-                isRequired={!formState.isOnlineEvent}
-                isInvalid={props.errors.location}
-              >
+              <FormControl isRequired={!formState.isOnlineEvent} isInvalid={props.errors.location}>
                 <FormLabel htmlFor="location" fontSize="lg" fontWeight="bold">
                   Location
                 </FormLabel>
@@ -289,25 +261,16 @@ const EventForm = (props) => {
                   <PlacesAutocomplete
                     value={formState.location}
                     onChange={(value) => setLocation(value)}
-                    onSelect={(address, placeId) =>
-                      setLocation(address, placeId)
-                    }
+                    onSelect={(address, placeId) => setLocation(address, placeId)}
                     debounce={600}
-                    shouldFetchSuggestions={Boolean(
-                      formState.location && formState.location.length >= 3
-                    )}
+                    shouldFetchSuggestions={Boolean(formState.location && formState.location.length >= 3)}
                   >
-                    {({
-                      getInputProps,
-                      suggestions,
-                      getSuggestionItemProps,
-                      loading,
-                    }) => (
+                    {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
                       <div>
                         <Input
                           {...getInputProps({
-                            placeholder: "Add a place or address",
-                            className: "location-search-input",
+                            placeholder: 'Add a place or address',
+                            className: 'location-search-input',
                             disabled: formState.isOnlineEvent,
                           })}
                           size="lg"
@@ -328,18 +291,14 @@ const EventForm = (props) => {
                           {suggestions.map((suggestion, index, arr) => {
                             const isLast = arr.length - 1 === index;
                             const style = {
-                              backgroundColor: suggestion.active
-                                ? "#edf2f7"
-                                : "#ffffff",
-                              cursor: "pointer",
-                              padding: "12px",
-                              borderLeft: "1px solid #e2e8f0",
-                              borderRight: "1px solid #e2e8f0",
-                              borderBottom: isLast
-                                ? "1px solid #e2e8f0"
-                                : undefined,
-                              borderBottomLeftRadius: "0.25rem",
-                              borderBottomRightRadius: "0.25rem",
+                              backgroundColor: suggestion.active ? '#edf2f7' : '#ffffff',
+                              cursor: 'pointer',
+                              padding: '12px',
+                              borderLeft: '1px solid #e2e8f0',
+                              borderRight: '1px solid #e2e8f0',
+                              borderBottom: isLast ? '1px solid #e2e8f0' : undefined,
+                              borderBottomLeftRadius: '0.25rem',
+                              borderBottomRightRadius: '0.25rem',
                             };
 
                             return (
@@ -363,11 +322,7 @@ const EventForm = (props) => {
                 </Stack>
               </FormControl>
               <FormControl isRequired isInvalid={props.errors.description}>
-                <FormLabel
-                  htmlFor="description"
-                  fontSize="lg"
-                  fontWeight="bold"
-                >
+                <FormLabel htmlFor="description" fontSize="lg" fontWeight="bold">
                   Description
                 </FormLabel>
                 <Textarea
@@ -382,12 +337,8 @@ const EventForm = (props) => {
                   h="150px"
                 />
                 <FormHelperText id="description-helper-text">
-                  Describe your event in fewer than{" "}
-                  {MAX_DESCRIPTION_LENGTH.toLocaleString()} characters.{" "}
-                  <CharacterCounter
-                    value={formState.description}
-                    maxLength={MAX_DESCRIPTION_LENGTH}
-                  />
+                  Describe your event in fewer than {MAX_DESCRIPTION_LENGTH.toLocaleString()} characters.{' '}
+                  <CharacterCounter value={formState.description} maxLength={MAX_DESCRIPTION_LENGTH} />
                 </FormHelperText>
               </FormControl>
               <FormErrorMessage>{props.errors.description}</FormErrorMessage>
@@ -395,23 +346,18 @@ const EventForm = (props) => {
                 <FormLabel htmlFor="gameSearch" fontSize="lg" fontWeight="bold">
                   Game
                 </FormLabel>
-                {(props.state === "edit" && hasPrefilledForm) ||
-                props.state !== "edit" ? (
+                {(props.state === 'edit' && hasPrefilledForm) || props.state !== 'edit' ? (
                   <Flex alignItems="center">
                     <Box flexGrow={1}>
                       <GameSearch
                         inputPlaceholder="The game being played"
                         onSelect={setGame}
-                        gameName={formState.game ? formState.game.name : ""}
+                        gameName={formState.game ? formState.game.name : ''}
                       />
                     </Box>
                     <Box pl={8}>
                       <GameCover
-                        url={
-                          formState.game && formState.game.cover
-                            ? formState.game.cover.url
-                            : null
-                        }
+                        url={formState.game && formState.game.cover ? formState.game.cover.url : null}
                         name={formState.game ? formState.game.name : null}
                         h={20}
                         w={20}
@@ -430,14 +376,10 @@ const EventForm = (props) => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startDay}
-                      flexBasis={{ base: "100%", md: "25%" }}
+                      flexBasis={{ base: '100%', md: '25%' }}
                       pr={{ base: 0, md: 4 }}
                     >
-                      <FormLabel
-                        htmlFor="startDay"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                      <FormLabel htmlFor="startDay" fontSize="sm" fontWeight="bold">
                         Day
                       </FormLabel>
                       <DaySelect
@@ -447,21 +389,15 @@ const EventForm = (props) => {
                         value={formState.startDay}
                         size="lg"
                       />
-                      <FormErrorMessage>
-                        {props.errors.startDay}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{props.errors.startDay}</FormErrorMessage>
                     </FormControl>
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startMonth}
-                      flexBasis={{ base: "100%", md: "30%" }}
+                      flexBasis={{ base: '100%', md: '30%' }}
                       pr={{ base: 0, md: 4 }}
                     >
-                      <FormLabel
-                        htmlFor="startMonth"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                      <FormLabel htmlFor="startMonth" fontSize="sm" fontWeight="bold">
                         Month
                       </FormLabel>
                       <MonthSelect
@@ -471,20 +407,10 @@ const EventForm = (props) => {
                         value={formState.startMonth}
                         size="lg"
                       />
-                      <FormErrorMessage>
-                        {props.errors.startMonth}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{props.errors.startMonth}</FormErrorMessage>
                     </FormControl>
-                    <FormControl
-                      isRequired
-                      isInvalid={props.errors.startYear}
-                      flexBasis={{ base: "100%", md: "25%" }}
-                    >
-                      <FormLabel
-                        htmlFor="startYear"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                    <FormControl isRequired isInvalid={props.errors.startYear} flexBasis={{ base: '100%', md: '25%' }}>
+                      <FormLabel htmlFor="startYear" fontSize="sm" fontWeight="bold">
                         Year
                       </FormLabel>
                       <YearSelect
@@ -495,22 +421,16 @@ const EventForm = (props) => {
                         size="lg"
                         max={CURRENT_YEAR + 5}
                       />
-                      <FormErrorMessage>
-                        {props.errors.startYear}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{props.errors.startYear}</FormErrorMessage>
                     </FormControl>
                   </Flex>
                   <Flex>
                     <FormControl
                       isRequired
                       isInvalid={props.errors.startTime}
-                      flexBasis={{ base: "100%", md: "33.3333%" }}
+                      flexBasis={{ base: '100%', md: '33.3333%' }}
                     >
-                      <FormLabel
-                        htmlFor="startTime"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                      <FormLabel htmlFor="startTime" fontSize="sm" fontWeight="bold">
                         Start Time
                       </FormLabel>
                       <TimeSelect
@@ -520,9 +440,7 @@ const EventForm = (props) => {
                         value={formState.startTime}
                         size="lg"
                       />
-                      <FormErrorMessage>
-                        {props.errors.startTime}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{props.errors.startTime}</FormErrorMessage>
                     </FormControl>
                   </Flex>
                 </Stack>
@@ -539,14 +457,10 @@ const EventForm = (props) => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endDay}
-                      flexBasis={{ base: "100%", md: "25%" }}
+                      flexBasis={{ base: '100%', md: '25%' }}
                       pr={{ base: 0, md: 4 }}
                     >
-                      <FormLabel
-                        htmlFor="endDay"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                      <FormLabel htmlFor="endDay" fontSize="sm" fontWeight="bold">
                         Day
                       </FormLabel>
                       <DaySelect
@@ -561,14 +475,10 @@ const EventForm = (props) => {
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endMonth}
-                      flexBasis={{ base: "100%", md: "30%" }}
+                      flexBasis={{ base: '100%', md: '30%' }}
                       pr={{ base: 0, md: 4 }}
                     >
-                      <FormLabel
-                        htmlFor="endMonth"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                      <FormLabel htmlFor="endMonth" fontSize="sm" fontWeight="bold">
                         Month
                       </FormLabel>
                       <MonthSelect
@@ -578,21 +488,15 @@ const EventForm = (props) => {
                         value={formState.endMonth}
                         size="lg"
                       />
-                      <FormErrorMessage>
-                        {props.errors.endMonth}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{props.errors.endMonth}</FormErrorMessage>
                     </FormControl>
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endYear}
-                      flexBasis={{ base: "100%", md: "25%" }}
+                      flexBasis={{ base: '100%', md: '25%' }}
                       pr={{ base: 0, md: 4 }}
                     >
-                      <FormLabel
-                        htmlFor="endYear"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                      <FormLabel htmlFor="endYear" fontSize="sm" fontWeight="bold">
                         Year
                       </FormLabel>
                       <YearSelect
@@ -603,22 +507,16 @@ const EventForm = (props) => {
                         size="lg"
                         max={CURRENT_YEAR + 5}
                       />
-                      <FormErrorMessage>
-                        {props.errors.endYear}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{props.errors.endYear}</FormErrorMessage>
                     </FormControl>
                   </Flex>
                   <Flex>
                     <FormControl
                       isRequired
                       isInvalid={props.errors.endTime}
-                      flexBasis={{ base: "100%", md: "33.3333%" }}
+                      flexBasis={{ base: '100%', md: '33.3333%' }}
                     >
-                      <FormLabel
-                        htmlFor="endTime"
-                        fontSize="sm"
-                        fontWeight="bold"
-                      >
+                      <FormLabel htmlFor="endTime" fontSize="sm" fontWeight="bold">
                         End Time
                       </FormLabel>
                       <TimeSelect
@@ -628,9 +526,7 @@ const EventForm = (props) => {
                         value={formState.endTime}
                         size="lg"
                       />
-                      <FormErrorMessage>
-                        {props.errors.endTime}
-                      </FormErrorMessage>
+                      <FormErrorMessage>{props.errors.endTime}</FormErrorMessage>
                     </FormControl>
                   </Flex>
                 </Stack>
@@ -641,24 +537,14 @@ const EventForm = (props) => {
             </Stack>
           </Card>
           <Box pt={16}>
-            <Button
-              colorScheme="brand"
-              type="submit"
-              size="lg"
-              w="full"
-              disabled={props.isSubmitting}
-            >
-              {props.isSubmitting
-                ? "Submitting..."
-                : props.state === "edit"
-                ? "Edit Event"
-                : "Create Event"}
+            <Button colorScheme="brand" type="submit" size="lg" w="full" disabled={props.isSubmitting}>
+              {props.isSubmitting ? 'Submitting...' : props.state === 'edit' ? 'Edit Event' : 'Create Event'}
             </Button>
           </Box>
         </Stack>
       </Article>
 
-      {props.state === "edit" ? (
+      {props.state === 'edit' ? (
         <DeleteEventDialog
           event={props.event}
           isOpen={isDeletingEventAlertOpen}

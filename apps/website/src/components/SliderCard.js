@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { Box } from "@chakra-ui/react";
+import React from 'react';
+import { Box } from '@chakra-ui/react';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SliderCard
@@ -17,7 +17,7 @@ const SliderCard = ({ children, ...rest }) => {
         bg="white"
         zIndex={1}
         _hover={{
-          shadow: "md",
+          shadow: 'md',
         }}
         {...rest}
       >

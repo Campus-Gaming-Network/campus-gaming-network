@@ -1,19 +1,12 @@
 // Libraries
-import React from "react";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-} from "firebase/firestore";
+import React from 'react';
+import { doc, collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
+import { COLLECTIONS } from 'src/constants/firebase';
 
 const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -26,19 +19,19 @@ const useFetchUserEventResponse = (eventId, userId, refreshToggle) => {
       setEventResponse(null);
       setError(null);
 
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[API] fetchUserEventResponse...");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[API] fetchUserEventResponse...');
       }
 
       getDocs(
         query(
           collection(db, COLLECTIONS.EVENT_RESPONSES),
-          where("event.ref", "==", doc(db, COLLECTIONS.EVENTS, eventId)),
-          where("user.ref", "==", doc(db, COLLECTIONS.USERS, userId)),
-          where("response", "==", "YES"),
-          where("endDateTime", ">=", Timestamp.fromDate(new Date())),
-          limit(1)
-        )
+          where('event.ref', '==', doc(db, COLLECTIONS.EVENTS, eventId)),
+          where('user.ref', '==', doc(db, COLLECTIONS.USERS, userId)),
+          where('response', '==', 'YES'),
+          where('endDateTime', '>=', Timestamp.fromDate(new Date())),
+          limit(1),
+        ),
       )
         .then((snapshot) => {
           if (!snapshot.empty) {

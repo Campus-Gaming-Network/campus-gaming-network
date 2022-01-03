@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Stack,
   Box,
@@ -17,59 +17,43 @@ import {
   IconButton,
   ButtonGroup,
   useBoolean,
-} from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSchool,
-  faFlag,
-  faEllipsisH,
-  faChevronLeft,
-  faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
-import safeJsonStringify from "safe-json-stringify";
-import dynamic from "next/dynamic";
+} from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSchool, faFlag, faEllipsisH, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import safeJsonStringify from 'safe-json-stringify';
+import dynamic from 'next/dynamic';
 
 // API
-import { getSchoolDetails, getSchoolEvents } from "src/api/school";
+import { getSchoolDetails, getSchoolEvents } from 'src/api/school';
 
 // Constants
-import {
-  EMPTY_SCHOOL_WEBSITE,
-  SCHOOL_EMPTY_USERS_TEXT,
-  SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT,
-} from "src/constants/school";
-import { NOT_FOUND } from "src/constants/other";
+import { EMPTY_SCHOOL_WEBSITE, SCHOOL_EMPTY_USERS_TEXT, SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT } from 'src/constants/school';
+import { NOT_FOUND } from 'src/constants/other';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Article from "src/components/Article";
-import OutsideLink from "src/components/OutsideLink";
-import EventListItem from "src/components/EventListItem";
-import SchoolLogo from "src/components/SchoolLogo";
-import UserListItem from "src/components/UserListItem";
-import SliderLazyLoad from "src/components/SliderLazyLoad";
-import EmptyText from "src/components/EmptyText";
+import SiteLayout from 'src/components/SiteLayout';
+import Article from 'src/components/Article';
+import OutsideLink from 'src/components/OutsideLink';
+import EventListItem from 'src/components/EventListItem';
+import SchoolLogo from 'src/components/SchoolLogo';
+import UserListItem from 'src/components/UserListItem';
+import SliderLazyLoad from 'src/components/SliderLazyLoad';
+import EmptyText from 'src/components/EmptyText';
 
 // Providers
-import { useAuth } from "src/providers/auth";
-import useFetchSchoolUsers from "src/hooks/useFetchSchoolUsers";
+import { useAuth } from 'src/providers/auth';
+import useFetchSchoolUsers from 'src/hooks/useFetchSchoolUsers';
 
 // Dynamic Components
-const ReportEntityDialog = dynamic(
-  () => import("src/components/dialogs/ReportEntityDialog"),
-  {
-    ssr: false,
-  }
-);
-const NearbySchools = dynamic(() => import("src/components/NearbySchools"), {
+const ReportEntityDialog = dynamic(() => import('src/components/dialogs/ReportEntityDialog'), {
   ssr: false,
 });
-const UpcomingSchoolEvents = dynamic(
-  () => import("src/components/UpcomingSchoolEvents"),
-  {
-    ssr: false,
-  }
-);
+const NearbySchools = dynamic(() => import('src/components/NearbySchools'), {
+  ssr: false,
+});
+const UpcomingSchoolEvents = dynamic(() => import('src/components/UpcomingSchoolEvents'), {
+  ssr: false,
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -100,10 +84,7 @@ export const getServerSideProps = async (context) => {
 
 const School = (props) => {
   const { isAuthenticated } = useAuth();
-  const [
-    isReportingSchoolDialogOpen,
-    setReportingSchoolDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingSchoolDialogOpen, setReportingSchoolDialogIsOpen] = useBoolean();
 
   return (
     <SiteLayout meta={props.school.meta}>
@@ -142,13 +123,7 @@ const School = (props) => {
           </Box>
         </Flex>
         <Stack spacing={10}>
-          <Flex
-            as="header"
-            align="center"
-            justify="space-between"
-            px={{ base: 4, md: 0 }}
-            pt={8}
-          >
+          <Flex as="header" align="center" justify="space-between" px={{ base: 4, md: 0 }} pt={8}>
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
               {props.school.formattedName}
             </Heading>
@@ -162,10 +137,7 @@ const School = (props) => {
                     aria-label="Options"
                   />
                   <MenuList fontSize="md">
-                    <MenuItem
-                      onClick={setReportingSchoolDialogIsOpen.on}
-                      icon={<FontAwesomeIcon icon={faFlag} />}
-                    >
+                    <MenuItem onClick={setReportingSchoolDialogIsOpen.on} icon={<FontAwesomeIcon icon={faFlag} />}>
                       Report {props.school.formattedName}
                     </MenuItem>
                   </MenuList>
@@ -187,9 +159,7 @@ const School = (props) => {
               </Text>
               {Boolean(props.school.contactEmail) ? (
                 <Text as="dd" w="50%">
-                  <OutsideLink href={`mailto:${props.school.contactEmail}`}>
-                    {props.school.contactEmail}
-                  </OutsideLink>
+                  <OutsideLink href={`mailto:${props.school.contactEmail}`}>{props.school.contactEmail}</OutsideLink>
                 </Text>
               ) : (
                 <EmptyText as="dd" w="50%">
@@ -199,14 +169,10 @@ const School = (props) => {
               <Text as="dt" w="50%" fontWeight="bold">
                 Website
               </Text>
-              {props.school.website &&
-              props.school.website !== EMPTY_SCHOOL_WEBSITE ? (
+              {props.school.website && props.school.website !== EMPTY_SCHOOL_WEBSITE ? (
                 <Text as="dd" w="50%">
                   {props.school.isValidWebsiteUrl ? (
-                    <OutsideLink
-                      d="inline-block"
-                      href={`//${props.school.website}`}
-                    >
+                    <OutsideLink d="inline-block" href={`//${props.school.website}`}>
                       {props.school.website}
                     </OutsideLink>
                   ) : (
@@ -223,10 +189,7 @@ const School = (props) => {
               </Text>
               {Boolean(props.school.address) ? (
                 <Text as="dd" w="50%">
-                  <OutsideLink
-                    d="inline-block"
-                    href={props.school.googleMapsAddressLink}
-                  >
+                  <OutsideLink d="inline-block" href={props.school.googleMapsAddressLink}>
                     {props.school.formattedAddress}
                   </OutsideLink>
                 </Text>
@@ -258,7 +221,7 @@ const School = (props) => {
       {isAuthenticated ? (
         <ReportEntityDialog
           entity={{
-            type: "schools",
+            type: 'schools',
             id: props.school.id,
           }}
           pageProps={props}
@@ -354,9 +317,7 @@ const UsersList = (props) => {
   }, [users]);
 
   const disablePrev = page === 0;
-  const disableNext =
-    props.school.userCount === 0 ||
-    Math.floor(props.school.userCount / 25) === page;
+  const disableNext = props.school.userCount === 0 || Math.floor(props.school.userCount / 25) === page;
 
   const decPage = () => {
     if (disablePrev) {
@@ -393,7 +354,7 @@ const UsersList = (props) => {
         </ButtonGroup>
       </Flex>
       {/* TODO: Better loading here */}
-      {status === "loading" ? (
+      {status === 'loading' ? (
         <Text>Loading...</Text>
       ) : hasUsers ? (
         <List display="flex" flexWrap="wrap" mx={-2}>

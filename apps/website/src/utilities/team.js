@@ -2,14 +2,10 @@
 // Team Utilities
 
 // Utilities
-import { cleanObjectOfBadWords } from "src/utilities/other";
+import { cleanObjectOfBadWords } from 'src/utilities/other';
 
 // Constants
-import {
-  PRODUCTION_URL,
-  CGN_TWITTER_HANDLE,
-  SITE_NAME,
-} from "src/constants/other";
+import { PRODUCTION_URL, CGN_TWITTER_HANDLE, SITE_NAME } from 'src/constants/other';
 
 export const mapTeam = (team) => {
   if (!Boolean(team)) {
@@ -32,14 +28,14 @@ export const mapTeam = (team) => {
     meta: {
       title: team.name,
       twitter: {
-        card: "summary",
+        card: 'summary',
         site: SITE_NAME,
         title: team.name,
         creator: CGN_TWITTER_HANDLE,
       },
       og: {
         title: team.name,
-        type: "article",
+        type: 'article',
         url,
         site_name: SITE_NAME,
       },

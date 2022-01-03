@@ -1,10 +1,10 @@
 // Libraries
-import React from "react";
-import SlickSlider from "react-slick";
-import { Box } from "@chakra-ui/react";
+import React from 'react';
+import SlickSlider from 'react-slick';
+import { Box } from '@chakra-ui/react';
 
 // Constants
-import { SLICK_SETTINGS } from "src/constants/slick";
+import { SLICK_SETTINGS } from 'src/constants/slick';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Slider

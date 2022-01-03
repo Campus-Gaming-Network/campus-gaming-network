@@ -1,24 +1,16 @@
 // Libraries
-import React from "react";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-  limit,
-} from "firebase/firestore";
+import React from 'react';
+import { doc, collection, query, where, getDocs, Timestamp, limit } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapEventResponse } from "src/utilities/eventResponse";
+import { mapEventResponse } from 'src/utilities/eventResponse';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { STATES } from "src/constants/api";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { STATES } from 'src/constants/api';
 
 const useFetchUserEvents = (id, page, _limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
@@ -32,16 +24,16 @@ const useFetchUserEvents = (id, page, _limit) => {
       setEvents(null);
       setError(null);
 
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.log(`[API] fetchUserEvents...${id}`);
       }
 
       let _events = [];
       let queryArgs = [
         collection(db, COLLECTIONS.EVENT_RESPONSES),
-        where("user.ref", "==", doc(db, COLLECTIONS.USERS, id)),
-        where("response", "==", "YES"),
-        where("event.endDateTime", ">=", Timestamp.fromDate(new Date())),
+        where('user.ref', '==', doc(db, COLLECTIONS.USERS, id)),
+        where('response', '==', 'YES'),
+        where('event.endDateTime', '>=', Timestamp.fromDate(new Date())),
       ];
 
       if (page > 0) {
@@ -69,8 +61,7 @@ const useFetchUserEvents = (id, page, _limit) => {
             ...{
               [page]: {
                 first: userEventsSnapshot.docs[0],
-                last:
-                  userEventsSnapshot.docs[userEventsSnapshot.docs.length - 1],
+                last: userEventsSnapshot.docs[userEventsSnapshot.docs.length - 1],
               },
             },
           }));

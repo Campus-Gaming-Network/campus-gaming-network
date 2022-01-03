@@ -2,7 +2,7 @@
 // Tournament Utilities
 
 // Utilities
-import { cleanObjectOfBadWords } from "src/utilities/other";
+import { cleanObjectOfBadWords } from 'src/utilities/other';
 
 export const mapTournament = (tournament) => {
   if (!Boolean(tournament)) {

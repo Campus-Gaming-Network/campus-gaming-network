@@ -1,29 +1,27 @@
 // Libraries
-import React from "react";
-import { Heading, Box } from "@chakra-ui/react";
+import React from 'react';
+import { Heading, Box } from '@chakra-ui/react';
 
 // Hooks
-import useFetchSchoolEvents from "src/hooks/useFetchSchoolEvents";
+import useFetchSchoolEvents from 'src/hooks/useFetchSchoolEvents';
 
 // Components
-import Link from "src/components/Link";
-import EventListItem from "src/components/EventListItem";
-import Slider from "src/components/Slider";
-import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
-import EmptyText from "src/components/EmptyText";
+import Link from 'src/components/Link';
+import EventListItem from 'src/components/EventListItem';
+import Slider from 'src/components/Slider';
+import SliderSilhouette from 'src/components/silhouettes/SliderSilhouette';
+import EmptyText from 'src/components/EmptyText';
 
 ////////////////////////////////////////////////////////////////////////////////
 // UpcomingSchoolEvents
 
 const UpcomingSchoolEvents = (props) => {
   const [events, state] = useFetchSchoolEvents(props?.school?.id);
-  const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [
-    events,
-  ]);
+  const hasEvents = React.useMemo(() => Boolean(events) && events.length > 0, [events]);
 
   return (
     <React.Fragment>
-      {state === "idle" || state === "loading" ? (
+      {state === 'idle' || state === 'loading' ? (
         <SliderSilhouette />
       ) : (
         <Box as="section" py={4}>
@@ -32,7 +30,7 @@ const UpcomingSchoolEvents = (props) => {
               props.title
             ) : (
               <React.Fragment>
-                Upcoming events at{" "}
+                Upcoming events at{' '}
                 <Link
                   href={`/school/${props.school.handle}`}
                   color="brand.500"
@@ -47,28 +45,22 @@ const UpcomingSchoolEvents = (props) => {
               </React.Fragment>
             )}
           </Heading>
-          {!(state === "done" && hasEvents) ? (
+          {!(state === 'done' && hasEvents) ? (
             <EmptyText>
               {Boolean(props.emptyText) ? (
                 props.emptyText
               ) : (
-                <React.Fragment>
-                  There are no upcoming events at {props.school.formattedName}
-                </React.Fragment>
+                <React.Fragment>There are no upcoming events at {props.school.formattedName}</React.Fragment>
               )}
             </EmptyText>
           ) : (
             <Slider
               settings={{
-                className: events.length < 5 ? "slick--less-slides" : "",
+                className: events.length < 5 ? 'slick--less-slides' : '',
               }}
             >
               {events.map((event) => (
-                <EventListItem
-                  key={event.id}
-                  event={event}
-                  school={event.school}
-                />
+                <EventListItem key={event.id} event={event} school={event.school} />
               ))}
             </Slider>
           )}

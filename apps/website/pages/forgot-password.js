@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Alert,
   AlertIcon,
@@ -16,28 +16,28 @@ import {
   AlertDescription,
   FormErrorMessage,
   useBoolean,
-} from "@chakra-ui/react";
-import isEmpty from "lodash.isempty";
-import firebaseAdmin from "src/firebaseAdmin";
-import nookies from "nookies";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { validateForgotPassword } from "@campus-gaming-network/tools";
+} from '@chakra-ui/react';
+import isEmpty from 'lodash.isempty';
+import firebaseAdmin from 'src/firebaseAdmin';
+import nookies from 'nookies';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { validateForgotPassword } from '@campus-gaming-network/tools';
 
 // Utilities
-import { useFormFields } from "src/utilities/other";
+import { useFormFields } from 'src/utilities/other';
 
 // Components
-import Article from "src/components/Article";
-import Card from "src/components/Card";
-import Link from "src/components/Link";
-import SiteLayout from "src/components/SiteLayout";
-import FormErrorAlert from "src/components/FormErrorAlert";
+import Article from 'src/components/Article';
+import Card from 'src/components/Card';
+import Link from 'src/components/Link';
+import SiteLayout from 'src/components/SiteLayout';
+import FormErrorAlert from 'src/components/FormErrorAlert';
 
 // Other
-import { auth } from "src/firebase";
+import { auth } from 'src/firebase';
 
 // Constants
-import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";
+import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from 'src/constants/other';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -64,7 +64,7 @@ export const getServerSideProps = async (context) => {
 
 const ForgotPassword = () => {
   const [fields, handleFieldChange] = useFormFields({
-    email: "",
+    email: '',
   });
   const [isSendingEmail, setIsSendingEmail] = useBoolean();
   const [emailSent, setEmailSent] = useBoolean();
@@ -82,10 +82,7 @@ const ForgotPassword = () => {
     const { error } = validateForgotPassword(fields);
 
     if (error) {
-      const errors = error.details.reduce(
-        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
-        {}
-      );
+      const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
       setErrors(errors);
       setIsSendingEmail.off();
       window.scrollTo(0, 0);
@@ -110,7 +107,7 @@ const ForgotPassword = () => {
   return (
     <SiteLayout
       meta={{
-        title: "Forgot Password",
+        title: 'Forgot Password',
         og: { url: `${PRODUCTION_URL}/forgot-password` },
       }}
     >
@@ -121,8 +118,8 @@ const ForgotPassword = () => {
             Reset your password
           </Heading>
           <Text color="gray.500">
-            Please enter the email you use for Campus Gaming Network below, and
-            we’ll send you instructions on how to reset your password.
+            Please enter the email you use for Campus Gaming Network below, and we’ll send you instructions on how to
+            reset your password.
           </Text>
           <Divider borderColor="gray.300" mt={12} mb={10} />
           {error ? (
@@ -139,7 +136,7 @@ const ForgotPassword = () => {
                   <AlertTitle>Instructions Sent</AlertTitle>
                 </Flex>
                 <AlertDescription>
-                  Please check both the inbox and spam folder of the email{" "}
+                  Please check both the inbox and spam folder of the email{' '}
                   <Text fontWeight="bold" as="span">
                     sansonebrandon@gmail.com
                   </Text>
@@ -182,7 +179,7 @@ const ForgotPassword = () => {
           )}
           <Flex align="center" justify="between">
             <Text>
-              Go back to{" "}
+              Go back to{' '}
               <Link href="/login" color="brand.500" fontWeight={600}>
                 Login page
               </Link>

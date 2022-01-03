@@ -1,59 +1,53 @@
 // Libraries
-import React from "react";
-import {
-  Box,
-  Heading,
-  VisuallyHidden,
-  useBoolean,
-  Text,
-} from "@chakra-ui/react";
-import shuffle from "lodash.shuffle";
+import React from 'react';
+import { Box, Heading, VisuallyHidden, useBoolean, Text } from '@chakra-ui/react';
+import shuffle from 'lodash.shuffle';
 
 // Components
-import SchoolLogo from "src/components/SchoolLogo";
-import Slider from "src/components/Slider";
-import Link from "src/components/Link";
+import SchoolLogo from 'src/components/SchoolLogo';
+import Slider from 'src/components/Slider';
+import Link from 'src/components/Link';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SchoolLogoSlider
 
 // TODO: Map the id's to school names for alt/title tag
 const schoolIds = shuffle([
-  { id: "5vyhaFi1crtMIXjGT6fu", name: "Nazareth College" },
-  { id: "6nc3PzeTwBL6KMgrb0aB", name: "Maryville University Of Saint Louis" },
-  { id: "7MRHHpxpk8WdhIrx1OC9", name: "University Of Akron" },
-  { id: "DHiimvWG3KTwPV2Hidpz", name: "Colorado School Of Mines" },
+  { id: '5vyhaFi1crtMIXjGT6fu', name: 'Nazareth College' },
+  { id: '6nc3PzeTwBL6KMgrb0aB', name: 'Maryville University Of Saint Louis' },
+  { id: '7MRHHpxpk8WdhIrx1OC9', name: 'University Of Akron' },
+  { id: 'DHiimvWG3KTwPV2Hidpz', name: 'Colorado School Of Mines' },
   {
-    id: "GqcDKBksPkuugsXDMjO9",
-    name: "University Of Illinois At Urbana Champaign",
+    id: 'GqcDKBksPkuugsXDMjO9',
+    name: 'University Of Illinois At Urbana Champaign',
   },
-  { id: "GtOHc6rKQfY6xe9EU7KF", name: "Illinois Institute Of Technology" },
-  { id: "Hl3jJ7t5fYXhbqq6thhe", name: "Carnegie Mellon University" },
-  { id: "II9xWAyiQvPlTH4XlUK0", name: "University Of Houston" },
-  { id: "KriCbXH62p0ALmUnhAvO", name: "University Of Kansas" },
-  { id: "Lo0KrpADPKfyUVD6iqRv", name: "Arizona State University Tempe" },
-  { id: "O1ZATKYzF2PfPw4YvWaP", name: "University Of Minnesota" },
-  { id: "PJ2JPXRknFM7H2nSSYnw", name: "University Of North Carolina" },
-  { id: "Ppqf1BWIuEMRDZ7OOtUF", name: "Marquette University" },
-  { id: "RBfssIhRA1DABqSMIyBE", name: "University Of Colorado Boulder" },
-  { id: "TOAicyiEln28ujf9Q3gD", name: "University Of San Diego" },
-  { id: "YWoXjvriKdJU3NL0rutm", name: "University Of Wisconsin Madison" },
-  { id: "Zth6ml8RWmARuz6YFWja", name: "Oregon State University" },
-  { id: "f0BOkkpWNXrREMoPyjtZ", name: "University Of Iowa" },
-  { id: "h7bbCtM1xmNER6ctZZlm", name: "University Of California Irvine" },
-  { id: "hJn7eINet0z2BKu6ebxn", name: "Case Western Reserve University" },
-  { id: "kXqUGz8O5qWRb63xeoZc", name: "Bethany Lutheran College" },
-  { id: "lOg2MryS0jyrSdnefcPH", name: "Salisbury University" },
-  { id: "lzWEb9OMTADUtGCQCKGL", name: "Depaul University" },
-  { id: "msgtZCY40Dtr1rriwDtA", name: "Massachusetts Institute Of Technology" },
-  { id: "pK3GuZyk6oDB0UVVAz7v", name: "Rutgers University" },
-  { id: "sSxCDb4s71taea0MZKoA", name: "Harvard University" },
-  { id: "wYYYropeY1yLMPh9dMES", name: "Michigan State University" },
-  { id: "y61xIVTMIGrNZL3oeSRw", name: "University Of Central Florida" },
-  { id: "zbt51IRo097p9peiBTYF", name: "Boise State University" },
+  { id: 'GtOHc6rKQfY6xe9EU7KF', name: 'Illinois Institute Of Technology' },
+  { id: 'Hl3jJ7t5fYXhbqq6thhe', name: 'Carnegie Mellon University' },
+  { id: 'II9xWAyiQvPlTH4XlUK0', name: 'University Of Houston' },
+  { id: 'KriCbXH62p0ALmUnhAvO', name: 'University Of Kansas' },
+  { id: 'Lo0KrpADPKfyUVD6iqRv', name: 'Arizona State University Tempe' },
+  { id: 'O1ZATKYzF2PfPw4YvWaP', name: 'University Of Minnesota' },
+  { id: 'PJ2JPXRknFM7H2nSSYnw', name: 'University Of North Carolina' },
+  { id: 'Ppqf1BWIuEMRDZ7OOtUF', name: 'Marquette University' },
+  { id: 'RBfssIhRA1DABqSMIyBE', name: 'University Of Colorado Boulder' },
+  { id: 'TOAicyiEln28ujf9Q3gD', name: 'University Of San Diego' },
+  { id: 'YWoXjvriKdJU3NL0rutm', name: 'University Of Wisconsin Madison' },
+  { id: 'Zth6ml8RWmARuz6YFWja', name: 'Oregon State University' },
+  { id: 'f0BOkkpWNXrREMoPyjtZ', name: 'University Of Iowa' },
+  { id: 'h7bbCtM1xmNER6ctZZlm', name: 'University Of California Irvine' },
+  { id: 'hJn7eINet0z2BKu6ebxn', name: 'Case Western Reserve University' },
+  { id: 'kXqUGz8O5qWRb63xeoZc', name: 'Bethany Lutheran College' },
+  { id: 'lOg2MryS0jyrSdnefcPH', name: 'Salisbury University' },
+  { id: 'lzWEb9OMTADUtGCQCKGL', name: 'Depaul University' },
+  { id: 'msgtZCY40Dtr1rriwDtA', name: 'Massachusetts Institute Of Technology' },
+  { id: 'pK3GuZyk6oDB0UVVAz7v', name: 'Rutgers University' },
+  { id: 'sSxCDb4s71taea0MZKoA', name: 'Harvard University' },
+  { id: 'wYYYropeY1yLMPh9dMES', name: 'Michigan State University' },
+  { id: 'y61xIVTMIGrNZL3oeSRw', name: 'University Of Central Florida' },
+  { id: 'zbt51IRo097p9peiBTYF', name: 'Boise State University' },
   {
-    id: "zxGU4sIS2C8NWfmDh7lB",
-    name: "University Of Maryland Baltimore County",
+    id: 'zxGU4sIS2C8NWfmDh7lB',
+    name: 'University Of Maryland Baltimore County',
   },
 ]);
 // const half = Math.ceil(schoolIds.length / 2);
@@ -74,7 +68,7 @@ const settings = {
   autoplay: true,
   speed: 5000,
   autoplaySpeed: 0,
-  cssEase: "linear",
+  cssEase: 'linear',
   pauseOnHover: false,
   responsive: [
     {
@@ -102,12 +96,7 @@ const SchoolLogoSlider = () => {
       </VisuallyHidden>
       <Slider settings={settings}>
         {schoolIds.map((school) => (
-          <SchoolLogoSliderItem
-            key={school.id}
-            id={school.id}
-            name={school.name}
-            handle={school.handle}
-          />
+          <SchoolLogoSliderItem key={school.id} id={school.id} name={school.name} handle={school.handle} />
         ))}
       </Slider>
     </Box>
@@ -131,17 +120,11 @@ const SchoolLogoSliderItem = (props) => {
         bg="white"
         borderStyle="solid"
         rounded="full"
-        _hover={{ shadow: "md" }}
+        _hover={{ shadow: 'md' }}
         onMouseEnter={() => setIsHovered.on()}
         onMouseLeave={() => setIsHovered.off()}
       >
-        <SchoolLogo
-          schoolId={props.id}
-          schoolName={props.name}
-          h={24}
-          w={24}
-          opacity={isHovered ? 0.5 : 1}
-        />
+        <SchoolLogo schoolId={props.id} schoolName={props.name} h={24} w={24} opacity={isHovered ? 0.5 : 1} />
         {isHovered ? (
           <Text
             d="block"

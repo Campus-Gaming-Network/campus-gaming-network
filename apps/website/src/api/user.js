@@ -1,19 +1,15 @@
-import firebaseAdmin from "src/firebaseAdmin";
-import { mapUser } from "src/utilities/user";
-import { mapEvent } from "src/utilities/event";
-import { mapEventResponse } from "src/utilities/eventResponse";
-import { mapTeam } from "src/utilities/team";
-import { mapTeammate } from "src/utilities/teammate";
+import firebaseAdmin from 'src/firebaseAdmin';
+import { mapUser } from 'src/utilities/user';
+import { mapEvent } from 'src/utilities/event';
+import { mapEventResponse } from 'src/utilities/eventResponse';
+import { mapTeam } from 'src/utilities/team';
+import { mapTeammate } from 'src/utilities/teammate';
 
 export const getUserDetails = async (id) => {
   let user = null;
 
   try {
-    const userDoc = await firebaseAdmin
-      .firestore()
-      .collection("users")
-      .doc(id)
-      .get();
+    const userDoc = await firebaseAdmin.firestore().collection('users').doc(id).get();
 
     if (userDoc.exists) {
       user = { ...mapUser(userDoc.data()) };
@@ -25,28 +21,19 @@ export const getUserDetails = async (id) => {
   }
 };
 
-export const getUserAttendingEvents = async (
-  id,
-  limit = 25,
-  next = null,
-  prev = null
-) => {
+export const getUserAttendingEvents = async (id, limit = 25, next = null, prev = null) => {
   const now = new Date();
   let events = [];
 
   try {
-    const userDocRef = firebaseAdmin.firestore().collection("users").doc(id);
+    const userDocRef = firebaseAdmin.firestore().collection('users').doc(id);
 
     let query = firebaseAdmin
       .firestore()
-      .collection("event-responses")
-      .where("user.ref", "==", userDocRef)
-      .where("response", "==", "YES")
-      .where(
-        "event.endDateTime",
-        ">=",
-        firebaseAdmin.firestore.Timestamp.fromDate(now)
-      );
+      .collection('event-responses')
+      .where('user.ref', '==', userDocRef)
+      .where('response', '==', 'YES')
+      .where('event.endDateTime', '>=', firebaseAdmin.firestore.Timestamp.fromDate(now));
 
     if (next) {
       query = query.startAfter(next);
@@ -73,20 +60,14 @@ export const getUserEventResponse = async (eventId, userId) => {
   let eventResponse = null;
 
   try {
-    const eventDocRef = firebaseAdmin
-      .firestore()
-      .collection("events")
-      .doc(eventId);
-    const userDocRef = firebaseAdmin
-      .firestore()
-      .collection("users")
-      .doc(userId);
+    const eventDocRef = firebaseAdmin.firestore().collection('events').doc(eventId);
+    const userDocRef = firebaseAdmin.firestore().collection('users').doc(userId);
 
     const eventResponseSnapshot = await firebaseAdmin
       .firestore()
-      .collection("event-responses")
-      .where("event.ref", "==", eventDocRef)
-      .where("user.ref", "==", userDocRef)
+      .collection('event-responses')
+      .where('event.ref', '==', eventDocRef)
+      .where('user.ref', '==', userDocRef)
       .limit(1)
       .get();
 
@@ -113,20 +94,13 @@ export const getUserCreatedEvents = async (userId) => {
   let events = [];
 
   try {
-    const userDocRef = firebaseAdmin
-      .firestore()
-      .collection("users")
-      .doc(userId);
+    const userDocRef = firebaseAdmin.firestore().collection('users').doc(userId);
 
     const userCreatedEventsSnapshot = await firebaseAdmin
       .firestore()
-      .collection("events")
-      .where("creator", "==", userDocRef)
-      .where(
-        "endDateTime",
-        ">=",
-        firebaseAdmin.firestore.Timestamp.fromDate(now)
-      )
+      .collection('events')
+      .where('creator', '==', userDocRef)
+      .where('endDateTime', '>=', firebaseAdmin.firestore.Timestamp.fromDate(now))
       .limit(25)
       .get();
 
@@ -149,14 +123,11 @@ export const getUserTeams = async (userId) => {
   let teams = [];
 
   try {
-    const userDocRef = firebaseAdmin
-      .firestore()
-      .collection("users")
-      .doc(userId);
+    const userDocRef = firebaseAdmin.firestore().collection('users').doc(userId);
     const teammatesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("teammates")
-      .where("user.ref", "==", userDocRef)
+      .collection('teammates')
+      .where('user.ref', '==', userDocRef)
       .limit(25)
       .get();
 
@@ -172,8 +143,8 @@ export const getUserTeams = async (userId) => {
   try {
     const teamsSnapshot = await firebaseAdmin
       .firestore()
-      .collection("teams")
-      .where("id", "in", teamIds)
+      .collection('teams')
+      .where('id', 'in', teamIds)
       .limit(25)
       .get();
 
@@ -195,20 +166,14 @@ export const getUserTeammateDetails = async (teamId, userId) => {
   let teammate = null;
 
   try {
-    const teamDocRef = firebaseAdmin
-      .firestore()
-      .collection("teams")
-      .doc(teamId);
-    const userDocRef = firebaseAdmin
-      .firestore()
-      .collection("users")
-      .doc(userId);
+    const teamDocRef = firebaseAdmin.firestore().collection('teams').doc(teamId);
+    const userDocRef = firebaseAdmin.firestore().collection('users').doc(userId);
 
     const teammatesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("teammates")
-      .where("event.ref", "==", teamDocRef)
-      .where("user.ref", "==", userDocRef)
+      .collection('teammates')
+      .where('event.ref', '==', teamDocRef)
+      .where('user.ref', '==', userDocRef)
       .limit(1)
       .get();
 

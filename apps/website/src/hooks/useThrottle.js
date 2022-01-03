@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Source: https://github.com/streamich/react-use
 
-import React from "react";
+import React from 'react';
 
 // Hooks
-import useUnmount from "src/hooks/useUnmount";
+import useUnmount from 'src/hooks/useUnmount';
 
 const useThrottle = (value, ms = 200) => {
   const [state, setState] = React.useState(value);

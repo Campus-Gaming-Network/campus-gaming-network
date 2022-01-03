@@ -1,4 +1,4 @@
 ////////////////////////////////////////////////////////////////////////////////
 // IGDB Constants
 
-export const IGDB_GAME_URL = "https://www.igdb.com/games";
+export const IGDB_GAME_URL = 'https://www.igdb.com/games';

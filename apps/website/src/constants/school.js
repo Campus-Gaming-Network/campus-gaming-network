@@ -1,19 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // School Constants
 
-import { ACCOUNTS } from "src/constants/other";
+import { ACCOUNTS } from 'src/constants/other';
 
-export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT =
-  "This school currently has no upcoming events.";
-export const SCHOOL_EMPTY_USERS_TEXT = "This school currently has no users.";
-export const ALLOWED_SCHOOL_ACCOUNTS = [
-  "website",
-  "twitter",
-  "twitch",
-  "youtube",
-  "skype",
-  "discord",
-];
+export const SCHOOL_EMPTY_UPCOMING_EVENTS_TEXT = 'This school currently has no upcoming events.';
+export const SCHOOL_EMPTY_USERS_TEXT = 'This school currently has no users.';
+export const ALLOWED_SCHOOL_ACCOUNTS = ['website', 'twitter', 'twitch', 'youtube', 'skype', 'discord'];
 export const SCHOOL_ACCOUNTS = Object.keys(ACCOUNTS)
   .filter((key) => ALLOWED_SCHOOL_ACCOUNTS.includes(key))
   .reduce((obj, key) => {
@@ -22,4 +14,4 @@ export const SCHOOL_ACCOUNTS = Object.keys(ACCOUNTS)
       [key]: ACCOUNTS[key],
     };
   }, {});
-export const EMPTY_SCHOOL_WEBSITE = "NOT AVAILABLE";
+export const EMPTY_SCHOOL_WEBSITE = 'NOT AVAILABLE';

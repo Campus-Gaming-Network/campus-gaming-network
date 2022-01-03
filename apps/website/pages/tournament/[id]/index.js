@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Stack,
   Box,
@@ -14,51 +14,42 @@ import {
   MenuList,
   MenuItem,
   useBoolean,
-} from "@chakra-ui/react";
-import safeJsonStringify from "safe-json-stringify";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import nookies from "nookies";
-import {
-  faEllipsisV,
-  faFlag,
-  faSignOutAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import dynamic from "next/dynamic";
+} from '@chakra-ui/react';
+import safeJsonStringify from 'safe-json-stringify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import nookies from 'nookies';
+import { faEllipsisV, faFlag, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import dynamic from 'next/dynamic';
 
 // API
-import { getTournamentDetails } from "src/api/tournament";
+import { getTournamentDetails } from 'src/api/tournament';
 
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Article from "src/components/Article";
-import UserListItem from "src/components/UserListItem";
-import EmptyText from "src/components/EmptyText";
-import Link from "src/components/Link";
+import SiteLayout from 'src/components/SiteLayout';
+import Article from 'src/components/Article';
+import UserListItem from 'src/components/UserListItem';
+import EmptyText from 'src/components/EmptyText';
+import Link from 'src/components/Link';
 
 // Other
-import firebaseAdmin from "src/firebaseAdmin";
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // Dynamic Components
-const ReportEntityDialog = dynamic(
-  () => import("src/components/dialogs/ReportEntityDialog"),
-  {
-    ssr: false,
-  }
-);
+const ReportEntityDialog = dynamic(() => import('src/components/dialogs/ReportEntityDialog'), {
+  ssr: false,
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [tournamentResponse] = await Promise.all([
-    getTournamentDetails(context.params.id),
-  ]);
+  const [tournamentResponse] = await Promise.all([getTournamentDetails(context.params.id)]);
   const { tournament } = tournamentResponse;
 
   if (!Boolean(tournament)) {
@@ -86,10 +77,7 @@ export const getServerSideProps = async (context) => {
 // Tournament
 
 const Tournament = (props) => {
-  const [
-    isReportingTournamentDialogOpen,
-    setReportingTournamentDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingTournamentDialogOpen, setReportingTournamentDialogIsOpen] = useBoolean();
 
   return (
     <SiteLayout meta={props.tournament.meta}>
@@ -102,21 +90,15 @@ const Tournament = (props) => {
             width="100%"
             borderRadius="md"
             bg="gray.100"
-            _focus={{ bg: "gray.200", boxShadow: "outline" }}
-            _hover={{ bg: "gray.200" }}
+            _focus={{ bg: 'gray.200', boxShadow: 'outline' }}
+            _hover={{ bg: 'gray.200' }}
             p={8}
           >
             Edit Tournament
           </Link>
         </Box>
         <Stack spacing={10}>
-          <Flex
-            as="header"
-            align="center"
-            justify="space-between"
-            px={{ base: 4, md: 0 }}
-            pt={8}
-          >
+          <Flex as="header" align="center" justify="space-between" px={{ base: 4, md: 0 }} pt={8}>
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
               {props.tournament.name} ({props.tournament.memberCount || 0})
             </Heading>
@@ -129,17 +111,10 @@ const Tournament = (props) => {
                   aria-label="Options"
                 />
                 <MenuList fontSize="md">
-                  <MenuItem
-                    color="red.500"
-                    fontWeight="bold"
-                    icon={<FontAwesomeIcon icon={faSignOutAlt} />}
-                  >
+                  <MenuItem color="red.500" fontWeight="bold" icon={<FontAwesomeIcon icon={faSignOutAlt} />}>
                     Leave {props.tournament.name}
                   </MenuItem>
-                  <MenuItem
-                    onClick={setReportingUserDialogIsOpen.on}
-                    icon={<FontAwesomeIcon icon={faFlag} />}
-                  >
+                  <MenuItem onClick={setReportingUserDialogIsOpen.on} icon={<FontAwesomeIcon icon={faFlag} />}>
                     Report {props.tournament.name}
                   </MenuItem>
                 </MenuList>
@@ -157,7 +132,7 @@ const Tournament = (props) => {
       {isAuthenticated ? (
         <ReportEntityDialog
           entity={{
-            type: "tournaments",
+            type: 'tournaments',
             id: props.tournament.id,
           }}
           pageProps={props}

@@ -1,26 +1,16 @@
 // Libraries
-import React from "react";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  orderBy,
-  Timestamp,
-  limit,
-  startAfter,
-  startAt,
-} from "firebase/firestore";
+import React from 'react';
+import { collection, query, where, getDocs, orderBy, Timestamp, limit, startAfter, startAt } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapEvent } from "src/utilities/event";
+import { mapEvent } from 'src/utilities/event';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { STATES } from "src/constants/api";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { STATES } from 'src/constants/api';
 
 const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
   const [state, setState] = React.useState(STATES.INITIAL);
@@ -34,16 +24,16 @@ const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
       setEvents(null);
       setError(null);
 
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[API] fetchRecentlyCreatedEvents...");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[API] fetchRecentlyCreatedEvents...');
       }
 
       let _events = [];
       let queryArgs = [
         collection(db, COLLECTIONS.EVENTS),
-        where("endDateTime", ">=", Timestamp.fromDate(new Date())),
-        orderBy("endDateTime"),
-        orderBy("createdAt", "desc"),
+        where('endDateTime', '>=', Timestamp.fromDate(new Date())),
+        orderBy('endDateTime'),
+        orderBy('createdAt', 'desc'),
       ];
 
       if (page > 0) {
@@ -57,18 +47,13 @@ const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
       queryArgs.push(limit(_limit));
 
       try {
-        const recentlyCreatedEventsSnapshot = await getDocs(
-          query(...queryArgs)
-        );
+        const recentlyCreatedEventsSnapshot = await getDocs(query(...queryArgs));
 
         if (!recentlyCreatedEventsSnapshot.empty) {
           recentlyCreatedEventsSnapshot.forEach((doc) => {
             const data = doc.data();
             const event = {
-              ...mapEvent(
-                { id: doc.id, _createdAt: data.createdAt.toDate(), ...data },
-                doc
-              ),
+              ...mapEvent({ id: doc.id, _createdAt: data.createdAt.toDate(), ...data }, doc),
             };
             _events.push(event);
           });
@@ -78,10 +63,7 @@ const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
             ...{
               [page]: {
                 first: recentlyCreatedEventsSnapshot.docs[0],
-                last:
-                  recentlyCreatedEventsSnapshot.docs[
-                    recentlyCreatedEventsSnapshot.docs.length - 1
-                  ],
+                last: recentlyCreatedEventsSnapshot.docs[recentlyCreatedEventsSnapshot.docs.length - 1],
               },
             },
           }));

@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React from 'react';
 import {
   Button,
   Text,
@@ -11,24 +11,18 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useBoolean,
-} from "@chakra-ui/react";
-import {
-  doc,
-  updateDoc,
-  addDoc,
-  collection,
-  Timestamp,
-} from "firebase/firestore";
+} from '@chakra-ui/react';
+import { doc, updateDoc, addDoc, collection, Timestamp } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Constants
-import { EVENT_RESPONSES } from "src/constants/eventResponse";
-import { COLLECTIONS } from "src/constants/firebase";
+import { EVENT_RESPONSES } from 'src/constants/eventResponse';
+import { COLLECTIONS } from 'src/constants/firebase';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 ////////////////////////////////////////////////////////////////////////////
 // RSVPDialog
@@ -39,17 +33,15 @@ const RSVPDialog = (props) => {
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = useBoolean();
-  const hasResponded = React.useMemo(() => Boolean(props.eventResponse), [
-    props.eventResponse,
-  ]);
+  const hasResponded = React.useMemo(() => Boolean(props.eventResponse), [props.eventResponse]);
 
   const handleSubmitError = (error) => {
     props.onClose();
     setIsSubmitting.off();
     toast({
-      title: "An error occurred.",
+      title: 'An error occurred.',
       description: error.message,
-      status: "error",
+      status: 'error',
       isClosable: true,
     });
   };
@@ -63,9 +55,9 @@ const RSVPDialog = (props) => {
       try {
         await addDoc(collection(db, COLLECTIONS.EVENT_RESPONSES), data);
         toast({
-          title: "RSVP created.",
-          description: "Your RSVP has been created.",
-          status: "success",
+          title: 'RSVP created.',
+          description: 'Your RSVP has been created.',
+          status: 'success',
           isClosable: true,
         });
         window.location.reload();
@@ -74,16 +66,13 @@ const RSVPDialog = (props) => {
       }
     } else {
       try {
-        await updateDoc(
-          doc(db, COLLECTIONS.EVENT_RESPONSES, props.eventResponse.id),
-          {
-            response,
-          }
-        );
+        await updateDoc(doc(db, COLLECTIONS.EVENT_RESPONSES, props.eventResponse.id), {
+          response,
+        });
         toast({
-          title: "RSVP updated.",
-          description: "Your RSVP has been updated.",
-          status: "success",
+          title: 'RSVP updated.',
+          description: 'Your RSVP has been updated.',
+          status: 'success',
           isClosable: true,
         });
         window.location.reload();
@@ -138,22 +127,15 @@ const RSVPDialog = (props) => {
     return data;
   };
 
-  if (
-    !hasResponded ||
-    (hasResponded && props.eventResponse.response === EVENT_RESPONSES.NO)
-  ) {
+  if (!hasResponded || (hasResponded && props.eventResponse.response === EVENT_RESPONSES.NO)) {
     return (
-      <AlertDialog
-        isOpen={props.isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={props.onClose}
-      >
+      <AlertDialog isOpen={props.isOpen} leastDestructiveRef={cancelRef} onClose={props.onClose}>
         <AlertDialogOverlay />
         <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
           <AlertDialogHeader>RSVP for '{props.event.name}'</AlertDialogHeader>
 
           <AlertDialogBody>
-            Are you sure you want to RSVP for{" "}
+            Are you sure you want to RSVP for{' '}
             <Text as="span" fontWeight="bold">
               {props.event.name}
             </Text>
@@ -170,11 +152,7 @@ const RSVPDialog = (props) => {
                 <Button ref={attendRef} onClick={props.onClose}>
                   No, nevermind
                 </Button>
-                <Button
-                  colorScheme="brand"
-                  onClick={() => onAttendingAlertConfirm(EVENT_RESPONSES.YES)}
-                  ml={3}
-                >
+                <Button colorScheme="brand" onClick={() => onAttendingAlertConfirm(EVENT_RESPONSES.YES)} ml={3}>
                   Yes, I want to go
                 </Button>
               </React.Fragment>
@@ -183,24 +161,17 @@ const RSVPDialog = (props) => {
         </AlertDialogContent>
       </AlertDialog>
     );
-  } else if (
-    hasResponded &&
-    props.eventResponse.response === EVENT_RESPONSES.YES
-  ) {
+  } else if (hasResponded && props.eventResponse.response === EVENT_RESPONSES.YES) {
     return (
-      <AlertDialog
-        isOpen={props.isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={props.onClose}
-      >
+      <AlertDialog isOpen={props.isOpen} leastDestructiveRef={cancelRef} onClose={props.onClose}>
         <AlertDialogOverlay />
         <AlertDialogContent rounded="lg" borderWidth="1px" boxShadow="lg">
           <AlertDialogHeader>Cancel RSVP</AlertDialogHeader>
 
           <AlertDialogBody>
-            Are you sure you want to cancel your RSVP for{" "}
+            Are you sure you want to cancel your RSVP for{' '}
             <Text as="span" fontWeight="bold">
-              {props.event ? props.event.name : ""}
+              {props.event ? props.event.name : ''}
             </Text>
             ?
           </AlertDialogBody>
@@ -215,11 +186,7 @@ const RSVPDialog = (props) => {
                 <Button ref={cancelRef} onClick={props.onClose}>
                   No, nevermind
                 </Button>
-                <Button
-                  colorScheme="red"
-                  onClick={() => onAttendingAlertConfirm(EVENT_RESPONSES.NO)}
-                  ml={3}
-                >
+                <Button colorScheme="red" onClick={() => onAttendingAlertConfirm(EVENT_RESPONSES.NO)} ml={3}>
                   Yes, cancel the RSVP
                 </Button>
               </React.Fragment>

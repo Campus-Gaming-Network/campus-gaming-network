@@ -1,16 +1,16 @@
 // Libraries
-import React from "react";
-import isEmpty from "lodash.isempty";
-import { getDoc, doc } from "firebase/firestore";
+import React from 'react';
+import isEmpty from 'lodash.isempty';
+import { getDoc, doc } from 'firebase/firestore';
 
 // Other
-import { db } from "src/firebase";
+import { db } from 'src/firebase';
 
 // Utilities
-import { mapUser } from "src/utilities/user";
+import { mapUser } from 'src/utilities/user';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
+import { COLLECTIONS } from 'src/constants/firebase';
 
 const useFetchUserDetails = (id) => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -24,14 +24,14 @@ const useFetchUserDetails = (id) => {
       setError(null);
 
       if (state.users[id] && !isEmpty(state.users[id])) {
-        if (process.env.NODE_ENV !== "production") {
+        if (process.env.NODE_ENV !== 'production') {
           console.log(`[CACHE] fetchUserDetails...${id}`);
         }
 
         setUser(state.users[id]);
         setIsLoading(false);
       } else {
-        if (process.env.NODE_ENV !== "production") {
+        if (process.env.NODE_ENV !== 'production') {
           console.log(`[API] fetchUserDetails...${id}`);
         }
 

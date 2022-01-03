@@ -1,16 +1,12 @@
-import firebaseAdmin from "src/firebaseAdmin";
-import { mapTeam } from "src/utilities/team";
-import { mapTeammate } from "src/utilities/teammate";
+import firebaseAdmin from 'src/firebaseAdmin';
+import { mapTeam } from 'src/utilities/team';
+import { mapTeammate } from 'src/utilities/teammate';
 
 export const getTeamDetails = async (teamId) => {
   let team = null;
 
   try {
-    const teamDoc = await firebaseAdmin
-      .firestore()
-      .collection("teams")
-      .doc(teamId)
-      .get();
+    const teamDoc = await firebaseAdmin.firestore().collection('teams').doc(teamId).get();
 
     if (teamDoc.exists) {
       team = { ...mapTeam(teamDoc.data(), teamDoc) };
@@ -27,14 +23,11 @@ export const getTeamUsers = async (teamId, limit = 25, page = 0) => {
   let teammates = [];
 
   try {
-    const teamsDocRef = firebaseAdmin
-      .firestore()
-      .collection("teams")
-      .doc(teamId);
+    const teamsDocRef = firebaseAdmin.firestore().collection('teams').doc(teamId);
     const teammatesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("teammates")
-      .where("team.ref", "==", teamsDocRef)
+      .collection('teammates')
+      .where('team.ref', '==', teamsDocRef)
       .limit(limit)
       .get();
 
@@ -59,9 +52,9 @@ export const getTeamRole = async (userId, teamId) => {
   try {
     const userTeamRolesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("user-roles")
-      .where("user.id", "==", userId)
-      .where("team.id", "==", teamId)
+      .collection('user-roles')
+      .where('user.id', '==', userId)
+      .where('team.id', '==', teamId)
       .limit(1)
       .get();
 
@@ -75,8 +68,8 @@ export const getTeamRole = async (userId, teamId) => {
   try {
     const rolesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("roles")
-      .where("id", "==", userTeamRole.role.id)
+      .collection('roles')
+      .where('id', '==', userTeamRole.role.id)
       .limit(1)
       .get();
 
@@ -101,8 +94,8 @@ export const getTeamRoles = async (teamId) => {
   try {
     const userTeamRolesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("user-roles")
-      .where("team.id", "==", teamId)
+      .collection('user-roles')
+      .where('team.id', '==', teamId)
       .get();
 
     if (!userTeamRolesSnapshot.empty) {
@@ -122,8 +115,8 @@ export const getTeamRoles = async (teamId) => {
   try {
     const rolesSnapshot = await firebaseAdmin
       .firestore()
-      .collection("roles")
-      .where("id", "in", Object.keys(roles))
+      .collection('roles')
+      .where('id', 'in', Object.keys(roles))
       .get();
 
     if (!rolesSnapshot.empty) {

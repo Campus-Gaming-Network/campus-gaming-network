@@ -1,13 +1,8 @@
 // Libraries
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import {
-  faCheck,
-  faFlag,
-  faEllipsisV,
-  faPencilAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { faCheck, faFlag, faEllipsisV, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import {
   Stack,
   Box,
@@ -27,9 +22,9 @@ import {
   MenuItem,
   IconButton,
   useBoolean,
-} from "@chakra-ui/react";
-import safeJsonStringify from "safe-json-stringify";
-import dynamic from "next/dynamic";
+} from '@chakra-ui/react';
+import safeJsonStringify from 'safe-json-stringify';
+import dynamic from 'next/dynamic';
 
 // Constants
 import {
@@ -38,40 +33,34 @@ import {
   USER_EMPTY_ACCOUNTS_TEXT,
   USER_EMPTY_UPCOMING_EVENTS_TEXT,
   USER_EMPTY_TEAMS_TEXT,
-} from "src/constants/user";
-import { ACCOUNTS, NOT_FOUND } from "src/constants/other";
+} from 'src/constants/user';
+import { ACCOUNTS, NOT_FOUND } from 'src/constants/other';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Article from "src/components/Article";
-import Link from "src/components/Link";
-import GameCover from "src/components/GameCover";
-import GameLink from "src/components/GameLink";
-import SliderLazyLoad from "src/components/SliderLazyLoad";
-import ButtonLink from "src/components/ButtonLink";
-import EmptyText from "src/components/EmptyText";
+import SiteLayout from 'src/components/SiteLayout';
+import Article from 'src/components/Article';
+import Link from 'src/components/Link';
+import GameCover from 'src/components/GameCover';
+import GameLink from 'src/components/GameLink';
+import SliderLazyLoad from 'src/components/SliderLazyLoad';
+import ButtonLink from 'src/components/ButtonLink';
+import EmptyText from 'src/components/EmptyText';
 
 // API
-import { getSchoolDetails } from "src/api/school";
-import { getUserDetails, getUserTeams } from "src/api/user";
+import { getSchoolDetails } from 'src/api/school';
+import { getUserDetails, getUserTeams } from 'src/api/user';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // Dynamic Components
-const TwitchEmbed = dynamic(() => import("src/components/TwitchEmbed"), {
+const TwitchEmbed = dynamic(() => import('src/components/TwitchEmbed'), {
   ssr: false,
 });
-const ReportEntityDialog = dynamic(
-  () => import("src/components/dialogs/ReportEntityDialog"),
-  {
-    ssr: false,
-  }
-);
-const AttendingEvents = dynamic(
-  () => import("src/components/AttendingEvents"),
-  { ssr: false }
-);
+const ReportEntityDialog = dynamic(() => import('src/components/dialogs/ReportEntityDialog'), {
+  ssr: false,
+});
+const AttendingEvents = dynamic(() => import('src/components/AttendingEvents'), { ssr: false });
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -104,32 +93,15 @@ export const getServerSideProps = async (context) => {
 
 const User = (props) => {
   const { authUser, isAuthenticated } = useAuth();
-  const isAuthenticatedUser = React.useMemo(
-    () => authUser && authUser.uid === props.user.id,
-    [authUser, props.user]
-  );
-  const [
-    isReportingUserDialogOpen,
-    setReportingUserDialogIsOpen,
-  ] = useBoolean();
-  const hasTeams = React.useMemo(
-    () => Boolean(props.teams) && props.teams.length > 0,
-    [props.teams]
-  );
+  const isAuthenticatedUser = React.useMemo(() => authUser && authUser.uid === props.user.id, [authUser, props.user]);
+  const [isReportingUserDialogOpen, setReportingUserDialogIsOpen] = useBoolean();
+  const hasTeams = React.useMemo(() => Boolean(props.teams) && props.teams.length > 0, [props.teams]);
 
   return (
     <SiteLayout meta={props.user.meta}>
       {isAuthenticatedUser ? (
         <Box pos="absolute" right={6} top={6}>
-          <Link
-            fontWeight="bold"
-            href="/edit-user"
-            p={2}
-            d="block"
-            bg="white"
-            rounded="lg"
-            boxShadow="sm"
-          >
+          <Link fontWeight="bold" href="/edit-user" p={2} d="block" bg="white" rounded="lg" boxShadow="sm">
             <Text as="span" pr={2}>
               <FontAwesomeIcon icon={faPencilAlt} size="sm" />
             </Text>
@@ -141,51 +113,20 @@ const User = (props) => {
       <Article>
         <Flex align="center" justify="center">
           <Box mt={{ base: -50, sm: -100, md: -135 }}>
-            <Box
-              p={1}
-              bg="white"
-              rounded="full"
-              boxShadow="sm"
-              borderWidth={2}
-              borderStyle="solid"
-            >
-              <Avatar
-                name={props.user.fullName}
-                title={props.user.fullName}
-                src={props.user.gravatarUrl}
-                size="2xl"
-              />
+            <Box p={1} bg="white" rounded="full" boxShadow="sm" borderWidth={2} borderStyle="solid">
+              <Avatar name={props.user.fullName} title={props.user.fullName} src={props.user.gravatarUrl} size="2xl" />
             </Box>
           </Box>
         </Flex>
         <Flex as="header" align="center" justify="space-between">
           <Box>
-            <Heading
-              as="h2"
-              fontSize="5xl"
-              fontWeight="bold"
-              pb={2}
-              display="flex"
-              alignItems="center"
-            >
+            <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2} display="flex" alignItems="center">
               {props.user.fullName}
             </Heading>
-            <Heading
-              as="h2"
-              fontSize="2xl"
-              fontWeight="normal"
-              fontStyle="italic"
-              display="flex"
-              alignItems="center"
-            >
+            <Heading as="h2" fontSize="2xl" fontWeight="normal" fontStyle="italic" display="flex" alignItems="center">
               {props.user.displayStatus}
               {Boolean(props.school) ? (
-                <Link
-                  href={`/school/${props.school.handle}`}
-                  color="brand.500"
-                  fontWeight={600}
-                  ml={2}
-                >
+                <Link href={`/school/${props.school.handle}`} color="brand.500" fontWeight={600} ml={2}>
                   {props.school.formattedName}
                 </Link>
               ) : null}
@@ -201,10 +142,7 @@ const User = (props) => {
                   aria-label="Options"
                 />
                 <MenuList fontSize="md">
-                  <MenuItem
-                    onClick={setReportingUserDialogIsOpen.on}
-                    icon={<FontAwesomeIcon icon={faFlag} />}
-                  >
+                  <MenuItem onClick={setReportingUserDialogIsOpen.on} icon={<FontAwesomeIcon icon={faFlag} />}>
                     Report {props.user.fullName}
                   </MenuItem>
                 </MenuList>
@@ -286,26 +224,16 @@ const User = (props) => {
             <Heading as="h3" fontSize="xl">
               Currently Playing
             </Heading>
-            <GameList
-              games={props.user.currentlyPlaying}
-              emptyText={USER_EMPTY_CURRENTLY_PLAYING_TEXT}
-            />
+            <GameList games={props.user.currentlyPlaying} emptyText={USER_EMPTY_CURRENTLY_PLAYING_TEXT} />
           </Stack>
           <Stack as="section" spacing={4}>
             <Heading as="h3" fontSize="xl">
               Favorite Games
             </Heading>
-            <GameList
-              games={props.user.favoriteGames}
-              emptyText={USER_EMPTY_FAVORITE_GAMES_TEXT}
-            />
+            <GameList games={props.user.favoriteGames} emptyText={USER_EMPTY_FAVORITE_GAMES_TEXT} />
           </Stack>
           <SliderLazyLoad>
-            <AttendingEvents
-              user={props.user}
-              title="Events Attending"
-              emptyText={USER_EMPTY_UPCOMING_EVENTS_TEXT}
-            />
+            <AttendingEvents user={props.user} title="Events Attending" emptyText={USER_EMPTY_UPCOMING_EVENTS_TEXT} />
           </SliderLazyLoad>
           <Stack as="section" spacing={4}>
             <Heading as="h3" fontSize="xl">
@@ -317,12 +245,7 @@ const User = (props) => {
               <List>
                 {props.teams.map((team) => (
                   <ListItem key={team.id}>
-                    <Link
-                      href={`/team/${team.id}`}
-                      color="brand.500"
-                      fontWeight={600}
-                      fontSize="md"
-                    >
+                    <Link href={`/team/${team.id}`} color="brand.500" fontWeight={600} fontSize="md">
                       {team.displayName}
                     </Link>
                   </ListItem>
@@ -336,7 +259,7 @@ const User = (props) => {
       {isAuthenticated ? (
         <ReportEntityDialog
           entity={{
-            type: "users",
+            type: 'users',
             id: props.user.id,
           }}
           pageProps={props}
@@ -359,14 +282,7 @@ const AccountsList = (props) => {
           const account = ACCOUNTS[key];
           const value = props.user[key];
 
-          return (
-            <AccountsListItem
-              key={key}
-              icon={account.icon}
-              label={account.label}
-              value={value}
-            />
-          );
+          return <AccountsListItem key={key} icon={account.icon} label={account.label} value={value} />;
         })}
       </List>
     );
@@ -391,9 +307,9 @@ const AccountsListItem = (props) => {
   const handleCopy = (label) => {
     onCopy();
     toast({
-      title: "Copied!",
+      title: 'Copied!',
       description: `${label} value copied to clipboard.`,
-      status: "info",
+      status: 'info',
       duration: 1500,
     });
   };
@@ -432,7 +348,7 @@ const AccountsListItem = (props) => {
         </Box>
         <Box pl={4} textAlign="left">
           <Text fontSize="sm" fontWeight="normal" color="gray.600">
-            {hasCopied ? "Copied!" : props.label}
+            {hasCopied ? 'Copied!' : props.label}
           </Text>
           <Text fontSize="sm" fontWeight="bold">
             {props.value}
@@ -448,18 +364,13 @@ const AccountsListItem = (props) => {
 
 const GameList = (props) => {
   if (!props.games || props.games.length === 0) {
-    return <EmptyText>{props.emptyText || "No games"}</EmptyText>;
+    return <EmptyText>{props.emptyText || 'No games'}</EmptyText>;
   }
 
   return (
     <List display="flex" flexWrap="wrap">
       {props.games.map((game) => (
-        <GameListItem
-          key={game.slug}
-          name={game.name}
-          slug={game.slug}
-          url={game.cover ? game.cover.url : null}
-        />
+        <GameListItem key={game.slug} name={game.name} slug={game.slug} url={game.cover ? game.cover.url : null} />
       ))}
     </List>
   );

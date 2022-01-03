@@ -1,16 +1,11 @@
 // Libraries
-import React from "react";
-import { Box } from "@chakra-ui/react";
+import React from 'react';
+import { Box } from '@chakra-ui/react';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Article
 
-const Article = ({
-  fullWidthDesktop = false,
-  fullWidthMobile = false,
-  children,
-  ...rest
-}) => {
+const Article = ({ fullWidthDesktop = false, fullWidthMobile = false, children, ...rest }) => {
   return (
     <Box
       as="article"
@@ -19,9 +14,9 @@ const Article = ({
       mx="auto"
       fontSize="xl"
       maxW={{
-        base: "100%",
-        sm: fullWidthDesktop ? "90%" : "xl",
-        md: fullWidthDesktop ? "90%" : "3xl",
+        base: '100%',
+        sm: fullWidthDesktop ? '90%' : 'xl',
+        md: fullWidthDesktop ? '90%' : '3xl',
       }}
       {...rest}
     >

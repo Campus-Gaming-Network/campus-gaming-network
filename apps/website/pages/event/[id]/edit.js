@@ -1,32 +1,32 @@
 // Libraries
-import React from "react";
-import { useToast, useBoolean } from "@chakra-ui/react";
-import { geocodeByAddress } from "react-places-autocomplete/dist/utils";
-import { DateTime } from "luxon";
-import { useRouter } from "next/router";
-import nookies from "nookies";
-import { doc, updateDoc, Timestamp } from "firebase/firestore";
+import React from 'react';
+import { useToast, useBoolean } from '@chakra-ui/react';
+import { geocodeByAddress } from 'react-places-autocomplete/dist/utils';
+import { DateTime } from 'luxon';
+import { useRouter } from 'next/router';
+import nookies from 'nookies';
+import { doc, updateDoc, Timestamp } from 'firebase/firestore';
 
 // Other
-import firebaseAdmin from "src/firebaseAdmin";
-import { db } from "src/firebase";
+import firebaseAdmin from 'src/firebaseAdmin';
+import { db } from 'src/firebase';
 
 // Utilities
-import { validateCreateEvent } from "src/utilities/validation";
+import { validateCreateEvent } from 'src/utilities/validation';
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
-import { DASHED_DATE_TIME } from "src/constants/dateTime";
-import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { COLLECTIONS } from 'src/constants/firebase';
+import { DASHED_DATE_TIME } from 'src/constants/dateTime';
+import { COOKIES, NOT_FOUND } from 'src/constants/other';
 
 // API
-import { getEventDetails } from "src/api/event";
+import { getEventDetails } from 'src/api/event';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 // Components
-import EventForm from "src/components/EventForm";
+import EventForm from 'src/components/EventForm';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -95,31 +95,21 @@ const EditEvent = (props) => {
         console.error({ error });
       });
 
-    let startDateTime = "";
-    let endDateTime = "";
+    let startDateTime = '';
+    let endDateTime = '';
 
-    if (
-      formState.startMonth &&
-      formState.startDay &&
-      formState.startYear &&
-      formState.startTime
-    ) {
+    if (formState.startMonth && formState.startDay && formState.startYear && formState.startTime) {
       const formattedStartdate = DateTime.fromFormat(
         `${formState.startMonth}-${formState.startDay}-${formState.startYear} ${formState.startTime}`,
-        DASHED_DATE_TIME
+        DASHED_DATE_TIME,
       );
       startDateTime = Timestamp.fromDate(new Date(formattedStartdate));
     }
 
-    if (
-      formState.endMonth &&
-      formState.endDay &&
-      formState.endYear &&
-      formState.endTime
-    ) {
+    if (formState.endMonth && formState.endDay && formState.endYear && formState.endTime) {
       const formattedEnddate = DateTime.fromFormat(
         `${formState.endMonth}-${formState.endDay}-${formState.endYear} ${formState.endTime}`,
-        DASHED_DATE_TIME
+        DASHED_DATE_TIME,
       );
       endDateTime = Timestamp.fromDate(new Date(formattedEnddate));
     }
@@ -139,9 +129,9 @@ const EditEvent = (props) => {
     updateDoc(doc(db, COLLECTIONS.EVENTS, props.id), eventData)
       .then(() => {
         toast({
-          title: "Event updated.",
-          description: "Your event has been updated. You will be redirected...",
-          status: "success",
+          title: 'Event updated.',
+          description: 'Your event has been updated. You will be redirected...',
+          status: 'success',
           isClosable: true,
         });
         setTimeout(() => {
@@ -151,22 +141,16 @@ const EditEvent = (props) => {
       .catch((error) => {
         setIsSubmitting.off();
         toast({
-          title: "An error occurred.",
+          title: 'An error occurred.',
           description: error.message,
-          status: "error",
+          status: 'error',
           isClosable: true,
         });
       });
   };
 
   return (
-    <EventForm
-      state="edit"
-      event={props.event}
-      onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
-      errors={errors}
-    />
+    <EventForm state="edit" event={props.event} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />
   );
 };
 

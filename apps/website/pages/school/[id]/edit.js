@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Input,
   InputGroup,
@@ -17,30 +17,25 @@ import {
   FormHelperText,
   Image,
   useBoolean,
-} from "@chakra-ui/react";
-import { useDropzone } from "react-dropzone";
-import nookies from "nookies";
-import safeJsonStringify from "safe-json-stringify";
-import { doc, updateDoc } from "firebase/firestore";
+} from '@chakra-ui/react';
+import { useDropzone } from 'react-dropzone';
+import nookies from 'nookies';
+import safeJsonStringify from 'safe-json-stringify';
+import { doc, updateDoc } from 'firebase/firestore';
 
 // Constants
-import { SCHOOL_ACCOUNTS } from "src/constants/school";
-import { DROPZONE_STYLES } from "src/constants/styles";
-import { COLLECTIONS } from "src/constants/firebase";
-import {
-  ACCOUNTS,
-  COOKIES,
-  PRODUCTION_URL,
-  NOT_FOUND,
-} from "src/constants/other";
+import { SCHOOL_ACCOUNTS } from 'src/constants/school';
+import { DROPZONE_STYLES } from 'src/constants/styles';
+import { COLLECTIONS } from 'src/constants/firebase';
+import { ACCOUNTS, COOKIES, PRODUCTION_URL, NOT_FOUND } from 'src/constants/other';
 
 // Other
 // import firebase from "src/firebase";
-import firebaseAdmin from "src/firebaseAdmin";
+import firebaseAdmin from 'src/firebaseAdmin';
 
 // Components
-import SiteLayout from "src/components/SiteLayout";
-import Article from "src/components/Article";
+import SiteLayout from 'src/components/SiteLayout';
+import Article from 'src/components/Article';
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -76,11 +71,11 @@ export const getServerSideProps = async (context) => {
 // Form Reducer
 
 const initialFormState = {
-  description: "",
-  email: "",
-  website: "",
-  phone: "",
-  logo: "",
+  description: '',
+  email: '',
+  website: '',
+  phone: '',
+  logo: '',
   file: null,
 };
 
@@ -105,19 +100,19 @@ const EditSchool = (props) => {
 
   const prefillForm = () => {
     dispatch({
-      field: "description",
+      field: 'description',
       value: props.school.description || initialFormState.description,
     });
     dispatch({
-      field: "website",
+      field: 'website',
       value: props.school.website || initialFormState.website,
     });
     dispatch({
-      field: "email",
+      field: 'email',
       value: props.school.email || initialFormState.email,
     });
     dispatch({
-      field: "phone",
+      field: 'phone',
       value: props.school.phone || initialFormState.phone,
     });
     setHasPrefilledForm.on();
@@ -139,24 +134,21 @@ const EditSchool = (props) => {
 
     if (state.file) {
       const storageRef = firebase.storage().ref();
-      const uploadTask = storageRef
-        .child(`schools/${props.school.id}/images/logo.jpg`)
-        .put(state.file);
+      const uploadTask = storageRef.child(`schools/${props.school.id}/images/logo.jpg`).put(state.file);
 
       uploadTask.on(
-        "state_changed",
+        'state_changed',
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
           console.log(`Upload is ${progress}% done`);
 
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED:
-              console.log("Upload is paused");
+              console.log('Upload is paused');
               break;
             case firebase.storage.TaskState.RUNNING:
-              console.log("Upload is running");
+              console.log('Upload is running');
               break;
             default:
               break;
@@ -164,9 +156,9 @@ const EditSchool = (props) => {
         },
         (error) => {
           toast({
-            title: "An error occurred.",
+            title: 'An error occurred.',
             description: error,
-            status: "error",
+            status: 'error',
             isClosable: true,
           });
         },
@@ -174,15 +166,15 @@ const EditSchool = (props) => {
           // Handle successful uploads on complete
           // For instance, get the download URL: https://storage.googleapis.com/...
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log("File available at", downloadURL);
+            console.log('File available at', downloadURL);
           });
           toast({
-            title: "Logo updated.",
-            description: "Your school logo has been updated.",
-            status: "success",
+            title: 'Logo updated.',
+            description: 'Your school logo has been updated.',
+            status: 'success',
             isClosable: true,
           });
-        }
+        },
       );
     }
 
@@ -190,18 +182,18 @@ const EditSchool = (props) => {
       .then(() => {
         setIsSubmitting.off();
         toast({
-          title: "School updated.",
-          description: "Your school has been updated.",
-          status: "success",
+          title: 'School updated.',
+          description: 'Your school has been updated.',
+          status: 'success',
           isClosable: true,
         });
       })
       .catch((error) => {
         setIsSubmitting.off();
         toast({
-          title: "An error occurred.",
+          title: 'An error occurred.',
           description: error.message,
-          status: "error",
+          status: 'error',
           isClosable: true,
         });
       });
@@ -225,15 +217,8 @@ const EditSchool = (props) => {
           <Heading as="h2" size="2xl">
             Edit School
           </Heading>
-          <Button
-            colorScheme="brand"
-            type="submit"
-            size="lg"
-            w="full"
-            mt={-12}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Update School"}
+          <Button colorScheme="brand" type="submit" size="lg" w="full" mt={-12} disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Update School'}
           </Button>
           <DetailSection
             dispatch={dispatch}
@@ -253,18 +238,11 @@ const EditSchool = (props) => {
                 ...acc,
                 [cur]: state[cur],
               }),
-              {}
+              {},
             )}
           />
-          <Button
-            colorScheme="brand"
-            type="submit"
-            size="lg"
-            w="full"
-            mt={-12}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Update School"}
+          <Button colorScheme="brand" type="submit" size="lg" w="full" mt={-12} disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Update School'}
           </Button>
         </Stack>
       </Article>
@@ -274,15 +252,9 @@ const EditSchool = (props) => {
 
 const DetailSection = React.memo((props) => {
   const [thumbnail, setThumbnail] = React.useState(null);
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragAccept,
-    isDragReject,
-  } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     multiple: false,
-    accept: "image/jpeg, image/png",
+    accept: 'image/jpeg, image/png',
     onDrop: ([file]) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -298,7 +270,7 @@ const DetailSection = React.memo((props) => {
       };
       console.log({ test });
       props.dispatch({
-        field: "file",
+        field: 'file',
         value: file,
       });
       setThumbnail({
@@ -315,7 +287,7 @@ const DetailSection = React.memo((props) => {
       ...(isDragAccept ? DROPZONE_STYLES.ACCEPT : {}),
       ...(isDragReject ? DROPZONE_STYLES.REJECT : {}),
     }),
-    [isDragActive, isDragReject, isDragAccept]
+    [isDragActive, isDragReject, isDragAccept],
   );
 
   React.useEffect(
@@ -325,7 +297,7 @@ const DetailSection = React.memo((props) => {
         URL.revokeObjectURL(props.file.preview);
       }
     },
-    [props.file]
+    [props.file],
   );
 
   return (
@@ -334,9 +306,7 @@ const DetailSection = React.memo((props) => {
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Details
         </Text>
-        <Text color="gray.500">
-          Basic information about {props.schoolName}.
-        </Text>
+        <Text color="gray.500">Basic information about {props.schoolName}.</Text>
       </Box>
       <Stack spacing={6} p={8}>
         <FormControl>
@@ -348,9 +318,7 @@ const DetailSection = React.memo((props) => {
             {isDragActive ? (
               <Text>Drop the files here ...</Text>
             ) : (
-              <Text>
-                Drag 'n' drop some files here, or click to select files
-              </Text>
+              <Text>Drag 'n' drop some files here, or click to select files</Text>
             )}
           </Box>
           {thumbnail ? (
@@ -425,9 +393,7 @@ const DetailSection = React.memo((props) => {
             h="150px"
             aria-describedby="bio-helper-text"
           />
-          <FormHelperText id="bio-helper-text">
-            Limit 10,000 characters.
-          </FormHelperText>
+          <FormHelperText id="bio-helper-text">Limit 10,000 characters.</FormHelperText>
         </FormControl>
       </Stack>
     </Card>
@@ -441,9 +407,7 @@ const SocialAccountsSection = React.memo((props) => {
         <Text as="legend" fontWeight="bold" fontSize="2xl">
           Social Accounts
         </Text>
-        <Text color="gray.500">
-          Other places where people can connect with {props.schoolName}.
-        </Text>
+        <Text color="gray.500">Other places where people can connect with {props.schoolName}.</Text>
       </Box>
       <Stack spacing={6} p={8}>
         {Object.keys(SCHOOL_ACCOUNTS).map((id) => {
@@ -460,9 +424,7 @@ const SocialAccountsSection = React.memo((props) => {
                     children={
                       <React.Fragment>
                         <FontAwesomeIcon icon={account.icon} />
-                        {Boolean(account.url) ? (
-                          <Text ml={4}>{account.url}</Text>
-                        ) : null}
+                        {Boolean(account.url) ? <Text ml={4}>{account.url}</Text> : null}
                       </React.Fragment>
                     }
                   />

@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { useRouter } from "next/router";
+import React from 'react';
+import { useRouter } from 'next/router';
 import {
   Flex,
   Text,
@@ -16,32 +16,26 @@ import {
   Stack,
   MenuGroup,
   useBoolean,
-} from "@chakra-ui/react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserCircle,
-  faSchool,
-  faPlus,
-  faTrophy,
-  faUserFriends,
-} from "@fortawesome/free-solid-svg-icons";
-import { faCalendarAlt } from "@fortawesome/free-regular-svg-icons";
-import { signOut } from "firebase/auth";
+} from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle, faSchool, faPlus, faTrophy, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
+import { signOut } from 'firebase/auth';
 
 // Components
-import NavWrapper from "src/components/NavWrapper";
-import SchoolSearch from "src/components/SchoolSearch";
-import SchoolLogo from "src/components/SchoolLogo";
-import Logo from "src/components/Logo";
-import Link from "src/components/Link";
-import ButtonLink from "src/components/ButtonLink";
+import NavWrapper from 'src/components/NavWrapper';
+import SchoolSearch from 'src/components/SchoolSearch';
+import SchoolLogo from 'src/components/SchoolLogo';
+import Logo from 'src/components/Logo';
+import Link from 'src/components/Link';
+import ButtonLink from 'src/components/ButtonLink';
 
 // Other
-import { auth } from "src/firebase";
+import { auth } from 'src/firebase';
 
 // Providers
-import { useAuth } from "src/providers/auth";
+import { useAuth } from 'src/providers/auth';
 
 ////////////////////////////////////////////////////////////////////////////////
 // AuthenticatedNav
@@ -52,7 +46,7 @@ const AuthenticatedNav = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useBoolean();
 
   const handleLogout = () => {
-    signOut(auth).then(() => router.push("/"));
+    signOut(auth).then(() => router.push('/'));
   };
 
   const onSchoolSelect = (selectedSchool) => {
@@ -79,13 +73,10 @@ const AuthenticatedNav = (props) => {
         width="auto"
         alignItems="center"
         flexGrow={{ base: 0, md: 1 }}
-        justifyContent={{ base: "flex-start", md: "flex-end" }}
+        justifyContent={{ base: 'flex-start', md: 'flex-end' }}
       >
         <Menu>
-          <Tooltip
-            label="Creation is disabled until email is verified."
-            isDisabled={authUser.emailVerified}
-          >
+          <Tooltip label="Creation is disabled until email is verified." isDisabled={authUser.emailVerified}>
             <MenuButton
               as={Button}
               isDisabled={!authUser.emailVerified}
@@ -103,14 +94,7 @@ const AuthenticatedNav = (props) => {
                 as={Link}
                 href="/create-event"
                 icon={
-                  <Flex
-                    align="center"
-                    justify="center"
-                    bg="gray.200"
-                    rounded="full"
-                    p={2}
-                    fontSize="lg"
-                  >
+                  <Flex align="center" justify="center" bg="gray.200" rounded="full" p={2} fontSize="lg">
                     <FontAwesomeIcon icon={faCalendarAlt} />
                   </Flex>
                 }
@@ -123,14 +107,7 @@ const AuthenticatedNav = (props) => {
                 href="/create-tournament"
                 isDisabled
                 icon={
-                  <Flex
-                    align="center"
-                    justify="center"
-                    bg="gray.200"
-                    rounded="full"
-                    p={2}
-                    fontSize="lg"
-                  >
+                  <Flex align="center" justify="center" bg="gray.200" rounded="full" p={2} fontSize="lg">
                     <FontAwesomeIcon icon={faTrophy} />
                   </Flex>
                 }
@@ -142,14 +119,7 @@ const AuthenticatedNav = (props) => {
                 as={Link}
                 href="/create-team"
                 icon={
-                  <Flex
-                    align="center"
-                    justify="center"
-                    bg="gray.200"
-                    rounded="full"
-                    p={2}
-                    fontSize="lg"
-                  >
+                  <Flex align="center" justify="center" bg="gray.200" rounded="full" p={2} fontSize="lg">
                     <FontAwesomeIcon icon={faUserFriends} />
                   </Flex>
                 }
@@ -167,11 +137,11 @@ const AuthenticatedNav = (props) => {
             alignItems="center"
             justifyContent="center"
             _focus={{
-              bg: "gray.900",
-              boxShadow: "outline",
+              bg: 'gray.900',
+              boxShadow: 'outline',
             }}
             _hover={{
-              bg: "gray.900",
+              bg: 'gray.900',
             }}
             px={2}
             rounded="md"
@@ -225,14 +195,7 @@ const AuthenticatedNav = (props) => {
                   htmlWidth={6}
                   mr={2}
                   fallback={
-                    <Flex
-                      alignItems="center"
-                      justifyContent="center"
-                      color="gray.600"
-                      h={6}
-                      w={6}
-                      mr={2}
-                    >
+                    <Flex alignItems="center" justifyContent="center" color="gray.600" h={6} w={6} mr={2}>
                       <FontAwesomeIcon icon={faSchool} />
                     </Flex>
                   }
@@ -250,7 +213,7 @@ const AuthenticatedNav = (props) => {
             </MenuGroup>
             <MenuDivider />
             <MenuGroup title="Settings">
-              <MenuItem as={Link} href={"/edit-user"}>
+              <MenuItem as={Link} href={'/edit-user'}>
                 Edit Profile
               </MenuItem>
             </MenuGroup>

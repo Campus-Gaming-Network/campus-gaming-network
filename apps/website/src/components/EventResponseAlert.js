@@ -1,6 +1,6 @@
 // Libraries
-import React from "react";
-import { Stack, Button, Text, Alert } from "@chakra-ui/react";
+import React from 'react';
+import { Stack, Button, Text, Alert } from '@chakra-ui/react';
 
 ////////////////////////////////////////////////////////////////////////////////
 // EventResponseAlert
@@ -20,12 +20,7 @@ const EventResponseAlert = (props) => {
         <Text fontWeight="bold" fontSize="2xl" color="green.500">
           You’re going!
         </Text>
-        <Button
-          onClick={props.onClick}
-          variant="link"
-          color="green.500"
-          display="inline"
-        >
+        <Button onClick={props.onClick} variant="link" color="green.500" display="inline">
           Cancel your RSVP
         </Button>
       </Stack>

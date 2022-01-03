@@ -1,25 +1,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Source: https://colinhacks.com/essays/nextjs-firebase-authentication
 
-import React from "react";
-import nookies from "nookies";
-import { onIdTokenChanged } from "firebase/auth";
-import { getDoc, doc } from "firebase/firestore";
+import React from 'react';
+import nookies from 'nookies';
+import { onIdTokenChanged } from 'firebase/auth';
+import { getDoc, doc } from 'firebase/firestore';
 
 // Other
-import { db, auth } from "src/firebase";
+import { db, auth } from 'src/firebase';
 
 // Constants
-import { COOKIES } from "src/constants/other";
-import {
-  AUTH_STATUS,
-  BASE_AUTH_CONTEXT,
-  AUTH_REFRESH_INTERVAL,
-} from "src/constants/auth";
+import { COOKIES } from 'src/constants/other';
+import { AUTH_STATUS, BASE_AUTH_CONTEXT, AUTH_REFRESH_INTERVAL } from 'src/constants/auth';
 
 // Utilities
-import { mapUser } from "src/utilities/user";
-import { mapSchool } from "src/utilities/school";
+import { mapUser } from 'src/utilities/user';
+import { mapSchool } from 'src/utilities/school';
 
 ////////////////////////////////////////////////////////////////////////////////
 // AuthContext
@@ -34,26 +30,21 @@ export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = React.useState(null);
   const [user, setUser] = React.useState(null);
   const [school, setSchool] = React.useState(null);
-  const isAuthenticated = React.useMemo(
-    () => authStatus === AUTH_STATUS.AUTHENTICATED,
-    [authStatus]
-  );
+  const isAuthenticated = React.useMemo(() => authStatus === AUTH_STATUS.AUTHENTICATED, [authStatus]);
   const isAuthenticating = React.useMemo(
-    () =>
-      authStatus === AUTH_STATUS.AUTHENTICATING ||
-      authStatus === AUTH_STATUS.IDLE,
-    [authStatus]
+    () => authStatus === AUTH_STATUS.AUTHENTICATING || authStatus === AUTH_STATUS.IDLE,
+    [authStatus],
   );
 
   React.useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       console.log(`[AUTH] Status -> ${authStatus}`);
     }
   }, [authStatus, process.env.NODE_ENV]);
 
   const clearAuth = () => {
-    if (process.env.NODE_ENV !== "production") {
-      console.log("[AUTH] Clearing auth.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[AUTH] Clearing auth.');
     }
 
     setAuthStatus(AUTH_STATUS.UNAUTHENTICATED);
@@ -62,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     setSchool(null);
 
     nookies.destroy(null, COOKIES.AUTH_TOKEN);
-    nookies.set(null, COOKIES.AUTH_TOKEN, "", { path: COOKIES.PATH });
+    nookies.set(null, COOKIES.AUTH_TOKEN, '', { path: COOKIES.PATH });
   };
 
   const setAuth = (token) => {
@@ -74,25 +65,25 @@ export const AuthProvider = ({ children }) => {
   React.useEffect(() => {
     setAuthStatus(AUTH_STATUS.AUTHENTICATING);
 
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       window.nookies = nookies;
     }
 
     return onIdTokenChanged(auth, async (authUser) => {
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[AUTH] Token changed!");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[AUTH] Token changed!');
       }
 
       if (!Boolean(authUser)) {
-        if (process.env.NODE_ENV !== "production") {
-          console.log("[AUTH] No auth user found.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[AUTH] No auth user found.');
         }
         clearAuth();
         return;
       }
 
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[AUTH] Updating token.");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[AUTH] Updating token.');
       }
 
       let token;
@@ -111,7 +102,7 @@ export const AuthProvider = ({ children }) => {
         let userDoc;
 
         try {
-          userDoc = await getDoc(doc(db, "users", authUser.uid));
+          userDoc = await getDoc(doc(db, 'users', authUser.uid));
         } catch (error) {
           console.error(`[AUTH] Error getting user.`, error);
           clearAuth();
@@ -122,9 +113,7 @@ export const AuthProvider = ({ children }) => {
           setUser({ ...mapUser(userDoc.data(), userDoc) });
 
           try {
-            const schoolDoc = await getDoc(
-              doc(db, "schools", userDoc.data().school.id)
-            );
+            const schoolDoc = await getDoc(doc(db, 'schools', userDoc.data().school.id));
 
             if (schoolDoc.exists) {
               setSchool({ ...mapSchool(schoolDoc.data(), schoolDoc) });
@@ -156,8 +145,8 @@ export const AuthProvider = ({ children }) => {
   // Force refresh the token
   React.useEffect(() => {
     const handle = setInterval(async () => {
-      if (process.env.NODE_ENV !== "production") {
-        console.log("[AUTH] Refreshing token.");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[AUTH] Refreshing token.');
       }
 
       const authUser = auth.currentUser;
@@ -170,8 +159,8 @@ export const AuthProvider = ({ children }) => {
           clearAuth();
         }
       } else {
-        if (process.env.NODE_ENV !== "production") {
-          console.log("[AUTH] No auth user found.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[AUTH] No auth user found.');
         }
         clearAuth();
       }
