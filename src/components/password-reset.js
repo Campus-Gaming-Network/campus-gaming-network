@@ -21,10 +21,10 @@ import {
   confirmPasswordReset,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { validatePasswordReset } from "@campus-gaming-network/tools";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
-import { validatePasswordReset } from "src/utilities/validation";
 
 // Other
 import { auth } from "src/firebase";
@@ -63,11 +63,14 @@ const PasswordReset = (props) => {
 
     setIsChangingPassword.on();
 
-    const { isValid, errors } = validatePasswordReset(fields);
+    const { error } = validatePasswordReset(fields);
 
-    setErrors(errors);
-
-    if (!isValid) {
+    if (error) {
+      const errors = error.details.reduce(
+        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
+        {}
+      );
+      setErrors(errors);
       setIsChangingPassword.off();
       window.scrollTo(0, 0);
       return;

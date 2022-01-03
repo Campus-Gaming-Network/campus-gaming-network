@@ -29,6 +29,7 @@ import {
   getIdToken,
 } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { validateSignUp } from "@campus-gaming-network/tools";
 
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
@@ -120,14 +121,17 @@ const Signup = () => {
 
     setIsSubmitting.on();
 
-    const { isValid, errors } = validateSignUp({
+    const { error } = validateSignUp({
       ...formState,
       school: formState.school.id,
     });
 
-    setErrors(errors);
-
-    if (!isValid) {
+    if (error) {
+      const errors = error.details.reduce(
+        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
+        {}
+      );
+      setErrors(errors);
       setIsSubmitting.off();
       window.scrollTo(0, 0);
       return;
