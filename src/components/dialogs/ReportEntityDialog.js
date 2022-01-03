@@ -20,9 +20,12 @@ import {
 import safeJsonStringify from "safe-json-stringify";
 import { doc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
+import {
+  validateReportEntity,
+  MAX_REPORT_REASON_LENGTH,
+} from "@campus-gaming-network/tools";
 
 // Utilities
-import { validateReportEntity } from "src/utilities/validation";
 import { sanitizePrivateProperties } from "src/utilities/other";
 
 // Constants
@@ -30,8 +33,6 @@ import { CALLABLES } from "src/constants/firebase";
 
 // Other
 import { db, functions } from "src/firebase";
-
-const MAX_REASON_LENGTH = 5000;
 
 ////////////////////////////////////////////////////////////////////////////
 // ReportEntityDialog
@@ -44,16 +45,21 @@ const ReportEntityDialog = (props) => {
   const [errors, setErrors] = React.useState({});
   const reasonCharactersRemaining = React.useMemo(
     () =>
-      Boolean(reason) ? MAX_REASON_LENGTH - reason.length : MAX_REASON_LENGTH,
+      Boolean(reason)
+        ? MAX_REPORT_REASON_LENGTH - reason.length
+        : MAX_REPORT_REASON_LENGTH,
     [reason]
   );
 
   const handleSubmit = async () => {
-    const { isValid, errors } = validateReportEntity({ reason });
+    const { error } = validateReportEntity({ reason });
 
-    setErrors(errors);
-
-    if (!isValid) {
+    if (error) {
+      const errors = error.details.reduce(
+        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
+        {}
+      );
+      setErrors(errors);
       return;
     }
 
@@ -140,7 +146,7 @@ const ReportEntityDialog = (props) => {
             />
             <FormHelperText id="description-helper-text">
               Explain your reason for reporting in fewer than{" "}
-              {MAX_REASON_LENGTH.toLocaleString()} characters.{" "}
+              {MAX_REPORT_REASON_LENGTH.toLocaleString()} characters.{" "}
               <Text
                 as="span"
                 color={reasonCharactersRemaining <= 0 ? "red.500" : undefined}

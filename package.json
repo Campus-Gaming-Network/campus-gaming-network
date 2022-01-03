@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@campus-gaming-network/tools": "^2.0.104",
+    "@campus-gaming-network/tools": "^2.0.105",
     "@chakra-ui/icons": "^1.0.1",
     "@chakra-ui/react": "^1.4.0",
     "@emotion/react": "^11.1.5",
