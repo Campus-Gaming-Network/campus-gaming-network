@@ -43,7 +43,6 @@ import {
 
 // Utilities
 import { createGravatarHash } from "src/utilities/user";
-import { validateSignUp } from "src/utilities/validation";
 
 // Components
 import Article from "src/components/Article";
