@@ -1,35 +1,20 @@
 {
   "name": "utils",
   "version": "0.0.0",
-  "description": "A number of utilities and constants used across Campus Gaming Network applications.",
+  "private": true,
   "main": "dist/index.js",
+  "source": "src/index.ts",
   "types": "dist/index.d.ts",
-  "prepublish": "tsc",
-  "scripts": {
-    "test": "jest --verbose --config jestconfig.json",
-    "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "tslint -p tsconfig.json",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
-    "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags"
-  },
   "files": [
     "dist/**/*"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Campus-Gaming-Network/cgn-tools.git"
+  "scripts": {
+    "test": "jest --verbose --config jestconfig.json",
+    "dev": "tsc -w",
+    "build": "tsc",
+    "lint": "tslint -p tsconfig.json",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
-  "keywords": [],
-  "author": "Campus Gaming Network",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Campus-Gaming-Network/cgn-tools/issues"
-  },
-  "homepage": "https://github.com/Campus-Gaming-Network/cgn-tools#readme",
   "devDependencies": {
     "@firebase/firestore-types": "^2.5.0",
     "@types/bad-words": "^3.0.1",
@@ -43,10 +28,8 @@
     "@types/md5": "^2.3.1",
     "@types/node": "^16.9.1",
     "jest": "^27.3.1",
-    "prettier": "^2.3.2",
     "ts-jest": "^27.0.7",
-    "tslint": "^6.1.3",
-    "tslint-config-prettier": "^1.18.0"
+    "tslint": "^6.1.3"
   },
   "dependencies": {
     "bad-words": "^3.0.4",

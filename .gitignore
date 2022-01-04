@@ -55,9 +55,6 @@ npm-debug.*
 web-build/
 app.config.js
 
-# prettier
-.prettierignore
-
 # apps/cloud-functions
 apps/cloud-functions/functions/lib/
 

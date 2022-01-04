@@ -1,5 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "start": "ENV=development expo start",
     "android": "ENV=development expo start --android",
@@ -37,6 +39,5 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
-  },
-  "private": true
+  }
 }
