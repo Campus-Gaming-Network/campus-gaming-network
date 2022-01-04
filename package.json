@@ -18,6 +18,8 @@
     "turbo": "latest"
   },
   "turbo": {
+    "baseBranch": "origin/main",
+    "npmClient": "npm",
     "pipeline": {
       "build": {
         "dependsOn": [
