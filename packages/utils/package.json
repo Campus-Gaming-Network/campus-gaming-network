@@ -11,7 +11,7 @@
   "scripts": {
     "test": "jest --verbose --config jestconfig.json",
     "dev": "tsc -w",
-    "build": "tsc",
+    "build": "npx tsc",
     "lint": "tslint -p tsconfig.json",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
