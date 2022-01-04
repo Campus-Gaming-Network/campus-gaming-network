@@ -793,6 +793,8 @@ export const sanitizePrivateProperties = (obj: { [key: string]: any }): { [key: 
 };
 
 export const cleanObjectOfBadWords = (obj: any): any => {
+  const keysToClean: string[] = ['meta', 'school', 'user', 'event', 'twitter', 'og', 'team'];
+
   for (const prop in obj) {
     if (obj.hasOwnProperty(prop) && !prop.startsWith('_')) {
       const value = obj[prop];
@@ -802,7 +804,7 @@ export const cleanObjectOfBadWords = (obj: any): any => {
       if (typeof value === 'string' && Boolean(value) && value.trim() !== '') {
         obj[prop] = cleanBadWords(value);
       } else if (
-        ['meta', 'school', 'user', 'event', 'twitter', 'og', 'team'].includes(prop) ||
+        keysToClean.includes(prop) ||
         typeof value === 'object'
       ) {
         cleanObjectOfBadWords(value);
@@ -949,7 +951,7 @@ export const getYears = (min = 2020, max = 2020, options = { reverse: false }): 
     return years;
   }
 
-  years = [...range(min, max).map((year) => year.toString())];
+  years = [...range(min, max).map((year: number) => year.toString())];
 
   if (options.reverse) {
     years = [...years.reverse()];
@@ -981,8 +983,8 @@ export const getClosestTimeByN = (hour: number, minutes: number, n: number): str
   return `${_hour}:${_minutes}`;
 };
 export const getTimes = (options = { increment: DEFAULT_TIME_INCREMENT }): string[] => {
+  const times: string[] = [];
   let hour = 0;
-  let times: string[] = [];
 
   // So we dont create negative times
   if (options.increment < 0) {
