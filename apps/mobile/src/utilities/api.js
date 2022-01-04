@@ -8,7 +8,7 @@ import {
   formatSchoolName,
   isValidUrl,
   getSchoolUrl,
-} from '@campus-gaming-network/tools';
+} from 'utils';
 import { doc, collection, query, where, getDoc, getDocs, limit, Timestamp } from 'firebase/firestore';
 
 // Other

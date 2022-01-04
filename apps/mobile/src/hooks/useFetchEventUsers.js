@@ -1,6 +1,6 @@
 // Libraries
 import React from 'react';
-import { DEFAULT_USERS_LIST_PAGE_SIZE } from '@campus-gaming-network/tools';
+import { DEFAULT_USERS_LIST_PAGE_SIZE } from 'utils';
 
 // Utilities
 import { getEventUsers } from '../utilities/api';

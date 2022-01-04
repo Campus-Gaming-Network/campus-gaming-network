@@ -1,16 +1,15 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.js",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ENV=development expo start",
+    "dev": "ENV=development expo start",
     "android": "ENV=development expo start --android",
     "ios": "ENV=development expo start --ios",
     "eject": "expo eject",
     "clean": "rm -rf .turbo && rm -rf node_modules"
   },
   "dependencies": {
-    "@campus-gaming-network/tools": "^2.0.100",
     "@react-native-firebase/dynamic-links": "^14.0.0",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.4",
@@ -35,7 +34,8 @@
     "sentry-expo": "^4.0.0",
     "styled-components": "^5.3.1",
     "styled-system": "^5.1.5",
-    "text-encoding-polyfill": "^0.6.7"
+    "text-encoding-polyfill": "^0.6.7",
+    "utils": "file:../../packages/utils"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"

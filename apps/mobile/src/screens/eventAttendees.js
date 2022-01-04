@@ -2,7 +2,7 @@ import React from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
 import { VStack, Text, Box, Badge, Avatar, HStack } from 'native-base';
 import useFetchEventUsers from '../hooks/useFetchEventUsers';
-import { createGravatarRequestUrl } from '@campus-gaming-network/tools';
+import { createGravatarRequestUrl } from 'utils';
 
 export default function EventAttendees({ route }) {
   const id = route.params.eventId;

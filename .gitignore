@@ -54,6 +54,7 @@ npm-debug.*
 *.orig.*
 web-build/
 app.config.js
+.expo-shared
 
 # apps/cloud-functions
 apps/cloud-functions/functions/lib/
