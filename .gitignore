@@ -1,66 +1,63 @@
-node_modules
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
 
 # testing
-/coverage
+coverage
 
-# production
-/build
+# next.js
+.next/
+out/
+build
 
 # misc
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.pem
 
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.pnpm-debug.log*
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
+# local env files
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
 .env.production
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-functions/.runtimeconfig.json
-ui-debug.log
+# turbo
+.turbo
 
+# firebase
 .firebaserc
-
 serviceAccountKey*.json
-
-hosting.*
 firebase-debug.log
 firestore-debug.log
 firestore-coverage.html
-.eslintcache
-
-.next
-
-.vercel
-
 .firebase-debug.log.icloud
+hosting.*
+GoogleService-Info*.plist
+google-services*.json
+ui-debug.log
+.firebase
+
+# expo/mobile
+.expo/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+app.config.js
+.expo-shared
+
+# apps/cloud-functions
+apps/cloud-functions/functions/lib/
+
+# packages/utils
+packages/utils/dist/
