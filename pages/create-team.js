@@ -4,13 +4,11 @@ import { useBoolean, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { httpsCallable } from "firebase/functions";
+import { validateCreateTeam } from "@campus-gaming-network/tools";
 
 // Other
 import { db, functions } from "src/firebase";
 import firebaseAdmin from "src/firebaseAdmin";
-
-// Utilities
-import { validateCreateTeam } from "src/utilities/validation";
 
 // Constants
 import { COOKIES, NOT_FOUND } from "src/constants/other";
@@ -68,18 +66,18 @@ const CreateTeam = () => {
 
     setIsSubmitting.on();
 
-    // TODO
-    // const { isValid, errors } = validateCreateTeam({
-    //   ...formState,
-    // });
+    const { error } = validateCreateTeam(formState);
 
-    // setErrors(errors);
-
-    // if (!isValid) {
-    //   setIsSubmitting.off();
-    //   window.scrollTo(0, 0);
-    //   return;
-    // }
+    if (error) {
+      const errors = error.details.reduce(
+        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
+        {}
+      );
+      setErrors(errors);
+      setIsSubmitting.off();
+      window.scrollTo(0, 0);
+      return;
+    }
 
     const teamData = {
       name: formState.name?.trim(),

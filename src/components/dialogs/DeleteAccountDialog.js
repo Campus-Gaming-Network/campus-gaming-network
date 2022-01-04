@@ -19,15 +19,13 @@ import {
 import { useRouter } from "next/router";
 import { signOut } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
+import { validateDeleteAccount } from "@campus-gaming-network/tools";
 
 // Other
 import { auth, db } from "src/firebase";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
-
-// Utilities
-import { validateDeleteAccount } from "src/utilities/validation";
 
 ////////////////////////////////////////////////////////////////////////////
 // DeleteAccountDialog
@@ -48,11 +46,14 @@ const DeleteAccountDialog = (props) => {
   };
 
   const onDeleteAccountConfirm = async () => {
-    const { isValid, errors } = validateDeleteAccount({ deleteConfirmation });
+    const { error } = validateDeleteAccount({ deleteConfirmation });
 
-    setErrors(errors);
-
-    if (!isValid) {
+    if (error) {
+      const errors = error.details.reduce(
+        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
+        {}
+      );
+      setErrors(errors);
       return;
     }
 

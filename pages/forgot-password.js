@@ -21,10 +21,10 @@ import isEmpty from "lodash.isempty";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { validateForgotPassword } from "@campus-gaming-network/tools";
 
 // Utilities
 import { useFormFields } from "src/utilities/other";
-import { validateForgotPassword } from "src/utilities/validation";
 
 // Components
 import Article from "src/components/Article";
@@ -79,11 +79,14 @@ const ForgotPassword = () => {
 
     setIsSendingEmail.on();
 
-    const { isValid, errors } = validateForgotPassword(fields);
+    const { error } = validateForgotPassword(fields);
 
-    setErrors(errors);
-
-    if (!isValid) {
+    if (error) {
+      const errors = error.details.reduce(
+        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
+        {}
+      );
+      setErrors(errors);
       setIsSendingEmail.off();
       window.scrollTo(0, 0);
       return;
