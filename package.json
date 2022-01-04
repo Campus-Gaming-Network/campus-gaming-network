@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "build-website": "turbo run build --scope=website --includeDependencies --no-deps",
+    "build-website": "npx turbo run build --scope=website --includeDependencies --no-deps",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,sass,md}\""
