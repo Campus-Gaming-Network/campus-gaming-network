@@ -21,7 +21,7 @@ import isEmpty from 'lodash.isempty';
 import firebaseAdmin from 'src/firebaseAdmin';
 import nookies from 'nookies';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { validateForgotPassword } from '@campus-gaming-network/tools';
+import { validateForgotPassword } from 'utils';
 
 // Utilities
 import { useFormFields } from 'src/utilities/other';

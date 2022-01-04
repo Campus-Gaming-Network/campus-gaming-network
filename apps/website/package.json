@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@campus-gaming-network/tools": "^2.0.108",
     "@chakra-ui/icons": "^1.0.1",
     "@chakra-ui/react": "^1.4.0",
     "@emotion/react": "^11.1.5",
@@ -57,7 +56,8 @@
     "react-slick": "^0.28.1",
     "safe-json-stringify": "^1.2.0",
     "slick-carousel": "^1.8.1",
-    "use-position": "^0.0.8"
+    "use-position": "^0.0.8",
+    "utils": "file:../../packages/utils"
   },
   "scripts": {
     "dev": "next dev",

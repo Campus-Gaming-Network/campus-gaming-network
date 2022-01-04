@@ -21,7 +21,7 @@ import { useRouter } from 'next/router';
 import firebaseAdmin from 'src/firebaseAdmin';
 import nookies from 'nookies';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { validateLogIn } from '@campus-gaming-network/tools';
+import { validateLogIn } from "utils";
 
 // Utilities
 import { useFormFields } from 'src/utilities/other';

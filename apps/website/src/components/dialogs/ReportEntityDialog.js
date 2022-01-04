@@ -20,7 +20,7 @@ import {
 import safeJsonStringify from 'safe-json-stringify';
 import { doc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import { validateReportEntity, MAX_REPORT_REASON_LENGTH } from '@campus-gaming-network/tools';
+import { validateReportEntity, MAX_REPORT_REASON_LENGTH } from 'utils';
 
 // Utilities
 import { sanitizePrivateProperties } from 'src/utilities/other';

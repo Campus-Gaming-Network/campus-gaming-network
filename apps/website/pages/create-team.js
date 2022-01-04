@@ -4,7 +4,7 @@ import { useBoolean, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import nookies from 'nookies';
 import { httpsCallable } from 'firebase/functions';
-import { validateCreateTeam } from '@campus-gaming-network/tools';
+import { validateCreateTeam } from 'utils';
 
 // Other
 import { db, functions } from 'src/firebase';

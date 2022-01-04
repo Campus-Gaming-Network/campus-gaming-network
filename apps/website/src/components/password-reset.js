@@ -17,7 +17,7 @@ import {
 import isEmpty from 'lodash.isempty';
 import { useRouter } from 'next/router';
 import { verifyPasswordResetCode, confirmPasswordReset, signInWithEmailAndPassword } from 'firebase/auth';
-import { validatePasswordReset } from '@campus-gaming-network/tools';
+import { validatePasswordReset } from 'utils';
 
 // Utilities
 import { useFormFields } from 'src/utilities/other';

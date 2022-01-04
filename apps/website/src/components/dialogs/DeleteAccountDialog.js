@@ -19,7 +19,7 @@ import {
 import { useRouter } from 'next/router';
 import { signOut } from 'firebase/auth';
 import { doc, deleteDoc } from 'firebase/firestore';
-import { validateDeleteAccount } from '@campus-gaming-network/tools';
+import { validateDeleteAccount } from 'utils';
 
 // Other
 import { auth, db } from 'src/firebase';

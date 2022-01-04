@@ -25,7 +25,7 @@ import firebaseAdmin from 'src/firebaseAdmin';
 import nookies from 'nookies';
 import { createUserWithEmailAndPassword, sendEmailVerification, getIdToken } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { validateSignUp } from '@campus-gaming-network/tools';
+import { validateSignUp } from 'utils';
 
 // Constants
 import { BASE_USER, STUDENT_STATUS_OPTIONS } from 'src/constants/user';
