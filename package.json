@@ -9,13 +9,15 @@
   "scripts": {
     "build": "npx turbo run build",
     "build-website": "npx turbo run build --scope=website --include-dependencies --no-deps",
+    "dev-website": "turbo run dev --parallel --scope='website' --scope='utils' --ignore='mobile'",
+    "dev-mobile": "turbo run dev --parallel --scope='mobile' --scope='utils' --ignore='website'",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,sass,md}\""
   },
   "devDependencies": {
     "prettier": "^2.5.1",
-    "turbo": "latest"
+    "turbo": "^1.0.25"
   },
   "turbo": {
     "baseBranch": "origin/main",
