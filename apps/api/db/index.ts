@@ -1,6 +1,6 @@
 import cls from 'cls-hooked';
 import { Sequelize } from 'sequelize';
-import { registerModels, setupModelAssociations } from '../models';
+import { registerModels, setupModelAssociations } from './models';
 
 export default class DB {
   environment: string;
