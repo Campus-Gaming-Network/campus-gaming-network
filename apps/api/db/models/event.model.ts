@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined } from 'sequelize';
 
 import { TABLES, MODELS, MAX_DESCRIPTION_LENGTH } from '../../constants';
 
-export default (sequelize: any) => {
+export default (sequelize: Sequelize): ModelDefined<any, any> => {
   return sequelize.define(
     MODELS.EVENT,
     {

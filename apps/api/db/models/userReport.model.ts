@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined } from 'sequelize';
 
 import { TABLES, MODELS, MAX_REPORT_REASON_LENGTH, REPORT_ENTITIES, REPORT_STATUSES } from '../../constants';
 
-export default (sequelize: any) => {
+export default (sequelize: Sequelize): ModelDefined<any, any> => {
   return sequelize.define(
     MODELS.USER_REPORT,
     {

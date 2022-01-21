@@ -3,7 +3,7 @@
 const kebabCase = require('lodash.kebabcase');
 const geohash = require('ngeohash');
 
-const SCHOOLS = require('../../data/schools.json');
+const SCHOOLS = require('../../../data/schools.json');
 
 // Track duplicate handles
 let handles = {};

@@ -1,25 +1,21 @@
 import Router from 'express-promise-router';
 
+import controllers from '../../controllers';
+
 const router = Router();
 
-router.get('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.get('/', controllers.School.getSchools);
 
-router.post('/', async (req, res) => {
-  res.send('schools post!');
-});
+router.get('/:handle', controllers.School.getSchoolByHandle);
 
-router.put('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.post('/', controllers.School.createSchool);
 
-router.get('/:id/users', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.put('/:handle', controllers.School.updateSchool);
 
-router.get('/:id/events', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.delete('/:handle', controllers.School.deleteSchool);
+
+router.get('/:handle/users', controllers.School.getSchoolUsers);
+
+router.get('/:handle/events', controllers.School.getSchoolEvents);
 
 export default router;

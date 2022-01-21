@@ -1,21 +1,19 @@
 import Router from 'express-promise-router';
 
+import controllers from '../../controllers';
+
 const router = Router();
 
-router.get('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.get('/', controllers.Team.getTeams);
 
-router.post('/', async (req, res) => {
-  res.send('teams post!');
-});
+router.get('/:id', controllers.Team.getTeamById);
 
-router.put('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.post('/', controllers.Team.createTeam);
 
-router.delete('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.put('/:id', controllers.Team.updateTeam);
+
+router.delete('/:id', controllers.Team.deleteTeam);
+
+router.get('/:id/users', controllers.Team.getTeammates);
 
 export default router;

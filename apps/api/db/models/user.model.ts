@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined } from 'sequelize';
 
 import { TABLES, MODELS, USER_STATUSES, TIMEZONES, MAX_BIO_LENGTH } from '../../constants';
 
-export default (sequelize: any) => {
+export default (sequelize: Sequelize): ModelDefined<any, any> => {
   return sequelize.define(
     MODELS.USER,
     {
@@ -19,16 +19,6 @@ export default (sequelize: any) => {
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      fullName: {
-        type: DataTypes.VIRTUAL,
-        // TODO
-        // @ts-ignore
-        get() {
-          // TODO
-          // @ts-ignore
-          return `${this.firstName} ${this.lastName}`;
-        },
       },
       status: {
         type: DataTypes.ENUM(...Object.keys(USER_STATUSES)),
@@ -64,6 +54,9 @@ export default (sequelize: any) => {
       birthdate: {
         type: DataTypes.DATEONLY,
       },
+      website: {
+        type: DataTypes.STRING,
+      },
       twitter: {
         type: DataTypes.STRING,
       },
@@ -92,10 +85,10 @@ export default (sequelize: any) => {
         type: DataTypes.STRING,
       },
       currentlyPlaying: {
-        type: DataTypes.ARRAY(DataTypes.JSONB),
+        type: DataTypes.JSONB,
       },
       favoriteGames: {
-        type: DataTypes.ARRAY(DataTypes.JSONB),
+        type: DataTypes.JSONB,
       },
     },
     {

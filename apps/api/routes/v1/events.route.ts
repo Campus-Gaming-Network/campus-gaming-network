@@ -1,25 +1,19 @@
 import Router from 'express-promise-router';
 
+import controllers from '../../controllers';
+
 const router = Router();
 
-router.get('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.get('/', controllers.Event.getEvents);
 
-router.post('/', async (req, res) => {
-  res.send('events post!');
-});
+router.get('/:id', controllers.Event.getEventById);
 
-router.put('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.post('/', controllers.Event.createEvent);
 
-router.delete('/:id', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.put('/:id', controllers.Event.updateEvent);
 
-router.get('/:id/users', async (req, res) => {
-  res.json({ id: req.params.id });
-});
+router.delete('/:id', controllers.Event.deleteEvent);
+
+router.get('/:id/participants', controllers.Event.getEventParticipants);
 
 export default router;

@@ -1,8 +1,14 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined } from 'sequelize';
 
 import { TABLES, MODELS } from '../../constants';
 
-export default (sequelize: any) => {
+interface RoleAttributes {
+  id: number;
+  name: string;
+  permissions: string[];
+}
+
+export default (sequelize: Sequelize): ModelDefined<RoleAttributes, RoleAttributes> => {
   return sequelize.define(
     MODELS.ROLE,
     {

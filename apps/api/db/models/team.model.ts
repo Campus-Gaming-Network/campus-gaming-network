@@ -1,8 +1,20 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined, Optional } from 'sequelize';
 
 import { TABLES, MODELS, MAX_DESCRIPTION_LENGTH } from '../../constants';
 
-export default (sequelize: any) => {
+interface TeamAttributes {
+  id: number;
+  name: string;
+  shortName: string;
+  website: string;
+  description: string;
+  joinHash: string;
+}
+
+interface TeamCreationAttributes
+  extends Optional<TeamAttributes, "shortName" | "website" | "description"> {}
+
+export default (sequelize: Sequelize): ModelDefined<TeamAttributes, TeamCreationAttributes> => {
   return sequelize.define(
     MODELS.TEAM,
     {

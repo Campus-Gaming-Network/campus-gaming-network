@@ -1,8 +1,14 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined } from 'sequelize';
 
 import { TABLES, MODELS } from '../../constants';
 
-export default (sequelize: any) => {
+interface TeammateAttributes {
+  id: number;
+  userId: number;
+  teamId: number;
+}
+
+export default (sequelize: Sequelize): ModelDefined<TeammateAttributes, TeammateAttributes> => {
   return sequelize.define(
     MODELS.TEAMMATE,
     {

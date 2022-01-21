@@ -1,8 +1,39 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined, Optional } from 'sequelize';
 
 import { TABLES, MODELS } from '../../constants';
 
-export default (sequelize: any) => {
+interface SchoolAttributes {
+  id: number;
+  name: string;
+  handle: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  county: string;
+  zip: string;
+  geohash: string;
+  phone: string;
+  website: string;
+  location: [number, number],
+}
+
+interface SchoolCreationAttributes
+  extends Optional<
+    SchoolAttributes,
+    | "address"
+    | "city"
+    | "state"
+    | "country"
+    | "county"
+    | "zip"
+    | "geohash"
+    | "phone"
+    | "website"
+    | "location"
+  > {}
+
+export default (sequelize: Sequelize): ModelDefined<SchoolAttributes, SchoolCreationAttributes> => {
   return sequelize.define(
     MODELS.SCHOOL,
     {

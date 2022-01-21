@@ -1,3 +1,4 @@
+import { Sequelize, ModelDefined } from 'sequelize';
 import User from './user.model';
 import School from './school.model';
 import Event from './event.model';
@@ -7,34 +8,43 @@ import Participant from './participant.model';
 import ParticipantType from './participantType.model';
 import UserReport from './userReport.model';
 
-const modelDefiners = [School, User, Event, Teammate, Teams, ParticipantType, Participant, UserReport];
+const modelDefiners = {
+  School,
+  User,
+  Event,
+  Teammate,
+  Teams,
+  ParticipantType,
+  Participant,
+  UserReport,
+};
 
-export const registerModels = (sequelize: any) => {
-  for (const modelDefiner of modelDefiners) {
-    modelDefiner(sequelize);
+const models: { [key: string]: ModelDefined<any, any> } = {};
+
+export const registerModels = (sequelize: Sequelize) => {
+  for (const [key, val] of Object.entries(modelDefiners)) {
+    models[key] = val(sequelize);
   }
 };
 
-export const setupModelAssociations = (sequelize: any) => {
-  const { models } = sequelize;
+export const setupModelAssociations = (sequelize: Sequelize) => {
+  sequelize.models.School.hasMany(sequelize.models.User);
+  sequelize.models.User.belongsTo(sequelize.models.School);
 
-  models.School.hasMany(models.User);
-  models.User.belongsTo(models.School);
+  sequelize.models.User.belongsToMany(sequelize.models.Event, { through: sequelize.models.Participant });
+  sequelize.models.Event.belongsToMany(sequelize.models.User, { through: sequelize.models.Participant });
 
-  models.User.belongsToMany(models.Event, { through: models.Participant });
-  models.Event.belongsToMany(models.User, { through: models.Participant });
+  sequelize.models.ParticipantType.hasMany(sequelize.models.Participant);
+  sequelize.models.Participant.belongsTo(sequelize.models.ParticipantType);
 
-  models.ParticipantType.hasMany(models.Participant);
-  models.Participant.belongsTo(models.ParticipantType);
+  sequelize.models.User.belongsToMany(sequelize.models.Team, { through: sequelize.models.Teammate });
+  sequelize.models.Team.belongsToMany(sequelize.models.User, { through: sequelize.models.Teammate });
 
-  models.User.belongsToMany(models.Team, { through: models.Teammate });
-  models.Team.belongsToMany(models.User, { through: models.Teammate });
+  sequelize.models.School.hasMany(sequelize.models.Event);
+  sequelize.models.Event.belongsTo(sequelize.models.School);
 
-  models.School.hasMany(models.Event);
-  models.Event.belongsTo(models.School);
-
-  models.User.hasMany(models.UserReport);
-  models.UserReport.belongsTo(models.User);
+  sequelize.models.User.hasMany(sequelize.models.UserReport);
+  sequelize.models.UserReport.belongsTo(sequelize.models.User);
 };
 
-export default modelDefiners;
+export default models;
