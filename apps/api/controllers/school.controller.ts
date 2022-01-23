@@ -4,10 +4,11 @@ import models from '../db/models';
 import { parseRequestQuery } from '../utils';
 
 const getSchools = async (req: Request, res: Response, next: NextFunction) => {
-  const { offset, limit } = parseRequestQuery(req);
+  const { offset, limit, attributes } = parseRequestQuery(req);
   const options: FindAndCountOptions = {
     offset,
     limit,
+    attributes,
   };
   let schools;
   let count;
