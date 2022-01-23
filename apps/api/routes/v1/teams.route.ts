@@ -14,6 +14,14 @@ router.put('/:id', controllers.Team.updateTeam);
 
 router.delete('/:id', controllers.Team.deleteTeam);
 
-router.get('/:id/users', controllers.Team.getTeammates);
+router.get('/:id/teammates', controllers.Team.getTeammates);
+
+router.post('/:id/teammates', controllers.Team.createTeammate);
+
+router.get('/:teamId/teammates/:teammateId', controllers.Team.getTeammateById);
+
+router.put('/:teamId/teammates/:teammateId', controllers.Team.updateTeammate);
+
+router.delete('/:teamId/teammates/:teammateId', controllers.Team.deleteTeammate);
 
 export default router;

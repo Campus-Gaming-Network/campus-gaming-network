@@ -11,8 +11,7 @@ interface TeamAttributes {
   joinHash: string;
 }
 
-interface TeamCreationAttributes
-  extends Optional<TeamAttributes, "shortName" | "website" | "description"> {}
+interface TeamCreationAttributes extends Optional<TeamAttributes, 'shortName' | 'website' | 'description'> {}
 
 export default (sequelize: Sequelize): ModelDefined<TeamAttributes, TeamCreationAttributes> => {
   return sequelize.define(

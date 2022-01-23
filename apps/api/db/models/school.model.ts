@@ -15,22 +15,13 @@ interface SchoolAttributes {
   geohash: string;
   phone: string;
   website: string;
-  location: [number, number],
+  location: [number, number];
 }
 
 interface SchoolCreationAttributes
   extends Optional<
     SchoolAttributes,
-    | "address"
-    | "city"
-    | "state"
-    | "country"
-    | "county"
-    | "zip"
-    | "geohash"
-    | "phone"
-    | "website"
-    | "location"
+    'address' | 'city' | 'state' | 'country' | 'county' | 'zip' | 'geohash' | 'phone' | 'website' | 'location'
   > {}
 
 export default (sequelize: Sequelize): ModelDefined<SchoolAttributes, SchoolCreationAttributes> => {

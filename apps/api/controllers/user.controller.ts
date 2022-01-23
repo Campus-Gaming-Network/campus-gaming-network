@@ -1,4 +1,4 @@
-import {  Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import models from '../db/models';
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +12,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     users = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
@@ -21,7 +21,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
       count,
       offset,
       limit,
-    }
+    },
   });
 };
 
@@ -43,7 +43,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     user = await models.User.findByPk(req.params.id);
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   if (!user) {
@@ -53,7 +53,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   return res.json({
     data: {
       user: user.toJSON(),
-    }
+    },
   });
 };
 
@@ -67,12 +67,12 @@ const getUserEvents = async (req: Request, res: Response, next: NextFunction) =>
     const result = await models.Participant.findAndCountAll({
       include: models.Event,
       offset,
-      limit
+      limit,
     });
     events = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
@@ -81,7 +81,7 @@ const getUserEvents = async (req: Request, res: Response, next: NextFunction) =>
       count,
       offset,
       limit,
-    }
+    },
   });
 };
 
@@ -95,12 +95,12 @@ const getUserTeams = async (req: Request, res: Response, next: NextFunction) => 
     const result = await models.Teammate.findAndCountAll({
       include: models.Team,
       offset,
-      limit
+      limit,
     });
     teams = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
@@ -109,16 +109,16 @@ const getUserTeams = async (req: Request, res: Response, next: NextFunction) => 
       count,
       offset,
       limit,
-    }
+    },
   });
 };
 
 export default {
-    getUsers,
-    createUser,
-    updateUser,
-    deleteUser,
-    getUserById,
-    getUserEvents,
-    getUserTeams,
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  getUserById,
+  getUserEvents,
+  getUserTeams,
 };

@@ -80,3 +80,4 @@ export const MAX_REPORT_REASON_LENGTH = 5000;
 
 export const BASE_LIMIT = 5;
 export const BASE_OFFSET = 0;
+export const MAX_LIMIT = 100;

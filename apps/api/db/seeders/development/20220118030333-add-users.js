@@ -2,16 +2,7 @@
 
 const chance = require('chance').Chance();
 
-const USER_STATUSES = [
-  "FRESHMAN",
-  "SOPHMORE",
-  "JUNIOR",
-  "SENIOR",
-  "GRAD",
-  "ALUMNI",
-  "FACULTY",
-  "OTHER",
-];
+const USER_STATUSES = ['FRESHMAN', 'SOPHMORE', 'JUNIOR', 'SENIOR', 'GRAD', 'ALUMNI', 'FACULTY', 'OTHER'];
 
 const TIMEZONES = [
   'America/Puerto_Rico',
@@ -22,98 +13,98 @@ const TIMEZONES = [
   'America/Los_Angeles',
   'America/Anchorage',
   'Pacific/Honolulu',
-]
+];
 
 const TEST_GAMES = [
   {
-    "cover": {
-      "id": 82068,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co1rbo.jpg',
+    cover: {
+      id: 82068,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co1rbo.jpg',
     },
-    "id": 1879,
-    "name": 'Terraria',
-    "slug": 'terraria',
+    id: 1879,
+    name: 'Terraria',
+    slug: 'terraria',
   },
   {
-    "cover": {
-      "id": 81905,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co1r75.jpg',
+    cover: {
+      id: 81905,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co1r75.jpg',
     },
-    "id": 11582,
-    "name": 'Stellaris',
-    "slug": 'stellaris',
+    id: 11582,
+    name: 'Stellaris',
+    slug: 'stellaris',
   },
   {
-    "cover": {
-      "id": 136663,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co2xg7.jpg',
+    cover: {
+      id: 136663,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co2xg7.jpg',
     },
-    "id": 9950,
-    "name": 'Age of Empires II: Forgotten Empires',
-    "slug": 'age-of-empires-ii-forgotten-empires',
+    id: 9950,
+    name: 'Age of Empires II: Forgotten Empires',
+    slug: 'age-of-empires-ii-forgotten-empires',
   },
   {
-    "cover": {
-      "id": 123165,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co2n19.jpg',
+    cover: {
+      id: 123165,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co2n19.jpg',
     },
-    "id": 621,
-    "name": 'Call of Duty',
-    "slug": 'call-of-duty',
+    id: 621,
+    name: 'Call of Duty',
+    slug: 'call-of-duty',
   },
   {
-    "cover": {
-      "id": 87278,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co1vce.jpg',
+    cover: {
+      id: 87278,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co1vce.jpg',
     },
-    "id": 1372,
-    "name": 'Counter-Strike: Global Offensive',
-    "slug": 'counter-strike-global-offensive',
+    id: 1372,
+    name: 'Counter-Strike: Global Offensive',
+    slug: 'counter-strike-global-offensive',
   },
   {
-    "cover": {
-      "id": 93896,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co20g8.jpg',
+    cover: {
+      id: 93896,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co20g8.jpg',
     },
-    "id": 3480,
-    "name": 'Earthworm Jim',
-    "slug": 'earthworm-jim',
+    id: 3480,
+    name: 'Earthworm Jim',
+    slug: 'earthworm-jim',
   },
   {
-    "cover": {
-      "id": 89684,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co1x78.jpg',
+    cover: {
+      id: 89684,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co1x78.jpg',
     },
-    "id": 2155,
-    "name": 'Dark Souls',
-    "slug": 'dark-souls',
+    id: 2155,
+    name: 'Dark Souls',
+    slug: 'dark-souls',
   },
   {
-    "cover": {
-      "id": 120422,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co2kx2.jpg',
+    cover: {
+      id: 120422,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co2kx2.jpg',
     },
-    "id": 427,
-    "name": 'Final Fantasy VII',
-    "slug": 'final-fantasy-vii',
+    id: 427,
+    name: 'Final Fantasy VII',
+    slug: 'final-fantasy-vii',
   },
   {
-    "cover": {
-      "id": 85091,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co1tnn.jpg',
+    cover: {
+      id: 85091,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co1tnn.jpg',
     },
-    "id": 239,
-    "name": 'StarCraft II: Wings of Liberty',
-    "slug": 'starcraft-ii-wings-of-liberty',
+    id: 239,
+    name: 'StarCraft II: Wings of Liberty',
+    slug: 'starcraft-ii-wings-of-liberty',
   },
   {
-    "cover": {
-      "id": 90408,
-      "url": '//images.igdb.com/igdb/image/upload/t_thumb/co1xrc.jpg',
+    cover: {
+      id: 90408,
+      url: '//images.igdb.com/igdb/image/upload/t_thumb/co1xrc.jpg',
     },
-    "id": 104967,
-    "name": 'Valheim',
-    "slug": 'valheim',
+    id: 104967,
+    name: 'Valheim',
+    slug: 'valheim',
   },
 ];
 
@@ -129,7 +120,7 @@ const getUsername = () => {
 const getBirthdate = () => {
   const _year = chance.year({
     min: new Date().getFullYear() - 99,
-    max: new Date().getFullYear() - 18
+    max: new Date().getFullYear() - 18,
   });
   const date = chance.birthday({ string: true, year: _year });
   const [month, day, year] = date.split('/');

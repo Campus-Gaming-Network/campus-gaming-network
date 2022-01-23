@@ -16,4 +16,12 @@ router.delete('/:id', controllers.Event.deleteEvent);
 
 router.get('/:id/participants', controllers.Event.getEventParticipants);
 
+router.post('/:id/participants', controllers.Event.createEventParticipant);
+
+router.get('/:eventId/participants/:participantId', controllers.Event.getEventParticipantById);
+
+router.put('/:eventId/participants/:participantId', controllers.Event.updateEventParticipant);
+
+router.delete('/:eventId/participants/:participantId', controllers.Event.deleteEventParticipant);
+
 export default router;

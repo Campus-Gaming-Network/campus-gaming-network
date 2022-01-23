@@ -1,41 +1,67 @@
-import {  Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
+import { Op, FindOptions, FindAndCountOptions } from 'sequelize';
 import models from '../db/models';
+import { parseRequestQuery } from '../utils';
 
 const getSchools = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  const limit = Number(req.query.limit) || undefined;
+  const { offset, limit } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    offset,
+    limit,
+  };
   let schools;
   let count;
 
+  if (req.query.search) {
+    const searchFields = [
+      "name",
+    ];
+
+    options.where = {
+      ...options.where,
+      [Op.or]: searchFields.map((field) => {
+        return {
+          [field]: {
+            [Op.iLike]: `%${req.query.search}%` 
+          }
+        };
+      })
+    }
+  }
+
   try {
-    const result = await models.School.findAndCountAll({ offset, limit });
+    const result = await models.School.findAndCountAll(options);
     schools = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       schools,
       count,
-      offset,
-      limit,
-    }
+    },
   });
 };
 
 const getSchoolByHandle = async (req: Request, res: Response, next: NextFunction) => {
+  const { attributes } = parseRequestQuery(req);
+  const options: FindOptions = {
+    where : {
+      handle: req.params.handle,
+    },
+    attributes,
+  };
   let school;
 
   try {
-    school = await models.School.findOne({
-      where: {
-        handle: req.params.handle
-      }
-    });
+    school = await models.School.findOne(options);
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   if (!school) {
@@ -43,9 +69,12 @@ const getSchoolByHandle = async (req: Request, res: Response, next: NextFunction
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       school: school.toJSON(),
-    }
+    },
   });
 };
 
@@ -67,7 +96,7 @@ const getSchoolById = async (req: Request, res: Response, next: NextFunction) =>
   try {
     school = await models.School.findByPk(req.params.id);
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   if (!school) {
@@ -75,15 +104,22 @@ const getSchoolById = async (req: Request, res: Response, next: NextFunction) =>
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       school: school.toJSON(),
-    }
+    },
   });
 };
 
 const getSchoolUsers = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  const limit = Number(req.query.limit) || undefined;
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    offset,
+    limit,
+    attributes,
+  };
   let school;
   let users;
   let count;
@@ -91,68 +127,69 @@ const getSchoolUsers = async (req: Request, res: Response, next: NextFunction) =
   try {
     school = await models.School.findOne({
       where: {
-        handle: req.params.handle
-      }
+        handle: req.params.handle,
+      },
     });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   if (!school) {
     return res.status(404);
   }
 
+  options.where = {
+    schoolId: school.toJSON().id,
+  };
+
   try {
-    const result = await models.User.findAndCountAll({
-      where: {
-        schoolId: school.toJSON().id,
-      },
-      offset,
-      limit
-    });
+    const result = await models.User.findAndCountAll(options);
     users = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       users,
       count,
-      offset,
-      limit,
-    }
+    },
   });
 };
 
 const getSchoolEvents = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  const limit = Number(req.query.limit) || undefined;
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    where: {
+      schoolId: req.params.id,
+    },
+    offset,
+    limit,
+    attributes,
+  };
   let events;
   let count;
 
   try {
-    const result = await models.Event.findAndCountAll({
-      where: {
-        schoolId: req.params.id,
-      },
-      offset,
-      limit
-    });
+    const result = await models.Event.findAndCountAll(options);
     events = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       events,
       count,
-      offset,
-      limit,
-    }
+    },
   });
 };
 

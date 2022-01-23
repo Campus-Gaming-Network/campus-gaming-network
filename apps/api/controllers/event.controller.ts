@@ -1,5 +1,6 @@
-import {  Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 import models from '../db/models';
+import { MAX_LIMIT } from '../constants';
 
 const getEvents = async (req: Request, res: Response, next: NextFunction) => {
   const offset = Number(req.query.offset) || undefined;
@@ -7,8 +8,8 @@ const getEvents = async (req: Request, res: Response, next: NextFunction) => {
   let events;
   let count;
 
-  if (limit && limit > 100) {
-      limit = 100;
+  if (limit && limit > MAX_LIMIT) {
+    limit = MAX_LIMIT;
   }
 
   try {
@@ -16,7 +17,7 @@ const getEvents = async (req: Request, res: Response, next: NextFunction) => {
     events = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
@@ -25,7 +26,7 @@ const getEvents = async (req: Request, res: Response, next: NextFunction) => {
       count,
       offset,
       limit,
-    }
+    },
   });
 };
 
@@ -47,7 +48,7 @@ const getEventById = async (req: Request, res: Response, next: NextFunction) => 
   try {
     event = await models.Event.findByPk(req.params.id);
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   if (!event) {
@@ -57,7 +58,7 @@ const getEventById = async (req: Request, res: Response, next: NextFunction) => 
   return res.json({
     data: {
       event: event.toJSON(),
-    }
+    },
   });
 };
 
@@ -70,17 +71,17 @@ const getEventParticipants = async (req: Request, res: Response, next: NextFunct
 
   try {
     const result = await models.Participant.findAndCountAll({
-        where: {
-            eventId: req.params.id,
-        },
-        include: models.User,
-        offset,
-        limit
+      where: {
+        eventId: req.params.id,
+      },
+      include: models.User,
+      offset,
+      limit,
     });
     participants = result.rows;
     count = result.count;
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 
   return res.json({
@@ -89,15 +90,35 @@ const getEventParticipants = async (req: Request, res: Response, next: NextFunct
       count,
       offset,
       limit,
-    }
+    },
   });
 };
 
+const createEventParticipant = async (req: Request, res: Response, next: NextFunction) => {
+  return res.status(501);
+};
+
+const getEventParticipantById = async (req: Request, res: Response, next: NextFunction) => {
+  return res.status(501);
+};
+
+const updateEventParticipant = async (req: Request, res: Response, next: NextFunction) => {
+  return res.status(501);
+};
+
+const deleteEventParticipant = async (req: Request, res: Response, next: NextFunction) => {
+  return res.status(501);
+};
+
 export default {
-    getEvents,
-    createEvent,
-    updateEvent,
-    deleteEvent,
-    getEventById,
-    getEventParticipants,
+  getEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getEventById,
+  getEventParticipants,
+  createEventParticipant,
+  getEventParticipantById,
+  updateEventParticipant,
+  deleteEventParticipant,
 };
