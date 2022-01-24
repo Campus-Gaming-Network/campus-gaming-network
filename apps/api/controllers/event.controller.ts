@@ -1,19 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
+import { FindAndCountOptions, FindOptions } from 'sequelize';
 import models from '../db/models';
 import { MAX_LIMIT } from '../constants';
+import { parseRequestQuery } from '../utils';
 
 const getEvents = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  let limit = Number(req.query.limit) || undefined;
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    offset,
+    limit,
+    attributes,
+  };
   let events;
   let count;
 
-  if (limit && limit > MAX_LIMIT) {
-    limit = MAX_LIMIT;
+  if (options.limit && options.limit > MAX_LIMIT) {
+    options.limit = MAX_LIMIT;
   }
 
   try {
-    const result = await models.Event.findAndCountAll({ offset, limit });
+    const result = await models.Event.findAndCountAll(options);
     events = result.rows;
     count = result.count;
   } catch (error) {
@@ -21,11 +27,12 @@ const getEvents = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       events,
       count,
-      offset,
-      limit,
     },
   });
 };
@@ -43,10 +50,14 @@ const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getEventById = async (req: Request, res: Response, next: NextFunction) => {
+  const { attributes } = parseRequestQuery(req);
+  const options: FindOptions = {
+    attributes,
+  };
   let event;
 
   try {
-    event = await models.Event.findByPk(req.params.id);
+    event = await models.Event.findByPk(req.params.id, options);
   } catch (error) {
     return next(error);
   }
@@ -56,6 +67,9 @@ const getEventById = async (req: Request, res: Response, next: NextFunction) => 
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       event: event.toJSON(),
     },
@@ -63,21 +77,20 @@ const getEventById = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 const getEventParticipants = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  const limit = Number(req.query.limit) || undefined;
-
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    where: {
+      eventId: req.params.id,
+    },
+    offset,
+    limit,
+    attributes,
+  };
   let participants;
   let count;
 
   try {
-    const result = await models.Participant.findAndCountAll({
-      where: {
-        eventId: req.params.id,
-      },
-      include: models.User,
-      offset,
-      limit,
-    });
+    const result = await models.Participant.findAndCountAll(options);
     participants = result.rows;
     count = result.count;
   } catch (error) {
@@ -85,11 +98,12 @@ const getEventParticipants = async (req: Request, res: Response, next: NextFunct
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       participants,
       count,
-      offset,
-      limit,
     },
   });
 };

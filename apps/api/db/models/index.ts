@@ -2,7 +2,7 @@ import { Sequelize, ModelDefined } from 'sequelize';
 import User from './user.model';
 import School from './school.model';
 import Event from './event.model';
-import Teams from './team.model';
+import Team from './team.model';
 import Teammate from './teammate.model';
 import Participant from './participant.model';
 import ParticipantType from './participantType.model';
@@ -13,7 +13,7 @@ const modelDefiners = {
   User,
   Event,
   Teammate,
-  Teams,
+  Team,
   ParticipantType,
   Participant,
   UserReport,
@@ -34,11 +34,17 @@ export const setupModelAssociations = (sequelize: Sequelize) => {
   sequelize.models.User.belongsToMany(sequelize.models.Event, { through: sequelize.models.Participant });
   sequelize.models.Event.belongsToMany(sequelize.models.User, { through: sequelize.models.Participant });
 
+  sequelize.models.Participant.belongsTo(sequelize.models.User, { foreignKey: 'userId' });
+  sequelize.models.Participant.belongsTo(sequelize.models.Event, { foreignKey: 'eventId' });
+
   sequelize.models.ParticipantType.hasMany(sequelize.models.Participant);
   sequelize.models.Participant.belongsTo(sequelize.models.ParticipantType);
 
   sequelize.models.User.belongsToMany(sequelize.models.Team, { through: sequelize.models.Teammate });
   sequelize.models.Team.belongsToMany(sequelize.models.User, { through: sequelize.models.Teammate });
+
+  sequelize.models.Teammate.belongsTo(sequelize.models.User, { foreignKey: 'userId' });
+  sequelize.models.Teammate.belongsTo(sequelize.models.Team, { foreignKey: 'teamId' });
 
   sequelize.models.School.hasMany(sequelize.models.Event);
   sequelize.models.Event.belongsTo(sequelize.models.School);

@@ -1,19 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
+import { FindAndCountOptions, FindOptions } from 'sequelize';
 import models from '../db/models';
 import { MAX_LIMIT } from '../constants';
+import { parseRequestQuery } from '../utils';
 
 const getTeams = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  let limit = Number(req.query.limit) || undefined;
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    offset,
+    limit,
+    attributes,
+  };
   let teams;
   let count;
 
-  if (limit && limit > MAX_LIMIT) {
-    limit = MAX_LIMIT;
+  if (options.limit && options.limit > MAX_LIMIT) {
+    options.limit = MAX_LIMIT;
   }
 
   try {
-    const result = await models.Team.findAndCountAll({ offset, limit });
+    const result = await models.Team.findAndCountAll(options);
     teams = result.rows;
     count = result.count;
   } catch (error) {
@@ -21,11 +27,12 @@ const getTeams = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       teams,
       count,
-      offset,
-      limit,
     },
   });
 };
@@ -63,21 +70,23 @@ const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getTeammates = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  const limit = Number(req.query.limit) || undefined;
-
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    where: {
+      teamId: req.params.id,
+    },
+    include: {
+      model: models.User,
+      attributes,
+    },
+    offset,
+    limit,
+  };
   let teammates;
   let count;
 
   try {
-    const result = await models.Teammate.findAndCountAll({
-      where: {
-        teamId: req.params.id,
-      },
-      include: models.User,
-      offset,
-      limit,
-    });
+    const result = await models.Teammate.findAndCountAll(options);
     teammates = result.rows;
     count = result.count;
   } catch (error) {
@@ -85,11 +94,12 @@ const getTeammates = async (req: Request, res: Response, next: NextFunction) => 
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       teammates,
       count,
-      offset,
-      limit,
     },
   });
 };
@@ -99,10 +109,17 @@ const createTeammate = async (req: Request, res: Response, next: NextFunction) =
 };
 
 const getTeammateById = async (req: Request, res: Response, next: NextFunction) => {
+  const { attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    include: {
+      model: models.User,
+      attributes,
+    },
+  };
   let teammate;
 
   try {
-    teammate = await models.Teammate.findByPk(req.params.id);
+    teammate = await models.Teammate.findByPk(req.params.teammateId, options);
   } catch (error) {
     return next(error);
   }
