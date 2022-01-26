@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { FindAndCountOptions, FindOptions } from 'sequelize';
 import models from '../db/models';
 import { MAX_LIMIT } from '../constants';
-import { parseRequestQuery } from '../utils';
+import { parseRequestQuery } from '../utilities';
 
 const getEvents = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
@@ -14,7 +14,7 @@ const getEvents = async (req: Request, res: Response, next: NextFunction) => {
   let events;
   let count;
 
-  if (options.limit && options.limit > MAX_LIMIT) {
+  if (!options.limit || (options.limit && options.limit > MAX_LIMIT)) {
     options.limit = MAX_LIMIT;
   }
 

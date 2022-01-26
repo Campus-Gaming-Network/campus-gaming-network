@@ -4,6 +4,8 @@ import controllers from '../../controllers';
 
 const router = Router();
 
+router.get('/', controllers.User.getUsers);
+
 router.get('/:id', controllers.User.getUserById);
 
 router.post('/', controllers.User.createUser);

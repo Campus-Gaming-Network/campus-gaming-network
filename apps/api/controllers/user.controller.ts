@@ -1,14 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
+import { FindAndCountOptions, FindOptions } from 'sequelize';
 import models from '../db/models';
+import { validateCreateUser } from 'utils';
+import { MAX_LIMIT } from '../constants';
+import { parseRequestQuery } from '../utilities';
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-  const offset = Number(req.query.offset) || undefined;
-  const limit = Number(req.query.limit) || undefined;
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    offset,
+    limit,
+    attributes,
+  };
   let users;
   let count;
 
+  if (!options.limit || (options.limit && options.limit > MAX_LIMIT)) {
+    options.limit = MAX_LIMIT;
+  }
+
   try {
-    const result = await models.User.findAndCountAll({ offset, limit });
+    const result = await models.User.findAndCountAll(options);
     users = result.rows;
     count = result.count;
   } catch (error) {
@@ -16,17 +28,30 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       users,
       count,
-      offset,
-      limit,
     },
   });
 };
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  const { error } = validateCreateUser(req.body);
+
+  if (error) {
+    const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
+    return res.status(400).json({ errors });
+  }
+
+  try {
+    const user = await models.User.create(req.body);
+    return res.status(200).json({ user: user.toJSON() });
+  } catch (error) {
+    return next(error);
+  }
 };
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {

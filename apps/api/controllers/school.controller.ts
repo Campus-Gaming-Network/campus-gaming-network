@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Op, FindOptions, FindAndCountOptions } from 'sequelize';
 import models from '../db/models';
-import { parseRequestQuery } from '../utils';
+import { parseRequestQuery } from '../utilities';
 
 const getSchools = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);

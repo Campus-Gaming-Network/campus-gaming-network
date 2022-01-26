@@ -1198,7 +1198,6 @@ export const emailSchema = Joi.string().email({ tlds: { allow: false } });
 export const passwordSchema = Joi.string().min(MIN_PASSWORD_LENGTH);
 export const userStatusSchema = Joi.string().valid(...STUDENT_STATUS_OPTIONS.map((o) => o && o.value));
 export const subEventSchema = Joi.object({
-  id: idSchema,
   name: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   responses: Joi.object({
     yes: Joi.number().integer().positive().required(),
@@ -1211,18 +1210,15 @@ export const subEventSchema = Joi.object({
   ref: refSchema,
 });
 export const subTeamSchema = Joi.object({
-  id: idSchema,
   name: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   shortName: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),
   ref: refSchema,
 });
 export const subSchoolSchema = Joi.object({
-  id: idSchema,
   name: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   ref: refSchema,
 });
 export const subUserSchema = Joi.object({
-  id: idSchema,
   firstName: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   lastName: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   gravatar: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
@@ -1266,14 +1262,11 @@ export interface CreateUserForm {
   favoriteGames: FirestoreGame[];
 }
 export const userSchema = Joi.object({
-  id: idSchema,
   firstName: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   lastName: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   status: userStatusSchema.required(),
   gravatar: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
-  school: subSchoolSchema,
-  createdAt: createdAtSchema,
-  updatedAt: updatedAtSchema,
+  schoolId: Joi.number().integer().positive(),
   major: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),
   minor: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),
   bio: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),
@@ -1296,7 +1289,6 @@ export const userSchema = Joi.object({
   favoriteGames: Joi.array().items(gameSchema).max(5).allow(),
 });
 export const schoolSchema = Joi.object({
-  id: idSchema,
   name: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   handle: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),
   email: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),
@@ -1314,7 +1306,6 @@ export const schoolSchema = Joi.object({
   updatedAt: updatedAtSchema,
 });
 export const eventSchema = Joi.object({
-  id: idSchema,
   name: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   creator: subUserSchema,
   school: subSchoolSchema,
@@ -1338,7 +1329,6 @@ export const eventResponseSchema = Joi.object({
   updatedAt: updatedAtSchema,
 });
 export const teamSchema = Joi.object({
-  id: idSchema,
   name: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   shortName: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),
   website: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(''),

@@ -18,7 +18,8 @@
     "ngeohash": "^0.6.3",
     "pg": "^8.7.1",
     "sequelize": "^6.13.0",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.4.1",
+    "utils": "file:../../packages/utils"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",

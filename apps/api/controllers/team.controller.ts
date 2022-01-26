@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { FindAndCountOptions, FindOptions } from 'sequelize';
 import models from '../db/models';
 import { MAX_LIMIT } from '../constants';
-import { parseRequestQuery } from '../utils';
+import { parseRequestQuery } from '../utilities';
 
 const getTeams = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
