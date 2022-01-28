@@ -3,7 +3,7 @@
 const kebabCase = require('lodash.kebabcase');
 const geohash = require('ngeohash');
 
-const SCHOOLS = require('../../../data/schools.json');
+const SCHOOLS = require('../../data/schools.json');
 
 // Track duplicate handles
 let handles = {};
@@ -40,11 +40,11 @@ const mapSchool = ({ NAME, ADDRESS, CITY, COUNTRY, STATE, WEBSITE, ZIP, COUNTY, 
 const schools = SCHOOLS.map(mapSchool);
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.bulkInsert('schools', schools, {});
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     return queryInterface.bulkDelete('schools', null, {});
   },
 };

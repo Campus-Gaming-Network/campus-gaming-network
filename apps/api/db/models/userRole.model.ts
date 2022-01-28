@@ -5,10 +5,15 @@ import { TABLES, MODELS } from '../../constants';
 interface UserRoleAttributes {
   id: number;
   userId: number;
+  teamId: number;
+  schoolId: number;
+  eventId: number;
   roleId: number;
 }
 
-export default (sequelize: Sequelize): ModelDefined<UserRoleAttributes, any> => {
+interface UserRoleCreationAttributes extends Optional<UserRoleAttributes, 'schoolId' | 'teamId' | 'eventId'> {}
+
+export default (sequelize: Sequelize): ModelDefined<UserRoleAttributes, UserRoleCreationAttributes> => {
   return sequelize.define(
     MODELS.USER_ROLE,
     {
@@ -23,6 +28,22 @@ export default (sequelize: Sequelize): ModelDefined<UserRoleAttributes, any> => 
         allowNull: true,
         references: {
           model: TABLES.USERS,
+          key: 'id',
+        },
+      },
+      teamId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: TABLES.TEAMS,
+          key: 'id',
+        },
+      },
+      eventId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: TABLES.EVENTS,
           key: 'id',
         },
       },
