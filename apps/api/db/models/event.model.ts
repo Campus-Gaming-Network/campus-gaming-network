@@ -19,10 +19,6 @@ export default (sequelize: Sequelize): ModelDefined<any, any> => {
       creatorId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-          model: TABLES.USERS,
-          key: 'id',
-        },
       },
       schoolId: {
         type: DataTypes.INTEGER,

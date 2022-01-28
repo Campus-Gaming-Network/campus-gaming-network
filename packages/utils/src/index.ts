@@ -1262,6 +1262,7 @@ export interface CreateUserForm {
   favoriteGames: FirestoreGame[];
 }
 export const userSchema = Joi.object({
+  uid: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   firstName: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   lastName: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
   status: userStatusSchema.required(),

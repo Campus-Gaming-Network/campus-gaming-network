@@ -1,6 +1,6 @@
 import { DataTypes, Sequelize, ModelDefined } from 'sequelize';
 
-import { TABLES, MODELS, PARTICIPANT_TYPES, PARTICIPANT_RESPONSES } from '../../constants';
+import { TABLES, MODELS, PARTICIPANT_TYPES } from '../../constants';
 
 export default (sequelize: Sequelize): ModelDefined<any, any> => {
   return sequelize.define(
@@ -15,11 +15,6 @@ export default (sequelize: Sequelize): ModelDefined<any, any> => {
       type: {
         type: DataTypes.ENUM(...Object.keys(PARTICIPANT_TYPES)),
         allowNull: false,
-      },
-      response: {
-        type: DataTypes.ENUM(...Object.keys(PARTICIPANT_RESPONSES)),
-        allowNull: false,
-        defaultValue: PARTICIPANT_RESPONSES.YES,
       },
     },
     {

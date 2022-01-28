@@ -5,8 +5,8 @@ import Event from './event.model';
 import Team from './team.model';
 import Teammate from './teammate.model';
 import Participant from './participant.model';
-import ParticipantType from './participantType.model';
-import UserReport from './userReport.model';
+import Role from './role.model';
+import UserRole from './userRole.model';
 
 const modelDefiners = {
   School,
@@ -14,9 +14,9 @@ const modelDefiners = {
   Event,
   Teammate,
   Team,
-  ParticipantType,
   Participant,
-  UserReport,
+  Role,
+  UserRole,
 };
 
 const models: { [key: string]: ModelDefined<any, any> } = {};
@@ -28,29 +28,32 @@ export const registerModels = (sequelize: Sequelize) => {
 };
 
 export const setupModelAssociations = (sequelize: Sequelize) => {
-  sequelize.models.School.hasMany(sequelize.models.User);
-  sequelize.models.User.belongsTo(sequelize.models.School);
+  sequelize.models.School.hasMany(sequelize.models.User, { foreignKey: "schoolId" });
+  sequelize.models.User.belongsTo(sequelize.models.School, { foreignKey: "schoolId", as: "school" });
 
-  sequelize.models.User.belongsToMany(sequelize.models.Event, { through: sequelize.models.Participant });
-  sequelize.models.Event.belongsToMany(sequelize.models.User, { through: sequelize.models.Participant });
+  // sequelize.models.User.hasMany(sequelize.models.Event, { foreignKey: "creatorId" });
+  // sequelize.models.Event.hasOne(sequelize.models.User);
 
-  sequelize.models.Participant.belongsTo(sequelize.models.User, { foreignKey: 'userId' });
-  sequelize.models.Participant.belongsTo(sequelize.models.Event, { foreignKey: 'eventId' });
+  sequelize.models.User.belongsToMany(sequelize.models.Event, { through: sequelize.models.Participant, foreignKey: "userId" });
+  sequelize.models.Event.belongsToMany(sequelize.models.User, { through: sequelize.models.Participant, foreignKey: "eventId"  });
+  sequelize.models.Team.belongsToMany(sequelize.models.Event, { through: sequelize.models.Participant, foreignKey: "teamId"  });
+  sequelize.models.Event.belongsToMany(sequelize.models.Team, { through: sequelize.models.Participant, foreignKey: "eventId"  });
+  sequelize.models.Participant.belongsTo(sequelize.models.User, { foreignKey: "userId", as: "user" });
+  sequelize.models.Participant.belongsTo(sequelize.models.Team, { foreignKey: "teamId", as: "team" });
 
-  sequelize.models.ParticipantType.hasMany(sequelize.models.Participant);
-  sequelize.models.Participant.belongsTo(sequelize.models.ParticipantType);
+  // sequelize.models.User.belongsToMany(sequelize.models.Team, { through: sequelize.models.Teammate });
+  // sequelize.models.Team.belongsToMany(sequelize.models.User, { through: sequelize.models.Teammate });
 
-  sequelize.models.User.belongsToMany(sequelize.models.Team, { through: sequelize.models.Teammate });
-  sequelize.models.Team.belongsToMany(sequelize.models.User, { through: sequelize.models.Teammate });
+  // sequelize.models.Teammate.belongsTo(sequelize.models.User, { foreignKey: 'userId' });
+  // sequelize.models.Teammate.belongsTo(sequelize.models.Team, { foreignKey: 'teamId' });
 
-  sequelize.models.Teammate.belongsTo(sequelize.models.User, { foreignKey: 'userId' });
-  sequelize.models.Teammate.belongsTo(sequelize.models.Team, { foreignKey: 'teamId' });
+  // sequelize.models.School.hasMany(sequelize.models.Event, { foreignKey: "schoolId" });
+  // sequelize.models.Event.belongsTo(sequelize.models.School);
 
-  sequelize.models.School.hasMany(sequelize.models.Event);
-  sequelize.models.Event.belongsTo(sequelize.models.School);
-
-  sequelize.models.User.hasMany(sequelize.models.UserReport);
-  sequelize.models.UserReport.belongsTo(sequelize.models.User);
+  sequelize.models.User.belongsToMany(sequelize.models.Role, { through: sequelize.models.UserRole, foreignKey: "userId" });
+  sequelize.models.Role.belongsToMany(sequelize.models.User, { through: sequelize.models.UserRole, foreignKey: "roleId"  });
+  sequelize.models.UserRole.belongsTo(sequelize.models.User, { foreignKey: "userId", as: "user" });
+  sequelize.models.UserRole.belongsTo(sequelize.models.Role, { foreignKey: "roleId", as: "role" });
 };
 
 export default models;

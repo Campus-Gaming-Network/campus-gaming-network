@@ -1,8 +1,19 @@
-import { DataTypes, Sequelize, ModelDefined } from 'sequelize';
+import { DataTypes, Sequelize, ModelDefined, Optional } from 'sequelize';
 
-import { TABLES, MODELS } from '../../constants';
+import { TABLES, MODELS, PARTICIPANT_RESPONSES } from '../../constants';
 
-export default (sequelize: Sequelize): ModelDefined<any, any> => {
+interface ParticipantAttributes {
+  id: number;
+  userId: number;
+  teamId: number;
+  eventId: number;
+  type: "SOLO" | "TEAM";
+  response: "YES" | "NO";
+}
+
+interface ParticipantCreationAttributes extends Optional<ParticipantAttributes, 'userId' | 'teamId'> {}
+
+export default (sequelize: Sequelize): ModelDefined<ParticipantAttributes, ParticipantCreationAttributes> => {
   return sequelize.define(
     MODELS.PARTICIPANT,
     {
@@ -14,9 +25,17 @@ export default (sequelize: Sequelize): ModelDefined<any, any> => {
       },
       userId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: TABLES.USERS,
+          key: 'id',
+        },
+      },
+      teamId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: TABLES.TEAMS,
           key: 'id',
         },
       },
@@ -28,13 +47,14 @@ export default (sequelize: Sequelize): ModelDefined<any, any> => {
           key: 'id',
         },
       },
-      participantTypeId: {
-        type: DataTypes.INTEGER,
+      type: {
+        type: DataTypes.ENUM("SOLO", "TEAM"),
         allowNull: false,
-        references: {
-          model: TABLES.PARTICIPANT_TYPES,
-          key: 'id',
-        },
+      },
+      response: {
+        type: DataTypes.ENUM(...Object.keys(PARTICIPANT_RESPONSES)),
+        allowNull: false,
+        defaultValue: PARTICIPANT_RESPONSES.YES,
       },
     },
     {

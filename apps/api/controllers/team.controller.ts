@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { FindAndCountOptions, FindOptions } from 'sequelize';
 import models from '../db/models';
-import { MAX_LIMIT } from '../constants';
+import { MAX_LIMIT, AUTH_ERROR_MESSAGE } from '../constants';
 import { parseRequestQuery } from '../utilities';
 
 const getTeams = async (req: Request, res: Response, next: NextFunction) => {
@@ -46,7 +46,7 @@ const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  res.status(501);
 };
 
 const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
@@ -140,7 +140,29 @@ const updateTeammate = async (req: Request, res: Response, next: NextFunction) =
 };
 
 const deleteTeammate = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  let teammate;
+
+  try {
+    teammate = await models.Teammate.findByPk(req.params.teammateId);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!teammate) {
+    return res.status(404);
+  }
+
+  if (req.authId !== teammate.toJSON().userId) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  // try {
+  //   await teammate.destroy();
+  // } catch (error) {
+  //   return next(error);
+  // }
+
+  return res.status(200);
 };
 
 export default {

@@ -109,13 +109,13 @@ const TEST_GAMES = [
 ];
 
 const maybeVal = (val) => {
-  return chance.pickone([val, '']);
+  return chance.pickone([val, null]);
 };
 const getStatus = () => {
   return chance.pickone(USER_STATUSES);
 };
 const getUsername = () => {
-  return chance.word();
+  return maybeVal(chance.word());
 };
 const getBirthdate = () => {
   const _year = chance.year({
@@ -124,7 +124,7 @@ const getBirthdate = () => {
   });
   const date = chance.birthday({ string: true, year: _year });
   const [month, day, year] = date.split('/');
-  return `${year}/${month}/${day}`;
+  return maybeVal(`${year}/${month}/${day}`);
 };
 const getGames = () => {
   return JSON.stringify(chance.pickset(TEST_GAMES, chance.integer({ min: 0, max: 5 })));
@@ -135,19 +135,25 @@ const getGravatarHash = () => {
 const getHometown = () => {
   const city = maybeVal(chance.city());
   const state = maybeVal(chance.state());
-  return [city, state].join(', ');
+
+  if (city && state) {
+    return [city, state].join(', ');
+  }
+
+  return '';
 };
 const getTimezone = () => {
-  return chance.pickone(TIMEZONES);
+  return maybeVal(chance.pickone(TIMEZONES));
 };
 
 const createUser = () => {
   return {
+    uid: chance.guid(),
     firstName: chance.first(),
     lastName: chance.last(),
     status: getStatus(),
     battlenet: getUsername(),
-    bio: chance.sentence(),
+    bio: maybeVal(chance.sentence()),
     birthdate: getBirthdate(),
     currentlyPlaying: getGames(),
     discord: getUsername(),
@@ -172,7 +178,7 @@ const createUser = () => {
 };
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     const users = [];
 
     const totalUsers = 1000;
@@ -185,7 +191,7 @@ module.exports = {
     await queryInterface.bulkInsert('users', users, {});
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     return queryInterface.bulkDelete('users', null, {});
   },
 };

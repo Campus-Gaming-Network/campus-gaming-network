@@ -1,5 +1,6 @@
 export const TABLES = {
   USERS: 'users',
+  USER_ROLES: 'userRoles',
   SCHOOLS: 'schools',
   SCHOOL_USERS: 'schoolUsers',
   TEAMS: 'teams',
@@ -8,7 +9,6 @@ export const TABLES = {
   EVENTS: 'events',
   EVENT_RESPONSES: 'eventResponses',
   ROLES: 'roles',
-  TEAMMATE_ROLES: 'teammateRoles',
   TOURNAMENTS: 'tournaments',
   USER_REPORTS: 'userReports',
   PARTICIPANTS: 'participants',
@@ -17,6 +17,7 @@ export const TABLES = {
 
 export const MODELS = {
   USER: 'User',
+  USER_ROLE: 'UserRole',
   SCHOOL: 'School',
   SCHOOL_USER: 'SchoolUser',
   TEAM: 'Team',
@@ -25,7 +26,6 @@ export const MODELS = {
   EVENT: 'Event',
   EVENT_RESPONSE: 'EventResponse',
   ROLE: 'Role',
-  TEAMMATE_ROLE: 'TeammateRole',
   TOURNAMENT: 'Tournament',
   USER_REPORT: 'UserReport',
   PARTICIPANT: 'Participant',
@@ -81,3 +81,5 @@ export const MAX_REPORT_REASON_LENGTH = 5000;
 export const BASE_LIMIT = 5;
 export const BASE_OFFSET = 0;
 export const MAX_LIMIT = 100;
+
+export const AUTH_ERROR_MESSAGE = 'You are not authorized to make this request';

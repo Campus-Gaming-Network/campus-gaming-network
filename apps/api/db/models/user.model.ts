@@ -12,6 +12,10 @@ export default (sequelize: Sequelize): ModelDefined<any, any> => {
         primaryKey: true,
         allowNull: false,
       },
+      uid: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
