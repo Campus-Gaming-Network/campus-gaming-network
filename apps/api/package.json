@@ -1,5 +1,5 @@
 {
-  "name": "@cgn/api",
+  "name": "api",
   "version": "0.0.0",
   "private": true,
   "main": "dist/app.js",

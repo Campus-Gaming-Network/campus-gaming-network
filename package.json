@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "build": "npx turbo run build",
-    "build-website": "npx turbo run build --scope=website --include-dependencies --no-deps",
+    "build-website": "npx turbo run build --scope='website' --include-dependencies --no-deps",
     "dev-website": "turbo run dev --parallel --scope='website' --scope='utils' --ignore='mobile'",
     "dev-mobile": "turbo run dev --parallel --scope='mobile' --scope='utils' --ignore='website'",
     "dev": "turbo run dev --parallel",

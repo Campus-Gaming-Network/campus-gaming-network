@@ -1,5 +1,5 @@
 {
-  "name": "@cgn/tsconfig",
+  "name": "tsconfig",
   "version": "0.0.0",
   "main": "index.js",
   "publishConfig": {
