@@ -5,7 +5,6 @@ import {
   AlertIcon,
   Button,
   Flex,
-  Heading,
   Text,
   Divider,
   Input,
@@ -32,6 +31,7 @@ import Card from "src/components/Card";
 import Link from "src/components/Link";
 import SiteLayout from "src/components/SiteLayout";
 import FormErrorAlert from "src/components/FormErrorAlert";
+import Heading from "src/components/shared/Heading";
 
 // Other
 import { auth } from "src/firebase";
