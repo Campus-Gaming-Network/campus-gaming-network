@@ -2,5 +2,18 @@
   "name": "@cgn/monorepo",
   "version": "0.0.0",
   "private": true,
-  "workspaces": ["apps/**"]
+  "workspaces": [
+    "apps/**"
+  ],
+  "devDependencies": {
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.2",
+    "prettier": "2.5.1"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown **/*.{js,jsx,ts,tsx,json,css,scss,md}"
+  }
 }
