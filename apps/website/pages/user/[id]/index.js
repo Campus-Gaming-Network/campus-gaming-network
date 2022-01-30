@@ -11,10 +11,6 @@ import {
 import {
   useClipboard,
   useToast,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   IconButton,
   useBoolean,
 } from "@chakra-ui/react";
@@ -51,6 +47,10 @@ import {
   Flex,
   VisuallyHidden,
   Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "src/components/shared";
 
 // API
