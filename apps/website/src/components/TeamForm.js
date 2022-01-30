@@ -360,14 +360,10 @@ const TeamForm = (props) => {
 // UsersList
 
 const UsersList = (props) => {
-  const [
-    isPromoteTeammateAlertOpen,
-    setPromoteTeammateAlertIsOpen,
-  ] = useBoolean();
-  const [
-    isDemoteTeammateAlertOpen,
-    setDemoteTeammateAlertIsOpen,
-  ] = useBoolean();
+  const [isPromoteTeammateAlertOpen, setPromoteTeammateAlertIsOpen] =
+    useBoolean();
+  const [isDemoteTeammateAlertOpen, setDemoteTeammateAlertIsOpen] =
+    useBoolean();
   const [isKickTeammateAlertOpen, setKickTeammateAlertIsOpen] = useBoolean();
   const [promotion, setPromotion] = React.useState("");
   const [teammateToEdit, setTeammateToEdit] = React.useState(null);

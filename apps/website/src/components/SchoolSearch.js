@@ -42,10 +42,8 @@ const SchoolSearch = (props) => {
     LOCAL_STORAGE.SCHOOLS,
     null
   );
-  const [
-    localStorageSchoolQueries,
-    setSchoolsQueryInLocalStorage,
-  ] = useLocalStorage(LOCAL_STORAGE.SCHOOLS_QUERY, null);
+  const [localStorageSchoolQueries, setSchoolsQueryInLocalStorage] =
+    useLocalStorage(LOCAL_STORAGE.SCHOOLS_QUERY, null);
 
   const [searchTerm, setSearchTerm] = React.useState(props.schoolName || "");
   const [isFetching, setIsFetching] = useBoolean();

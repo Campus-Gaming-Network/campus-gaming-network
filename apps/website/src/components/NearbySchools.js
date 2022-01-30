@@ -29,10 +29,8 @@ const NearbySchools = (props) => {
     longitude: browserLongitude,
     error: geoPositionError,
   } = usePosition();
-  const [
-    localStorageGeolocation,
-    setGeolocationInLocalStorage,
-  ] = useLocalStorage(LOCAL_STORAGE.GEOLOCATION, null);
+  const [localStorageGeolocation, setGeolocationInLocalStorage] =
+    useLocalStorage(LOCAL_STORAGE.GEOLOCATION, null);
   const latitude = React.useMemo(() => {
     let _latitude = props.useBrowserLocation
       ? localStorageGeolocation?.browserLatitude || browserLatitude

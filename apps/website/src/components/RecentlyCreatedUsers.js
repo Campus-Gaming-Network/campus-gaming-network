@@ -15,9 +15,10 @@ import EmptyText from "src/components/EmptyText";
 
 const RecentlyCreatedUsers = () => {
   const [users, state] = useFetchRecentlyCreatedUsers(50);
-  const hasUsers = React.useMemo(() => Boolean(users) && users.length > 0, [
-    users,
-  ]);
+  const hasUsers = React.useMemo(
+    () => Boolean(users) && users.length > 0,
+    [users]
+  );
 
   return (
     <React.Fragment>

@@ -86,10 +86,8 @@ export const getServerSideProps = async (context) => {
 // Tournament
 
 const Tournament = (props) => {
-  const [
-    isReportingTournamentDialogOpen,
-    setReportingTournamentDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingTournamentDialogOpen, setReportingTournamentDialogIsOpen] =
+    useBoolean();
 
   return (
     <SiteLayout meta={props.tournament.meta}>

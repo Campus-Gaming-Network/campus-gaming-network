@@ -28,10 +28,10 @@ const TwitchEmbed = ({
   ...rest
 }) => {
   const scriptStatus = useScript(TWITCH_EMBED_SCRIPT_URL);
-  const embedId = React.useMemo(() => id || `twitch-embed-${channel}`, [
-    id,
-    channel,
-  ]);
+  const embedId = React.useMemo(
+    () => id || `twitch-embed-${channel}`,
+    [id, channel]
+  );
 
   React.useEffect(() => {
     if (scriptStatus === "ready") {

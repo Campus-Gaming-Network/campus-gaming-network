@@ -108,10 +108,8 @@ const User = (props) => {
     () => authUser && authUser.uid === props.user.id,
     [authUser, props.user]
   );
-  const [
-    isReportingUserDialogOpen,
-    setReportingUserDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingUserDialogOpen, setReportingUserDialogIsOpen] =
+    useBoolean();
   const hasTeams = React.useMemo(
     () => Boolean(props.teams) && props.teams.length > 0,
     [props.teams]

@@ -45,15 +45,12 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  const [
-    teamResponse,
-    teamUsersResponse,
-    teamRolesResponse,
-  ] = await Promise.all([
-    getTeamDetails(context.params.id),
-    getTeamUsers(context.params.id),
-    getTeamRoles(context.params.id),
-  ]);
+  const [teamResponse, teamUsersResponse, teamRolesResponse] =
+    await Promise.all([
+      getTeamDetails(context.params.id),
+      getTeamUsers(context.params.id),
+      getTeamRoles(context.params.id),
+    ]);
   const { team } = teamResponse;
   const { teammates } = teamUsersResponse;
   const { roles } = teamRolesResponse;

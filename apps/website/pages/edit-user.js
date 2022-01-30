@@ -151,10 +151,8 @@ const EditUser = () => {
   const { isAuthenticating, authUser, user, school } = useAuth();
   const [isSubmitting, setIsSubmitting] = useBoolean();
   const [hasPrefilledForm, setHasPrefilledForm] = useBoolean();
-  const [
-    isDeletingAccountAlertOpen,
-    setDeletingAccountAlertIsOpen,
-  ] = useBoolean();
+  const [isDeletingAccountAlertOpen, setDeletingAccountAlertIsOpen] =
+    useBoolean();
   const [formState, formDispatch] = React.useReducer(
     formReducer,
     initialFormState

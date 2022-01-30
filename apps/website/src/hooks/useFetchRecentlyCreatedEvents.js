@@ -78,10 +78,9 @@ const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
             ...{
               [page]: {
                 first: recentlyCreatedEventsSnapshot.docs[0],
-                last:
-                  recentlyCreatedEventsSnapshot.docs[
-                    recentlyCreatedEventsSnapshot.docs.length - 1
-                  ],
+                last: recentlyCreatedEventsSnapshot.docs[
+                  recentlyCreatedEventsSnapshot.docs.length - 1
+                ],
               },
             },
           }));

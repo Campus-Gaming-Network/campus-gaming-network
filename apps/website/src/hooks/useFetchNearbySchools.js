@@ -61,9 +61,8 @@ const useFetchNearbySchools = (latitude, longitude) => {
 
           for (const snap of snapshots) {
             for (const doc of snap.docs) {
-              const { longitude: _longitude, latitude: _latitude } = doc.get(
-                "location"
-              );
+              const { longitude: _longitude, latitude: _latitude } =
+                doc.get("location");
 
               if (Boolean(_latitude) && Boolean(_longitude)) {
                 const distanceInKilometers = distanceBetween(

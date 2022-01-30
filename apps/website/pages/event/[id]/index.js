@@ -143,10 +143,8 @@ export const getServerSideProps = async (context) => {
 const Event = (props) => {
   const { authUser, isAuthenticated } = useAuth();
   const [isRSVPAlertOpen, setIsRSVPAlertOpen] = useBoolean();
-  const [
-    isReportingEventDialogOpen,
-    setReportingEventDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingEventDialogOpen, setReportingEventDialogIsOpen] =
+    useBoolean();
 
   const openRSVPDialog = () => {
     if (props.canChangeEventResponse) {

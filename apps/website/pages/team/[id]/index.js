@@ -62,15 +62,12 @@ const ReportEntityDialog = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [
-    teamResponse,
-    teamUsersResponse,
-    teamRolesResponse,
-  ] = await Promise.all([
-    getTeamDetails(context.params.id),
-    getTeamUsers(context.params.id),
-    getTeamRoles(context.params.id),
-  ]);
+  const [teamResponse, teamUsersResponse, teamRolesResponse] =
+    await Promise.all([
+      getTeamDetails(context.params.id),
+      getTeamUsers(context.params.id),
+      getTeamRoles(context.params.id),
+    ]);
   const { team } = teamResponse;
   const { teammates } = teamUsersResponse;
   const { roles } = teamRolesResponse;
@@ -115,10 +112,8 @@ export const getServerSideProps = async (context) => {
 
 const Team = (props) => {
   const { isAuthenticated } = useAuth();
-  const [
-    isReportingTeamDialogOpen,
-    setReportingTeamDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingTeamDialogOpen, setReportingTeamDialogIsOpen] =
+    useBoolean();
 
   return (
     <SiteLayout meta={props.team.meta}>

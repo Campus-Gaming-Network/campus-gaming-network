@@ -100,10 +100,8 @@ export const getServerSideProps = async (context) => {
 
 const School = (props) => {
   const { isAuthenticated } = useAuth();
-  const [
-    isReportingSchoolDialogOpen,
-    setReportingSchoolDialogIsOpen,
-  ] = useBoolean();
+  const [isReportingSchoolDialogOpen, setReportingSchoolDialogIsOpen] =
+    useBoolean();
 
   return (
     <SiteLayout meta={props.school.meta}>

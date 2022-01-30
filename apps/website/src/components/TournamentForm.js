@@ -104,10 +104,8 @@ const TournamentForm = (props) => {
     formReducer,
     initialFormState
   );
-  const [
-    isDeletingTournamentAlertOpen,
-    setDeletingTournamentAlertIsOpen,
-  ] = useBoolean();
+  const [isDeletingTournamentAlertOpen, setDeletingTournamentAlertIsOpen] =
+    useBoolean();
   const handleFieldChange = React.useCallback((e) => {
     formDispatch({ field: e.target.name, value: e.target.value });
   }, []);

@@ -39,9 +39,10 @@ const RSVPDialog = (props) => {
   const cancelRef = React.useRef();
   const attendRef = React.useRef();
   const [isSubmitting, setIsSubmitting] = useBoolean();
-  const hasResponded = React.useMemo(() => Boolean(props.eventResponse), [
-    props.eventResponse,
-  ]);
+  const hasResponded = React.useMemo(
+    () => Boolean(props.eventResponse),
+    [props.eventResponse]
+  );
 
   const handleSubmitError = (error) => {
     props.onClose();

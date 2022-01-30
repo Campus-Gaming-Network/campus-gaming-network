@@ -69,8 +69,9 @@ const useFetchUserEvents = (id, page, _limit) => {
             ...{
               [page]: {
                 first: userEventsSnapshot.docs[0],
-                last:
-                  userEventsSnapshot.docs[userEventsSnapshot.docs.length - 1],
+                last: userEventsSnapshot.docs[
+                  userEventsSnapshot.docs.length - 1
+                ],
               },
             },
           }));
