@@ -1,10 +1,20 @@
 {
-  "name": "api",
+  "name": "@cgn/api",
   "version": "0.0.0",
   "private": true,
-  "main": "app.ts",
+  "main": "dist/app.js",
+  "source": "src/app.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=14.0.0"
+  },
   "scripts": {
-    "dev": "NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts"
+    "dev": "NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts",
+    "build": "npx -p typescript tsc",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "@types/pg": "^8.6.4",

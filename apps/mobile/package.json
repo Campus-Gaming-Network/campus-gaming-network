@@ -1,5 +1,5 @@
 {
-  "name": "mobile",
+  "name": "@cgn/mobile",
   "main": "index.js",
   "version": "0.0.0",
   "private": true,
