@@ -1,8 +1,0 @@
-{
-  "name": "@cgn/mobile-ui",
-  "version": "0.0.0",
-  "private": true,
-  "devDependencies": {
-    "native-base": "^3.3.2"
-  }
-}
