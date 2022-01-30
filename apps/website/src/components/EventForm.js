@@ -3,24 +3,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import isEmpty from "lodash.isempty";
-import {
-  Input,
-  Stack,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  Box,
-  Button,
-  Textarea,
-  Text,
-  FormErrorMessage,
-  Spinner,
-  Checkbox,
-  Flex,
-  Avatar,
-  Spacer,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { DateTime } from "luxon";
@@ -39,6 +22,23 @@ import YearSelect from "src/components/YearSelect";
 import TimeSelect from "src/components/TimeSelect";
 import FormErrorAlert from "src/components/FormErrorAlert";
 import CharacterCounter from "src/components/CharacterCounter";
+import {
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  FormErrorMessage,
+  Checkbox,
+  Textarea,
+  Spacer,
+  Avatar,
+  Flex,
+  Input,
+  Stack,
+  Box,
+  Button,
+  Text,
+  Spinner,
+} from "src/components/common";
 
 // Constants
 import { CURRENT_YEAR, DASHED_DATE_TIME } from "src/constants/dateTime";

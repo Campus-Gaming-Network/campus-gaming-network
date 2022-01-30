@@ -1,7 +1,7 @@
 // Libraries
 import React from "react";
 import uniqBy from "lodash.uniqby";
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading } from "src/components/common";
 
 // Hooks
 import useFetchRecentlyCreatedEvents from "src/hooks/useFetchRecentlyCreatedEvents";

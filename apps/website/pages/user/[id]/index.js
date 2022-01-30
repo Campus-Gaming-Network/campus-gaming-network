@@ -51,7 +51,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-} from "src/components/shared";
+} from "src/components/common";
 
 // API
 import { getSchoolDetails } from "src/api/school";

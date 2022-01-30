@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box, Flex, Button, useBoolean } from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 // Components
@@ -9,6 +9,7 @@ import SchoolSearch from "src/components/SchoolSearch";
 import Logo from "src/components/Logo";
 import Link from "src/components/Link";
 import ButtonLink from "src/components/ButtonLink";
+import { Box, Flex, Button } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // UnauthenticatedNav

@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Heading, Box } from "@chakra-ui/react";
+import { Heading, Box } from "src/components/common";
 
 // Hooks
 import useFetchSchoolEvents from "src/hooks/useFetchSchoolEvents";

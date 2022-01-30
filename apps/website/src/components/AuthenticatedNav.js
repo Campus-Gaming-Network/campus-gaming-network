@@ -1,22 +1,7 @@
 // Libraries
 import React from "react";
 import { useRouter } from "next/router";
-import {
-  Flex,
-  Text,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-  Box,
-  Avatar,
-  Tooltip,
-  Stack,
-  MenuGroup,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -36,6 +21,21 @@ import SchoolLogo from "src/components/SchoolLogo";
 import Logo from "src/components/Logo";
 import Link from "src/components/Link";
 import ButtonLink from "src/components/ButtonLink";
+import {
+  Flex,
+  Text,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  Box,
+  Avatar,
+  Tooltip,
+  Stack,
+  MenuGroup,
+} from "src/components/common";
 
 // Other
 import { auth } from "src/firebase";

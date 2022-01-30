@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box, Flex, Button } from "@chakra-ui/react";
+import { Box, Flex, Button } from "src/components/common";
 
 const START_PAGE = 0;
 

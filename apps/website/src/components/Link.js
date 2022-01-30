@@ -1,7 +1,7 @@
 // Libraries
 import React from "react";
 import NextLink from "next/link";
-import { Link as ChakraLink, Tooltip } from "@chakra-ui/react";
+import { Link as ChakraLink, Tooltip } from "src/components/common";
 
 // Components
 import ConditionalWrapper from "src/components/ConditionalWrapper";

@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Box } from "src/components/common";
 
 // Components
 import Link from "src/components/Link";

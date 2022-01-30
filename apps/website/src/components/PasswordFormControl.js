@@ -7,7 +7,7 @@ import {
   Button,
   FormErrorMessage,
   useBoolean,
-} from "@chakra-ui/react";
+} from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordFormControl

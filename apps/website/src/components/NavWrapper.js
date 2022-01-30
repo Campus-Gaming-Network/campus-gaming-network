@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Flex } from "@chakra-ui/react";
+import { Flex } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // NavWrapper

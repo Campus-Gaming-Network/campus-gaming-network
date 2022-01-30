@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Text, Flex, Stack, Badge } from "@chakra-ui/react";
+import { Text, Flex, Stack, Badge } from "src/components/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
 

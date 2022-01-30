@@ -1,7 +1,7 @@
 // Libraries
 import React from "react";
 import NextLink from "next/link";
-import { Link, Button } from "@chakra-ui/react";
+import { Link, Button } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // ButtonLink

@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Flex, Text, Spinner, useBoolean } from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import {
   Combobox,
   ComboboxInput,
@@ -14,6 +14,7 @@ import { httpsCallable } from "firebase/functions";
 
 // Components
 import GameCover from "src/components/GameCover";
+import { Flex, Text, Spinner } from "src/components/common";
 
 // Hooks
 import useDebounce from "src/hooks/useDebounce";

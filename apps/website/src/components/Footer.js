@@ -7,7 +7,7 @@ import {
   ListItem,
   Text,
   Flex,
-} from "@chakra-ui/react";
+} from "src/components/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMugHot } from "@fortawesome/free-solid-svg-icons";
 

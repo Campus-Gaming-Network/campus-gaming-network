@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Box } from "src/components/common";
 import Head from "next/head";
 
 // Components

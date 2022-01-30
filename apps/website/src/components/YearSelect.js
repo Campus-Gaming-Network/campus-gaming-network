@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Select } from "@chakra-ui/react";
+import { Select } from "src/components/common";
 
 // Constants
 import { CURRENT_YEAR } from "src/constants/dateTime";
