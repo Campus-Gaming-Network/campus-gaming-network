@@ -9,16 +9,6 @@ import {
   faPencilAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  Stack,
-  Box,
-  Heading,
-  Text,
-  List,
-  ListItem,
-  Avatar,
-  Flex,
-  VisuallyHidden,
-  Button,
   useClipboard,
   useToast,
   Menu,
@@ -50,6 +40,18 @@ import GameLink from "src/components/GameLink";
 import SliderLazyLoad from "src/components/SliderLazyLoad";
 import ButtonLink from "src/components/ButtonLink";
 import EmptyText from "src/components/EmptyText";
+import {
+  Stack,
+  Box,
+  Heading,
+  Text,
+  List,
+  ListItem,
+  Avatar,
+  Flex,
+  VisuallyHidden,
+  Button,
+} from "src/components/shared";
 
 // API
 import { getSchoolDetails } from "src/api/school";

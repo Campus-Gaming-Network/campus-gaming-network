@@ -31,7 +31,7 @@ import Card from "src/components/Card";
 import Link from "src/components/Link";
 import SiteLayout from "src/components/SiteLayout";
 import FormErrorAlert from "src/components/FormErrorAlert";
-import { Heading } from "src/components/shared/Heading";
+import { Heading } from "src/components/shared";
 
 // Other
 import { auth } from "src/firebase";

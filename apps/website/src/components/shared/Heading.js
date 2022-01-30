@@ -1,4 +1,3 @@
-import React from "react";
-import { Heading as ChakraHeading } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 
-export const Heading = ChakraHeading;
+export default Heading;
