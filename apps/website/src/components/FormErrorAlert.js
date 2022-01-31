@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Alert, AlertIcon, AlertDescription } from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertDescription } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // FormErrorAlert

@@ -11,21 +11,7 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import {
-  Stack,
-  Box,
-  Heading,
-  Text,
-  List,
-  Flex,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  IconButton,
-  useBoolean,
-  ButtonGroup,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import safeJsonStringify from "safe-json-stringify";
 import nookies from "nookies";
@@ -45,6 +31,20 @@ import Link from "src/components/Link";
 import GameCover from "src/components/GameCover";
 import UserListItem from "src/components/UserListItem";
 import EmptyText from "src/components/EmptyText";
+import {
+  Stack,
+  Box,
+  Heading,
+  Text,
+  List,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  ButtonGroup,
+} from "src/components/common";
 
 // Providers
 import { useAuth } from "src/providers/auth";

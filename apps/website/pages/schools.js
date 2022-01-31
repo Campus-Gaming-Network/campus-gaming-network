@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Box, Heading, Flex, List, ListItem } from "@chakra-ui/react";
 import firebaseAdmin from "src/firebaseAdmin";
 import sortBy from "lodash.sortby";
 import safeJsonStringify from "safe-json-stringify";
@@ -13,6 +12,7 @@ import SiteLayout from "src/components/SiteLayout";
 import Article from "src/components/Article";
 import Link from "src/components/Link";
 import { mapSchool } from "src/utilities/school";
+import { Box, Heading, Flex, List, ListItem } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getStaticProps

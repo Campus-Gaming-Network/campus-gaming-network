@@ -1,17 +1,19 @@
 // Libraries
 import React from "react";
+import { useToast } from "@chakra-ui/react";
+import { sendEmailVerification } from "firebase/auth";
+
+// Other
+import { auth } from "src/firebase";
+
+// Components
 import {
   Alert,
   AlertIcon,
   AlertDescription,
   Text,
   Button,
-  useToast,
-} from "@chakra-ui/react";
-import { sendEmailVerification } from "firebase/auth";
-
-// Other
-import { auth } from "src/firebase";
+} from "src/components/common";
 
 // Providers
 import { useAuth } from "src/providers/auth";

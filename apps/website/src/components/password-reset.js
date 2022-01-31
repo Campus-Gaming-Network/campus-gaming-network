@@ -1,19 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Alert,
-  AlertIcon,
-  Button,
-  Heading,
-  Divider,
-  Input,
-  Stack,
-  FormLabel,
-  FormControl,
-  FormErrorMessage,
-  AlertDescription,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
 import {
@@ -37,6 +24,19 @@ import Article from "src/components/Article";
 import Card from "src/components/Card";
 import SiteLayout from "src/components/SiteLayout";
 import FormErrorAlert from "src/components/FormErrorAlert";
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  Heading,
+  Divider,
+  Input,
+  Stack,
+  FormLabel,
+  FormControl,
+  FormErrorMessage,
+  AlertDescription,
+} from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // PasswordReset

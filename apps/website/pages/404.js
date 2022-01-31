@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Box, Text, Img, Stack, Flex } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeartBroken } from "@fortawesome/free-solid-svg-icons";
 
@@ -8,6 +7,7 @@ import { faHeartBroken } from "@fortawesome/free-solid-svg-icons";
 import SiteLayout from "src/components/SiteLayout";
 import Article from "src/components/Article";
 import ButtonLink from "src/components/ButtonLink";
+import { Box, Text, Img, Stack, Flex } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // NotFound

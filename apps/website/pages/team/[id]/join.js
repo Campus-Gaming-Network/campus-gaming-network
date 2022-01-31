@@ -1,20 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  Input,
-  Stack,
-  FormControl,
-  FormLabel,
-  Button,
-  Heading,
-  Divider,
-  useToast,
-  FormErrorMessage,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useToast, useBoolean } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
@@ -44,6 +30,19 @@ import SiteLayout from "src/components/SiteLayout";
 import Card from "src/components/Card";
 import Article from "src/components/Article";
 import FormErrorAlert from "src/components/FormErrorAlert";
+import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Input,
+  Stack,
+  FormControl,
+  FormLabel,
+  Button,
+  Heading,
+  Divider,
+  FormErrorMessage,
+} from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps

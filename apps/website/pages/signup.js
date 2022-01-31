@@ -1,24 +1,7 @@
 // Libraries
 import React from "react";
 import startCase from "lodash.startcase";
-import {
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  Input,
-  Stack,
-  FormControl,
-  FormLabel,
-  Text,
-  Select,
-  Button,
-  Divider,
-  useToast,
-  Heading,
-  FormHelperText,
-  FormErrorMessage,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useToast, useBoolean } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
 import firebaseAdmin from "src/firebaseAdmin";
@@ -51,6 +34,22 @@ import Link from "src/components/Link";
 import SchoolSearch from "src/components/SchoolSearch";
 import SiteLayout from "src/components/SiteLayout";
 import FormErrorAlert from "src/components/FormErrorAlert";
+import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Input,
+  Stack,
+  FormControl,
+  FormLabel,
+  Text,
+  Select,
+  Button,
+  Divider,
+  Heading,
+  FormHelperText,
+  FormErrorMessage,
+} from "src/components/common";
 
 // Other
 import { auth, db } from "src/firebase";

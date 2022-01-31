@@ -1,20 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Stack,
-  Box,
-  Heading,
-  Text,
-  Flex,
-  VisuallyHidden,
-  List,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import nookies from "nookies";
@@ -43,6 +29,20 @@ import Article from "src/components/Article";
 import UserListItem from "src/components/UserListItem";
 import EmptyText from "src/components/EmptyText";
 import Link from "src/components/Link";
+import {
+  Stack,
+  Box,
+  Heading,
+  Text,
+  Flex,
+  VisuallyHidden,
+  List,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "src/components/common";
 
 // Other
 import firebaseAdmin from "src/firebaseAdmin";

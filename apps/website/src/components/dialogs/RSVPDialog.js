@@ -1,17 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Button,
-  Text,
-  useToast,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useToast, useBoolean } from "@chakra-ui/react";
 import {
   doc,
   updateDoc,
@@ -29,6 +18,18 @@ import { COLLECTIONS } from "src/constants/firebase";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+
+// Components
+import {
+  Button,
+  Text,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+} from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////
 // RSVPDialog

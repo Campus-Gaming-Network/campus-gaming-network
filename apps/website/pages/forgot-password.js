@@ -1,21 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Alert,
-  AlertIcon,
-  Button,
-  Flex,
-  Text,
-  Divider,
-  Input,
-  Stack,
-  FormLabel,
-  FormControl,
-  AlertTitle,
-  AlertDescription,
-  FormErrorMessage,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
@@ -31,7 +16,22 @@ import Card from "src/components/Card";
 import Link from "src/components/Link";
 import SiteLayout from "src/components/SiteLayout";
 import FormErrorAlert from "src/components/FormErrorAlert";
-import { Heading } from "src/components/common";
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  Flex,
+  Text,
+  Divider,
+  Input,
+  Stack,
+  FormLabel,
+  FormControl,
+  AlertTitle,
+  AlertDescription,
+  FormErrorMessage,
+  Heading,
+} from "src/components/common";
 
 // Other
 import { auth } from "src/firebase";

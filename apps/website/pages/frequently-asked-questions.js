@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Box, Link, Flex } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 
@@ -10,6 +9,7 @@ import Card from "src/components/Card";
 import PageHeading from "src/components/PageHeading";
 import OutsideLink from "src/components/OutsideLink";
 import SiteLayout from "src/components/SiteLayout";
+import { Box, Link, Flex } from "src/components/common";
 
 // Constants
 import {

@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Box, Heading, Wrap, WrapItem } from "@chakra-ui/react";
 
 // Hooks
 import useFetchRecentlyCreatedUsers from "src/hooks/useFetchRecentlyCreatedUsers";
@@ -9,6 +8,7 @@ import useFetchRecentlyCreatedUsers from "src/hooks/useFetchRecentlyCreatedUsers
 import UserListItem from "src/components/UserListItem";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
+import { Box, Heading, Wrap, WrapItem } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // RecentlyCreatedUsers

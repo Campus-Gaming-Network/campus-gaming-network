@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import { Stack, Text, Box, Flex, Spacer, Heading, Img } from "@chakra-ui/react";
 
 // Constants
 import { PRODUCTION_URL } from "src/constants/other";
@@ -13,6 +12,15 @@ import Article from "src/components/Article";
 import PageHeading from "src/components/PageHeading";
 import SiteLayout from "src/components/SiteLayout";
 import ButtonLink from "src/components/ButtonLink";
+import {
+  Stack,
+  Text,
+  Box,
+  Flex,
+  Spacer,
+  Heading,
+  Img,
+} from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // About

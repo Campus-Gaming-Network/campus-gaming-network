@@ -1,23 +1,7 @@
 // Libraries
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  Stack,
-  FormControl,
-  FormLabel,
-  Box,
-  Button,
-  Textarea,
-  Heading,
-  Text,
-  useToast,
-  FormHelperText,
-  Image,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useToast, useBoolean } from "@chakra-ui/react";
 import { useDropzone } from "react-dropzone";
 import nookies from "nookies";
 import safeJsonStringify from "safe-json-stringify";
@@ -33,6 +17,21 @@ import {
   PRODUCTION_URL,
   NOT_FOUND,
 } from "src/constants/other";
+import {
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  Stack,
+  FormControl,
+  FormLabel,
+  Box,
+  Button,
+  Textarea,
+  Heading,
+  Text,
+  FormHelperText,
+  Image,
+} from "src/components/common";
 
 // Other
 // import firebase from "src/firebase";

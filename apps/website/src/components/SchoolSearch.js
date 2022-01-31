@@ -1,7 +1,7 @@
 // Libraries
 import React from "react";
 import startCase from "lodash.startcase";
-import { Text, Spinner, Flex, Box, useBoolean } from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool, faHistory } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -17,6 +17,7 @@ import { httpsCallable } from "firebase/functions";
 
 // Components
 import SchoolLogo from "src/components/SchoolLogo";
+import { Text, Spinner, Flex, Box } from "src/components/common";
 
 // Hooks
 import useLocalStorage from "src/hooks/useLocalStorage";

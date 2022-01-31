@@ -4,34 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import xorBy from "lodash.xorby";
 import isEmpty from "lodash.isempty";
 import { DateTime } from "luxon";
-import {
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  Stack,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  Box,
-  Select,
-  Button,
-  Textarea,
-  Text,
-  Tooltip,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  FormErrorMessage,
-  useToast,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Spacer,
-  IconButton,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useToast, useBoolean } from "@chakra-ui/react";
 import {
   faCaretRight,
   faCaretLeft,
@@ -75,6 +48,32 @@ import DaySelect from "src/components/DaySelect";
 import YearSelect from "src/components/YearSelect";
 import FormErrorAlert from "src/components/FormErrorAlert";
 import CharacterCounter from "src/components/CharacterCounter";
+import {
+  Flex,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  Stack,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Box,
+  Select,
+  Button,
+  Textarea,
+  Text,
+  Tooltip,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  FormErrorMessage,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Spacer,
+  IconButton,
+} from "src/components/common";
 
 // Utilities
 import { move } from "src/utilities/other";

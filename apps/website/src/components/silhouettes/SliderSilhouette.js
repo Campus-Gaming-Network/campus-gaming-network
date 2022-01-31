@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Stack, Skeleton, Box } from "@chakra-ui/react";
+import { Stack, Skeleton, Box } from "src/components/common";
 import Slider from "src/components/Slider";
 
 ////////////////////////////////////////////////////////////////////////////

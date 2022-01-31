@@ -1,23 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Stack,
-  Box,
-  Heading,
-  Text,
-  List,
-  ListItem,
-  Flex,
-  Avatar,
-  VisuallyHidden,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  IconButton,
-  ButtonGroup,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSchool,
@@ -49,6 +32,23 @@ import SchoolLogo from "src/components/SchoolLogo";
 import UserListItem from "src/components/UserListItem";
 import SliderLazyLoad from "src/components/SliderLazyLoad";
 import EmptyText from "src/components/EmptyText";
+import {
+  Stack,
+  Box,
+  Heading,
+  Text,
+  List,
+  ListItem,
+  Flex,
+  Avatar,
+  VisuallyHidden,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  ButtonGroup,
+} from "src/components/common";
 
 // Providers
 import { useAuth } from "src/providers/auth";

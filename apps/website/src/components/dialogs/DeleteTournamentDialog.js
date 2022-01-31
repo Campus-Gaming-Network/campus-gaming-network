@@ -1,22 +1,23 @@
 // Libraries
 import React from "react";
+import { useToast, useBoolean } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { doc, deleteDoc } from "firebase/firestore";
+
+// Other
+import { db } from "src/firebase";
+
+// Components
 import {
   Button,
   Text,
-  useToast,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  useBoolean,
-} from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { doc, deleteDoc } from "firebase/firestore";
-
-// Other
-import { db } from "src/firebase";
+} from "src/components/common";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";

@@ -1,6 +1,18 @@
 // Libraries
 import React from "react";
 import isEmpty from "lodash.isempty";
+import { useBoolean } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
+
+// Components
+import SiteLayout from "src/components/SiteLayout";
+import FormSilhouette from "src/components/silhouettes/FormSilhouette";
+import Article from "src/components/Article";
+import PageHeading from "src/components/PageHeading";
+import Card from "src/components/Card";
+import FormErrorAlert from "src/components/FormErrorAlert";
+import CharacterCounter from "src/components/CharacterCounter";
+import OutsideLink from "src/components/OutsideLink";
 import {
   Input,
   Stack,
@@ -15,7 +27,6 @@ import {
   Flex,
   Spacer,
   Select,
-  useBoolean,
   Checkbox,
   Radio,
   RadioGroup,
@@ -25,18 +36,7 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Img,
-} from "@chakra-ui/react";
-import dynamic from "next/dynamic";
-
-// Components
-import SiteLayout from "src/components/SiteLayout";
-import FormSilhouette from "src/components/silhouettes/FormSilhouette";
-import Article from "src/components/Article";
-import PageHeading from "src/components/PageHeading";
-import Card from "src/components/Card";
-import FormErrorAlert from "src/components/FormErrorAlert";
-import CharacterCounter from "src/components/CharacterCounter";
-import OutsideLink from "src/components/OutsideLink";
+} from "src/components/common";
 
 // Constants
 import { MAX_DESCRIPTION_LENGTH } from "src/constants/event";

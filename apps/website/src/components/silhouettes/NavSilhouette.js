@@ -1,6 +1,6 @@
 // Libraries
 import React from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex } from "src/components/common";
 
 // Components
 import NavWrapper from "src/components/NavWrapper";

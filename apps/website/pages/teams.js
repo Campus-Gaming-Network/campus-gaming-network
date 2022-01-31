@@ -7,19 +7,7 @@ import {
   faCrown,
   faMedal,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  Stack,
-  Box,
-  Heading,
-  Tooltip,
-  List,
-  ListItem,
-  Flex,
-  IconButton,
-  VisuallyHidden,
-  Text,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
@@ -34,6 +22,18 @@ import Article from "src/components/Article";
 import Link from "src/components/Link";
 import Card from "src/components/Card";
 import EmptyText from "src/components/EmptyText";
+import {
+  Stack,
+  Box,
+  Heading,
+  Tooltip,
+  List,
+  ListItem,
+  Flex,
+  IconButton,
+  VisuallyHidden,
+  Text,
+} from "src/components/common";
 
 // API
 import { getUserTeams } from "src/api/user";

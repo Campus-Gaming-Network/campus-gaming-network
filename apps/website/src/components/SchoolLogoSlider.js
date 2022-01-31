@@ -1,18 +1,13 @@
 // Libraries
 import React from "react";
-import {
-  Box,
-  Heading,
-  VisuallyHidden,
-  useBoolean,
-  Text,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import shuffle from "lodash.shuffle";
 
 // Components
 import SchoolLogo from "src/components/SchoolLogo";
 import Slider from "src/components/Slider";
 import Link from "src/components/Link";
+import { Box, Heading, VisuallyHidden, Text } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // SchoolLogoSlider

@@ -1,9 +1,18 @@
 // Libraries
 import React from "react";
+import { useToast, useBoolean } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { signOut } from "firebase/auth";
+import { doc, deleteDoc } from "firebase/firestore";
+import { validateDeleteAccount } from "@campus-gaming-network/tools";
+
+// Other
+import { auth, db } from "src/firebase";
+
+// Components
 import {
   Button,
   Text,
-  useToast,
   Input,
   FormLabel,
   FormControl,
@@ -14,15 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  useBoolean,
-} from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { signOut } from "firebase/auth";
-import { doc, deleteDoc } from "firebase/firestore";
-import { validateDeleteAccount } from "@campus-gaming-network/tools";
-
-// Other
-import { auth, db } from "src/firebase";
+} from "src/components/common";
 
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";

@@ -1,5 +1,17 @@
 // Libraries
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCrown,
+  faEllipsisV,
+  faMedal,
+  faSchool,
+} from "@fortawesome/free-solid-svg-icons";
+
+// Components
+import Link from "src/components/Link";
+import SliderCard from "src/components/SliderCard";
+import SchoolLogo from "src/components/SchoolLogo";
 import {
   Box,
   Avatar,
@@ -13,19 +25,7 @@ import {
   MenuItem,
   IconButton,
   Portal,
-} from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCrown,
-  faEllipsisV,
-  faMedal,
-  faSchool,
-} from "@fortawesome/free-solid-svg-icons";
-
-// Components
-import Link from "src/components/Link";
-import SliderCard from "src/components/SliderCard";
-import SchoolLogo from "src/components/SchoolLogo";
+} from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // UserListItem

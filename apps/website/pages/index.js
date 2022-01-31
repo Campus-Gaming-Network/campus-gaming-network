@@ -1,5 +1,4 @@
 import React from "react";
-import { Heading, Text, Stack, VisuallyHidden, Box } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 
 // Components
@@ -9,6 +8,13 @@ import RecentlyCreatedEvents from "src/components/RecentlyCreatedEvents";
 import RecentlyCreatedUsers from "src/components/RecentlyCreatedUsers";
 import SliderLazyLoad from "src/components/SliderLazyLoad";
 import ConditionalWrapper from "src/components/ConditionalWrapper";
+import {
+  Heading,
+  Text,
+  Stack,
+  VisuallyHidden,
+  Box,
+} from "src/components/common";
 
 // Providers
 import { useAuth } from "src/providers/auth";

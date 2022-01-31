@@ -1,21 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  Input,
-  Stack,
-  FormControl,
-  FormLabel,
-  Text,
-  Button,
-  Heading,
-  Divider,
-  Flex,
-  FormErrorMessage,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
 import firebaseAdmin from "src/firebaseAdmin";
@@ -35,6 +20,21 @@ import Card from "src/components/Card";
 import Article from "src/components/Article";
 import Link from "src/components/Link";
 import FormErrorAlert from "src/components/FormErrorAlert";
+import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Input,
+  Stack,
+  FormControl,
+  FormLabel,
+  Text,
+  Button,
+  Heading,
+  Divider,
+  Flex,
+  FormErrorMessage,
+} from "src/components/common";
 
 // Constants
 import { COOKIES, PRODUCTION_URL, REDIRECT_HOME } from "src/constants/other";

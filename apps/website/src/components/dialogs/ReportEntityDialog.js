@@ -1,22 +1,6 @@
 // Libraries
 import React from "react";
-import {
-  Button,
-  Text,
-  useToast,
-  Textarea,
-  FormLabel,
-  FormControl,
-  FormHelperText,
-  FormErrorMessage,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useToast, useBoolean } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import { doc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
@@ -33,6 +17,23 @@ import { CALLABLES } from "src/constants/firebase";
 
 // Other
 import { db, functions } from "src/firebase";
+
+// Components
+import {
+  Button,
+  Text,
+  Textarea,
+  FormLabel,
+  FormControl,
+  FormHelperText,
+  FormErrorMessage,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+} from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////
 // ReportEntityDialog

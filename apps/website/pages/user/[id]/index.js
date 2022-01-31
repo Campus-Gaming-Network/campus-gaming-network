@@ -8,12 +8,7 @@ import {
   faEllipsisV,
   faPencilAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  useClipboard,
-  useToast,
-  IconButton,
-  useBoolean,
-} from "@chakra-ui/react";
+import { useClipboard, useToast, useBoolean } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import dynamic from "next/dynamic";
 
@@ -51,6 +46,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  IconButton,
 } from "src/components/common";
 
 // API

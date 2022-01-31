@@ -1,9 +1,12 @@
 // Libraries
 import React from "react";
-import { Img, useBoolean } from "@chakra-ui/react";
+import { useBoolean } from "@chakra-ui/react";
 
 // Utilities
 import { getSchoolLogoUrl } from "src/utilities/school";
+
+// Components
+import { Img } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // SchoolLogo

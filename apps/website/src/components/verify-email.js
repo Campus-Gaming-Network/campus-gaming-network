@@ -1,11 +1,5 @@
 // Libraries
 import React from "react";
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-} from "@chakra-ui/react";
 import { applyActionCode } from "firebase/auth";
 
 // Other
@@ -14,6 +8,12 @@ import { auth } from "src/firebase";
 // Components
 import Article from "src/components/Article";
 import SiteLayout from "src/components/SiteLayout";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from "src/components/common";
 
 // Constants
 import { PRODUCTION_URL } from "src/constants/other";

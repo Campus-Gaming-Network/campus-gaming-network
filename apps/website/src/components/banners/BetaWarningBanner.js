@@ -1,6 +1,11 @@
 // Libraries
 import React from "react";
-import { Alert, AlertIcon, AlertDescription, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Text,
+} from "src/components/common";
 
 // Components
 import OutsideLink from "src/components/OutsideLink";
