@@ -1,0 +1,8 @@
+.gcloudignore
+.git
+.gitignore
+node_modules/
+scripts
+dist
+package-lock.json
+docker-compose.yml

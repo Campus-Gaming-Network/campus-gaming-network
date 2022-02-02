@@ -4,6 +4,10 @@ import v1 from "./v1";
 
 const router = Router();
 
+router.get("/", (req, res) => {
+  res.send("Hello world");
+});
+
 router.use("/v1", v1);
 
 export default router;

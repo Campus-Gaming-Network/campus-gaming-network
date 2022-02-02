@@ -3,7 +3,6 @@ import cors from "cors";
 import helmet from "helmet";
 import logger from "morgan";
 import bodyParser from "body-parser";
-import errorhandler from "errorhandler";
 
 import config from "./config";
 import routes from "./routes";
@@ -19,10 +18,6 @@ export default class App {
     this.app.use(logger("common"));
     this.app.use(bodyParser.urlencoded({ extended: false }));
     this.app.use(bodyParser.json());
-
-    if (!config.env) {
-      this.app.use(errorhandler());
-    }
 
     this.setupRoutes();
   }
