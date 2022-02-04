@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions } from "sequelize";
 import models from "../db/models";
-// import { validateCreateUser, validateEditUser } from 'utils';
 import { MAX_LIMIT, AUTH_ERROR_MESSAGE } from "../constants";
 import { parseRequestQuery } from "../utilities";
+import { validateCreateUser, validateEditUser } from "../validation";
 import firebaseAdmin from "../firebase";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -49,12 +49,11 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password, ...rest } = req.body;
-  // const { error } = validateCreateUser(rest);
+  const { error } = validateCreateUser(rest);
 
-  // if (error) {
-  //   const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
-  //   return res.status(400).json({ errors });
-  // }
+  if (error) {
+    return res.status(400).json({ error: error.details });
+  }
 
   let authUser;
 
@@ -79,12 +78,11 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-  // const { error } = validateEditUser(req.body);
+  const { error } = validateEditUser(req.body);
 
-  // if (error) {
-  //   const errors = error.details.reduce((acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }), {});
-  //   return res.status(400).json({ errors });
-  // }
+  if (error) {
+    return res.status(400).json({ error: error.details });
+  }
 
   let user;
 
@@ -127,9 +125,12 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
   }
 
-  // TODO: Destroy all of the users Events and Participants
-  // If the user is the owner of the team, do not destroy but
-  // tell them to assign a new owner.
+  // TODO:
+  // If the user is a owner of a team, they must assign a new owner before deletion
+
+  // TODO:
+  // Destroy all of the users Events and Participants
+
   // try {
   //   await user.destroy();
   // } catch (error) {
@@ -192,11 +193,12 @@ const getUserEvents = async (
   }
 
   return res.json({
+    metadata: {
+      query: req.query,
+    },
     data: {
       events,
       count,
-      offset,
-      limit,
     },
   });
 };
@@ -249,7 +251,23 @@ const createUserRole = async (
 };
 
 const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  let role;
+
+  try {
+    role = await models.UserRole.findByPk(req.params.roleId);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!role) {
+    return res.status(404);
+  }
+
+  return res.json({
+    data: {
+      role: role.toJSON(),
+    },
+  });
 };
 
 const updateUserRole = async (
@@ -257,6 +275,24 @@ const updateUserRole = async (
   res: Response,
   next: NextFunction
 ) => {
+  // let user;
+
+  // try {
+  //   user = await models.User.findByPk(req.params.userId);
+  // } catch (error) {
+  //   return next(error);
+  // }
+
+  // if (!user) {
+  //   return res.status(404);
+  // }
+
+  // if (req.authId !== user.toJSON().uid) {
+  //   return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  // }
+
+  // TODO: Update user role
+
   return res.status(501);
 };
 
@@ -265,7 +301,34 @@ const deleteUserRole = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  let user;
+
+  try {
+    user = await models.User.findByPk(req.params.userId);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!user) {
+    return res.status(404);
+  }
+
+  if (req.authId !== user.toJSON().uid) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  try {
+    await models.UserRole.destroy({
+      where: {
+        userId: req.params.userId,
+        roleId: req.params.roleId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  return res.status(200);
 };
 
 const getUserRoles = async (

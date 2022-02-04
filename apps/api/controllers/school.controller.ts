@@ -4,6 +4,7 @@ import models from "../db/models";
 import { parseRequestQuery } from "../utilities";
 import kebabCase from "lodash.kebabcase";
 import geohash from "ngeohash";
+import { validateCreateSchool, validateEditSchool } from "../validation";
 
 const getSchools = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
@@ -88,7 +89,13 @@ const createSchool = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  const { error } = validateCreateSchool(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details });
+  }
+
+  return res.status(200);
 };
 
 const updateSchool = async (
@@ -96,7 +103,13 @@ const updateSchool = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  const { error } = validateEditSchool(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details });
+  }
+
+  return res.status(200);
 };
 
 const deleteSchool = async (

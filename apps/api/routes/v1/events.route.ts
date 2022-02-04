@@ -10,7 +10,7 @@ router.get("/", controllers.Event.getEvents);
 
 router.get("/:id", controllers.Event.getEventById);
 
-router.post("/", [], controllers.Event.createEvent);
+router.post("/", [isAuthenticated], controllers.Event.createEvent);
 
 router.put("/:id", [isAuthenticated], controllers.Event.updateEvent);
 
@@ -18,7 +18,11 @@ router.delete("/:id", [isAuthenticated], controllers.Event.deleteEvent);
 
 router.get("/:id/participants", controllers.Event.getEventParticipants);
 
-router.post("/:id/participants", [], controllers.Event.createEventParticipant);
+router.post(
+  "/:id/participants",
+  [isAuthenticated],
+  controllers.Event.createEventParticipant
+);
 
 router.get(
   "/:eventId/participants/:participantId",

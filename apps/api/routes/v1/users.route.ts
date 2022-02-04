@@ -24,10 +24,18 @@ router.get("/:id/roles", controllers.User.getUserRoles);
 
 router.get("/:userId/roles/:roleId", controllers.User.getUserRole);
 
-router.post("/:id/roles", controllers.User.createUserRole);
+router.post("/:id/roles", [isAuthenticated], controllers.User.createUserRole);
 
-router.put("/:userId/roles/:roleId", controllers.User.updateUserRole);
+router.put(
+  "/:userId/roles/:roleId",
+  [isAuthenticated],
+  controllers.User.updateUserRole
+);
 
-router.delete("/:userId/roles/:roleId", controllers.User.deleteUserRole);
+router.delete(
+  "/:userId/roles/:roleId",
+  [isAuthenticated],
+  controllers.User.deleteUserRole
+);
 
 export default router;

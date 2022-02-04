@@ -3,6 +3,7 @@ import { FindAndCountOptions, FindOptions } from "sequelize";
 import models from "../db/models";
 import { MAX_LIMIT, AUTH_ERROR_MESSAGE } from "../constants";
 import { parseRequestQuery } from "../utilities";
+import { validateCreateTeam, validateEditTeam } from "../validation";
 
 const getTeams = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
@@ -38,15 +39,30 @@ const getTeams = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const createTeam = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  const { error } = validateCreateTeam(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details });
+  }
+
+  return res.status(200);
 };
 
 const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  const { error } = validateEditTeam(req.body);
+
+  if (error) {
+    return res.status(400).json({ error: error.details });
+  }
+
+  return res.status(200);
 };
 
 const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
-  res.status(501);
+  // TODO:
+  // Need to validate the user who is trying to delete
+  // is the owner of the team
+  return res.status(501);
 };
 
 const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
