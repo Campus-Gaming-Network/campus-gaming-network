@@ -1,14 +1,28 @@
 import { Request } from "express";
 
-export const parseRequestQuery = (req: Request) => {
-  const parsed: { [key: string]: any } = {};
+interface ParsedRequestQuery {
+  offset?: number;
+  limit?: number;
+  attributes?: string[];
+}
+
+export const parseRequestQuery = (req: Request): ParsedRequestQuery => {
+  let parsed = {};
 
   if (req.query.offset) {
-    parsed.offset = Number(req.query.offset) || undefined;
+    const offset = Number(req.query.offset) || undefined;
+
+    if (offset) {
+      parsed = { ...parsed, offset };
+    }
   }
 
   if (req.query.limit) {
-    parsed.limit = Number(req.query.limit) || undefined;
+    const limit = Number(req.query.limit) || undefined;
+
+    if (limit) {
+      parsed = { ...parsed, limit };
+    }
   }
 
   let attributes: string[] = [];
@@ -24,7 +38,7 @@ export const parseRequestQuery = (req: Request) => {
   }
 
   if (attributes.length) {
-    parsed.attributes = attributes;
+    parsed = { ...parsed, attributes };
   }
 
   return parsed;
