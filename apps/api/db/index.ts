@@ -23,13 +23,12 @@ export default class DB {
     const { username, password, host, port, database, dialect } =
       this.config[this.environment];
 
-    this.connection = new Sequelize({
-      username,
-      password,
+    this.connection = new Sequelize(database, username, password, {
       host,
-      port,
-      database,
       dialect,
+      dialectOptions: {
+        socketPath: host,
+      },
       logging: this.isTesting ? false : console.log,
     });
 

@@ -8,16 +8,17 @@
     "dist/**/*"
   ],
   "engines": {
-    "node": "14.x.x"
+    "node": "16.x.x"
   },
   "scripts": {
-    "dev": "NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts",
+    "dev": "npx sequelize-cli db:migrate && NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts",
     "gcp-build": "npx -p typescript tsc",
-    "start": "node ./dist/server.js",
+    "start": "npx sequelize-cli db:migrate && NODE_ENV=production node ./dist/server.js",
     "deploy": "gcloud app deploy"
   },
   "dependencies": {
     "body-parser": "^1.19.1",
+    "chance": "^1.1.8",
     "cls-hooked": "^4.2.2",
     "cors": "^2.8.5",
     "dotenv": "^15.0.0",
@@ -25,6 +26,7 @@
     "express-promise-router": "^4.1.1",
     "firebase-admin": "^10.0.2",
     "helmet": "^5.0.1",
+    "lodash.kebabcase": "^4.1.1",
     "morgan": "^1.10.0",
     "ngeohash": "^0.6.3",
     "pg": "^8.7.1",
@@ -47,8 +49,6 @@
     "@types/pg": "^8.6.4",
     "@types/sequelize": "^4.28.11",
     "@types/validator": "^13.7.1",
-    "chance": "^1.1.8",
-    "lodash.kebabcase": "^4.1.1",
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.5.4"

@@ -16,8 +16,14 @@ import {
 
 export const PRODUCTION_URL = "https://campusgamingnetwork.com";
 export const DEVELOPMENT_URL = "https://dev.campusgamingnetwork.com";
+export const PRODUCTION_API_URL = "https://api.campusgamingnetwork.com";
+export const DEVELOPMENT_API_URL = "https://api-test.campusgamingnetwork.com";
 export const BASE_URL =
   process.env.NODE_ENV !== "production" ? DEVELOPMENT_URL : PRODUCTION_URL;
+export const BASE_API_URL =
+  process.env.NODE_ENV !== "production"
+    ? DEVELOPMENT_API_URL
+    : PRODUCTION_API_URL;
 export const ACCOUNTS = {
   website: {
     label: "Website",
