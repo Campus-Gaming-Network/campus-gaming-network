@@ -3,24 +3,23 @@
 const roles = [
   {
     name: "School Admin",
-    permissions: ["school.update"],
+    textkey: "school-admin",
+    permissions: ["school.edit"],
   },
   {
     name: "Event Admin",
-    permissions: ["event.update", "event.delete"],
+    textkey: "event-admin",
+    permissions: ["event.edit", "event.delete"],
   },
   {
     name: "Team Leader",
+    textkey: "team-leader",
     permissions: [
-      "teammate.update",
-      "teammate.delete",
-      "team.update",
+      "teammate.promote",
+      "teammate.kick",
+      "team.edit",
       "team.delete",
     ],
-  },
-  {
-    name: "Team Officer",
-    permissions: ["teammate.update"],
   },
 ].map((role) => ({
   ...role,

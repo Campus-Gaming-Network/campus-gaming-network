@@ -59,10 +59,47 @@ const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
-  // TODO:
-  // Need to validate the user who is trying to delete
-  // is the owner of the team
-  return res.status(501);
+  let userRole;
+
+  try {
+    userRole = await models.UserRole.findOne({
+      where: {
+        userId: req.authId,
+        teamId: req.params.id,
+      },
+      include: [
+        {
+          model: models.Role,
+          as: "role",
+          required: true,
+        },
+      ],
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!userRole) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  const { role } = userRole.toJSON();
+
+  if (role.textkey !== "team-leader") {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  try {
+    await models.Team.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  return res.status(200);
 };
 
 const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
