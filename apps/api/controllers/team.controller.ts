@@ -59,12 +59,28 @@ const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
+  let user;
+
+  try {
+    user = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!user) {
+    return res.status(404);
+  }
+
   let userRole;
 
   try {
     userRole = await models.UserRole.findOne({
       where: {
-        userId: req.authId,
+        userId: user.toJSON().id,
         teamId: req.params.id,
       },
       include: [
