@@ -182,7 +182,48 @@ const createTeammate = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  let user;
+
+  try {
+    user = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!user) {
+    return res.status(404);
+  }
+
+  let teammateCount;
+
+  try {
+    teammateCount = await models.Teammate.count({
+      where: {
+        teamId: req.params.id,
+        userId: user.toJSON().id,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (teammateCount >= 1) {
+    return res.status(400).json({ error: "Teammate already exists." });
+  }
+
+  try {
+    const teammate = await models.Teammate.create({
+      teamId: req.params.id,
+      userId: user.toJSON().id,
+    });
+    return res.status(200).json({ teammate: teammate.toJSON() });
+  } catch (error) {
+    return next(error);
+  }
 };
 
 const getTeammateById = async (
