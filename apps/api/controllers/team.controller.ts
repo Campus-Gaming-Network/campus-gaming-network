@@ -282,17 +282,57 @@ const deleteTeammate = async (
     return res.status(404);
   }
 
-  if (req.authId !== teammate.toJSON().userId) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  let requestingUser;
+
+  try {
+    requestingUser = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
   }
 
-  // try {
-  //   await teammate.destroy();
-  // } catch (error) {
-  //   return next(error);
-  // }
+  if (!requestingUser) {
+    return res.status(404);
+  }
 
-  return res.status(200);
+  let userRole;
+
+  try {
+    userRole = await models.UserRole.findOne({
+      where: {
+        userId: requestingUser.toJSON().id,
+        teamId: req.params.teamId,
+      },
+      include: [
+        {
+          model: models.Role,
+          as: "role",
+          required: true,
+        },
+      ],
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  const isOwner = requestingUser.toJSON().id === teammate.toJSON().userId;
+  const requestingUserHasPermission =
+    userRole && userRole.toJSON().role.textkey !== "team-leader";
+
+  if (isOwner || requestingUserHasPermission) {
+    try {
+      await teammate.destroy();
+    } catch (error) {
+      return next(error);
+    }
+
+    return res.status(200);
+  }
+
+  return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
 };
 
 export default {
