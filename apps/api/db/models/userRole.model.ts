@@ -50,6 +50,14 @@ export default (
           key: "id",
         },
       },
+      schoolId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: TABLES.SCHOOLS,
+          key: "id",
+        },
+      },
       roleId: {
         type: DataTypes.INTEGER,
         allowNull: true,

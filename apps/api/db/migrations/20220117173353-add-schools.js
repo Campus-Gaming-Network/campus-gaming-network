@@ -21,7 +21,6 @@ const mapSchool = ({
   LATITUDE,
   LONGITUDE,
 }) => {
-  const now = new Date();
   const school = {
     name: NAME,
     address: ADDRESS,
@@ -35,8 +34,6 @@ const mapSchool = ({
     location: [LATITUDE, LONGITUDE],
     geohash: LATITUDE && LONGITUDE ? geohash.encode(LATITUDE, LONGITUDE) : null,
     handle: kebabCase(NAME),
-    createdAt: now,
-    updatedAt: now,
   };
 
   if (school.handle in handles) {

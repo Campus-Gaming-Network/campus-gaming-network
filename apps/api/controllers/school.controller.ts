@@ -3,8 +3,10 @@ import { Op, FindOptions, FindAndCountOptions } from "sequelize";
 import models from "../db/models";
 import { parseRequestQuery } from "../utilities";
 import kebabCase from "lodash.kebabcase";
+import isEqual from "lodash.isequal";
 import geohash from "ngeohash";
 import { validateCreateSchool, validateEditSchool } from "../validation";
+import { ROLES, AUTH_ERROR_MESSAGE } from "../constants";
 
 const getSchools = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
@@ -84,20 +86,6 @@ const getSchoolByHandle = async (
   });
 };
 
-const createSchool = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { error } = validateCreateSchool(req.body);
-
-  if (error) {
-    return res.status(400).json({ error: error.details });
-  }
-
-  return res.status(200);
-};
-
 const updateSchool = async (
   req: Request,
   res: Response,
@@ -109,15 +97,111 @@ const updateSchool = async (
     return res.status(400).json({ error: error.details });
   }
 
-  return res.status(200);
-};
+  let user;
 
-const deleteSchool = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  return res.status(501);
+  try {
+    user = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!user) {
+    return res.status(404);
+  }
+
+  let school;
+
+  try {
+    school = await models.School.findOne({
+      where: {
+        handle: req.params.handle,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!school) {
+    return res.status(404);
+  }
+
+  let userRole;
+
+  try {
+    userRole = await models.UserRole.findOne({
+      where: {
+        userId: user.toJSON().id,
+        schoolId: req.params.id,
+      },
+      include: [
+        {
+          model: models.Role,
+          as: "role",
+          required: true,
+        },
+      ],
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!userRole) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  const { role } = userRole.toJSON();
+
+  if (role.textkey !== ROLES.SCHOOL_ADMIN) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  let updatedValues: {
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    county: string;
+    zip: string;
+    geohash?: string;
+    phone: string;
+    website: string;
+    location: [number, number];
+  } = {
+    name: req.body.name,
+    address: req.body.address,
+    city: req.body.city,
+    state: req.body.state,
+    country: req.body.country,
+    county: req.body.county,
+    zip: req.body.zip,
+    phone: req.body.phone,
+    website: req.body.website,
+    location: req.body.location,
+  };
+
+  if (!isEqual(req.body.location, school.toJSON().location)) {
+    const [lat, lng] = req.body.location;
+
+    updatedValues = {
+      ...updatedValues,
+      geohash: geohash.encode(lat, lng),
+    };
+  }
+
+  let updatedSchool;
+
+  try {
+    updatedSchool = await school.update(updatedValues);
+  } catch (error) {
+    return next(error);
+  }
+
+  return res.status(200).json({ school: updatedSchool.toJSON() });
 };
 
 const getSchoolById = async (
@@ -238,9 +322,7 @@ const getSchoolEvents = async (
 export default {
   getSchools,
   getSchoolByHandle,
-  createSchool,
   updateSchool,
-  deleteSchool,
   getSchoolById,
   getSchoolUsers,
   getSchoolEvents,
