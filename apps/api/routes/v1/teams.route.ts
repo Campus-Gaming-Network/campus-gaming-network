@@ -26,12 +26,6 @@ router.post(
 
 router.get("/:teamId/teammates/:teammateId", controllers.Team.getTeammateById);
 
-router.put(
-  "/:teamId/teammates/:teammateId",
-  [isAuthenticated],
-  controllers.Team.updateTeammate
-);
-
 router.delete(
   "/:teamId/teammates/:teammateId",
   [isAuthenticated],

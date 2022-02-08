@@ -24,6 +24,10 @@ export default (
         type: DataTypes.STRING,
         allowNull: false,
       },
+      textkey: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       permissions: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: false,

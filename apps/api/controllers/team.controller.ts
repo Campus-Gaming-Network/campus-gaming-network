@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions } from "sequelize";
 import models from "../db/models";
-import { MAX_LIMIT, AUTH_ERROR_MESSAGE } from "../constants";
-import { parseRequestQuery } from "../utilities";
+import { MAX_LIMIT, AUTH_ERROR_MESSAGE, ROLES } from "../constants";
+import { parseRequestQuery, hashPassword } from "../utilities";
 import { validateCreateTeam, validateEditTeam } from "../validation";
 
 const getTeams = async (req: Request, res: Response, next: NextFunction) => {
@@ -45,7 +45,85 @@ const createTeam = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(400).json({ error: error.details });
   }
 
-  return res.status(200);
+  let role;
+
+  try {
+    role = await models.Role.findOne({
+      where: {
+        textkey: ROLES.TEAM_LEADER,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!role) {
+    return res.status(404);
+  }
+
+  let user;
+
+  try {
+    user = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!user) {
+    return res.status(404);
+  }
+
+  let hashedPassword;
+
+  try {
+    hashedPassword = await hashPassword(req.body.password.trim());
+  } catch (error) {
+    return next(error);
+  }
+
+  let team;
+
+  try {
+    team = await models.Team.create({
+      name: req.body.name,
+      shortName: req.body.shortName,
+      website: req.body.website,
+      description: req.body.description,
+      joinHash: hashedPassword,
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  const teamData = team.toJSON();
+  const userData = user.toJSON();
+
+  try {
+    await models.Teammate.create({
+      teamId: teamData.id,
+      userId: userData.id,
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  try {
+    await models.UserRole.create({
+      teamId: teamData.id,
+      userId: userData.id,
+      roleId: role.toJSON().id,
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  const { joinHash, ...rest } = teamData;
+
+  return res.status(200).json(rest);
 };
 
 const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
@@ -55,7 +133,103 @@ const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(400).json({ error: error.details });
   }
 
-  return res.status(200);
+  let user;
+
+  try {
+    user = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!user) {
+    return res.status(404);
+  }
+
+  let team;
+
+  try {
+    team = await models.Team.findByPk(req.params.id);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!team) {
+    return res.status(404);
+  }
+
+  let userRole;
+
+  try {
+    userRole = await models.UserRole.findOne({
+      where: {
+        userId: user.toJSON().id,
+        teamId: req.params.id,
+      },
+      include: [
+        {
+          model: models.Role,
+          as: "role",
+          required: true,
+        },
+      ],
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!userRole) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  const { role } = userRole.toJSON();
+
+  if (role.textkey !== ROLES.TEAM_LEADER) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  let updatedValues: {
+    name: string;
+    shortName?: string;
+    website?: string;
+    description?: string;
+    joinHash?: string;
+  } = {
+    name: req.body.name,
+    shortName: req.body.shortName,
+    website: req.body.website,
+    description: req.body.description,
+  };
+
+  if (req.body.password) {
+    let hashedPassword;
+
+    try {
+      hashedPassword = await hashPassword(req.body.password.trim());
+    } catch (error) {
+      return next(error);
+    }
+
+    updatedValues = {
+      ...updatedValues,
+      joinHash: hashedPassword,
+    };
+  }
+
+  let updatedTeam;
+
+  try {
+    updatedTeam = await team.update(updatedValues);
+  } catch (error) {
+    return next(error);
+  }
+
+  const { joinHash, ...rest } = updatedTeam.toJSON();
+
+  return res.status(200).json(rest);
 };
 
 const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
@@ -101,7 +275,7 @@ const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
 
   const { role } = userRole.toJSON();
 
-  if (role.textkey !== "team-leader") {
+  if (role.textkey !== ROLES.TEAM_LEADER) {
     return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
   }
 
@@ -257,14 +431,6 @@ const getTeammateById = async (
   });
 };
 
-const updateTeammate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  return res.status(501);
-};
-
 const deleteTeammate = async (
   req: Request,
   res: Response,
@@ -344,6 +510,5 @@ export default {
   getTeammates,
   createTeammate,
   getTeammateById,
-  updateTeammate,
   deleteTeammate,
 };

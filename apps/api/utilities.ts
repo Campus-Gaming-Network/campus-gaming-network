@@ -1,4 +1,7 @@
 import { Request } from "express";
+import { customAlphabet } from "nanoid";
+import * as bcrypt from "bcrypt";
+import { NANO_ALPHABET, NANO_ID_LENGTH, SALT_ROUNDS } from "./constants";
 
 interface ParsedRequestQuery {
   offset?: number;
@@ -43,3 +46,14 @@ export const parseRequestQuery = (req: Request): ParsedRequestQuery => {
 
   return parsed;
 };
+
+// Returns a callable function
+export const nanoid = customAlphabet(NANO_ALPHABET, NANO_ID_LENGTH);
+
+export const hashPassword = async (password: string): Promise<string> =>
+  await bcrypt.hash(password, SALT_ROUNDS);
+
+export const comparePasswords = async (
+  password: string,
+  hash: string
+): Promise<boolean> => await bcrypt.compare(password, hash);

@@ -89,3 +89,17 @@ export const BASE_OFFSET = 0;
 export const MAX_LIMIT = 100;
 
 export const AUTH_ERROR_MESSAGE = "You are not authorized to make this request";
+
+// Nanoid
+export const NANO_ALPHABET =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+export const NANO_ID_LENGTH = 10;
+
+// Bcrypt
+export const SALT_ROUNDS = 10;
+
+export const ROLES = {
+  SCHOOL_ADMIN: "school-admin",
+  EVENT_ADMIN: "event-admin",
+  TEAM_LEADER: "team-loader",
+};
