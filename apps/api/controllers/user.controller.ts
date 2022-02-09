@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions } from "sequelize";
 import models from "../db/models";
-import { MAX_LIMIT, AUTH_ERROR_MESSAGE, ROLES } from "../constants";
+import { MAX_LIMIT, AUTH_ERROR_MESSAGE, SUCCESS_MESSAGE } from "../constants";
 import { parseRequestQuery } from "../utilities";
 import { validateCreateUser, validateEditUser } from "../validation";
 import firebaseAdmin from "../firebase";
@@ -137,7 +137,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   //   return next(error);
   // }
 
-  return res.status(200);
+  return res.status(200).send(SUCCESS_MESSAGE);
 };
 
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
@@ -214,6 +214,7 @@ const getUserTeams = async (
       {
         model: models.Team,
         required: true,
+        as: "team",
       },
     ],
     offset,
@@ -300,7 +301,7 @@ const deleteUserRole = async (
     return next(error);
   }
 
-  return res.status(200);
+  return res.status(200).send(SUCCESS_MESSAGE);
 };
 
 const getUserRoles = async (

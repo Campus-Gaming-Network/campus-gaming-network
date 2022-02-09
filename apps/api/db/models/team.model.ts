@@ -46,6 +46,11 @@ export default (
     },
     {
       tableName: TABLES.TEAMS,
+      defaultScope: {
+        attributes: {
+          exclude: ["joinHash"],
+        },
+      },
     }
   );
 };

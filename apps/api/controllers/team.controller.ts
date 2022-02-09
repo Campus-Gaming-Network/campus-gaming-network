@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions } from "sequelize";
 import models from "../db/models";
-import { MAX_LIMIT, AUTH_ERROR_MESSAGE, ROLES } from "../constants";
+import {
+  MAX_LIMIT,
+  AUTH_ERROR_MESSAGE,
+  ROLES,
+  SUCCESS_MESSAGE,
+} from "../constants";
 import { parseRequestQuery, hashPassword } from "../utilities";
 import { validateCreateTeam, validateEditTeam } from "../validation";
 
@@ -80,7 +85,7 @@ const createTeam = async (req: Request, res: Response, next: NextFunction) => {
   let hashedPassword;
 
   try {
-    hashedPassword = await hashPassword(req.body.password.trim());
+    hashedPassword = await hashPassword(req.body.joinHash.trim());
   } catch (error) {
     return next(error);
   }
@@ -280,16 +285,44 @@ const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    await models.Team.destroy({
+    await models.Teammate.destroy({
       where: {
-        id: req.params.id,
+        teamId: req.params.id,
       },
     });
   } catch (error) {
     return next(error);
   }
 
-  return res.status(200);
+  try {
+    await models.UserRole.destroy({
+      where: {
+        teamId: req.params.id,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  let team;
+
+  try {
+    team = await models.Team.findByPk(req.params.id);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!team) {
+    return res.status(404);
+  }
+
+  try {
+    await team.destroy();
+  } catch (error) {
+    return next(error);
+  }
+
+  return res.status(200).send(SUCCESS_MESSAGE);
 };
 
 const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
@@ -325,6 +358,7 @@ const getTeammates = async (
     include: {
       model: models.User,
       attributes,
+      as: "user",
     },
     offset,
     limit,
@@ -495,7 +529,7 @@ const deleteTeammate = async (
       return next(error);
     }
 
-    return res.status(200);
+    return res.status(200).send(SUCCESS_MESSAGE);
   }
 
   return res.status(401).send({ error: AUTH_ERROR_MESSAGE });

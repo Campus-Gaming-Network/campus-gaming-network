@@ -193,9 +193,10 @@ export const eventResponseSchema = Joi.object({
 });
 export const teamSchema = Joi.object({
   name: Joi.string().max(BASE_STRING_MAX_LENGTH).required(),
-  shortName: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(""),
-  website: Joi.string().max(BASE_STRING_MAX_LENGTH).allow(""),
-  description: Joi.string().max(MAX_DESCRIPTION_LENGTH).allow(""),
+  shortName: Joi.string().max(BASE_STRING_MAX_LENGTH).allow("").allow(null),
+  website: Joi.string().max(BASE_STRING_MAX_LENGTH).allow("").allow(null),
+  description: Joi.string().max(MAX_DESCRIPTION_LENGTH).allow("").allow(null),
+  joinHash: Joi.string().max(MAX_DESCRIPTION_LENGTH).allow("").allow(null),
 });
 export const teammateSchema = Joi.object({});
 export interface CreateEventForm {

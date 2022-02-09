@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions, Op } from "sequelize";
 import models from "../db/models";
-import { MAX_LIMIT, AUTH_ERROR_MESSAGE } from "../constants";
+import { MAX_LIMIT, AUTH_ERROR_MESSAGE, SUCCESS_MESSAGE } from "../constants";
 import { parseRequestQuery } from "../utilities";
 
 const getEvents = async (req: Request, res: Response, next: NextFunction) => {
@@ -235,7 +235,7 @@ const deleteEventParticipant = async (
     return next(error);
   }
 
-  return res.status(200);
+  return res.status(200).send(SUCCESS_MESSAGE);
 };
 
 export default {

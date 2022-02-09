@@ -101,5 +101,7 @@ export const SALT_ROUNDS = 10;
 export const ROLES = {
   SCHOOL_ADMIN: "school-admin",
   EVENT_ADMIN: "event-admin",
-  TEAM_LEADER: "team-loader",
+  TEAM_LEADER: "team-leader",
 };
+
+export const SUCCESS_MESSAGE = "success";
