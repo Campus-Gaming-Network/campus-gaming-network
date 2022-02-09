@@ -105,3 +105,9 @@ export const ROLES = {
 };
 
 export const SUCCESS_MESSAGE = "success";
+
+export const SCOPES = {
+  TEAM: {
+    WITH_JOIN_HASH: "withJoinHash",
+  },
+};

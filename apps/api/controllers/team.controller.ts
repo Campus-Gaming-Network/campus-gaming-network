@@ -6,8 +6,13 @@ import {
   AUTH_ERROR_MESSAGE,
   ROLES,
   SUCCESS_MESSAGE,
+  SCOPES,
 } from "../constants";
-import { parseRequestQuery, hashPassword } from "../utilities";
+import {
+  parseRequestQuery,
+  hashPassword,
+  comparePasswords,
+} from "../utilities";
 import { validateCreateTeam, validateEditTeam } from "../validation";
 
 const getTeams = async (req: Request, res: Response, next: NextFunction) => {
@@ -390,6 +395,12 @@ const createTeammate = async (
   res: Response,
   next: NextFunction
 ) => {
+  // TODO: Create joi validation
+
+  if (!req.body.password) {
+    return res.status(400).json({ error: "Password is required" });
+  }
+
   let user;
 
   try {
@@ -420,7 +431,36 @@ const createTeammate = async (
   }
 
   if (teammateCount >= 1) {
-    return res.status(400).json({ error: "Teammate already exists." });
+    return res.status(400).json({ error: "User already exists on team." });
+  }
+
+  let team;
+
+  try {
+    team = await models.Team.scope(SCOPES.TEAM.WITH_JOIN_HASH).findByPk(
+      req.params.teamId
+    );
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!team) {
+    return res.status(404);
+  }
+
+  let isValidPassowrd = false;
+
+  try {
+    isValidPassowrd = await comparePasswords(
+      req.body.password,
+      team.toJSON().joinHash
+    );
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!isValidPassowrd) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
   }
 
   try {

@@ -51,6 +51,13 @@ export default (
           exclude: ["joinHash"],
         },
       },
+      scopes: {
+        withJoinHash: {
+          attributes: {
+            include: ["joinHash"],
+          },
+        },
+      },
     }
   );
 };
