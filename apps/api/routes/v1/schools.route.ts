@@ -8,7 +8,7 @@ router.get("/", controllers.School.getSchools);
 
 router.get("/:handle", controllers.School.getSchoolByHandle);
 
-router.put("/:handle", controllers.School.updateSchool);
+router.put("/:handle", [isAuthenticated], controllers.School.updateSchool);
 
 router.get("/:handle/users", controllers.School.getSchoolUsers);
 

@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import firebaseAdmin from "./firebase";
 import { AUTH_ERROR_MESSAGE } from "./constants";
+import models from "./db/models";
 
 declare global {
   namespace Express {
     interface Request {
       authToken: string | null;
       authId: string | null;
+      authUser: { [key: string]: any };
     }
   }
 }
@@ -34,14 +36,33 @@ export const isAuthenticated = async (
       return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
     }
 
+    let userInfo;
+
     try {
-      const userInfo = await firebaseAdmin.auth().verifyIdToken(req.authToken);
-
-      req.authId = userInfo.uid;
-
-      return next();
+      userInfo = await firebaseAdmin.auth().verifyIdToken(req.authToken);
     } catch (e) {
       return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
     }
+
+    let user;
+
+    try {
+      user = await models.User.findOne({
+        where: {
+          uid: userInfo.uid,
+        },
+      });
+    } catch (error) {
+      return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    }
+
+    if (!user) {
+      return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    }
+
+    req.authId = userInfo.uid;
+    req.authUser = user.toJSON();
+
+    return next();
   });
 };

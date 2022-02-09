@@ -10,11 +10,11 @@ router.get("/", controllers.Team.getTeams);
 
 router.get("/:id", controllers.Team.getTeamById);
 
-router.post("/", controllers.Team.createTeam);
+router.post("/", [isAuthenticated], controllers.Team.createTeam);
 
-router.put("/:id", controllers.Team.updateTeam);
+router.put("/:id", [isAuthenticated], controllers.Team.updateTeam);
 
-router.delete("/:id", controllers.Team.deleteTeam);
+router.delete("/:id", [isAuthenticated], controllers.Team.deleteTeam);
 
 router.get("/:id/teammates", controllers.Team.getTeammates);
 
@@ -34,16 +34,19 @@ router.delete(
 
 router.post(
   "/:teamId/teammates/:teammateId/roles",
+  [isAuthenticated],
   controllers.Team.createTeammateRole
 );
 
 router.put(
   "/:teamId/teammates/:teammateId/roles/:roleId",
+  [isAuthenticated],
   controllers.Team.updateTeammateRole
 );
 
 router.delete(
   "/:teamId/teammates/:teammateId/roles/:roleId",
+  [isAuthenticated],
   controllers.Team.deleteTeammateRole
 );
 
