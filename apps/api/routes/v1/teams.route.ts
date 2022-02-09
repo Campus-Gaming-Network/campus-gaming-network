@@ -32,4 +32,19 @@ router.delete(
   controllers.Team.deleteTeammate
 );
 
+router.post(
+  "/:teamId/teammates/:teammateId/roles",
+  controllers.Team.createTeammateRole
+);
+
+router.put(
+  "/:teamId/teammates/:teammateId/roles/:roleId",
+  controllers.Team.updateTeammateRole
+);
+
+router.delete(
+  "/:teamId/teammates/:teammateId/roles/:roleId",
+  controllers.Team.deleteTeammateRole
+);
+
 export default router;

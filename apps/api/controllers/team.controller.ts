@@ -501,6 +501,28 @@ const deleteTeammate = async (
   return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
 };
 
+const createTeammateRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return res.status(501);
+};
+const updateTeammateRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return res.status(501);
+};
+const deleteTeammateRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return res.status(501);
+};
+
 export default {
   getTeams,
   createTeam,
@@ -511,4 +533,7 @@ export default {
   createTeammate,
   getTeammateById,
   deleteTeammate,
+  createTeammateRole,
+  updateTeammateRole,
+  deleteTeammateRole,
 };

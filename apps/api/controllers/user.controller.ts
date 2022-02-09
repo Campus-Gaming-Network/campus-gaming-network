@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions } from "sequelize";
 import models from "../db/models";
-import { MAX_LIMIT, AUTH_ERROR_MESSAGE } from "../constants";
+import { MAX_LIMIT, AUTH_ERROR_MESSAGE, ROLES } from "../constants";
 import { parseRequestQuery } from "../utilities";
 import { validateCreateUser, validateEditUser } from "../validation";
 import firebaseAdmin from "../firebase";
@@ -242,19 +242,17 @@ const getUserTeams = async (
   });
 };
 
-const createUserRole = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  return res.status(501);
-};
-
 const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
+  const options: FindAndCountOptions = {
+    include: {
+      model: models.Role,
+      as: "role",
+    },
+  };
   let role;
 
   try {
-    role = await models.UserRole.findByPk(req.params.roleId);
+    role = await models.UserRole.findByPk(req.params.roleId, options);
   } catch (error) {
     return next(error);
   }
@@ -268,32 +266,6 @@ const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
       role: role.toJSON(),
     },
   });
-};
-
-const updateUserRole = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  // let user;
-
-  // try {
-  //   user = await models.User.findByPk(req.params.userId);
-  // } catch (error) {
-  //   return next(error);
-  // }
-
-  // if (!user) {
-  //   return res.status(404);
-  // }
-
-  // if (req.authId !== user.toJSON().uid) {
-  //   return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
-  // }
-
-  // TODO: Update user role
-
-  return res.status(501);
 };
 
 const deleteUserRole = async (
@@ -338,13 +310,11 @@ const getUserRoles = async (
 ) => {
   const { offset, limit } = parseRequestQuery(req);
   const options: FindAndCountOptions = {
-    include: [
-      {
-        model: models.Role,
-        as: "role",
-        required: true,
-      },
-    ],
+    include: {
+      model: models.Role,
+      as: "role",
+      required: true,
+    },
     offset,
     limit,
   };
@@ -383,8 +353,6 @@ export default {
   getUserEvents,
   getUserTeams,
   getUserRole,
-  createUserRole,
-  updateUserRole,
   deleteUserRole,
   getUserRoles,
 };
