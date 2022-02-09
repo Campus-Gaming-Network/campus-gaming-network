@@ -269,41 +269,6 @@ const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
-const deleteUserRole = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  let user;
-
-  try {
-    user = await models.User.findByPk(req.params.userId);
-  } catch (error) {
-    return next(error);
-  }
-
-  if (!user) {
-    return res.status(404);
-  }
-
-  if (req.authId !== user.toJSON().uid) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
-  }
-
-  try {
-    await models.UserRole.destroy({
-      where: {
-        userId: req.params.userId,
-        roleId: req.params.roleId,
-      },
-    });
-  } catch (error) {
-    return next(error);
-  }
-
-  return res.status(200).send(SUCCESS_MESSAGE);
-};
-
 const getUserRoles = async (
   req: Request,
   res: Response,
@@ -354,6 +319,5 @@ export default {
   getUserEvents,
   getUserTeams,
   getUserRole,
-  deleteUserRole,
   getUserRoles,
 };

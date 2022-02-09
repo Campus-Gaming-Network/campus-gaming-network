@@ -520,7 +520,7 @@ const deleteTeammate = async (
 
   const isOwner = requestingUser.toJSON().id === teammate.toJSON().userId;
   const requestingUserHasPermission =
-    userRole && userRole.toJSON().role.textkey !== "team-leader";
+    userRole && userRole.toJSON().role.textkey !== ROLES.TEAM_LEADER;
 
   if (isOwner || requestingUserHasPermission) {
     try {
@@ -540,8 +540,105 @@ const createTeammateRole = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  // TODO: Create joi validation
+
+  if (!req.body.roleId) {
+    return res.status(400).json({ error: "Role id is required" });
+  }
+
+  if (!req.params.teamId) {
+    return res.status(400).json({ error: "Team id is required" });
+  }
+
+  if (!req.params.teammateId) {
+    return res.status(400).json({ error: "Teammate id is required" });
+  }
+
+  let teammate;
+
+  try {
+    teammate = await models.Teammate.findByPk(req.params.teammateId);
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!teammate) {
+    return res.status(404);
+  }
+
+  let requestingUser;
+
+  try {
+    requestingUser = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!requestingUser) {
+    return res.status(404);
+  }
+
+  let requestingUserRole;
+
+  try {
+    requestingUserRole = await models.UserRole.findOne({
+      where: {
+        userId: requestingUser.toJSON().id,
+        teamId: req.params.teamId,
+      },
+      include: {
+        model: models.Role,
+        as: "role",
+        required: true,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (
+    !requestingUserRole ||
+    requestingUserRole.toJSON().role.textkey !== ROLES.TEAM_LEADER
+  ) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  let userRoleCount;
+
+  try {
+    userRoleCount = await models.UserRole.count({
+      where: {
+        teamId: req.params.teamId,
+        userId: teammate.toJSON().userId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (userRoleCount >= 1) {
+    return res.status(400).json({ error: "Teammate already has role." });
+  }
+
+  let userRole;
+
+  try {
+    userRole = await models.UserRole.create({
+      teamId: req.params.teamId,
+      userId: teammate.toJSON().userId,
+      roleId: req.body.roleId,
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  return res.status(200).json({ role: userRole.toJSON() });
 };
+
 const updateTeammateRole = async (
   req: Request,
   res: Response,
@@ -549,12 +646,88 @@ const updateTeammateRole = async (
 ) => {
   return res.status(501);
 };
+
 const deleteTeammateRole = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  // TODO: Create joi validation
+
+  if (!req.params.roleId) {
+    return res.status(400).json({ error: "Role id is required" });
+  }
+
+  if (!req.params.teamId) {
+    return res.status(400).json({ error: "Team id is required" });
+  }
+
+  let requestingUser;
+
+  try {
+    requestingUser = await models.User.findOne({
+      where: {
+        uid: req.authId,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!requestingUser) {
+    return res.status(404);
+  }
+
+  let requestingUserRole;
+
+  try {
+    requestingUserRole = await models.UserRole.findOne({
+      where: {
+        userId: requestingUser.toJSON().id,
+        teamId: req.params.teamId,
+      },
+      include: {
+        model: models.Role,
+        as: "role",
+        required: true,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (
+    !requestingUserRole ||
+    requestingUserRole.toJSON().role.textkey !== ROLES.TEAM_LEADER
+  ) {
+    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  }
+
+  let userRole;
+
+  try {
+    userRole = await models.UserRole.findByPk(req.params.roleId, {
+      include: {
+        model: models.Role,
+        as: "role",
+        required: true,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!userRole) {
+    return res.status(404);
+  }
+
+  try {
+    await userRole.destroy();
+  } catch (error) {
+    return next(error);
+  }
+
+  return res.status(200).send(SUCCESS_MESSAGE);
 };
 
 export default {

@@ -24,10 +24,4 @@ router.get("/:id/roles", controllers.User.getUserRoles);
 
 router.get("/:userId/roles/:roleId", controllers.User.getUserRole);
 
-router.delete(
-  "/:userId/roles/:roleId",
-  [isAuthenticated],
-  controllers.User.deleteUserRole
-);
-
 export default router;
