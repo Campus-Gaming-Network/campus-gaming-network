@@ -2,10 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { Op, FindOptions, FindAndCountOptions } from "sequelize";
 import models from "../db/models";
 import { parseRequestQuery } from "../utilities";
-import kebabCase from "lodash.kebabcase";
 import isEqual from "lodash.isequal";
 import geohash from "ngeohash";
-import { validateCreateSchool, validateEditSchool } from "../validation";
+import { validateEditSchool } from "../validation";
 import { ROLES, AUTH_ERROR_MESSAGE } from "../constants";
 
 const getSchools = async (req: Request, res: Response, next: NextFunction) => {
@@ -290,15 +289,31 @@ const getSchoolEvents = async (
 ) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
   const options: FindAndCountOptions = {
-    where: {
-      schoolId: req.params.id,
-    },
     offset,
     limit,
     attributes,
   };
+  let school;
   let events;
   let count;
+
+  try {
+    school = await models.School.findOne({
+      where: {
+        handle: req.params.handle,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!school) {
+    return res.status(404);
+  }
+
+  options.where = {
+    schoolId: school.toJSON().id,
+  };
 
   try {
     const result = await models.Event.findAndCountAll(options);
