@@ -4,7 +4,7 @@ import models from "../db/models";
 import { MAX_LIMIT, AUTH_ERROR_MESSAGE, SUCCESS_MESSAGE } from "../constants";
 import { parseRequestQuery } from "../utilities";
 import { validateCreateUser, validateEditUser } from "../validation";
-import firebaseAdmin from "../firebase";
+import firebase from "../firebase";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
@@ -58,7 +58,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   let authUser;
 
   try {
-    authUser = await firebaseAdmin.auth().createUser({
+    authUser = await firebase.auth().createUser({
       email,
       password,
     });

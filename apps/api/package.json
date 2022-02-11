@@ -15,7 +15,7 @@
     "gcp-build": "npx -p typescript tsc",
     "start": "npx sequelize-cli db:migrate && NODE_ENV=production node ./dist/server.js",
     "deploy": "gcloud app deploy",
-    "test": "jest --runInBand",
+    "test": "NODE_ENV=test jest --runInBand",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage"
   },

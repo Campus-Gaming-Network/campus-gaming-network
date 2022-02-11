@@ -27,6 +27,12 @@ describe("register", () => {
     await request(app).post("/v1/teams").send({}).expect(401);
   });
 
+  it("should get teams succesfully", async () => {
+    const response = await request(app).get("/v1/teams").expect(200);
+
+    console.log(response);
+  });
+
   it("should create a team succesfully", async () => {
     const newTeam = {
       name: "Test Team",

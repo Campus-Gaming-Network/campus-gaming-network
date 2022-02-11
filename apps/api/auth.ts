@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import firebaseAdmin from "./firebase";
+import firebase from "./firebase";
 import { AUTH_ERROR_MESSAGE, STATUS_CODES } from "./constants";
 import models from "./db/models";
 
@@ -24,7 +24,7 @@ export const decodeAuthToken = async (
     let decodedToken = null;
 
     try {
-      decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
+      decodedToken = await firebase.auth().verifyIdToken(token);
     } catch (error) {
       console.log(error);
     }
