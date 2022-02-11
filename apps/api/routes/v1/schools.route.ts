@@ -1,5 +1,7 @@
 import Router from "express-promise-router";
 
+import { isAuthenticated } from "../../auth";
+
 import controllers from "../../controllers";
 
 const router = Router();

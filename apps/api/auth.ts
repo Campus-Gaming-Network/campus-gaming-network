@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import firebaseAdmin from "./firebase";
-import { AUTH_ERROR_MESSAGE } from "./constants";
+import { AUTH_ERROR_MESSAGE, STATUS_CODES } from "./constants";
 import models from "./db/models";
 
 declare global {
@@ -8,19 +8,48 @@ declare global {
     interface Request {
       authToken: string | null;
       authId: string | null;
-      authUser: { [key: string]: any };
+      authUser: object | null;
     }
   }
 }
 
-const getAuthToken = (req: Request, res: Response, next: NextFunction) => {
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "Bearer"
-  ) {
-    req.authToken = req.headers.authorization.split(" ")[1];
-  } else {
-    req.authToken = null;
+export const decodeAuthToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.headers?.authorization?.startsWith("Bearer ")) {
+    const token = req.headers.authorization.split("Bearer ")[1];
+
+    let decodedToken = null;
+
+    try {
+      decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
+    } catch (error) {
+      console.log(error);
+    }
+
+    if (decodedToken) {
+      req.authId = decodedToken.uid;
+
+      let user;
+
+      try {
+        user = await models.User.findOne({
+          where: {
+            uid: decodedToken.uid,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      if (!user) {
+        req.authId = null;
+      } else {
+        req.authUser = user.toJSON();
+      }
+    }
   }
 
   next();
@@ -31,38 +60,11 @@ export const isAuthenticated = async (
   res: Response,
   next: NextFunction
 ) => {
-  getAuthToken(req, res, async () => {
-    if (!req.authToken) {
-      return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
-    }
+  if (!req.authId) {
+    return res
+      .status(STATUS_CODES.UNAUTHORIZED)
+      .send({ error: AUTH_ERROR_MESSAGE });
+  }
 
-    let userInfo;
-
-    try {
-      userInfo = await firebaseAdmin.auth().verifyIdToken(req.authToken);
-    } catch (e) {
-      return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
-    }
-
-    let user;
-
-    try {
-      user = await models.User.findOne({
-        where: {
-          uid: userInfo.uid,
-        },
-      });
-    } catch (error) {
-      return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
-    }
-
-    if (!user) {
-      return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
-    }
-
-    req.authId = userInfo.uid;
-    req.authUser = user.toJSON();
-
-    return next();
-  });
+  return next();
 };

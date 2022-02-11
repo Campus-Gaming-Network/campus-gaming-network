@@ -203,33 +203,6 @@ const updateSchool = async (
   return res.status(200).json({ school: updatedSchool.toJSON() });
 };
 
-const getSchoolById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  let school;
-
-  try {
-    school = await models.School.findByPk(req.params.id);
-  } catch (error) {
-    return next(error);
-  }
-
-  if (!school) {
-    return res.status(404);
-  }
-
-  return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      school: school.toJSON(),
-    },
-  });
-};
-
 const getSchoolUsers = async (
   req: Request,
   res: Response,
@@ -334,11 +307,34 @@ const getSchoolEvents = async (
   });
 };
 
+const getSchoolTeams = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return res.send(501);
+};
+
+const createSchoolTeam = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return res.send(501);
+};
+
+const deleteSchoolTeam = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return res.send(501);
+};
+
 export default {
   getSchools,
   getSchoolByHandle,
   updateSchool,
-  getSchoolById,
   getSchoolUsers,
   getSchoolEvents,
 };

@@ -43,6 +43,14 @@ export default (
         type: DataTypes.STRING,
         allowNull: false,
       },
+      schoolId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: TABLES.SCHOOLS,
+          key: "id",
+        },
+      },
     },
     {
       tableName: TABLES.TEAMS,

@@ -19,7 +19,7 @@ const modelDefiners = {
   UserRole,
 };
 
-const models: { [key: string]: ModelDefined<any, any> } = {};
+let models: { [key: string]: ModelDefined<any, any> } = {};
 
 export const registerModels = (sequelize: Sequelize) => {
   for (const [key, val] of Object.entries(modelDefiners)) {
