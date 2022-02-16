@@ -109,6 +109,10 @@ const createTeam = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
+  if (!team) {
+    return res.status(404);
+  }
+
   const teamData = team.toJSON();
   const userData = user.toJSON();
 

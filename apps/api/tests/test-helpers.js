@@ -1,6 +1,5 @@
 const DB = require("../db").default;
 const dbConfig = require("../db/config/config.js");
-// import request from 'supertest';
 
 let db;
 

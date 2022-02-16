@@ -1,10 +1,14 @@
 const TestHelpers = require("../../test-helpers");
-const models = require("../../../db/models");
 const request = require("supertest");
+const firebasemock = require("firebase-mock");
 
-describe("register", () => {
+const mockauth = new firebasemock.MockAuthentication();
+const mocksdk = new firebasemock.MockFirebaseSdk(null, () => {
+  return mockauth;
+});
+
+describe("team", () => {
   let app;
-  let newUserResponse;
 
   beforeAll(async () => {
     await TestHelpers.startDb();
@@ -17,82 +21,29 @@ describe("register", () => {
 
   beforeEach(async () => {
     await TestHelpers.syncDb();
-    // newUserResponse = await TestHelpers.registerNewUser({
-    //   email: 'test@example.com',
-    //   password: 'Test123#',
-    // });
+    mocksdk.auth().autoFlush();
+    mocksdk.auth().createUser({
+      uid: "123",
+      email: "test@test.com",
+      password: "abc123",
+    });
   });
 
-  it("should fail to create a team unauthorized", async () => {
-    await request(app).post("/v1/teams").send({}).expect(401);
-  });
-
-  it("should get teams succesfully", async () => {
-    const response = await request(app).get("/v1/teams").expect(200);
-
-    console.log(response);
-  });
-
-  it("should create a team succesfully", async () => {
-    const newTeam = {
-      name: "Test Team",
-      shortName: "TT",
-      website: "www.testteam.gg",
-      description: "This is a test team",
-      joinHash: "password",
-    };
+  it("should create a team succesfully", async (done) => {
+    const user = await mocksdk.auth().getUser("123");
+    const token = await user.getIdToken();
 
     await request(app)
       .post("/v1/teams")
-      .set("Authorization", "Bearer invalidToken")
-      .send(newTeam)
+      .set("Content-Type", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        name: "Test Team",
+        shortName: "TT",
+        website: "www.testteam.gg",
+        description: "This is a test team",
+        joinHash: "password",
+      })
       .expect(200);
   });
-
-  //   it('should return 401 if we pass an email that is not associated with any user', async () => {
-  //     const response = await request(app)
-  //       .post('/v1/login')
-  //       .send({ email: 'test@example.net', password: 'Test123#' })
-  //       .expect(401);
-  //     expect(response.body.success).toEqual(false);
-  //     expect(response.body.message).toEqual('Invalid credentials');
-  //   });
-
-  //   it('should return 401 if we pass an invalid password', async () => {
-  //     const response = await request(app)
-  //       .post('/v1/login')
-  //       .send({ email: 'test@example.com', password: 'invalidpassword' })
-  //       .expect(401);
-  //     expect(response.body.success).toEqual(false);
-  //     expect(response.body.message).toEqual('Invalid credentials');
-  //   });
-
-  //   it('should create a new refresh token record if there is not one associated with the user', async () => {
-  //     const { RefreshToken } = models;
-  //     await RefreshToken.destroy({ where: {} });
-  //     let refreshTokensCount = await RefreshToken.count();
-  //     expect(refreshTokensCount).toEqual(0);
-  //     await request(app)
-  //       .post('/v1/login')
-  //       .send({ email: 'test@example.com', password: 'Test123#' })
-  //       .expect(200);
-  //     refreshTokensCount = await RefreshToken.count();
-  //     expect(refreshTokensCount).toEqual(1);
-  //   });
-
-  //   it('should set the token field to a JWT if this field is empty', async () => {
-  //     const { RefreshToken } = models;
-  //     const refreshToken = newUserResponse.body.data.refreshToken;
-  //     const savedRefreshToken = await RefreshToken.findOne({
-  //       where: { token: refreshToken },
-  //     });
-  //     savedRefreshToken.token = null;
-  //     await savedRefreshToken.save();
-  //     await request(app)
-  //       .post('/v1/login')
-  //       .send({ email: 'test@example.com', password: 'Test123#' })
-  //       .expect(200);
-  //     await savedRefreshToken.reload();
-  //     expect(savedRefreshToken.token).not.toBeNull();
-  //   });
 });
