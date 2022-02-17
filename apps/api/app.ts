@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import logger from "morgan";
-import bodyParser from "body-parser";
 
 import config from "./config";
 import routes from "./routes";
@@ -34,8 +33,8 @@ export default class App {
 
     this.app.use(logger("common"));
 
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
 
     this.app.use(decodeAuthToken);
 
