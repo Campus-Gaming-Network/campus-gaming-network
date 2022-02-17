@@ -5,7 +5,7 @@ import { parseRequestQuery } from "../utilities";
 import isEqual from "lodash.isequal";
 import geohash from "ngeohash";
 import { validateEditSchool } from "../validation";
-import { ROLES, AUTH_ERROR_MESSAGE } from "../constants";
+import { ROLES, AUTH_ERROR_MESSAGE, STATUS_CODES } from "../constants";
 
 const getSchools = async (req: Request, res: Response, next: NextFunction) => {
   const { offset, limit, attributes } = parseRequestQuery(req);
@@ -72,7 +72,8 @@ const getSchoolByHandle = async (
   }
 
   if (!school) {
-    return res.status(404);
+    res.status(STATUS_CODES.NOT_FOUND);
+    return next();
   }
 
   return res.json({

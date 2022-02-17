@@ -53,8 +53,6 @@ export default class DB {
   }
 
   async sync() {
-    console.log("Attempting sync...");
-
     try {
       await this.connection.sync({
         force: this.isTesting,

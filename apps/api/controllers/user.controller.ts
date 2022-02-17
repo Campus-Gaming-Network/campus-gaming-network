@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions } from "sequelize";
 import models from "../db/models";
-import { MAX_LIMIT, AUTH_ERROR_MESSAGE, SUCCESS_MESSAGE } from "../constants";
+import {
+  MAX_LIMIT,
+  AUTH_ERROR_MESSAGE,
+  SUCCESS_MESSAGE,
+  STATUS_CODES,
+} from "../constants";
 import { parseRequestQuery } from "../utilities";
 import { validateCreateUser, validateEditUser } from "../validation";
 import firebase from "../firebase";
@@ -52,7 +57,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { error } = validateCreateUser(rest);
 
   if (error) {
-    return res.status(400).json({ error: error.details });
+    return res.status(STATUS_CODES.BAD_REQUEST).json({ error: error.details });
   }
 
   let authUser;
@@ -66,22 +71,35 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
+  if (!authUser) {
+    res.status(STATUS_CODES.NOT_FOUND);
+    return next();
+  }
+
+  let user;
+
   try {
-    const user = await models.User.create({
+    user = await models.User.create({
       uid: authUser.uid,
       ...rest,
     });
-    return res.status(200).json({ user: user.toJSON() });
   } catch (error) {
     return next(error);
   }
+
+  if (!user) {
+    res.status(STATUS_CODES.NOT_FOUND);
+    return next();
+  }
+
+  return res.status(STATUS_CODES.OK).json({ user: user.toJSON() });
 };
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { error } = validateEditUser(req.body);
 
   if (error) {
-    return res.status(400).json({ error: error.details });
+    return res.status(STATUS_CODES.BAD_REQUEST).json({ error: error.details });
   }
 
   let user;
@@ -93,16 +111,18 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(404);
+    return res.status(STATUS_CODES.NOT_FOUND);
   }
 
   if (req.authId !== user.toJSON().uid) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res
+      .status(STATUS_CODES.UNAUTHORIZED)
+      .send({ error: AUTH_ERROR_MESSAGE });
   }
 
   try {
     const updatedUser = await user.update(req.body);
-    return res.status(200).json({ user: updatedUser.toJSON() });
+    return res.status(STATUS_CODES.OK).json({ user: updatedUser.toJSON() });
   } catch (error) {
     return next(error);
   }
@@ -118,11 +138,13 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(404);
+    return res.status(STATUS_CODES.NOT_FOUND);
   }
 
   if (req.authId !== user.toJSON().uid) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res
+      .status(STATUS_CODES.UNAUTHORIZED)
+      .send({ error: AUTH_ERROR_MESSAGE });
   }
 
   // TODO:
@@ -137,7 +159,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   //   return next(error);
   // }
 
-  return res.status(200).send(SUCCESS_MESSAGE);
+  return res.status(STATUS_CODES.OK).send(SUCCESS_MESSAGE);
 };
 
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
@@ -160,7 +182,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(404);
+    return res.status(STATUS_CODES.NOT_FOUND);
   }
 
   return res.json({
@@ -259,7 +281,7 @@ const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!role) {
-    return res.status(404);
+    return res.status(STATUS_CODES.NOT_FOUND);
   }
 
   return res.json({

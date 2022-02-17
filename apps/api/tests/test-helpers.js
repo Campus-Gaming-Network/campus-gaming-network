@@ -1,5 +1,6 @@
 const DB = require("../db").default;
 const dbConfig = require("../db/config/config.js");
+const models = require("../db/models").default;
 
 let db;
 
@@ -21,6 +22,13 @@ class TestHelpers {
   static getApp() {
     const App = require("../app").default;
     return new App().getApp();
+  }
+
+  static async seedDb() {
+    await models.School.create({
+      name: "Test School",
+      handle: "test-school",
+    });
   }
 }
 
