@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
+import Script from "next/script";
 
 class MyDocument extends Document {
   render() {
@@ -43,17 +44,15 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
-          <script
-            async
-            defer
+          <Script
+            strategy="lazyOnload"
             data-domain={process.env.NEXT_PUBLIC_BASE_URL}
             src="https://plausible.io/js/plausible.js"
-          ></script>
-          <script
-            async
-            defer
+          />
+          <Script
+            strategy="lazyOnload"
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-          ></script>
+          />
         </body>
       </Html>
     );
