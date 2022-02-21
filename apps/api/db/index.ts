@@ -37,7 +37,7 @@ export default class DB {
       options.ssl = true;
       options.dialectOptions = {
         ssl: {
-          ca: fs.readFileSync("../../../cgn-db-dev.cert").toString(),
+          ca: fs.readFileSync("../../../cgn-db-dev.cer").toString(),
         },
       };
     }
