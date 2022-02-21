@@ -23,24 +23,25 @@ export default class DB {
 
     Sequelize.useCLS(namespace);
 
-    const { username, password, host, port, database, dialect } =
-      this.config[this.environment];
+    const {
+      username,
+      password,
+      host,
+      port,
+      database,
+      dialect,
+      ssl,
+      dialectOptions,
+    } = this.config[this.environment];
 
     let options: Options = {
       host,
       dialect,
       port,
       logging: this.isTesting ? false : console.log,
+      ssl,
+      dialectOptions,
     };
-
-    if (this.isProduction) {
-      options.ssl = true;
-      options.dialectOptions = {
-        ssl: {
-          ca: fs.readFileSync("../../../cgn-db-dev.cer").toString(),
-        },
-      };
-    }
 
     this.connection = new Sequelize(database, username, password, options);
 

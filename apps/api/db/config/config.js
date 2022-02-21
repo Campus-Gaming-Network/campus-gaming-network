@@ -1,4 +1,5 @@
 require("dotenv").config();
+const fs = require("fs");
 
 module.exports = {
   development: {
@@ -16,6 +17,12 @@ module.exports = {
     port: Number(process.env.DB_PROD_PORT) || 5432,
     database: process.env.DB_PROD_DATABASE || "postgres",
     dialect: "postgres",
+    ssl: true,
+    dialectOptions: {
+      ssl: {
+        ca: fs.readFileSync("../../../cgn-db.cer").toString(),
+      },
+    },
   },
   test: {
     username: process.env.DB_TEST_USERNAME || "postgres",
