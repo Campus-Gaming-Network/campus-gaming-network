@@ -1,17 +1,20 @@
 import cls from "cls-hooked";
-import { Sequelize } from "sequelize";
+import { Sequelize, Options } from "sequelize";
 import { registerModels, setupModelAssociations } from "./models";
+import * as fs from "fs";
 
 export default class DB {
   environment: string;
   config: { [key: string]: any };
   isTesting: boolean;
+  isProduction: boolean;
   connection: any;
 
   constructor(environment: string, config: object) {
     this.environment = environment;
     this.config = config;
     this.isTesting = this.environment === "test";
+    this.isProduction = this.environment === "production";
     this.connection = undefined;
   }
 
@@ -23,14 +26,23 @@ export default class DB {
     const { username, password, host, port, database, dialect } =
       this.config[this.environment];
 
-    this.connection = new Sequelize(database, username, password, {
+    let options: Options = {
       host,
       dialect,
-      dialectOptions: {
-        socketPath: host,
-      },
+      port,
       logging: this.isTesting ? false : console.log,
-    });
+    };
+
+    if (this.isProduction) {
+      options.ssl = true;
+      options.dialectOptions = {
+        ssl: {
+          ca: fs.readFileSync("../../../cgn-db-dev.cert").toString(),
+        },
+      };
+    }
+
+    this.connection = new Sequelize(database, username, password, options);
 
     try {
       await this.connection.authenticate();

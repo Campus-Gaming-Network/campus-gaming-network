@@ -11,10 +11,9 @@
     "node": "16.x.x"
   },
   "scripts": {
-    "dev": "npx sequelize-cli db:migrate && NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts",
-    "gcp-build": "npx -p typescript tsc",
-    "start": "npx sequelize-cli db:migrate && NODE_ENV=production node ./dist/server.js",
-    "deploy": "gcloud app deploy",
+    "dev": "NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts",
+    "build": "tsc",
+    "start": "npm run build && NODE_ENV=production pm2 ./dist/server.js",
     "test": "NODE_ENV=test jest --runInBand",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage"

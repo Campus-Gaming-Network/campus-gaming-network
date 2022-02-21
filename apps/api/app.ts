@@ -17,10 +17,7 @@ export default class App {
     this.app.use(
       cors({
         origin: (origin, callback) => {
-          if (
-            process.env.NODE_ENV === "test" ||
-            (!!origin && ORIGIN_WHITELIST.includes(origin))
-          ) {
+          if (!origin || ORIGIN_WHITELIST.includes(origin)) {
             callback(null, true);
           } else {
             callback(new Error());
