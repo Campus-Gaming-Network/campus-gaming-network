@@ -63,7 +63,6 @@ export const STATUS_CODES = {
 };
 
 export const ORIGIN_WHITELIST = [
-  "http://localhost:8080",
   "https://campusgamingnetwork.com",
   "https://dev.campusgamingnetwork.com",
   "https://api-dev.campusgamingnetwork.com",

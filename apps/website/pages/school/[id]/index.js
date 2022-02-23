@@ -13,7 +13,10 @@ import safeJsonStringify from "safe-json-stringify";
 import dynamic from "next/dynamic";
 
 // API
-import { getSchoolDetails, getSchoolEvents } from "src/api/school";
+import { API } from "src/api/new";
+
+// Utilities
+import { mapSchool } from "src/utilities/school";
 
 // Constants
 import {
@@ -76,19 +79,23 @@ const UpcomingSchoolEvents = dynamic(
 
 export const getServerSideProps = async (context) => {
   const [schoolResponse, eventsResponse] = await Promise.all([
-    getSchoolDetails(context.params.id),
-    getSchoolEvents(context.params.id),
+    API().Schools.getOneByHandle(context.params.id),
+    API().Schools.getEvents(context.params.id),
   ]);
-  const { school } = schoolResponse;
-  const { events } = eventsResponse;
 
-  if (!Boolean(school)) {
+  if (!schoolResponse?.data?.data?.school) {
     return NOT_FOUND;
+  }
+
+  let events = [];
+
+  if (eventsResponse?.data?.data?.count) {
+    events = eventsResponse?.data?.data?.events;
   }
 
   const data = {
     params: context.params,
-    school,
+    school: mapSchool(schoolResponse.data.data.school),
     events,
   };
 
@@ -268,85 +275,9 @@ const School = (props) => {
   );
 };
 
-////////////////////////////////////////////////////////////////////////////////
-// UsersList
-
-// const UsersList = (props) => {
-//   // const dispatch = useAppDispatch();
-//   // const [page, setPage] = React.useState(0);
-//   // const [users, isLoadingUsers] = useFetchSchoolUsers(
-//   //   props.id,
-//   //   undefined,
-//   //   page
-//   // );
-//   const hasUsers = React.useMemo(
-//     () => Boolean(props.users) && props.users.length && props.users.length > 0,
-//     [props.users]
-//   );
-//   // const isFirstPage = React.useMemo(() => page === 0, [page]);
-//   // const isLastPage = React.useMemo(
-//   //   () => hasUsers && users.length === DEFAULT_USERS_LIST_PAGE_SIZE,
-//   //   [hasUsers, users]
-//   // );
-//   // const isValidPage = React.useMemo(() => page >= 0, [page]);
-
-//   // const nextPage = () => {
-//   //   if (!isLastPage) {
-//   //     setPage(page + 1);
-//   //   }
-//   // };
-
-//   // const prevPage = () => {
-//   //   if (!isFirstPage) {
-//   //     setPage(page - 1);
-//   //   }
-//   // };
-
-//   if (hasUsers) {
-//     return (
-//       <React.Fragment>
-//         <List display="flex" flexWrap="wrap" mx={-2}>
-//           {props.users.map((user) => (
-//             <UserListItem key={user.id} user={user} />
-//           ))}
-//         </List>
-//         {/* <Flex justifyContent="space-between" m={2}>
-//           {!isFirstPage ? (
-//             <Button
-//               variant="ghost"
-//               size="sm"
-//               leftIcon={<ArrowBack />}
-//               colorScheme="brand"
-//               disabled={isFirstPage}
-//               onClick={prevPage}
-//             >
-//               Prev Page
-//             </Button>
-//           ) : null}
-//           {!isLastPage ? (
-//             <Button
-//               variant="ghost"
-//               size="sm"
-//               rightIcon={<ArrowForward />}
-//               colorScheme="brand"
-//               disabled={isLastPage}
-//               onClick={nextPage}
-//               ml="auto"
-//             >
-//               Next Page
-//             </Button>
-//           ) : null}
-//         </Flex> */}
-//       </React.Fragment>
-//     );
-//   }
-
-//   return <EmptyText mt={4}>{SCHOOL_EMPTY_USERS_TEXT}</EmptyText>;
-// };
-
 const UsersList = (props) => {
   const [page, setPage] = React.useState(0);
-  const [users, status] = useFetchSchoolUsers(props.school.id, page);
+  const [users, status] = useFetchSchoolUsers(props.school.handle, page);
   const hasUsers = React.useMemo(() => {
     return Boolean(users) && users.length > 0;
   }, [users]);

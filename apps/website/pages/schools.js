@@ -1,6 +1,5 @@
 // Libraries
 import React from "react";
-import firebaseAdmin from "src/firebaseAdmin";
 import sortBy from "lodash.sortby";
 import safeJsonStringify from "safe-json-stringify";
 
@@ -13,6 +12,7 @@ import Article from "src/components/Article";
 import Link from "src/components/Link";
 import { mapSchool } from "src/utilities/school";
 import { Box, Heading, Flex, List, ListItem } from "src/components/common";
+import { API } from "src/api/new";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getStaticProps
@@ -21,19 +21,10 @@ export const getStaticProps = async () => {
   let schools = [];
 
   try {
-    const response = await firebaseAdmin
-      .storage()
-      .bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET)
-      .file("schools.json")
-      .download();
+    const response = await API().Schools.getAll();
 
-    if (response && response.length) {
-      try {
-        const data = JSON.parse(response[0].toString()).map(mapSchool);
-        schools = sortBy(data, "name");
-      } catch (error) {
-        return NOT_FOUND;
-      }
+    if (response?.data?.data?.count) {
+      schools = sortBy(response.data.data.schools.map(mapSchool), "name");
     }
   } catch (error) {
     return NOT_FOUND;

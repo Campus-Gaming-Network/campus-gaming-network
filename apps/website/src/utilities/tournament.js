@@ -11,7 +11,5 @@ export const mapTournament = (tournament) => {
 
   return {
     ...tournament,
-    createdAt: tournament.createdAt?.toDate(),
-    updatedAt: tournament.updatedAt?.toDate(),
   };
 };

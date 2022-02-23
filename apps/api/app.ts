@@ -17,7 +17,9 @@ export default class App {
     this.app.use(
       cors({
         origin: (origin, callback) => {
-          if (!origin || ORIGIN_WHITELIST.includes(origin)) {
+          const isProduction = process.env.NODE_ENV === "production";
+
+          if (!isProduction || !origin || ORIGIN_WHITELIST.includes(origin)) {
             callback(null, true);
           } else {
             callback(new Error());

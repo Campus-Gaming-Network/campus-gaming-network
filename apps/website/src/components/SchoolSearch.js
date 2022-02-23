@@ -12,8 +12,6 @@ import {
   ComboboxOption,
   ComboboxOptionText,
 } from "@reach/combobox";
-import keyBy from "lodash.keyby";
-import { httpsCallable } from "firebase/functions";
 
 // Components
 import SchoolLogo from "src/components/SchoolLogo";
@@ -27,11 +25,10 @@ import useDebounce from "src/hooks/useDebounce";
 import { mapSchool } from "src/utilities/school";
 
 // Constants
-import { CALLABLES } from "src/constants/firebase";
 import { LOCAL_STORAGE } from "src/constants/other";
 
 // Other
-import { functions } from "src/firebase";
+import { API } from "src/api/new";
 
 let savedSearches = [];
 
@@ -76,43 +73,26 @@ const SchoolSearch = (props) => {
     return schools;
   };
 
-  const fetchSchools = (searchTerm) => {
+  const fetchSchools = async (searchTerm) => {
     const value = searchTerm?.trim().toLowerCase() || "";
-    // const cachedQueryResults = localStorageSchoolQueries
-    //   ? localStorageSchoolQueries[value]
-    //   : null;
 
-    // if (cachedQueryResults && cachedQueryResults.length > 0) {
-    //   return Promise.resolve(
-    //     Object.entries(localStorageSchools)
-    //       .filter((entry) => cachedQueryResults.includes(entry[0]))
-    //       .map((entry) => entry[1])
-    //       .slice(0, 10)
-    //   );
-    // }
+    try {
+      const response = await API().Schools.getAll({
+        params: {
+          search: value,
+          limit: 10,
+        },
+      });
 
-    const searchSchools = httpsCallable(functions, CALLABLES.SEARCH_SCHOOLS);
-
-    return searchSchools({ query: value }).then((result) => {
-      console.log({ value, result });
-      if (Boolean(result?.data?.hits?.length)) {
-        const mappedSchools = result.data.hits.map((hit) => mapSchool(hit));
-        // const schools = {
-        //   // ...localStorageSchools,
-        //   ...keyBy(mappedSchools, "objectID"),
-        // };
-
-        // setSchoolsInLocalStorage(schools);
-        // setSchoolsQueryInLocalStorage({
-        //   ...localStorageSchoolQueries,
-        //   [value]: result.data.hits.map((hit) => hit.objectID),
-        // });
-
-        return mappedSchools.slice(0, 10);
+      if (response?.data?.data?.count) {
+        return response.data.data.schools.map((school) => mapSchool(school));
       }
 
       return [];
-    });
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   };
 
   const results = useSchoolSearch(debouncedSchoolSearch);

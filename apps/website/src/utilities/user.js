@@ -48,8 +48,6 @@ export const mapUser = (user) => {
 
   return {
     ...user,
-    createdAt: user.createdAt?.toDate(),
-    updatedAt: user.updatedAt?.toDate(),
     birthdate: buildDateTime(user.birthdate),
     school: mapSchool(user.school),
     fullName,

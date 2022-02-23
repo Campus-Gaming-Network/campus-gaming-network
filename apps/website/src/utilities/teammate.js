@@ -13,8 +13,6 @@ export const mapTeammate = (teammate) => {
 
   return {
     ...teammate,
-    createdAt: teammate.createdAt?.toDate(),
-    updatedAt: teammate.updatedAt?.toDate(),
     user: mapUser(teammate.user),
     team: mapTeam(teammate.team),
   };

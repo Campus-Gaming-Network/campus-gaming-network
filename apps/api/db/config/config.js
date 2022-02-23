@@ -1,6 +1,12 @@
 require("dotenv").config();
 const fs = require("fs");
 
+let ca;
+
+if (process.env.NODE_ENV === "production") {
+  ca = fs.readFileSync("../../../cgn-db.cer").toString();
+}
+
 module.exports = {
   development: {
     username: process.env.DB_LOCAL_USERNAME || "postgres",
@@ -19,9 +25,7 @@ module.exports = {
     dialect: "postgres",
     ssl: true,
     dialectOptions: {
-      ssl: {
-        ca: fs.readFileSync("../../../cgn-db.cer").toString(),
-      },
+      ssl: { ca },
     },
   },
   test: {
