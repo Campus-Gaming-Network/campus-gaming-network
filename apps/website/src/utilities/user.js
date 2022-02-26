@@ -48,7 +48,7 @@ export const mapUser = (user) => {
 
   return {
     ...user,
-    birthdate: buildDateTime(user.birthdate),
+    birthdate: user.birthdate,
     school: mapSchool(user.school),
     fullName,
     hasAccounts: userHasAccounts(user),

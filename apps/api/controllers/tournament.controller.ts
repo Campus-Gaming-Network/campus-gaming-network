@@ -6,7 +6,7 @@ const getTournaments = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const getTournamentById = async (
@@ -14,7 +14,7 @@ const getTournamentById = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const createTournament = async (
@@ -22,7 +22,7 @@ const createTournament = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const updateTournament = async (
@@ -30,7 +30,7 @@ const updateTournament = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const deleteTournament = async (
@@ -38,7 +38,7 @@ const deleteTournament = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const getTournamentParticipants = async (
@@ -46,7 +46,7 @@ const getTournamentParticipants = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const createTournamentParticipant = async (
@@ -54,7 +54,7 @@ const createTournamentParticipant = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const getTournamentParticipantById = async (
@@ -62,7 +62,7 @@ const getTournamentParticipantById = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const updateTournamentParticipant = async (
@@ -70,7 +70,7 @@ const updateTournamentParticipant = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const deleteTournamentParticipant = async (
@@ -78,7 +78,7 @@ const deleteTournamentParticipant = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 export default {

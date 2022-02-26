@@ -68,7 +68,7 @@ const createTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!role) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let user;
@@ -84,7 +84,7 @@ const createTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let hashedPassword;
@@ -110,7 +110,7 @@ const createTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!team) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   const teamData = team.toJSON();
@@ -160,7 +160,7 @@ const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let team;
@@ -172,7 +172,7 @@ const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!team) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let userRole;
@@ -196,13 +196,13 @@ const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!userRole) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   const { role } = userRole.toJSON();
 
   if (role.textkey !== ROLES.TEAM_LEADER) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   let updatedValues: {
@@ -260,7 +260,7 @@ const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let userRole;
@@ -284,13 +284,13 @@ const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!userRole) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   const { role } = userRole.toJSON();
 
   if (role.textkey !== ROLES.TEAM_LEADER) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   try {
@@ -322,7 +322,7 @@ const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!team) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   try {
@@ -344,7 +344,7 @@ const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!team) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   return res.json({
@@ -418,7 +418,7 @@ const createTeammate = async (
   }
 
   if (!user) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let teammateCount;
@@ -449,7 +449,7 @@ const createTeammate = async (
   }
 
   if (!team) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let isValidPassowrd = false;
@@ -464,7 +464,7 @@ const createTeammate = async (
   }
 
   if (!isValidPassowrd) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   try {
@@ -499,7 +499,7 @@ const getTeammateById = async (
   }
 
   if (!teammate) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   return res.json({
@@ -523,7 +523,7 @@ const deleteTeammate = async (
   }
 
   if (!teammate) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let requestingUser;
@@ -539,7 +539,7 @@ const deleteTeammate = async (
   }
 
   if (!requestingUser) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let userRole;
@@ -576,7 +576,7 @@ const deleteTeammate = async (
     return res.status(200).send(SUCCESS_MESSAGE);
   }
 
-  return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+  return res.sendStatus(401);
 };
 
 const createTeammateRole = async (
@@ -607,7 +607,7 @@ const createTeammateRole = async (
   }
 
   if (!teammate) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let requestingUser;
@@ -623,7 +623,7 @@ const createTeammateRole = async (
   }
 
   if (!requestingUser) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let requestingUserRole;
@@ -648,7 +648,7 @@ const createTeammateRole = async (
     !requestingUserRole ||
     requestingUserRole.toJSON().role.textkey !== ROLES.TEAM_LEADER
   ) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   let userRoleCount;
@@ -688,7 +688,7 @@ const updateTeammateRole = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const deleteTeammateRole = async (
@@ -719,7 +719,7 @@ const deleteTeammateRole = async (
   }
 
   if (!requestingUser) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let requestingUserRole;
@@ -744,7 +744,7 @@ const deleteTeammateRole = async (
     !requestingUserRole ||
     requestingUserRole.toJSON().role.textkey !== ROLES.TEAM_LEADER
   ) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   let userRole;
@@ -762,7 +762,7 @@ const deleteTeammateRole = async (
   }
 
   if (!userRole) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   try {

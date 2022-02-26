@@ -12,7 +12,7 @@ import { validateCreateUser, validateEditUser } from "../validation";
 import firebase from "../firebase";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-  const { offset, limit, attributes } = parseRequestQuery(req);
+  const { offset, limit, attributes, order } = parseRequestQuery(req);
   const options: FindAndCountOptions = {
     include: [
       {
@@ -25,6 +25,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     offset,
     limit,
     attributes,
+    order,
   };
   let users;
   let count;
@@ -72,8 +73,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!authUser) {
-    res.status(STATUS_CODES.NOT_FOUND);
-    return next();
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
   }
 
   let user;
@@ -88,8 +88,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    res.status(STATUS_CODES.NOT_FOUND);
-    return next();
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
   }
 
   return res.status(STATUS_CODES.OK).json({ user: user.toJSON() });
@@ -111,13 +110,11 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(STATUS_CODES.NOT_FOUND);
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
   }
 
   if (req.authId !== user.toJSON().uid) {
-    return res
-      .status(STATUS_CODES.UNAUTHORIZED)
-      .send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(STATUS_CODES.UNAUTHORIZED);
   }
 
   try {
@@ -138,13 +135,11 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(STATUS_CODES.NOT_FOUND);
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
   }
 
   if (req.authId !== user.toJSON().uid) {
-    return res
-      .status(STATUS_CODES.UNAUTHORIZED)
-      .send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(STATUS_CODES.UNAUTHORIZED);
   }
 
   // TODO:
@@ -182,7 +177,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!user) {
-    return res.status(STATUS_CODES.NOT_FOUND);
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
   }
 
   return res.json({
@@ -281,7 +276,7 @@ const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (!role) {
-    return res.status(STATUS_CODES.NOT_FOUND);
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
   }
 
   return res.json({

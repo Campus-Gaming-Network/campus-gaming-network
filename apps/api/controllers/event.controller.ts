@@ -51,11 +51,11 @@ const createEvent = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updateEvent = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const deleteEvent = async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const getEventById = async (
@@ -76,7 +76,7 @@ const getEventById = async (
   }
 
   if (!event) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   return res.json({
@@ -175,7 +175,7 @@ const getEventParticipantById = async (
   res: Response,
   next: NextFunction
 ) => {
-  return res.status(501);
+  return res.sendStatus(501);
 };
 
 const updateEventParticipant = async (
@@ -192,7 +192,7 @@ const updateEventParticipant = async (
   }
 
   if (!participant) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   try {
@@ -222,11 +222,11 @@ const deleteEventParticipant = async (
   }
 
   if (!participant) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   if (req.authId !== participant.toJSON().userId) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   try {

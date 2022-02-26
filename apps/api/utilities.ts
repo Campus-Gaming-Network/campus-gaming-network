@@ -7,6 +7,7 @@ interface ParsedRequestQuery {
   offset?: number;
   limit?: number;
   attributes?: string[];
+  order?: [string] | [string, string];
 }
 
 export const parseRequestQuery = (req: Request): ParsedRequestQuery => {
@@ -42,6 +43,19 @@ export const parseRequestQuery = (req: Request): ParsedRequestQuery => {
 
   if (attributes.length) {
     parsed = { ...parsed, attributes };
+  }
+
+  if (req.query.orderBy) {
+    let order = [req.query.orderBy];
+
+    if (req.query.orderDirection) {
+      order.push(req.query.orderDirection);
+    }
+
+    parsed = {
+      ...parsed,
+      order: [order],
+    };
   }
 
   return parsed;

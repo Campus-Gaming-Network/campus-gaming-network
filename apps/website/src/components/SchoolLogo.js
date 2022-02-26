@@ -18,6 +18,10 @@ const SchoolLogo = React.memo(
       setHasError.on();
     };
 
+    if (process.env.NODE_ENV !== "production") {
+      return null;
+    }
+
     if (hasError && Boolean(fallback)) {
       return fallback;
     }

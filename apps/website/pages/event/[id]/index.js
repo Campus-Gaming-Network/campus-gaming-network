@@ -50,11 +50,14 @@ import {
 import { useAuth } from "src/providers/auth";
 
 // API
-import { getEventDetails, incrementEventPageViews } from "src/api/event";
 import { getUserDetails, getUserEventResponse } from "src/api/user";
+import { API } from "src/api/new";
 
 // Hooks
 import useFetchEventUsers from "src/hooks/useFetchEventUsers";
+
+// Utilities
+import { mapEvent } from "src/utilities/event";
 
 // Other
 import firebaseAdmin from "src/firebaseAdmin";
@@ -85,18 +88,16 @@ const EventResponseAttendButton = dynamic(() =>
 
 export const getServerSideProps = async (context) => {
   const [eventDetailsResponse] = await Promise.all([
-    getEventDetails(context.params.id),
-    incrementEventPageViews(context.params.id),
+    API().Events.getOne(context.params.id),
   ]);
-  const { event } = eventDetailsResponse;
 
-  if (!Boolean(event)) {
+  if (!eventDetailsResponse?.data?.data?.event) {
     return NOT_FOUND;
   }
 
   const data = {
     params: context.params,
-    event,
+    event: mapEvent(eventDetailsResponse.data.data.event),
     eventResponse: null,
     isEventCreator: false,
     hasResponded: false,

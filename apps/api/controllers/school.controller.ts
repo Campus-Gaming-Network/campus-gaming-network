@@ -72,8 +72,7 @@ const getSchoolByHandle = async (
   }
 
   if (!school) {
-    res.status(STATUS_CODES.NOT_FOUND);
-    return next();
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
   }
 
   return res.json({
@@ -110,7 +109,7 @@ const updateSchool = async (
   }
 
   if (!user) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let school;
@@ -126,7 +125,7 @@ const updateSchool = async (
   }
 
   if (!school) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   let userRole;
@@ -150,13 +149,13 @@ const updateSchool = async (
   }
 
   if (!userRole) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   const { role } = userRole.toJSON();
 
   if (role.textkey !== ROLES.SCHOOL_ADMIN) {
-    return res.status(401).send({ error: AUTH_ERROR_MESSAGE });
+    return res.sendStatus(401);
   }
 
   let updatedValues: {
@@ -230,7 +229,7 @@ const getSchoolUsers = async (
   }
 
   if (!school) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   options.where = {
@@ -282,7 +281,7 @@ const getSchoolEvents = async (
   }
 
   if (!school) {
-    return res.status(404);
+    return res.sendStatus(404);
   }
 
   options.where = {

@@ -11,6 +11,7 @@ import { mapUser } from "src/utilities/user";
 // Constants
 import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
+import { API } from "src/api/new";
 
 const useFetchRecentlyCreatedUsers = (_limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
@@ -30,19 +31,18 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
       let _users = [];
 
       try {
-        const recentlyCreatedUsersSnapshot = await getDocs(
-          query(
-            collection(db, COLLECTIONS.USERS),
-            orderBy("createdAt", "desc"),
-            limit(_limit)
-          )
-        );
+        const response = await API().Users.getAll({
+          params: {
+            limit: _limit,
+            orderBy: "createdAt",
+            orderDirection: "DESC",
+          },
+        });
 
-        if (!recentlyCreatedUsersSnapshot.empty) {
-          recentlyCreatedUsersSnapshot.forEach((doc) => {
-            const data = doc.data();
-            const user = { ...mapUser(data, doc) };
-            _users.push(user);
+        if (response?.data?.data?.count) {
+          response.data.data.users.forEach((user) => {
+            console.log(user.createdAt);
+            _users.push(mapUser(user));
           });
         }
 

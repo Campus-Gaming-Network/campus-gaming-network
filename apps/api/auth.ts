@@ -79,7 +79,7 @@ export const isAuthenticated = async (
   next: NextFunction
 ) => {
   if (!req.authId) {
-    res.status(STATUS_CODES.UNAUTHORIZED).send({ error: AUTH_ERROR_MESSAGE });
+    res.sendStatus(STATUS_CODES.UNAUTHORIZED);
   }
 
   next();

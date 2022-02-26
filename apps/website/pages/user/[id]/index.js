@@ -50,11 +50,14 @@ import {
 } from "src/components/common";
 
 // API
-import { getSchoolDetails } from "src/api/school";
-import { getUserDetails, getUserTeams } from "src/api/user";
+import { API } from "src/api/new";
 
 // Providers
 import { useAuth } from "src/providers/auth";
+
+// Utilities
+import { mapUser } from "src/utilities/user";
+import { mapSchool } from "src/utilities/school";
 
 // Dynamic Components
 const TwitchEmbed = dynamic(() => import("src/components/TwitchEmbed"), {
@@ -75,23 +78,39 @@ const AttendingEvents = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [userResponse, teamsResponse] = await Promise.all([
-    getUserDetails(context.params.id),
-    getUserTeams(context.params.id),
-  ]);
-  const { user } = userResponse;
-  const { teams } = teamsResponse;
+  let responses;
 
-  if (!Boolean(user)) {
+  try {
+    responses = await Promise.all([
+      API().Users.getOne(context.params.id),
+      // API().Users.getTeams(context.params.id)
+    ]);
+  } catch (error) {
     return NOT_FOUND;
   }
 
-  const { school } = await getSchoolDetails(user.school.handle);
+  const [userResponse] = responses;
+
+  const user = mapUser(userResponse.data.data.user);
+  let schoolResponse;
+
+  try {
+    schoolResponse = await API().Schools.getOneByHandle(user.school.handle);
+  } catch (error) {
+    return NOT_FOUND;
+  }
+
+  // let teams = [];
+
+  // if (teamsResponse?.data?.data?.count) {
+  //   teams = teamsResponse?.data?.data?.teams;
+  // }
+
   const data = {
     params: context.params,
     user,
-    school,
-    teams,
+    school: mapSchool(schoolResponse.data.data.school),
+    // teams,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -297,11 +316,11 @@ const User = (props) => {
             />
           </Stack>
           <SliderLazyLoad>
-            <AttendingEvents
+            {/* <AttendingEvents
               user={props.user}
               title="Events Attending"
               emptyText={USER_EMPTY_UPCOMING_EVENTS_TEXT}
-            />
+            /> */}
           </SliderLazyLoad>
           <Stack as="section" spacing={4}>
             <Heading as="h3" fontSize="xl">
