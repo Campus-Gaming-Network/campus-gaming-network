@@ -83,15 +83,16 @@ export const getServerSideProps = async (context) => {
   try {
     responses = await Promise.all([
       API().Users.getOne(context.params.id),
-      // API().Users.getTeams(context.params.id)
+      API().Users.getTeams(context.params.id),
     ]);
   } catch (error) {
     return NOT_FOUND;
   }
 
-  const [userResponse] = responses;
+  const [userResponse, teamsResponse] = responses;
 
   const user = mapUser(userResponse.data.data.user);
+
   let schoolResponse;
 
   try {
@@ -100,17 +101,11 @@ export const getServerSideProps = async (context) => {
     return NOT_FOUND;
   }
 
-  // let teams = [];
-
-  // if (teamsResponse?.data?.data?.count) {
-  //   teams = teamsResponse?.data?.data?.teams;
-  // }
-
   const data = {
     params: context.params,
     user,
     school: mapSchool(schoolResponse.data.data.school),
-    // teams,
+    teams: teamsResponse.data.data.teams,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };
@@ -292,11 +287,11 @@ const User = (props) => {
             </Heading>
             <AccountsList user={props.user} />
           </Stack>
-          {Boolean(props.user.twitch) ? (
+          {/* {Boolean(props.user.twitch) ? (
             <Stack as="section" spacing={4}>
               <TwitchEmbed channel={props.user.twitch} />
             </Stack>
-          ) : null}
+          ) : null} */}
           <Stack as="section" spacing={4}>
             <Heading as="h3" fontSize="xl">
               Currently Playing
