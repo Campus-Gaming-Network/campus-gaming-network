@@ -7,7 +7,7 @@ interface ParticipantAttributes {
   userId: number;
   teamId: number;
   eventId: number;
-  type: "SOLO" | "TEAM";
+  participantType: "SOLO" | "TEAM";
   response: "YES" | "NO";
 }
 
@@ -50,7 +50,7 @@ export default (
           key: "id",
         },
       },
-      type: {
+      participantType: {
         type: DataTypes.ENUM("SOLO", "TEAM"),
         allowNull: false,
       },

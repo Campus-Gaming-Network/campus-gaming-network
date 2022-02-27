@@ -40,19 +40,31 @@ export const setupModelAssociations = (sequelize: Sequelize) => {
   // sequelize.models.Event.hasOne(sequelize.models.User);
 
   sequelize.models.User.belongsToMany(sequelize.models.Event, {
-    through: sequelize.models.Participant,
+    through: {
+      model: sequelize.models.Participant,
+      unique: false,
+    },
     foreignKey: "userId",
   });
   sequelize.models.Event.belongsToMany(sequelize.models.User, {
-    through: sequelize.models.Participant,
+    through: {
+      model: sequelize.models.Participant,
+      unique: false,
+    },
     foreignKey: "eventId",
   });
   sequelize.models.Team.belongsToMany(sequelize.models.Event, {
-    through: sequelize.models.Participant,
+    through: {
+      model: sequelize.models.Participant,
+      unique: false,
+    },
     foreignKey: "teamId",
   });
   sequelize.models.Event.belongsToMany(sequelize.models.Team, {
-    through: sequelize.models.Participant,
+    through: {
+      model: sequelize.models.Participant,
+      unique: false,
+    },
     foreignKey: "eventId",
   });
   sequelize.models.Participant.belongsTo(sequelize.models.User, {
@@ -65,11 +77,17 @@ export const setupModelAssociations = (sequelize: Sequelize) => {
   });
 
   sequelize.models.User.belongsToMany(sequelize.models.Team, {
-    through: sequelize.models.Teammate,
+    through: {
+      model: sequelize.models.Teammate,
+      unique: false,
+    },
     foreignKey: "userId",
   });
   sequelize.models.Team.belongsToMany(sequelize.models.User, {
-    through: sequelize.models.Teammate,
+    through: {
+      model: sequelize.models.Teammate,
+      unique: false,
+    },
     foreignKey: "teamId",
   });
 
