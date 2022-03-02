@@ -18,36 +18,36 @@ export const mapEvent = (event) => {
     return undefined;
   }
 
-  const startDateTime = event.startDateTime.toDate();
-  const endDateTime = event.endDateTime.toDate();
+  // const startDateTime = event.startDateTime.toDate();
+  // const endDateTime = event.endDateTime.toDate();
 
-  const metaDescription = `${startDateTime}: ${event.description}`;
+  // const metaDescription = `${startDateTime}: ${event.description}`;
   const url = `${PRODUCTION_URL}/event/${event.id}`;
 
   return {
     ...event,
-    startDateTime,
-    endDateTime,
+    // startDateTime,
+    // endDateTime,
     url,
     googleMapsAddressLink: googleMapsLink(event.location),
-    hasStarted: hasStarted(startDateTime, endDateTime),
-    hasEnded: hasEnded(endDateTime),
+    // hasStarted: hasStarted(startDateTime, endDateTime),
+    // hasEnded: hasEnded(endDateTime),
     school: mapSchool(event.school),
     meta: {
       title: event.name,
-      description: metaDescription.substring(0, 155),
+      // description: metaDescription.substring(0, 155),
       twitter: {
         card: "summary",
         site: SITE_NAME,
         title: event.name,
-        description: metaDescription.substring(0, 200),
+        // description: metaDescription.substring(0, 200),
         creator: CGN_TWITTER_HANDLE,
       },
       og: {
         title: event.name,
         type: "article",
         url,
-        description: metaDescription,
+        // description: metaDescription,
         site_name: SITE_NAME,
       },
     },

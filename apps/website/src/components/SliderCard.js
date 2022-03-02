@@ -11,7 +11,6 @@ const SliderCard = ({ children, ...rest }) => {
       <Box
         p={4}
         pos="relative"
-        shadow="sm"
         borderWidth={1}
         rounded="lg"
         bg="white"

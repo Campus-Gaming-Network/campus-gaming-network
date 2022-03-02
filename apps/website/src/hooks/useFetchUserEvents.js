@@ -1,30 +1,19 @@
 // Libraries
 import React from "react";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-  limit,
-} from "firebase/firestore";
-
-// Other
-import { db } from "src/firebase";
 
 // Utilities
-import { mapEventResponse } from "src/utilities/eventResponse";
+import { mapEvent } from "src/utilities/event";
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
+
+import { API } from "src/api/new";
 
 const useFetchUserEvents = (id, page, _limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const [pages, setPages] = React.useState({});
+  const [pagination, setPagination] = React.useState({});
 
   React.useEffect(() => {
     const fetchUserEvents = async () => {
@@ -37,54 +26,21 @@ const useFetchUserEvents = (id, page, _limit) => {
       }
 
       let _events = [];
-      let queryArgs = [
-        collection(db, COLLECTIONS.EVENT_RESPONSES),
-        where("user.ref", "==", doc(db, COLLECTIONS.USERS, id)),
-        where("response", "==", "YES"),
-        where("event.endDateTime", ">=", Timestamp.fromDate(new Date())),
-      ];
-
-      if (page > 0) {
-        if (!pages[page]) {
-          queryArgs.push(startAfter(pages[page - 1].last));
-        } else {
-          queryArgs.push(startAt(pages[page].first));
-        }
-      }
-
-      queryArgs.push(limit(_limit));
 
       try {
-        const userEventsSnapshot = await getDocs(query(...queryArgs));
+        const response = await API().Users.getEvents(1, {
+          params: {
+            "endDateTime.gte": new Date(),
+            limit: _limit,
+          },
+        });
 
-        if (!userEventsSnapshot.empty) {
-          userEventsSnapshot.forEach((doc) => {
-            const data = doc.data();
-            const event = { ...mapEventResponse(data) };
-            _events.push(event);
+        setPagination(response.data.pagination);
+
+        if (response?.data?.pagination.total) {
+          response.data.events.forEach((event) => {
+            _events.push(mapEvent(event));
           });
-
-          setPages((prev) => ({
-            ...prev,
-            ...{
-              [page]: {
-                first: userEventsSnapshot.docs[0],
-                last: userEventsSnapshot.docs[
-                  userEventsSnapshot.docs.length - 1
-                ],
-              },
-            },
-          }));
-        } else {
-          setPages((prev) => ({
-            ...prev,
-            ...{
-              [page]: {
-                first: null,
-                last: null,
-              },
-            },
-          }));
         }
 
         setState(STATES.DONE);
@@ -101,7 +57,7 @@ const useFetchUserEvents = (id, page, _limit) => {
     }
   }, [id, _limit]);
 
-  return [events, state, error];
+  return [{ events, pagination }, state, error];
 };
 
 export default useFetchUserEvents;

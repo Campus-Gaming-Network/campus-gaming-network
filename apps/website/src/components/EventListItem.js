@@ -14,6 +14,8 @@ import Time from "src/components/Time";
 // EventListItem
 
 const EventListItem = (props) => {
+  console.log(props);
+  // if (!props.event) {
   if (!props.event || !props.school) {
     return null;
   }
@@ -57,7 +59,7 @@ const EventListItem = (props) => {
                 isTruncated
               />
             )}
-            <SchoolLogo
+            {/* <SchoolLogo
               schoolId={props.school.id}
               schoolName={props.school.formattedName}
               h={6}
@@ -77,7 +79,7 @@ const EventListItem = (props) => {
                   <FontAwesomeIcon icon={faSchool} />
                 </Flex>
               }
-            />
+            /> */}
           </Flex>
           <Link
             href={`/event/${props.event.id}`}
@@ -90,7 +92,7 @@ const EventListItem = (props) => {
           >
             {props.event.name}
           </Link>
-          <Link
+          {/* <Link
             href={`/school/${props.school.handle}`}
             color="gray.500"
             fontWeight={600}
@@ -99,7 +101,7 @@ const EventListItem = (props) => {
             title={props.school.formattedName}
           >
             {props.school.formattedName}
-          </Link>
+          </Link> */}
         </Stack>
         <Flex justifyContent="space-between" alignItems="center">
           {props.event.isOnlineEvent ? (
@@ -107,7 +109,7 @@ const EventListItem = (props) => {
               Online event
             </Badge>
           ) : null}
-          {Boolean(props.event.responses?.yes?.length) > 0 ? (
+          {/* {Boolean(props.event.responses?.yes?.length) > 0 ? (
             <Text
               fontSize="xs"
               color="gray.500"
@@ -116,7 +118,7 @@ const EventListItem = (props) => {
             >
               {props.event.responses.yes} Attending
             </Text>
-          ) : null}
+          ) : null} */}
         </Flex>
       </Flex>
     </SliderCard>

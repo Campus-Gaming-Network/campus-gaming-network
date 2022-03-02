@@ -6,11 +6,11 @@ import uniqBy from "lodash.uniqby";
 import useFetchUserEvents from "src/hooks/useFetchUserEvents";
 
 // Components
+import { Heading, Stack } from "src/components/common";
 import EventListItem from "src/components/EventListItem";
 import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
 import EmptyText from "src/components/EmptyText";
-import { Heading, Stack } from "src/components/common";
 
 ////////////////////////////////////////////////////////////////////////////////
 // AttendingEvents
@@ -19,7 +19,11 @@ const AttendingEvents = (props) => {
   const [hasLoadedOnce, setHasLoadedOnce] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const limit = React.useMemo(() => (page === 0 ? 6 : 1), [page]);
-  const [events, state] = useFetchUserEvents(props?.user?.id, page, limit);
+  const [{ events, pagination }, state] = useFetchUserEvents(
+    props?.user?.id,
+    page,
+    limit
+  );
   const [allEvents, setAllEvents] = React.useState([]);
   const hasEvents = React.useMemo(
     () => Boolean(allEvents) && allEvents.length > 0,
@@ -70,8 +74,12 @@ const AttendingEvents = (props) => {
               }}
               onPageChange={(nextPage) => setPage(nextPage)}
             >
-              {allEvents?.map((eventResponse) => (
-                <EventListItem key={eventResponse.id} {...eventResponse} />
+              {allEvents?.map((event) => (
+                <EventListItem
+                  key={event.id}
+                  event={event}
+                  school={event.school}
+                />
               ))}
             </Slider>
           )}

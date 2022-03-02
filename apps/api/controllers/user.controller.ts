@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { FindAndCountOptions, FindOptions } from "sequelize";
+import { FindAndCountOptions, FindOptions, Op } from "sequelize";
 import models from "../db/models";
 import {
   MAX_LIMIT,
@@ -7,7 +7,7 @@ import {
   SUCCESS_MESSAGE,
   STATUS_CODES,
 } from "../constants";
-import { parseRequestQuery } from "../utilities";
+import { parseRequestQuery, buildPagination } from "../utilities";
 import { validateCreateUser, validateEditUser } from "../validation";
 import firebase from "../firebase";
 
@@ -192,31 +192,89 @@ const getUserEvents = async (
   res: Response,
   next: NextFunction
 ) => {
-  const offset = Number(req.query.offset) || undefined;
-  const limit = Number(req.query.limit) || undefined;
-  let events;
-  let count;
+  const { offset, limit } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {
+    offset,
+    limit,
+    include: {
+      model: models.Event,
+      as: "event",
+      required: true,
+      include: [
+        {
+          model: models.School,
+          as: "school",
+          attributes: ["id", "name", "handle"],
+          required: true,
+        },
+      ],
+    },
+    where: {
+      response: "YES",
+      userId: req.params.id,
+    },
+  };
+
+  let where: { [key: string]: any } = {};
+
+  const filterFields = ["startDateTime", "endDateTime"];
+
+  Object.keys(req.query).forEach((key) => {
+    const value = req.query[key];
+    const matched = filterFields.find((field) => key.includes(field));
+
+    if (!!matched) {
+      const [field, operator] = key.split(".");
+
+      if (filterFields.includes(field)) {
+        if (operator === "gte") {
+          where = {
+            ...where,
+            [field]: {
+              ...(field in where ? where[field] : {}),
+              [Op.gte]: value,
+            },
+          };
+        }
+      }
+    }
+  });
+
+  if (Object.keys(where).length) {
+    // @ts-ignore
+    options.include.where = where;
+  }
+
+  let result;
 
   try {
-    const result = await models.Participant.findAndCountAll({
-      include: models.Event,
-      offset,
-      limit,
-    });
-    events = result.rows;
-    count = result.count;
+    result = await models.Participant.findAndCountAll(options);
   } catch (error) {
     return next(error);
   }
 
+  let events: any[] = [];
+
+  result.rows.forEach((eventRespone) => {
+    // @ts-ignore
+    let { event } = eventRespone;
+
+    // @ts-ignore
+    event.response = eventRespone.response;
+    // @ts-ignore
+    event.participantType = eventRespone.participantType;
+
+    events.push(event);
+  });
+
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      events,
-      count,
-    },
+    pagination: buildPagination(
+      result.rows.length,
+      result.count,
+      offset,
+      limit
+    ),
+    events,
   });
 };
 

@@ -1,39 +1,76 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions, Op } from "sequelize";
 import models from "../db/models";
-import { MAX_LIMIT, AUTH_ERROR_MESSAGE, SUCCESS_MESSAGE } from "../constants";
-import { parseRequestQuery } from "../utilities";
+import { SUCCESS_MESSAGE } from "../constants";
+import { parseRequestQuery, buildPagination } from "../utilities";
 
 const getEvents = async (req: Request, res: Response, next: NextFunction) => {
-  const { offset, limit, attributes } = parseRequestQuery(req);
+  const { offset, limit, attributes, order } = parseRequestQuery(req);
+  const filterFields = ["startDateTime", "endDateTime"];
   const options: FindAndCountOptions = {
     offset,
     limit,
     attributes,
+    order,
+    include: [
+      {
+        model: models.School,
+        as: "school",
+        attributes: ["id", "name", "handle"],
+        required: true,
+      },
+      {
+        model: models.User,
+        as: "creator",
+        attributes: ["id", "firstName", "lastName", "gravatar"],
+        required: true,
+      },
+    ],
   };
-  let events;
-  let count;
 
-  if (!options.limit || (options.limit && options.limit > MAX_LIMIT)) {
-    options.limit = MAX_LIMIT;
+  let where: { [key: string]: any } = {};
+
+  Object.keys(req.query).forEach((key) => {
+    const value = req.query[key];
+    const matched = filterFields.find((field) => key.includes(field));
+
+    if (!!matched) {
+      const [field, operator] = key.split(".");
+
+      if (filterFields.includes(field)) {
+        if (operator === "gte") {
+          where = {
+            ...where,
+            [field]: {
+              ...(field in where ? where[field] : {}),
+              [Op.gte]: value,
+            },
+          };
+        }
+      }
+    }
+  });
+
+  if (Object.keys(where).length) {
+    options.where = where;
   }
 
+  let result;
+
   try {
-    const result = await models.Event.findAndCountAll(options);
-    events = result.rows;
-    count = result.count;
+    result = await models.Event.findAndCountAll(options);
   } catch (error) {
     return next(error);
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      events,
-      count,
-    },
+    pagination: buildPagination(
+      result.rows.length,
+      result.count,
+      offset,
+      limit
+    ),
+    events: result.rows,
   });
 };
 

@@ -1,32 +1,18 @@
 // Libraries
 import React from "react";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  orderBy,
-  Timestamp,
-  limit,
-  startAfter,
-  startAt,
-} from "firebase/firestore";
-
-// Other
-import { db } from "src/firebase";
 
 // Utilities
 import { mapEvent } from "src/utilities/event";
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
+import { API } from "src/api/new";
 
 const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [events, setEvents] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const [pages, setPages] = React.useState({});
+  const [pagination, setPagination] = React.useState({});
 
   React.useEffect(() => {
     const fetchRecentlyCreatedEvents = async () => {
@@ -39,61 +25,21 @@ const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
       }
 
       let _events = [];
-      let queryArgs = [
-        collection(db, COLLECTIONS.EVENTS),
-        where("endDateTime", ">=", Timestamp.fromDate(new Date())),
-        orderBy("endDateTime"),
-        orderBy("createdAt", "desc"),
-      ];
-
-      if (page > 0) {
-        if (!pages[page]) {
-          queryArgs.push(startAfter(pages[page - 1].last));
-        } else {
-          queryArgs.push(startAt(pages[page].first));
-        }
-      }
-
-      queryArgs.push(limit(_limit));
 
       try {
-        const recentlyCreatedEventsSnapshot = await getDocs(
-          query(...queryArgs)
-        );
+        const response = await API().Events.getAll({
+          params: {
+            "endDateTime.gte": new Date(),
+            limit: _limit,
+            order: ["endDateTime.ASC", "createdAt.DESC"],
+          },
+        });
+        setPagination(response.data.pagination);
 
-        if (!recentlyCreatedEventsSnapshot.empty) {
-          recentlyCreatedEventsSnapshot.forEach((doc) => {
-            const data = doc.data();
-            const event = {
-              ...mapEvent(
-                { id: doc.id, _createdAt: data.createdAt.toDate(), ...data },
-                doc
-              ),
-            };
-            _events.push(event);
+        if (response?.data?.pagination.total) {
+          response.data.events.forEach((event) => {
+            _events.push(mapEvent(event));
           });
-
-          setPages((prev) => ({
-            ...prev,
-            ...{
-              [page]: {
-                first: recentlyCreatedEventsSnapshot.docs[0],
-                last: recentlyCreatedEventsSnapshot.docs[
-                  recentlyCreatedEventsSnapshot.docs.length - 1
-                ],
-              },
-            },
-          }));
-        } else {
-          setPages((prev) => ({
-            ...prev,
-            ...{
-              [page]: {
-                first: null,
-                last: null,
-              },
-            },
-          }));
         }
 
         setState(STATES.DONE);
@@ -108,7 +54,7 @@ const useFetchRecentlyCreatedEvents = (page = 0, _limit = 25) => {
     fetchRecentlyCreatedEvents();
   }, [page, _limit]);
 
-  return [events, state, error];
+  return [{ events, pagination }, state, error];
 };
 
 export default useFetchRecentlyCreatedEvents;

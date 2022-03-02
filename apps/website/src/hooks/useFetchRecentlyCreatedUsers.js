@@ -34,14 +34,12 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
         const response = await API().Users.getAll({
           params: {
             limit: _limit,
-            orderBy: "createdAt",
-            orderDirection: "DESC",
+            order: [["createdAt", "DESC"]],
           },
         });
 
         if (response?.data?.data?.count) {
           response.data.data.users.forEach((user) => {
-            console.log(user.createdAt);
             _users.push(mapUser(user));
           });
         }

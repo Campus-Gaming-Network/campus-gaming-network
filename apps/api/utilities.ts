@@ -1,32 +1,34 @@
-import { Request } from "express";
+import e, { Request } from "express";
 import { customAlphabet } from "nanoid";
 import * as bcrypt from "bcrypt";
-import { NANO_ALPHABET, NANO_ID_LENGTH, SALT_ROUNDS } from "./constants";
+import {
+  NANO_ALPHABET,
+  NANO_ID_LENGTH,
+  SALT_ROUNDS,
+  BASE_OFFSET,
+  BASE_LIMIT,
+} from "./constants";
 
 interface ParsedRequestQuery {
-  offset?: number;
-  limit?: number;
+  offset: number;
+  limit: number;
   attributes?: string[];
-  order?: [string] | [string, string];
+  // order?: [string] | [string, string];
+  order?: any;
 }
 
 export const parseRequestQuery = (req: Request): ParsedRequestQuery => {
-  let parsed = {};
+  let parsed: ParsedRequestQuery = {
+    offset: BASE_OFFSET,
+    limit: BASE_LIMIT,
+  };
 
   if (req.query.offset) {
-    const offset = Number(req.query.offset) || undefined;
-
-    if (offset) {
-      parsed = { ...parsed, offset };
-    }
+    parsed = { ...parsed, offset: Number(req.query.offset) || BASE_OFFSET };
   }
 
   if (req.query.limit) {
-    const limit = Number(req.query.limit) || undefined;
-
-    if (limit) {
-      parsed = { ...parsed, limit };
-    }
+    parsed = { ...parsed, limit: Number(req.query.limit) || BASE_LIMIT };
   }
 
   let attributes: string[] = [];
@@ -45,20 +47,43 @@ export const parseRequestQuery = (req: Request): ParsedRequestQuery => {
     parsed = { ...parsed, attributes };
   }
 
-  if (req.query.orderBy) {
-    let order = [req.query.orderBy];
+  if (req.query.order) {
+    let order: string[] = [];
 
-    if (req.query.orderDirection) {
-      order.push(req.query.orderDirection);
+    if (!Array.isArray(req.query.order)) {
+      order = [String(req.query.order)];
     }
 
     parsed = {
       ...parsed,
-      order: [order],
+      order: order.map((o: string) => o.split(".")),
     };
   }
 
   return parsed;
+};
+
+export const buildPagination = (
+  count: number,
+  total: number,
+  offset: number,
+  limit: number
+) => {
+  const pages = Math.ceil(total / limit);
+  const page = offset ? offset / limit + 1 : 1;
+  const isFirstPage = page === 1;
+  const isLastPage = page === pages;
+
+  return {
+    count,
+    total,
+    offset,
+    limit,
+    pages,
+    page,
+    isFirstPage,
+    isLastPage,
+  };
 };
 
 // Returns a callable function

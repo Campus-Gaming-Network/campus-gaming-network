@@ -62,6 +62,11 @@ export default (sequelize: Sequelize): ModelDefined<any, any> => {
     },
     {
       tableName: TABLES.EVENTS,
+      defaultScope: {
+        attributes: {
+          exclude: ["schoolId", "creatorId"],
+        },
+      },
     }
   );
 };

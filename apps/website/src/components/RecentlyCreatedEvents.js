@@ -1,12 +1,12 @@
 // Libraries
 import React from "react";
 import uniqBy from "lodash.uniqby";
-import { Box, Heading } from "src/components/common";
 
 // Hooks
 import useFetchRecentlyCreatedEvents from "src/hooks/useFetchRecentlyCreatedEvents";
 
 // Components
+import { Box, Heading } from "src/components/common";
 import EventListItem from "src/components/EventListItem";
 import Slider from "src/components/Slider";
 import SliderSilhouette from "src/components/silhouettes/SliderSilhouette";
@@ -19,7 +19,10 @@ const RecentlyCreatedEvents = () => {
   const [hasLoadedOnce, setHasLoadedOnce] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const limit = React.useMemo(() => (page === 0 ? 6 : 1), [page]);
-  const [events, state] = useFetchRecentlyCreatedEvents(page, limit);
+  const [{ events, pagination }, state] = useFetchRecentlyCreatedEvents(
+    page,
+    limit
+  );
   const [allEvents, setAllEvents] = React.useState([]);
   const hasEvents = React.useMemo(
     () => Boolean(allEvents) && allEvents.length > 0,

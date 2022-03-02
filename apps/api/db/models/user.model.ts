@@ -103,6 +103,18 @@ export default (sequelize: Sequelize): ModelDefined<any, any> => {
     },
     {
       tableName: TABLES.USERS,
+      defaultScope: {
+        attributes: {
+          exclude: ["schoolId", "uid"],
+        },
+      },
+      scopes: {
+        withUid: {
+          attributes: {
+            include: ["uid"],
+          },
+        },
+      },
     }
   );
 };

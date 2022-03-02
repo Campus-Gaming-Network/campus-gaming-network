@@ -36,8 +36,13 @@ export const setupModelAssociations = (sequelize: Sequelize) => {
     as: "school",
   });
 
-  // sequelize.models.User.hasMany(sequelize.models.Event, { foreignKey: "creatorId" });
-  // sequelize.models.Event.hasOne(sequelize.models.User);
+  sequelize.models.User.hasMany(sequelize.models.Event, {
+    foreignKey: "creatorId",
+  });
+  sequelize.models.Event.belongsTo(sequelize.models.User, {
+    foreignKey: "creatorId",
+    as: "creator",
+  });
 
   sequelize.models.User.belongsToMany(sequelize.models.Event, {
     through: {
@@ -66,6 +71,10 @@ export const setupModelAssociations = (sequelize: Sequelize) => {
       unique: false,
     },
     foreignKey: "eventId",
+  });
+  sequelize.models.Participant.belongsTo(sequelize.models.Event, {
+    foreignKey: "eventId",
+    as: "event",
   });
   sequelize.models.Participant.belongsTo(sequelize.models.User, {
     foreignKey: "userId",
@@ -100,8 +109,13 @@ export const setupModelAssociations = (sequelize: Sequelize) => {
     as: "team",
   });
 
-  // sequelize.models.School.hasMany(sequelize.models.Event, { foreignKey: "schoolId" });
-  // sequelize.models.Event.belongsTo(sequelize.models.School);
+  sequelize.models.School.hasMany(sequelize.models.Event, {
+    foreignKey: "schoolId",
+  });
+  sequelize.models.Event.belongsTo(sequelize.models.School, {
+    foreignKey: "schoolId",
+    as: "school",
+  });
 
   sequelize.models.User.belongsToMany(sequelize.models.Role, {
     through: sequelize.models.UserRole,

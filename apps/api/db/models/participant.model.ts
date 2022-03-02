@@ -62,6 +62,11 @@ export default (
     },
     {
       tableName: TABLES.PARTICIPANTS,
+      defaultScope: {
+        attributes: {
+          exclude: ["userId", "teamId", "eventId"],
+        },
+      },
     }
   );
 };

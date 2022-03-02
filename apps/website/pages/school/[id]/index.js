@@ -277,15 +277,12 @@ const School = (props) => {
 
 const UsersList = (props) => {
   const [page, setPage] = React.useState(0);
-  const [users, status] = useFetchSchoolUsers(props.school.handle, page);
-  const hasUsers = React.useMemo(() => {
-    return Boolean(users) && users.length > 0;
-  }, [users]);
-
+  const [{ users, count }, status] = useFetchSchoolUsers(
+    props.school.handle,
+    page
+  );
   const disablePrev = page === 0;
-  const disableNext =
-    props.school.userCount === 0 ||
-    Math.floor(props.school.userCount / 25) === page;
+  const disableNext = count === 0 || Math.floor(count / 25) === page;
 
   const decPage = () => {
     if (disablePrev) {
@@ -304,7 +301,7 @@ const UsersList = (props) => {
     <Stack as="section" spacing={4}>
       <Flex justify="space-between">
         <Heading as="h4" fontSize="xl">
-          Members ({props.school.userCount || 0})
+          Members ({count || 0})
         </Heading>
         <ButtonGroup size="sm" isAttached variant="outline">
           <IconButton
@@ -324,7 +321,7 @@ const UsersList = (props) => {
       {/* TODO: Better loading here */}
       {status === "loading" ? (
         <Text>Loading...</Text>
-      ) : hasUsers ? (
+      ) : count > 0 ? (
         <List display="flex" flexWrap="wrap" mx={-2}>
           {users.map((user) => (
             <UserListItem key={user.id} user={user} />

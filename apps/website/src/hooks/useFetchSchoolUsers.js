@@ -16,6 +16,7 @@ const useFetchSchoolUsers = (
   const [status, setStatus] = React.useState("idle");
   const [users, setUsers] = React.useState([]);
   const [error, setError] = React.useState(null);
+  const [count, setCount] = React.useState(0);
 
   React.useEffect(() => {
     if (!id) {
@@ -32,7 +33,7 @@ const useFetchSchoolUsers = (
       let response;
 
       try {
-        response = API().Schools.getUsers(id, {
+        response = await API().Schools.getUsers(id, {
           params: {
             limit: limit,
             offset: page * limit,
@@ -57,6 +58,7 @@ const useFetchSchoolUsers = (
         });
 
         setUsers(schoolUsers);
+        setCount(response.data.data.count);
       }
 
       setStatus("done");
@@ -65,7 +67,7 @@ const useFetchSchoolUsers = (
     fetchSchoolUsers();
   }, [id, limit, page]);
 
-  return [users, status, error];
+  return [{ users, count }, status, error];
 };
 
 export default useFetchSchoolUsers;
