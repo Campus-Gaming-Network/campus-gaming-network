@@ -1,25 +1,12 @@
 // Libraries
 import React from "react";
-import {
-  doc,
-  collection,
-  query,
-  where,
-  getDocs,
-  limit,
-  startAfter,
-  startAt,
-} from "firebase/firestore";
-
-// Other
-import { db } from "src/firebase";
 
 // Utilities
 import { mapUser } from "src/utilities/user";
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
 import { DEFAULT_USERS_LIST_PAGE_SIZE } from "src/constants/other";
+import { API } from "src/api/new";
 
 const useFetchEventUsers = (
   id,
@@ -30,12 +17,9 @@ const useFetchEventUsers = (
   const [users, setUsers] = React.useState([]);
   const [error, setError] = React.useState(null);
   const [pages, setPages] = React.useState({});
+  const [pagination, setPagination] = React.useState({});
 
   React.useEffect(() => {
-    if (!id) {
-      return;
-    }
-
     const fetchEventUsers = async () => {
       setStatus("loading");
 
@@ -43,74 +27,37 @@ const useFetchEventUsers = (
         console.log(`[API] fetchEventUsers...${id}`);
       }
 
-      let queryArgs = [
-        collection(db, COLLECTIONS.EVENT_RESPONSES),
-        where("event.ref", "==", doc(db, COLLECTIONS.EVENTS, id)),
-        where("response", "==", "YES"),
-      ];
-
-      if (page > 0) {
-        if (!pages[page]) {
-          queryArgs.push(startAfter(pages[page - 1].last));
-        } else {
-          queryArgs.push(startAt(pages[page].first));
-        }
-      }
-
-      queryArgs.push(limit(_limit));
-
-      let snapshot;
-
       try {
-        snapshot = await getDocs(query(...queryArgs));
+        const response = await API().Events.getAllParticipants(id, {
+          params: {
+            limit: _limit,
+          },
+        });
+
+        let eventUsers = [];
+
+        if (response?.data?.pagination.total) {
+          response.data.users.forEach((user) => {
+            eventUsers.push(mapUser(user));
+          });
+        }
+
+        setStatus("done");
+        setPagination(response.data.pagination);
+        setUsers(eventUsers);
       } catch (error) {
         console.error({ error });
         setError(error);
         setStatus("done");
       }
-
-      if (!snapshot.empty) {
-        let eventUsers = [];
-
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          eventUsers.push(
-            mapUser({
-              id: data.user.id,
-              ...data.user,
-            })
-          );
-        });
-
-        setUsers(eventUsers);
-        setPages((prev) => ({
-          ...prev,
-          ...{
-            [page]: {
-              first: snapshot.docs[0],
-              last: snapshot.docs[snapshot.docs.length - 1],
-            },
-          },
-        }));
-      } else {
-        setPages((prev) => ({
-          ...prev,
-          ...{
-            [page]: {
-              first: null,
-              last: null,
-            },
-          },
-        }));
-      }
-
-      setStatus("done");
     };
 
-    fetchEventUsers();
+    if (id) {
+      fetchEventUsers();
+    }
   }, [id, _limit, page]);
 
-  return [users, status, error];
+  return [{ users, pagination }, status, error];
 };
 
 export default useFetchEventUsers;

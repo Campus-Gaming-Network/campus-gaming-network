@@ -35,8 +35,6 @@ const useFetchUserEvents = (id, page, _limit) => {
           },
         });
 
-        setPagination(response.data.pagination);
-
         if (response?.data?.pagination.total) {
           response.data.events.forEach((event) => {
             _events.push(mapEvent(event));
@@ -44,6 +42,7 @@ const useFetchUserEvents = (id, page, _limit) => {
         }
 
         setState(STATES.DONE);
+        setPagination(response.data.pagination);
         setEvents(_events);
       } catch (error) {
         console.error({ error });
