@@ -38,8 +38,8 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
           },
         });
 
-        if (response?.data?.data?.count) {
-          response.data.data.users.forEach((user) => {
+        if (response?.data?.count) {
+          response.data.users.forEach((user) => {
             _users.push(mapUser(user));
           });
         }

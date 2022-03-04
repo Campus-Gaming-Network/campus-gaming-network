@@ -41,13 +41,7 @@ const getSchools = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      schools,
-      count,
-    },
+    schools,
   });
 };
 
@@ -76,12 +70,7 @@ const getSchoolByHandle = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      school: school.toJSON(),
-    },
+    school: school.toJSON(),
   });
 };
 
@@ -245,13 +234,7 @@ const getSchoolUsers = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      users,
-      count,
-    },
+    users,
   });
 };
 
@@ -297,13 +280,7 @@ const getSchoolEvents = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      events,
-      count,
-    },
+    events,
   });
 };
 

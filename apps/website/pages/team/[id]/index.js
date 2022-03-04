@@ -3,7 +3,6 @@ import React from "react";
 import { useBoolean } from "@chakra-ui/react";
 import safeJsonStringify from "safe-json-stringify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import nookies from "nookies";
 import {
   faEllipsisV,
   faFlag,
@@ -11,17 +10,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import dynamic from "next/dynamic";
 
-// API
-import {
-  getTeamDetails,
-  getTeamUsers,
-  getTeamRole,
-  getTeamRoles,
-} from "src/api/team";
-import { getUserTeammateDetails } from "src/api/user";
-
 // Constants
-import { COOKIES, NOT_FOUND } from "src/constants/other";
+import { NOT_FOUND } from "src/constants/other";
 
 // Components
 import SiteLayout from "src/components/SiteLayout";
@@ -44,11 +34,10 @@ import {
   MenuItem,
 } from "src/components/common";
 
-// Other
-import firebaseAdmin from "src/firebaseAdmin";
-
 // Providers
 import { useAuth } from "src/providers/auth";
+import { API } from "src/api/new";
+import { mapTeam } from "src/utilities/team";
 
 // Dynamic Components
 const ReportEntityDialog = dynamic(
@@ -62,47 +51,21 @@ const ReportEntityDialog = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [teamResponse, teamUsersResponse, teamRolesResponse] =
-    await Promise.all([
-      getTeamDetails(context.params.id),
-      getTeamUsers(context.params.id),
-      getTeamRoles(context.params.id),
-    ]);
-  const { team } = teamResponse;
-  const { teammates } = teamUsersResponse;
-  const { roles } = teamRolesResponse;
+  const [teamResponse, teamUsersResponse] = await Promise.all([
+    API().Teams.getOne(context.params.id),
+    API().Teams.getAllTeammates(context.params.id),
+  ]);
 
-  if (!Boolean(team)) {
+  if (!teamResponse?.data?.team) {
     return NOT_FOUND;
   }
 
   const data = {
     params: context.params,
-    team,
-    teammates,
-    roles,
+    team: mapTeam(teamResponse.data.team),
+    teammates: mapTeammate(teamUsersResponse.data.teammates),
     isPartOfTeam: false,
   };
-
-  try {
-    const cookies = nookies.get(context);
-    const token = Boolean(cookies?.[COOKIES.AUTH_TOKEN])
-      ? await firebaseAdmin.auth().verifyIdToken(cookies[COOKIES.AUTH_TOKEN])
-      : null;
-
-    if (Boolean(token?.uid)) {
-      const [userTeammateResponse, teamRoleResponse] = await Promise.all([
-        getUserTeammateDetails(context.params.id, token.uid),
-        getTeamRole(token.uid, context.params.id),
-      ]);
-      const { teammate } = userTeammateResponse;
-      const { role } = teamRoleResponse;
-      data.isPartOfTeam = Boolean(teammate);
-      data.role = role;
-    }
-  } catch (error) {
-    return NOT_FOUND;
-  }
 
   return { props: JSON.parse(safeJsonStringify(data)) };
 };
@@ -149,7 +112,7 @@ const Team = (props) => {
             pt={8}
           >
             <Heading as="h2" fontSize="5xl" fontWeight="bold" pb={2}>
-              {props.team.name} ({props.team.memberCount})
+              {props.team.name}
             </Heading>
             <Box>
               <Menu>

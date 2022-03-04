@@ -43,13 +43,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      users,
-      count,
-    },
+    users,
   });
 };
 
@@ -181,9 +175,21 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
-    data: {
-      user: user.toJSON(),
-    },
+    user: user.toJSON(),
+  });
+};
+
+const getUserByUid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.authUser) {
+    return res.sendStatus(STATUS_CODES.NOT_FOUND);
+  }
+
+  return res.json({
+    user: req.authUser,
   });
 };
 
@@ -308,13 +314,7 @@ const getUserTeams = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      teams,
-      count,
-    },
+    teams,
   });
 };
 
@@ -338,9 +338,7 @@ const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
-    data: {
-      role: role.toJSON(),
-    },
+    role: role.toJSON(),
   });
 };
 
@@ -375,13 +373,7 @@ const getUserRoles = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      roles,
-      count,
-    },
+    roles,
   });
 };
 
@@ -391,6 +383,7 @@ export default {
   updateUser,
   deleteUser,
   getUserById,
+  getUserByUid,
   getUserEvents,
   getUserTeams,
   getUserRole,

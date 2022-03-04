@@ -84,8 +84,8 @@ const SchoolSearch = (props) => {
         },
       });
 
-      if (response?.data?.data?.count) {
-        return response.data.data.schools.map((school) => mapSchool(school));
+      if (response?.data?.count) {
+        return response.data.schools.map((school) => mapSchool(school));
       }
 
       return [];

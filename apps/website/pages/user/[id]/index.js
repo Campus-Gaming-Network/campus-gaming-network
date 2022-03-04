@@ -91,7 +91,7 @@ export const getServerSideProps = async (context) => {
 
   const [userResponse, teamsResponse] = responses;
 
-  const user = mapUser(userResponse.data.data.user);
+  const user = mapUser(userResponse.data.user);
 
   let schoolResponse;
 
@@ -104,8 +104,8 @@ export const getServerSideProps = async (context) => {
   const data = {
     params: context.params,
     user,
-    school: mapSchool(schoolResponse.data.data.school),
-    teams: teamsResponse.data.data.teams,
+    school: mapSchool(schoolResponse.data.school),
+    teams: teamsResponse.data.teams,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };

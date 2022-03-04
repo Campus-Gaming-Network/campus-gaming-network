@@ -23,8 +23,8 @@ export const getStaticProps = async () => {
   try {
     const response = await API().Schools.getAll();
 
-    if (response?.data?.data?.count) {
-      schools = sortBy(response.data.data.schools.map(mapSchool), "name");
+    if (response?.data?.count) {
+      schools = sortBy(response.data.schools.map(mapSchool), "name");
     }
   } catch (error) {
     return NOT_FOUND;

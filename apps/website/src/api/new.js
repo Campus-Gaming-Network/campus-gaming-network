@@ -18,6 +18,9 @@ export const API = (version = DEFAULT_VERSION) => {
   };
 
   return {
+    Auth: {
+      getUser: (id, config = {}) => requests.get(`/auth/user/${id}`, config),
+    },
     Users: {
       getAll: (config = {}) => requests.get("/users", config),
       getOne: (id, config = {}) => requests.get(`/users/${id}`, config),

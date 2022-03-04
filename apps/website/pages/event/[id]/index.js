@@ -91,13 +91,15 @@ export const getServerSideProps = async (context) => {
     API().Events.getOne(context.params.id),
   ]);
 
-  if (!eventDetailsResponse?.data?.data?.event) {
+  if (!eventDetailsResponse?.data?.event) {
     return NOT_FOUND;
   }
 
+  const event = mapEvent(eventDetailsResponse.data.event);
+
   const data = {
     params: context.params,
-    event: mapEvent(eventDetailsResponse.data.data.event),
+    event,
     eventResponse: null,
     isEventCreator: false,
     hasResponded: false,
@@ -115,6 +117,7 @@ export const getServerSideProps = async (context) => {
 
     if (Boolean(token?.uid)) {
       const [userResponse, userEventResponse] = await Promise.all([
+        // API().Users.getOne(),
         getUserDetails(token.uid),
         getUserEventResponse(context.params.id, token.uid),
       ]);

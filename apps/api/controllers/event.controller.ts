@@ -117,12 +117,7 @@ const getEventById = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      event: event.toJSON(),
-    },
+    event: event.toJSON(),
   });
 };
 
@@ -184,13 +179,7 @@ const getEventParticipants = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      participants,
-      count,
-    },
+    participants,
   });
 };
 
@@ -239,9 +228,7 @@ const updateEventParticipant = async (
   }
 
   return res.json({
-    data: {
-      participant,
-    },
+    participant,
   });
 };
 

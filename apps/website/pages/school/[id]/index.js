@@ -83,19 +83,19 @@ export const getServerSideProps = async (context) => {
     API().Schools.getEvents(context.params.id),
   ]);
 
-  if (!schoolResponse?.data?.data?.school) {
+  if (!schoolResponse?.data?.school) {
     return NOT_FOUND;
   }
 
   let events = [];
 
-  if (eventsResponse?.data?.data?.count) {
-    events = eventsResponse?.data?.data?.events;
+  if (eventsResponse?.data?.count) {
+    events = eventsResponse?.data?.events;
   }
 
   const data = {
     params: context.params,
-    school: mapSchool(schoolResponse.data.data.school),
+    school: mapSchool(schoolResponse.data.school),
     events,
   };
 

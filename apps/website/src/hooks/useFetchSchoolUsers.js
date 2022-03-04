@@ -45,10 +45,10 @@ const useFetchSchoolUsers = (
         setStatus("done");
       }
 
-      if (!!response?.data?.data?.count) {
+      if (!!response?.data?.count) {
         let schoolUsers = [];
 
-        response.data.data.users.forEach((user) => {
+        response.data.users.forEach((user) => {
           schoolUsers.push(
             mapUser({
               id: user.id,
@@ -58,7 +58,7 @@ const useFetchSchoolUsers = (
         });
 
         setUsers(schoolUsers);
-        setCount(response.data.data.count);
+        setCount(response.data.count);
       }
 
       setStatus("done");

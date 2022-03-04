@@ -38,13 +38,7 @@ const getTeams = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      teams,
-      count,
-    },
+    teams,
   });
 };
 
@@ -348,9 +342,7 @@ const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.json({
-    data: {
-      team: team.toJSON(),
-    },
+    team: team.toJSON(),
   });
 };
 
@@ -384,13 +376,7 @@ const getTeammates = async (
   }
 
   return res.json({
-    metadata: {
-      query: req.query,
-    },
-    data: {
-      teammates,
-      count,
-    },
+    teammates,
   });
 };
 
@@ -503,9 +489,7 @@ const getTeammateById = async (
   }
 
   return res.json({
-    data: {
-      teammate: teammate.toJSON(),
-    },
+    teammate: teammate.toJSON(),
   });
 };
 

@@ -18,10 +18,6 @@ import { noop, useFormFields } from "src/utilities/other";
 import { COOKIES, NOT_FOUND } from "src/constants/other";
 import { CALLABLES } from "src/constants/firebase";
 
-// API
-import { getTeamDetails } from "src/api/team";
-import { getTeammateDetails } from "src/api/teammate";
-
 // Providers
 import { useAuth } from "src/providers/auth";
 
@@ -43,6 +39,8 @@ import {
   Divider,
   FormErrorMessage,
 } from "src/components/common";
+import { API } from "src/api/new";
+import { mapTeam } from "src/utilities/team";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -59,22 +57,24 @@ export const getServerSideProps = async (context) => {
     noop();
   }
 
-  const { team } = await getTeamDetails(context.params.id);
+  // const teamResponse = await API().Teams.getOne(context.params.id);
 
-  if (!Boolean(team)) {
-    return NOT_FOUND;
-  }
+  // if (!teamResponse?.data?.team) {
+  //   return NOT_FOUND;
+  // }
 
   let teammate;
 
   if (Boolean(token?.uid)) {
-    const response = await getTeammateDetails(context.params.id, token.uid);
-    teammate = response?.teammate;
+    // const response = await API().Auth.getUser();
+    // const response = await API().Teams.getOneParticipant(context.params.id);
+    // const response = await getTeammateDetails(context.params.id, token.uid);
+    // teammate = response?.teammate;
   }
 
   const data = {
     params: context.params,
-    team,
+    team: mapTeam(teamResponse.data.team),
     alreadyJoinedTeam: Boolean(teammate),
   };
 
