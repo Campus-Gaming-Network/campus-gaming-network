@@ -50,7 +50,6 @@ import {
 import { useAuth } from "src/providers/auth";
 
 // API
-import { getUserDetails, getUserEventResponse } from "src/api/user";
 import { API } from "src/api/new";
 
 // Hooks
@@ -116,20 +115,18 @@ export const getServerSideProps = async (context) => {
       : null;
 
     if (Boolean(token?.uid)) {
-      const [userResponse, userEventResponse] = await Promise.all([
-        // API().Users.getOne(),
-        getUserDetails(token.uid),
-        getUserEventResponse(context.params.id, token.uid),
-      ]);
-      const { user } = userResponse;
-      const { eventResponse } = userEventResponse;
-
-      data.user = user;
-      data.eventResponse = eventResponse;
-      data.hasResponded = Boolean(eventResponse);
-
-      isEventCreator = event.creator.id === token.uid;
-      canChangeEventResponse = !isEventCreator && !event.hasEnded;
+      // const [userResponse, userEventResponse] = await Promise.all([
+      //   // API().Users.getOne(),
+      //   getUserDetails(token.uid),
+      //   getUserEventResponse(context.params.id, token.uid),
+      // ]);
+      // const { user } = userResponse;
+      // const { eventResponse } = userEventResponse;
+      // data.user = user;
+      // data.eventResponse = eventResponse;
+      // data.hasResponded = Boolean(eventResponse);
+      // isEventCreator = event.creator.id === token.uid;
+      // canChangeEventResponse = !isEventCreator && !event.hasEnded;
     }
 
     data.isEventCreator = isEventCreator;
@@ -358,15 +355,16 @@ const Event = (props) => {
 
 const UsersList = (props) => {
   const [page, setPage] = React.useState(0);
-  const [users, status] = useFetchEventUsers(props.event.id, page);
-  const hasUsers = React.useMemo(() => {
-    return Boolean(users) && users.length > 0;
-  }, [users]);
+  const [{ participants, pagination }, status] = useFetchEventUsers(
+    props.event.id,
+    page
+  );
+  const hasParticipants = React.useMemo(() => {
+    return Boolean(participants) && participants.length > 0;
+  }, [participants]);
 
-  const disablePrev = page === 0;
-  const disableNext =
-    props.event.responses.yes === 0 ||
-    Math.floor(props.event.responses.yes / 25) === page;
+  const disablePrev = pagination.isFirstPage;
+  const disableNext = pagination.isLastPage;
 
   const decPage = () => {
     if (disablePrev) {
@@ -385,7 +383,7 @@ const UsersList = (props) => {
     <Stack as="section" spacing={4}>
       <Flex justify="space-between">
         <Heading as="h4" fontSize="xl">
-          Attendees ({props.event.responses.yes || 0})
+          Attendees ({props.event.responses.yes.toLocaleString() || 0})
         </Heading>
         <ButtonGroup size="sm" isAttached variant="outline">
           <IconButton
@@ -405,10 +403,10 @@ const UsersList = (props) => {
       {/* TODO: Better loading here */}
       {status === "loading" ? (
         <Text>Loading...</Text>
-      ) : hasUsers ? (
+      ) : hasParticipants ? (
         <List display="flex" flexWrap="wrap" mx={-2}>
-          {users.map((user) => (
-            <UserListItem key={user.id} user={user} />
+          {participants.map((participant) => (
+            <UserListItem key={participant.id} user={participant.user} />
           ))}
         </List>
       ) : (

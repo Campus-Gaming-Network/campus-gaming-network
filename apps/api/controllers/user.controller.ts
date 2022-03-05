@@ -27,23 +27,27 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     attributes,
     order,
   };
-  let users;
-  let count;
 
   if (!options.limit || (options.limit && options.limit > MAX_LIMIT)) {
     options.limit = MAX_LIMIT;
   }
 
+  let result;
+
   try {
-    const result = await models.User.findAndCountAll(options);
-    users = result.rows;
-    count = result.count;
+    result = await models.User.findAndCountAll(options);
   } catch (error) {
     return next(error);
   }
 
   return res.json({
-    users,
+    pagination: buildPagination(
+      result.rows.length,
+      result.count,
+      offset,
+      limit
+    ),
+    users: result.rows,
   });
 };
 

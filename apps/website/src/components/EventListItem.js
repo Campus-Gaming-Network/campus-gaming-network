@@ -14,8 +14,6 @@ import Time from "src/components/Time";
 // EventListItem
 
 const EventListItem = (props) => {
-  console.log(props);
-  // if (!props.event) {
   if (!props.event || !props.school) {
     return null;
   }

@@ -30,8 +30,8 @@ export const mapEvent = (event) => {
     // endDateTime,
     url,
     googleMapsAddressLink: googleMapsLink(event.location),
-    // hasStarted: hasStarted(startDateTime, endDateTime),
-    // hasEnded: hasEnded(endDateTime),
+    hasStarted: hasStarted(event.startDateTime, event.endDateTime),
+    hasEnded: hasEnded(event.endDateTime),
     school: mapSchool(event.school),
     meta: {
       title: event.name,

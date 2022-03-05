@@ -16,7 +16,7 @@ import EmptyText from "src/components/EmptyText";
 // UpcomingSchoolEvents
 
 const UpcomingSchoolEvents = (props) => {
-  const [events, state] = useFetchSchoolEvents(props?.school?.id);
+  const [events, state] = useFetchSchoolEvents(props?.school?.handle);
   const hasEvents = React.useMemo(
     () => Boolean(events) && events.length > 0,
     [events]

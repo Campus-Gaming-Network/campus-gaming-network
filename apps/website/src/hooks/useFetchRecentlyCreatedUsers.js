@@ -1,15 +1,10 @@
 // Libraries
 import React from "react";
-import { collection, query, limit, getDocs, orderBy } from "firebase/firestore";
-
-// Other
-import { db } from "src/firebase";
 
 // Utilities
 import { mapUser } from "src/utilities/user";
 
 // Constants
-import { COLLECTIONS } from "src/constants/firebase";
 import { STATES } from "src/constants/api";
 import { API } from "src/api/new";
 
@@ -17,6 +12,7 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
   const [state, setState] = React.useState(STATES.INITIAL);
   const [users, setUsers] = React.useState(null);
   const [error, setError] = React.useState(null);
+  const [pagination, setPagination] = React.useState({});
 
   React.useEffect(() => {
     const fetchRecentlyCreatedUsers = async () => {
@@ -38,7 +34,9 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
           },
         });
 
-        if (response?.data?.count) {
+        setPagination(response.data.pagination);
+
+        if (response?.data?.pagination.total) {
           response.data.users.forEach((user) => {
             _users.push(mapUser(user));
           });
@@ -56,7 +54,7 @@ const useFetchRecentlyCreatedUsers = (_limit) => {
     fetchRecentlyCreatedUsers();
   }, [_limit]);
 
-  return [users, state, error];
+  return [{ users, pagination }, state, error];
 };
 
 export default useFetchRecentlyCreatedUsers;

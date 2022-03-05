@@ -14,7 +14,7 @@ import { Box, Heading, Wrap, WrapItem } from "src/components/common";
 // RecentlyCreatedUsers
 
 const RecentlyCreatedUsers = () => {
-  const [users, state] = useFetchRecentlyCreatedUsers(50);
+  const [{ users }, state] = useFetchRecentlyCreatedUsers(50);
   const hasUsers = React.useMemo(
     () => Boolean(users) && users.length > 0,
     [users]

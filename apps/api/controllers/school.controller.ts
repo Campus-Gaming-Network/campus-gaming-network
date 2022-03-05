@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Op, FindOptions, FindAndCountOptions } from "sequelize";
 import models from "../db/models";
-import { parseRequestQuery } from "../utilities";
+import { parseRequestQuery, buildPagination } from "../utilities";
 import isEqual from "lodash.isequal";
 import geohash from "ngeohash";
 import { validateEditSchool } from "../validation";
@@ -271,16 +271,22 @@ const getSchoolEvents = async (
     schoolId: school.toJSON().id,
   };
 
+  let result;
+
   try {
-    const result = await models.Event.findAndCountAll(options);
-    events = result.rows;
-    count = result.count;
+    result = await models.Event.findAndCountAll(options);
   } catch (error) {
     return next(error);
   }
 
   return res.json({
-    events,
+    pagination: buildPagination(
+      result.rows.length,
+      result.count,
+      offset,
+      limit
+    ),
+    events: result.rows,
   });
 };
 

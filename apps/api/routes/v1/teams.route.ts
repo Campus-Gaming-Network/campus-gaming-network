@@ -16,6 +16,8 @@ router.put("/:id", [isAuthenticated], controllers.Team.updateTeam);
 
 router.delete("/:id", [isAuthenticated], controllers.Team.deleteTeam);
 
+router.get("/:id/roles", controllers.Team.getTeamRoles);
+
 router.get("/:id/teammates", controllers.Team.getTeammates);
 
 router.post(

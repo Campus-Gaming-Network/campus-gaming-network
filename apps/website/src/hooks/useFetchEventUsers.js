@@ -14,9 +14,8 @@ const useFetchEventUsers = (
   _limit = DEFAULT_USERS_LIST_PAGE_SIZE
 ) => {
   const [status, setStatus] = React.useState("idle");
-  const [users, setUsers] = React.useState([]);
+  const [participants, setParticipants] = React.useState([]);
   const [error, setError] = React.useState(null);
-  const [pages, setPages] = React.useState({});
   const [pagination, setPagination] = React.useState({});
 
   React.useEffect(() => {
@@ -34,17 +33,20 @@ const useFetchEventUsers = (
           },
         });
 
-        let eventUsers = [];
+        let eventParticipants = [];
 
         if (response?.data?.pagination.total) {
-          response.data.users.forEach((user) => {
-            eventUsers.push(mapUser(user));
+          response.data.participants.forEach((participant) => {
+            eventParticipants.push({
+              ...participant,
+              user: mapUser(participant.user),
+            });
           });
         }
 
         setStatus("done");
         setPagination(response.data.pagination);
-        setUsers(eventUsers);
+        setParticipants(eventParticipants);
       } catch (error) {
         console.error({ error });
         setError(error);
@@ -57,7 +59,7 @@ const useFetchEventUsers = (
     }
   }, [id, _limit, page]);
 
-  return [{ users, pagination }, status, error];
+  return [{ participants, pagination }, status, error];
 };
 
 export default useFetchEventUsers;

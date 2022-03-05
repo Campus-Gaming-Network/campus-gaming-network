@@ -346,6 +346,19 @@ const getTeamById = async (req: Request, res: Response, next: NextFunction) => {
   });
 };
 
+const getTeamRoles = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { offset, limit, attributes } = parseRequestQuery(req);
+  const options: FindAndCountOptions = {};
+
+  return res.json({
+    roles: [],
+  });
+};
+
 const getTeammates = async (
   req: Request,
   res: Response,
@@ -764,6 +777,7 @@ export default {
   updateTeam,
   deleteTeam,
   getTeamById,
+  getTeamRoles,
   getTeammates,
   createTeammate,
   getTeammateById,

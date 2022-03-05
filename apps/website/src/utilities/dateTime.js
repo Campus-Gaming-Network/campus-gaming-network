@@ -9,9 +9,10 @@ export const hasStarted = (startDateTime, endDateTime) => {
     return undefined;
   }
 
-  return Interval.fromDateTimes(startDateTime, endDateTime).contains(
-    DateTime.local()
-  );
+  return Interval.fromDateTimes(
+    DateTime.fromISO(startDateTime),
+    DateTime.fromISO(endDateTime)
+  ).contains(DateTime.local());
 };
 
 export const hasEnded = (endDateTime) => {

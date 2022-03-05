@@ -16,7 +16,7 @@ import EmptyText from "src/components/EmptyText";
 
 const UserCreatedEvents = (props) => {
   const id = React.useMemo(() => props?.user?.id, [props]);
-  const [events, state] = useFetchUserCreatedEvents(id);
+  const [{ events }, state] = useFetchUserCreatedEvents(id);
   const hasEvents = React.useMemo(
     () => Boolean(events) && events.length > 0,
     [events]

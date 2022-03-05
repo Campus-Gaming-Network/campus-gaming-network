@@ -103,6 +103,20 @@ const getEventById = async (
   const { attributes } = parseRequestQuery(req);
   const options: FindOptions = {
     attributes,
+    include: [
+      {
+        model: models.School,
+        as: "school",
+        attributes: ["id", "name", "handle"],
+        required: true,
+      },
+      {
+        model: models.User,
+        as: "creator",
+        attributes: ["id", "firstName", "lastName", "gravatar"],
+        required: true,
+      },
+    ],
   };
   let event;
 
@@ -116,8 +130,43 @@ const getEventById = async (
     return res.sendStatus(404);
   }
 
+  let yesCount = 0;
+  let noCount = 0;
+
+  try {
+    yesCount = await models.Participant.count({
+      where: {
+        response: {
+          [Op.eq]: "YES",
+        },
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  try {
+    noCount = await models.Participant.count({
+      where: {
+        response: {
+          [Op.eq]: "NO",
+        },
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  const eventData = {
+    ...event.toJSON(),
+    responses: {
+      yes: yesCount,
+      no: noCount,
+    },
+  };
+
   return res.json({
-    event: event.toJSON(),
+    event: eventData,
   });
 };
 
@@ -140,7 +189,8 @@ const getEventParticipants = async (
         include: [
           {
             model: models.School,
-            attributes: ["id", "name"],
+            attributes: ["id", "name", "handle"],
+            as: "school",
             required: false,
           },
         ],
@@ -152,16 +202,16 @@ const getEventParticipants = async (
         required: false,
       },
     ],
-    attributes: [],
+    attributes: ["id", "response", "participantType"],
     offset,
     limit,
   };
 
   let participants: any[] = [];
-  let count;
+  let result;
 
   try {
-    const result = await models.Participant.findAndCountAll(options);
+    result = await models.Participant.findAndCountAll(options);
 
     result.rows.forEach((row) => {
       const participant = JSON.parse(JSON.stringify(row));
@@ -172,14 +222,18 @@ const getEventParticipants = async (
         team: participant.team,
       });
     });
-
-    count = result.count;
   } catch (error) {
     return next(error);
   }
 
   return res.json({
-    participants,
+    pagination: buildPagination(
+      result.rows.length,
+      result.count,
+      offset,
+      limit
+    ),
+    participants: result.rows,
   });
 };
 

@@ -19,11 +19,7 @@ const AttendingEvents = (props) => {
   const [hasLoadedOnce, setHasLoadedOnce] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const limit = React.useMemo(() => (page === 0 ? 6 : 1), [page]);
-  const [{ events, pagination }, state] = useFetchUserEvents(
-    props?.user?.id,
-    page,
-    limit
-  );
+  const [{ events }, state] = useFetchUserEvents(props?.user?.id, page, limit);
   const [allEvents, setAllEvents] = React.useState([]);
   const hasEvents = React.useMemo(
     () => Boolean(allEvents) && allEvents.length > 0,
