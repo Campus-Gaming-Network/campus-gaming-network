@@ -225,16 +225,22 @@ const getSchoolUsers = async (
     schoolId: school.toJSON().id,
   };
 
+  let result;
+
   try {
-    const result = await models.User.findAndCountAll(options);
-    users = result.rows;
-    count = result.count;
+    result = await models.User.findAndCountAll(options);
   } catch (error) {
     return next(error);
   }
 
   return res.json({
-    users,
+    pagination: buildPagination(
+      result.rows.length,
+      result.count,
+      offset,
+      limit
+    ),
+    users: result.rows,
   });
 };
 

@@ -89,7 +89,7 @@ export const getServerSideProps = async (context) => {
 
   let events = [];
 
-  if (eventsResponse?.data?.count) {
+  if (eventsResponse?.data?.pagination.total) {
     events = eventsResponse?.data?.events;
   }
 
@@ -277,12 +277,13 @@ const School = (props) => {
 
 const UsersList = (props) => {
   const [page, setPage] = React.useState(0);
-  const [{ users, count }, status] = useFetchSchoolUsers(
+  const [{ users, pagination }, status] = useFetchSchoolUsers(
     props.school.handle,
     page
   );
   const disablePrev = page === 0;
-  const disableNext = count === 0 || Math.floor(count / 25) === page;
+  const disableNext =
+    pagination.count === 0 || Math.floor(pagination.count / 25) === page;
 
   const decPage = () => {
     if (disablePrev) {
@@ -301,7 +302,7 @@ const UsersList = (props) => {
     <Stack as="section" spacing={4}>
       <Flex justify="space-between">
         <Heading as="h4" fontSize="xl">
-          Members ({count || 0})
+          Members ({pagination.total || 0})
         </Heading>
         <ButtonGroup size="sm" isAttached variant="outline">
           <IconButton
@@ -321,7 +322,7 @@ const UsersList = (props) => {
       {/* TODO: Better loading here */}
       {status === "loading" ? (
         <Text>Loading...</Text>
-      ) : count > 0 ? (
+      ) : pagination.count > 0 ? (
         <List display="flex" flexWrap="wrap" mx={-2}>
           {users.map((user) => (
             <UserListItem key={user.id} user={user} />

@@ -11,7 +11,7 @@ import { API } from "src/api/new";
 const useFetchEventUsers = (
   id,
   page = 0,
-  _limit = DEFAULT_USERS_LIST_PAGE_SIZE
+  limit = DEFAULT_USERS_LIST_PAGE_SIZE
 ) => {
   const [status, setStatus] = React.useState("idle");
   const [participants, setParticipants] = React.useState([]);
@@ -29,7 +29,8 @@ const useFetchEventUsers = (
       try {
         const response = await API().Events.getAllParticipants(id, {
           params: {
-            limit: _limit,
+            limit: limit,
+            offset: page * limit,
           },
         });
 
@@ -57,7 +58,7 @@ const useFetchEventUsers = (
     if (id) {
       fetchEventUsers();
     }
-  }, [id, _limit, page]);
+  }, [id, limit, page]);
 
   return [{ participants, pagination }, status, error];
 };

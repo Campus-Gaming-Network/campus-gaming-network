@@ -16,7 +16,7 @@ const useFetchSchoolUsers = (
   const [status, setStatus] = React.useState("idle");
   const [users, setUsers] = React.useState([]);
   const [error, setError] = React.useState(null);
-  const [count, setCount] = React.useState(0);
+  const [pagination, setPagination] = React.useState({});
 
   React.useEffect(() => {
     if (!id) {
@@ -45,7 +45,7 @@ const useFetchSchoolUsers = (
         setStatus("done");
       }
 
-      if (!!response?.data?.count) {
+      if (response?.data?.pagination.total) {
         let schoolUsers = [];
 
         response.data.users.forEach((user) => {
@@ -57,17 +57,16 @@ const useFetchSchoolUsers = (
           );
         });
 
+        setStatus("done");
         setUsers(schoolUsers);
-        setCount(response.data.count);
+        setPagination(response.data.pagination);
       }
-
-      setStatus("done");
     };
 
     fetchSchoolUsers();
   }, [id, limit, page]);
 
-  return [{ users, count }, status, error];
+  return [{ users, pagination }, status, error];
 };
 
 export default useFetchSchoolUsers;
