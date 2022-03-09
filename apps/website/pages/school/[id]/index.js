@@ -78,25 +78,17 @@ const UpcomingSchoolEvents = dynamic(
 // getServerSideProps
 
 export const getServerSideProps = async (context) => {
-  const [schoolResponse, eventsResponse] = await Promise.all([
+  const [schoolResponse] = await Promise.all([
     API().Schools.getOneByHandle(context.params.id),
-    API().Schools.getEvents(context.params.id),
   ]);
 
   if (!schoolResponse?.data?.school) {
     return NOT_FOUND;
   }
 
-  let events = [];
-
-  if (eventsResponse?.data?.pagination.total) {
-    events = eventsResponse?.data?.events;
-  }
-
   const data = {
     params: context.params,
     school: mapSchool(schoolResponse.data.school),
-    events,
   };
 
   return { props: JSON.parse(safeJsonStringify(data)) };

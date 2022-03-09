@@ -16,7 +16,7 @@ import EmptyText from "src/components/EmptyText";
 // UpcomingSchoolEvents
 
 const UpcomingSchoolEvents = (props) => {
-  const [events, state] = useFetchSchoolEvents(props?.school?.handle);
+  const [{ events }, state] = useFetchSchoolEvents(props?.school?.handle);
   const hasEvents = React.useMemo(
     () => Boolean(events) && events.length > 0,
     [events]
@@ -68,7 +68,7 @@ const UpcomingSchoolEvents = (props) => {
                 <EventListItem
                   key={event.id}
                   event={event}
-                  school={event.school}
+                  school={props.school}
                 />
               ))}
             </Slider>

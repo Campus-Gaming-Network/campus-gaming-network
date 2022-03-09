@@ -16,6 +16,10 @@ const useFetchSchoolEvents = (id) => {
 
   React.useEffect(() => {
     const fetchSchoolEvents = async () => {
+      if (!id) {
+        return;
+      }
+
       setState(STATES.LOADING);
       setEvents(null);
       setError(null);
@@ -34,14 +38,13 @@ const useFetchSchoolEvents = (id) => {
           },
         });
 
-        setPagination(response.data.pagination);
-
         if (response?.data?.pagination.total) {
           response.data.events.forEach((event) => {
             _events.push(mapEvent(event));
           });
         }
 
+        setPagination(response.data.pagination);
         setState(STATES.DONE);
         setEvents(_events);
       } catch (error) {
@@ -51,9 +54,7 @@ const useFetchSchoolEvents = (id) => {
       }
     };
 
-    if (id) {
-      fetchSchoolEvents();
-    }
+    fetchSchoolEvents();
   }, [id]);
 
   return [{ events, pagination }, state, error];

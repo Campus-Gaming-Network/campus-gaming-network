@@ -204,8 +204,6 @@ const getSchoolUsers = async (
     attributes,
   };
   let school;
-  let users;
-  let count;
 
   try {
     school = await models.School.findOne({
@@ -256,8 +254,6 @@ const getSchoolEvents = async (
     attributes,
   };
   let school;
-  let events;
-  let count;
 
   try {
     school = await models.School.findOne({
