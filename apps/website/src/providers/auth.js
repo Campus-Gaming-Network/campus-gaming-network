@@ -4,10 +4,9 @@
 import React from "react";
 import nookies from "nookies";
 import { onIdTokenChanged } from "firebase/auth";
-import { getDoc, doc } from "firebase/firestore";
 
 // Other
-import { db, auth } from "src/firebase";
+import { auth } from "src/firebase";
 import { API } from "src/api/new";
 
 // Constants

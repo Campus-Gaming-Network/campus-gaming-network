@@ -6,26 +6,15 @@ import isEmpty from "lodash.isempty";
 import { useRouter } from "next/router";
 import firebaseAdmin from "src/firebaseAdmin";
 import nookies from "nookies";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  getIdToken,
-} from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { validateSignUp } from "@campus-gaming-network/tools";
 
 // Constants
-import { BASE_USER, STUDENT_STATUS_OPTIONS } from "src/constants/user";
-import { COLLECTIONS } from "src/constants/firebase";
+import { STUDENT_STATUS_OPTIONS } from "src/constants/user";
 import {
   COOKIES,
   PRODUCTION_URL,
   REDIRECT_HOME,
   BASE_ERROR_MESSAGE,
 } from "src/constants/other";
-
-// Utilities
-import { createGravatarHash } from "src/utilities/user";
 
 // Components
 import Article from "src/components/Article";
@@ -52,7 +41,7 @@ import {
 } from "src/components/common";
 
 // Other
-import { auth, db } from "src/firebase";
+import { API } from "src/api/new";
 
 ////////////////////////////////////////////////////////////////////////////////
 // getServerSideProps
@@ -119,104 +108,46 @@ const Signup = () => {
 
     setIsSubmitting.on();
 
-    const { error } = validateSignUp({
-      ...formState,
-      school: formState.school.id,
-    });
+    // const { error } = validateSignUp({
+    //   ...formState,
+    //   school: formState.school.id,
+    // });
 
-    if (error) {
-      const errors = error.details.reduce(
-        (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
-        {}
-      );
-      setErrors(errors);
-      setIsSubmitting.off();
-      window.scrollTo(0, 0);
-      return;
-    }
-
-    let user;
+    // if (error) {
+    //   const errors = error.details.reduce(
+    //     (acc, curr) => ({ ...acc, [curr.path[0]]: curr.message }),
+    //     {}
+    //   );
+    //   setErrors(errors);
+    //   setIsSubmitting.off();
+    //   window.scrollTo(0, 0);
+    //   return;
+    // }
 
     try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        formState.email,
-        formState.password
-      );
+      await API().Users.create({
+        email: formState.email,
+        password: formState.password,
+        firstName: formState.firstName,
+        lastName: formState.lastName,
+        status: formState.status,
+        schoolId: formState.school.id,
+      });
 
-      if (response?.user) {
-        user = response.user;
-      }
+      toast({
+        title: "Account creation successful.",
+        description:
+          "Your account has successfully been created, welcome to Campus Gaming Network!",
+        status: "success",
+        isClosable: true,
+      });
+
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } catch (error) {
       console.error(error);
-      setError(error.message);
-      setIsSubmitting.off();
-      window.scrollTo(0, 0);
-      return;
-    }
-
-    if (Boolean(user)) {
-      try {
-        await sendEmailVerification(auth.currentUser);
-        await getIdToken(auth.currentUser, true);
-
-        toast({
-          title: "Verification email sent.",
-          description: `A verification email has been sent to ${formState.email}. Please check your inbox and follow the instructions in the email.`,
-          status: "success",
-          isClosable: true,
-        });
-      } catch (error) {
-        console.error(error);
-        toast({
-          title: "Verification email error.",
-          description: `There was an issue sending a verification email to ${formState.email}. ${BASE_ERROR_MESSAGE}`,
-          status: "error",
-          isClosable: true,
-        });
-      }
-
-      try {
-        await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
-          ...BASE_USER,
-          id: user.uid,
-          firstName: formState.firstName,
-          lastName: formState.lastName,
-          status: formState.status,
-          gravatar: createGravatarHash(formState.email),
-          school: {
-            ref: doc(db, COLLECTIONS.SCHOOLS, formState.school.id),
-            id: formState.school.id,
-            name: formState.school.name,
-            handle: formState.school.handle,
-          },
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-
-        toast({
-          title: "Account creation successful.",
-          description:
-            "Your account has successfully been created, welcome to Campus Gaming Network!",
-          status: "success",
-          isClosable: true,
-        });
-
-        setTimeout(() => {
-          router.push("/");
-        }, 2000);
-      } catch (error) {
-        console.error(error);
-        setError(
-          `There was an issue creating your user. ${BASE_ERROR_MESSAGE}`
-        );
-        setIsSubmitting.off();
-        window.scrollTo(0, 0);
-      }
-    } else {
-      setError(
-        `There was an issue when creating your account. ${BASE_ERROR_MESSAGE}`
-      );
+      setError(`There was an issue creating your user. ${BASE_ERROR_MESSAGE}`);
       setIsSubmitting.off();
       window.scrollTo(0, 0);
     }

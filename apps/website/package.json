@@ -44,7 +44,6 @@
     "lodash.uniqby": "^4.7.0",
     "lodash.xorby": "^4.7.0",
     "luxon": "^1.25.0",
-    "md5": "^2.2.1",
     "mocha": "^8.1.3",
     "next": "^11.1.0",
     "nookies": "^2.5.2",

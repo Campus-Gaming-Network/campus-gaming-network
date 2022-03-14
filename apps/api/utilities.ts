@@ -1,6 +1,7 @@
-import e, { Request } from "express";
+import { Request } from "express";
 import { customAlphabet } from "nanoid";
 import * as bcrypt from "bcrypt";
+import md5 from "md5";
 import {
   NANO_ALPHABET,
   NANO_ID_LENGTH,
@@ -96,3 +97,13 @@ export const comparePasswords = async (
   password: string,
   hash: string
 ): Promise<boolean> => await bcrypt.compare(password, hash);
+
+export const createGravatarHash = (email = "") => {
+  const trimmedEmail = email.trim();
+
+  if (!Boolean(trimmedEmail)) {
+    return undefined;
+  }
+
+  return md5(trimmedEmail.toLowerCase());
+};

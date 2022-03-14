@@ -32,16 +32,22 @@ const getSchools = async (req: Request, res: Response, next: NextFunction) => {
     };
   }
 
+  let result;
+
   try {
-    const result = await models.School.findAndCountAll(options);
-    schools = result.rows;
-    count = result.count;
+    result = await models.School.findAndCountAll(options);
   } catch (error) {
     return next(error);
   }
 
   return res.json({
-    schools,
+    pagination: buildPagination(
+      result.rows.length,
+      result.count,
+      offset,
+      limit
+    ),
+    schools: result.rows,
   });
 };
 

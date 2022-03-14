@@ -1,13 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { FindAndCountOptions, FindOptions, Op } from "sequelize";
 import models from "../db/models";
+import { MAX_LIMIT, SUCCESS_MESSAGE, STATUS_CODES } from "../constants";
 import {
-  MAX_LIMIT,
-  AUTH_ERROR_MESSAGE,
-  SUCCESS_MESSAGE,
-  STATUS_CODES,
-} from "../constants";
-import { parseRequestQuery, buildPagination } from "../utilities";
+  parseRequestQuery,
+  buildPagination,
+  createGravatarHash,
+} from "../utilities";
 import { validateCreateUser, validateEditUser } from "../validation";
 import firebase from "../firebase";
 
@@ -53,7 +52,11 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password, ...rest } = req.body;
-  const { error } = validateCreateUser(rest);
+  const gravatar = createGravatarHash(email);
+  const { error } = validateCreateUser({
+    ...rest,
+    gravatar,
+  });
 
   if (error) {
     return res.status(STATUS_CODES.BAD_REQUEST).json({ error: error.details });
@@ -79,6 +82,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     user = await models.User.create({
       uid: authUser.uid,
+      gravatar,
       ...rest,
     });
   } catch (error) {

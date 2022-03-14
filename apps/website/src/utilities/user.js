@@ -4,31 +4,14 @@
 import intersection from "lodash.intersection";
 import capitalize from "lodash.capitalize";
 import startCase from "lodash.startcase";
-import md5 from "md5";
 
 // Constants
 import { GRAVATAR, ACCOUNTS, PRODUCTION_URL } from "src/constants/other";
 
 // Utilities
 import { mapSchool } from "src/utilities/school";
-import { buildDateTime } from "src/utilities/dateTime";
-import { cleanObjectOfBadWords } from "src/utilities/other";
 
-export const createGravatarHash = (email = "") => {
-  const trimmedEmail = email.trim();
-
-  if (!Boolean(trimmedEmail)) {
-    return undefined;
-  }
-
-  return md5(trimmedEmail.toLowerCase());
-};
-
-export const createGravatarRequestUrl = (hash = "", email = "") => {
-  if (!Boolean(hash) && Boolean(email)) {
-    hash = createGravatarHash(email);
-  }
-
+export const createGravatarRequestUrl = (hash = "") => {
   return `https://www.gravatar.com/avatar/${hash}?s=100&d=${GRAVATAR.DEFAULT}&r=${GRAVATAR.RA}`;
 };
 

@@ -28,23 +28,6 @@ const localeFormat = {
   ...{ month: "long", day: "numeric" },
 };
 
-export const buildDateTime = (dateTime) => {
-  if (!Boolean(dateTime)) {
-    return undefined;
-  }
-
-  const _dateTime = dateTime.toDate();
-  const _dateTimeISO = _dateTime.toISOString();
-
-  return {
-    firestore: dateTime,
-    base: _dateTime,
-    iso: _dateTimeISO,
-    locale: DateTime.fromISO(_dateTimeISO).toLocaleString(localeFormat),
-    relative: DateTime.fromISO(_dateTimeISO).toRelativeCalendar(),
-  };
-};
-
 export const firebaseToLocaleString = (dateTime) => {
   if (!Boolean(dateTime)) {
     return undefined;
