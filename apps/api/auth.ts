@@ -56,6 +56,14 @@ export const decodeAuthToken = async (
             where: {
               uid: decodedToken.uid,
             },
+            include: [
+              {
+                model: models.School,
+                as: "school",
+                attributes: ["id", "name", "handle"],
+                required: true,
+              },
+            ],
           });
         } catch (error) {
           console.log(error);

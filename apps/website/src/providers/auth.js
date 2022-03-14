@@ -8,6 +8,7 @@ import { getDoc, doc } from "firebase/firestore";
 
 // Other
 import { db, auth } from "src/firebase";
+import { API } from "src/api/new";
 
 // Constants
 import { COOKIES } from "src/constants/other";
@@ -108,36 +109,20 @@ export const AuthProvider = ({ children }) => {
       setAuthUser(authUser);
 
       if (Boolean(authUser) && Boolean(authUser.uid)) {
-        let userDoc;
+        let user;
 
         try {
-          userDoc = await getDoc(doc(db, "users", authUser.uid));
+          const response = await API().Auth.getUser(authUser.uid);
+          user = response.data.user;
         } catch (error) {
           console.error(`[AUTH] Error getting user.`, error);
           clearAuth();
           return;
         }
 
-        if (userDoc.exists) {
-          setUser({ ...mapUser(userDoc.data(), userDoc) });
-
-          try {
-            const schoolDoc = await getDoc(
-              doc(db, "schools", userDoc.data().school.id)
-            );
-
-            if (schoolDoc.exists) {
-              setSchool({ ...mapSchool(schoolDoc.data(), schoolDoc) });
-            } else {
-              console.error(`[AUTH] School does not exist.`, error);
-              clearAuth();
-              return;
-            }
-          } catch (error) {
-            console.error(`[AUTH] Error getting school.`, error);
-            clearAuth();
-            return;
-          }
+        if (Boolean(user)) {
+          setUser(mapUser(user));
+          setSchool(mapSchool(user.school));
         } else {
           console.error(`[AUTH] User does not exist.`, error);
           clearAuth();

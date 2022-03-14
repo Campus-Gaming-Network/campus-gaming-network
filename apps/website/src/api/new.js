@@ -1,14 +1,13 @@
 import axios from "axios";
-import { BASE_API_URL } from "src/constants/other";
+import { BASE_API_URL, COOKIES } from "src/constants/other";
+import { parseCookies } from "nookies";
 
-const instance = axios.create({
-  baseURL: BASE_API_URL,
-  // TODO: Headers
-});
+const instance = axios.create({ baseURL: BASE_API_URL });
 
 const DEFAULT_VERSION = "v1";
 
 export const API = (version = DEFAULT_VERSION) => {
+  const cookies = parseCookies();
   const createUrl = (url) => `/${version}${url}`;
   const requests = {
     get: (url, ...args) => instance.get(createUrl(url), ...args),
@@ -16,6 +15,16 @@ export const API = (version = DEFAULT_VERSION) => {
     put: (url, ...args) => instance.put(createUrl(url), ...args),
     delete: (url, ...args) => instance.delete(createUrl(url), ...args),
   };
+
+  instance.interceptors.request.use((config) => {
+    if (Boolean(cookies[COOKIES.AUTH_TOKEN])) {
+      config.headers.common.Authorization = `Bearer ${
+        cookies[COOKIES.AUTH_TOKEN]
+      }`;
+    }
+
+    return config;
+  });
 
   return {
     Auth: {
