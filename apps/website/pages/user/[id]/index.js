@@ -57,7 +57,6 @@ import { useAuth } from "src/providers/auth";
 
 // Utilities
 import { mapUser } from "src/utilities/user";
-import { mapSchool } from "src/utilities/school";
 
 // Dynamic Components
 const TwitchEmbed = dynamic(() => import("src/components/TwitchEmbed"), {
@@ -93,18 +92,9 @@ export const getServerSideProps = async (context) => {
 
   const user = mapUser(userResponse.data.user);
 
-  let schoolResponse;
-
-  try {
-    schoolResponse = await API().Schools.getOneByHandle(user.school.handle);
-  } catch (error) {
-    return NOT_FOUND;
-  }
-
   const data = {
     params: context.params,
     user,
-    school: mapSchool(schoolResponse.data.school),
     teams: teamsResponse.data.teams,
   };
 
@@ -117,7 +107,7 @@ export const getServerSideProps = async (context) => {
 const User = (props) => {
   const { authUser, isAuthenticated } = useAuth();
   const isAuthenticatedUser = React.useMemo(
-    () => authUser && authUser.uid === props.user.id,
+    () => authUser && authUser.id === props.user.id,
     [authUser, props.user]
   );
   const [isReportingUserDialogOpen, setReportingUserDialogIsOpen] =
@@ -189,14 +179,14 @@ const User = (props) => {
               alignItems="center"
             >
               {props.user.displayStatus}
-              {Boolean(props.school) ? (
+              {Boolean(props.user.school) ? (
                 <Link
-                  href={`/school/${props.school.handle}`}
+                  href={`/school/${props.user.school.handle}`}
                   color="brand.500"
                   fontWeight={600}
                   ml={2}
                 >
-                  {props.school.formattedName}
+                  {props.user.school.formattedName}
                 </Link>
               ) : null}
             </Heading>
@@ -311,11 +301,11 @@ const User = (props) => {
             />
           </Stack>
           <SliderLazyLoad>
-            {/* <AttendingEvents
+            <AttendingEvents
               user={props.user}
               title="Events Attending"
               emptyText={USER_EMPTY_UPCOMING_EVENTS_TEXT}
-            /> */}
+            />
           </SliderLazyLoad>
           <Stack as="section" spacing={4}>
             <Heading as="h3" fontSize="xl">

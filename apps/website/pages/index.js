@@ -111,14 +111,14 @@ const Home = () => {
             </Box>
           </SliderLazyLoad>
           <SchoolLogoSlider />
-          <SliderLazyLoad>
+          {/* <SliderLazyLoad>
             <Box
               px={{ base: 4, md: 8 }}
               maxW={{ base: "100%", sm: "90%", md: "90%" }}
             >
               <NearbySchools useBrowserLocation />
             </Box>
-          </SliderLazyLoad>
+          </SliderLazyLoad> */}
           <SliderLazyLoad>
             <Box
               px={{ base: 4, md: 8 }}

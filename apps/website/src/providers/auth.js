@@ -105,8 +105,6 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      setAuthUser(authUser);
-
       if (Boolean(authUser) && Boolean(authUser.uid)) {
         let user;
 
@@ -120,6 +118,12 @@ export const AuthProvider = ({ children }) => {
         }
 
         if (Boolean(user)) {
+          setAuthUser({
+            uid: authUser.uid,
+            email: authUser.email,
+            emailVerified: authUser.emailVerified,
+            id: user.id,
+          });
           setUser(mapUser(user));
           setSchool(mapSchool(user.school));
         } else {

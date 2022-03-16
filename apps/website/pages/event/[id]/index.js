@@ -400,10 +400,7 @@ const UsersList = (props) => {
           />
         </ButtonGroup>
       </Flex>
-      {/* TODO: Better loading here */}
-      {status === "loading" ? (
-        <Text>Loading...</Text>
-      ) : hasParticipants ? (
+      {hasParticipants ? (
         <List display="flex" flexWrap="wrap" mx={-2}>
           {participants.map((participant) => (
             <UserListItem key={participant.id} user={participant.user} />

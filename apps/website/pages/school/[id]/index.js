@@ -242,13 +242,13 @@ const School = (props) => {
             />
           </SliderLazyLoad>
           <UsersList school={props.school} />
-          {props.school.geohash ? (
+          {/* {props.school.geohash ? (
             <NearbySchools
               latitude={props.school.location._latitude}
               longitude={props.school.location._longitude}
               settings={{ slidesToShow: 3 }}
             />
-          ) : null}
+          ) : null} */}
         </Stack>
       </Article>
 
@@ -311,10 +311,7 @@ const UsersList = (props) => {
           />
         </ButtonGroup>
       </Flex>
-      {/* TODO: Better loading here */}
-      {status === "loading" ? (
-        <Text>Loading...</Text>
-      ) : pagination.count > 0 ? (
+      {pagination.count > 0 ? (
         <List display="flex" flexWrap="wrap" mx={-2}>
           {users.map((user) => (
             <UserListItem key={user.id} user={user} />

@@ -28,7 +28,7 @@ const useFetchUserEvents = (id, page, _limit) => {
       let _events = [];
 
       try {
-        const response = await API().Users.getEvents(1, {
+        const response = await API().Users.getEvents(id, {
           params: {
             "endDateTime.gte": new Date(),
             limit: _limit,

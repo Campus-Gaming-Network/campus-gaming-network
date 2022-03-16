@@ -6,9 +6,18 @@ const instance = axios.create({ baseURL: BASE_API_URL });
 
 const DEFAULT_VERSION = "v1";
 
-export const API = (version = DEFAULT_VERSION) => {
+const DEFAULT_OPTIONS = {
+  version: DEFAULT_VERSION,
+};
+
+export const API = (options = {}) => {
+  const opts = {
+    ...DEFAULT_OPTIONS,
+    ...(options || {}),
+  };
+
   const cookies = parseCookies();
-  const createUrl = (url) => `/${version}${url}`;
+  const createUrl = (url) => `/${opts.version}${url}`;
   const requests = {
     get: (url, ...args) => instance.get(createUrl(url), ...args),
     post: (url, ...args) => instance.post(createUrl(url), ...args),
