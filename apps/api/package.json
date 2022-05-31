@@ -11,10 +11,10 @@
     "node": "16.x.x"
   },
   "scripts": {
-    "dev": "NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only server.ts",
     "build": "tsc",
-    "start": "npm run build && NODE_ENV=production pm2 start ./dist/server.js --watch",
-    "test": "NODE_ENV=test jest --runInBand",
+    "start": "npm run build && cross-env NODE_ENV=production pm2 start ./dist/server.js --watch",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage"
   },
@@ -71,6 +71,7 @@
     "@types/sequelize": "^4.28.11",
     "@types/supertest": "^2.0.11",
     "@types/validator": "^13.7.1",
+    "cross-env": "^7.0.3",
     "firebase-mock": "^2.3.2",
     "jest": "^27.5.1",
     "supertest": "^6.2.2",
